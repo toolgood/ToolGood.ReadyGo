@@ -1,0 +1,13 @@
+build
+bin
+obj
+*.suo
+*.nupkg
+*.user
+_ReSharper*
+src/TestResults
+packages
+artifacts
+TestResult.xml
+UnitTests*
+.vs*
