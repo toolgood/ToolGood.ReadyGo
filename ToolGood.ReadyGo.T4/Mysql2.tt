@@ -1,0 +1,305 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ assembly name="System.Data" #>
+<#@ import namespace="System.Data" #>
+<#@ assembly name="$(SolutionDir)lib\MySql.Data.dll" #>
+<#@ import namespace="MySql.Data.MySqlClient" #>
+<#@ output extension=".txt" #>
+<# 
+	//--------------------------------
+	string ServerIP="localhost";
+	string Port="3306";
+	string User="pl5";
+	string Password="pl5";
+	string table_schema="pl5";
+	//--------------------------------
+	string Namespace="Database";
+	string ClassPrefix="db_";
+	//--------------------------------
+
+
+	MysqlHelper helper=new MysqlHelper(ServerIP,Port,User,Password,table_schema);
+	var tables=	helper.GetProcedure();
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace <#= Namespace #>
+{
+<#  foreach (var table in tables){#>   
+    public class <#=ClassPrefix  #><#= table.Name #> 
+    {   
+<# foreach (var col in table.Params){#>
+
+		public <#= col.GetDotNetType() #> <#= col.Name #> { get; set; }
+<# } #> 
+	}
+<# }  #>
+}
+
+
+
+
+
+<#+ 
+	public class MysqlSql
+    {
+        public const string ConnString = "database={4};server={0};Port={1};uid={2};pwd={3};charset=utf8;";
+        public const string GetTableNames = "SELECT table_name,TABLE_COMMENT FROM information_schema.tables WHERE table_schema='{0}' ORDER BY table_name ASC;";
+        public const string GetColumnNames = "select * from information_schema.columns where table_schema='{0}' and table_name='{1}';";
+        public const string GetIndex = "show index from `{0}`.`{1}`";
+        public const string GetProcedure = "show procedure status where db='{0}' ;";
+        public const string GetCreateProcedure = "show create procedure `{0}`.`{1}` ;";
+
+        public static string GetDotNetType(string DATA_TYPE)
+        {
+            string type = "";
+            if (DATA_TYPE == "tinyint") type = "int";
+            else if (DATA_TYPE == "smallint") type = "int";
+            else if (DATA_TYPE == "mediumint") type = "int";
+            else if (DATA_TYPE == "int") type = "int";
+            else if (DATA_TYPE == "bigint") type = "long";
+
+            else if (DATA_TYPE == "decimal") type = "decimal";
+            else if (DATA_TYPE == "float") type = "float";
+            else if (DATA_TYPE == "double") type = "double";
+
+            else if (DATA_TYPE == "datetime") type = "DateTime";
+            else if (DATA_TYPE == "date") type = "DateTime";
+            else if (DATA_TYPE == "time") type = "DateTime";
+            else if (DATA_TYPE == "timestamp") type = "DateTime";
+
+
+
+            else if (DATA_TYPE == "char") type = "string";
+            else if (DATA_TYPE == "varchar") type = "string";
+            else if (DATA_TYPE == "text") type = "string";
+            else if (DATA_TYPE == "longtext") type = "string";
+            else if (DATA_TYPE == "enum") type = "string";
+
+            return type;
+        }
+    }
+
+    public class MysqlHelper
+    {
+        private string table_schema;
+        private string connString;
+        public MysqlHelper(string ServerIP, string post, string User, string Password, string table_schema)
+        {
+            this.connString = string.Format(MysqlSql.ConnString, ServerIP, post, User, Password, table_schema);
+            this.table_schema = table_schema;
+        }
+
+        private Dictionary<string,string> GetTableName()
+        {
+            MySqlConnection conn = new MySqlConnection(connString);
+            conn.Open();
+            Dictionary<string,string> list = new Dictionary<string,string>();
+            try {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = string.Format(MysqlSql.GetTableNames, table_schema);
+                var read = cmd.ExecuteReader();
+
+                while (read.Read()) {
+                    list.Add(read["table_name"].ToString(),read["TABLE_COMMENT"].ToString());
+                }
+            } finally {
+                conn.Close();
+            }
+            return list;
+        }
+        private List<MysqlColumn> GetColumn(string tableName)
+        {
+            MySqlConnection conn = new MySqlConnection(connString);
+            conn.Open();
+            List<MysqlColumn> list = new List<MysqlColumn>();
+            try {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = string.Format(MysqlSql.GetColumnNames, table_schema, tableName);
+                var read = cmd.ExecuteReader();
+
+                while (read.Read()) {
+                    MysqlColumn col = new MysqlColumn();
+                    col.COLUMN_NAME = read["COLUMN_NAME"].ToString();
+                    col.IS_NULLABLE = read["IS_NULLABLE"].ToString() == "YES";
+                    col.DATA_TYPE = read["DATA_TYPE"].ToString();
+                    col.COLUMN_KEY = read["COLUMN_KEY"].ToString();
+                    col.COLUMN_COMMENT = read["COLUMN_COMMENT"] == null ? "" : read["COLUMN_COMMENT"].ToString();
+                    list.Add(col);
+                }
+            } finally {
+                conn.Close();
+            }
+            return list;
+        }
+        public List<MysqlTable> GetTable()
+        {
+            var tables = GetTableName();
+            List<MysqlTable> list = new List<MysqlTable>();
+            foreach (var item in tables) {
+                var cols = GetColumn(item.Key);
+                MysqlTable tab = new MysqlTable();
+                tab.TableName = item.Key;
+				tab.TableComment=item.Value;
+                tab.SchemaName = this.table_schema;
+                tab.Columns = cols;
+                var pk = cols.FirstOrDefault(q => q.COLUMN_KEY == "PRI");
+                if (pk != null) {
+                    tab.PrimaryKey = pk.COLUMN_NAME;
+                }
+                list.Add(tab);
+            }
+            return list;
+        }
+
+
+        private Dictionary<string,string> GetGetProcedureName()
+        {
+            MySqlConnection conn = new MySqlConnection(connString);
+            conn.Open();
+			Dictionary<string,string> list = new Dictionary<string,string>();
+            try {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = string.Format(MysqlSql.GetProcedure, table_schema);
+                var read = cmd.ExecuteReader();
+
+                while (read.Read()) {
+                    list.Add(read["Name"].ToString(),read["Comment"].ToString());
+                }
+            } finally {
+                conn.Close();
+            }
+            return list;
+        }
+        private List<MysqlProcedureParam> GetProcedureParam(string tableName)
+        {
+            MySqlConnection conn = new MySqlConnection(connString);
+            conn.Open();
+            List<MysqlProcedureParam> list = new List<MysqlProcedureParam>();
+            try {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = string.Format(MysqlSql.GetCreateProcedure, table_schema, tableName);
+                var read = cmd.ExecuteReader();
+
+               while (read.Read()) {
+                    var text = read["Create Procedure"].ToString();
+					text = Regex.Replace(text, @"(.*)\Abegin.*", "$1", RegexOptions.IgnoreCase );
+					text = Regex.Replace(text, " --.*(\r|\n)", "");
+					text = Regex.Replace(text, "#.*(\r|\n)", "");
+				   
+                    var re = new Regex(@"\(([^()]|\([^)]*\))*?\)");
+                    var m = re.Match(text);
+                    if (m.Success) {
+                        var t = m.Value.TrimEnd(')').TrimStart('(').Trim();
+						t = Regex.Replace(t, @"\(.*?\)", "");
+                        if (string.IsNullOrEmpty(t)==false)
+                        {
+		                var sp = t.Split(',');
+                        foreach (var s in sp) {
+							var c=s.Trim();
+                            if (c.StartsWith("in ", StringComparison.CurrentCultureIgnoreCase))
+                            {
+								c=c.Substring(3);
+                            }
+							if (c.StartsWith("out ", StringComparison.CurrentCultureIgnoreCase))
+                            {
+								c=c.Substring(4);
+                            }
+                            var p = c.Split(new char[]{ ' '},StringSplitOptions.RemoveEmptyEntries);
+                            MysqlProcedureParam param = new MysqlProcedureParam();
+                            param.Name = p[0].Trim();
+                            param.Type = p[1];
+                            if (p[1].Contains("(")) {
+                                param.Type = p[1].Substring(0, p[1].IndexOf('('));
+                            }
+                            list.Add(param);
+                        }
+                        }
+         
+                    }
+                }
+            } finally {
+                conn.Close();
+            }
+            return list;
+        }
+        public List<MysqlProcedure> GetProcedure()
+        {
+            List<MysqlProcedure> list = new List<MysqlProcedure>();
+            var names = GetGetProcedureName();
+            foreach (var name in names) {
+                MysqlProcedure proc = new MysqlProcedure();
+                proc.Name = name.Key;
+				proc.Comment=name.Value;
+                proc.Params = GetProcedureParam(name.Key);
+                list.Add(proc);
+            }
+            return list;
+        }
+    }
+
+    public class MysqlProcedure
+    {
+        public string Name;
+		public string Comment;
+        public List<MysqlProcedureParam> Params;
+    }
+    public class MysqlProcedureParam
+    {
+        public string Type;
+        public string Name;
+
+        public string GetDotNetType()
+        {
+            return MysqlSql.GetDotNetType(Type);
+        }
+    }
+    public class MysqlTable
+    {
+        public string SchemaName;
+        public string TableName;
+		public string TableComment;
+        public string PrimaryKey;
+        public List<MysqlColumn> Columns;
+
+		public string GetComment()
+        {
+			return TableComment.Replace("\r","").Replace("\n","");
+        }
+    }
+    public class MysqlColumn
+    {
+        public string COLUMN_NAME;
+        public bool IS_NULLABLE;
+        public string DATA_TYPE;
+        public string COLUMN_KEY;
+        public string COLUMN_COMMENT;
+
+        public string GetPrivateName()
+        {
+            return "_" + COLUMN_NAME;
+        }
+        public string GetDotNetType()
+        {
+            string type = MysqlSql.GetDotNetType(DATA_TYPE);
+
+            if (IS_NULLABLE && type != "string") {
+                type += "?";
+            }
+            return type;
+        }
+
+		public string GetComment()
+        {
+			return COLUMN_COMMENT.Replace("\r","").Replace("\n","");
+        }
+
+    }
+ #>

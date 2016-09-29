@@ -1,0 +1,370 @@
+﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ assembly name="System.Data" #>
+<#@ import namespace="System.Data" #>
+<#@ assembly name="$(SolutionDir)lib\MySql.Data.dll" #>
+<#@ import namespace="MySql.Data.MySqlClient" #>
+<#@ output extension=".cs" #>
+<# 
+	//--------------------------------
+	string ServerIP="localhost";
+	string Port="3306";
+	string User="pl5";
+	string Password="pl5";
+	string table_schema="pl5";
+	//--------------------------------
+	string Namespace="ToolGoodReadyGo.Test";
+	string ClassPrefix="db_";
+	//--------------------------------
+
+
+	MysqlHelper helper=new MysqlHelper(ServerIP,Port,User,Password,table_schema);
+	var tables=	helper.GetProcedure();
+#>
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Data;
+using ToolGood.ReadyGo;
+
+
+namespace <#= Namespace #>
+{
+<#  foreach (var table in tables){#>   
+    public class <#=ClassPrefix  #><#= table.Name #> : SqlProcess
+    {   
+		public <#=ClassPrefix  #><#= table.Name #>(string connectionStringName):base(connectionStringName){}
+        public <#=ClassPrefix  #><#= table.Name #>(string connectionString, string providerName):base(connectionString,providerName){}
+        public <#=ClassPrefix  #><#= table.Name #>(SqlHelper helper):base(helper){}
+
+		protected override void OnInit()
+        {
+            this._ProcessName = "<#= table_schema #>.<#= table.Name #>";
+<# foreach (var col in table.Params){#>
+			Add<<#= col.GetDotNetType() #>>("<#= col.Name #>", <#= col.IsOutput?"true":"false" #>);
+<# } #> 
+        }
+<# foreach (var col in table.Params.Where(q=>q.IsOutput==true)){#>
+        public <#= col.GetDotNetType() #> <#= col.GetFieldName() #> { get { return _G<<#= col.GetDotNetType() #>>("<#= col.Name #>"); } set { _S("<#= col.Name #>", value); } }
+<# } #> 
+        public int Execute(<#= table.GetParamsString() #>)
+		{
+<# foreach (var col in table.Params){#>
+			_S("<#= col.Name #>",<#= col.Name #>);
+<# } #> 
+			var _value=_Execute();
+<# foreach (var col in table.Params.Where(q=>q.IsOutput==true)){#>
+			<#= col.Name #>=_G<<#= col.GetDotNetType() #>>("<#= col.Name #>");
+<# } #> 
+			return _value;
+		}
+		public T ExecuteScalar<T>(<#= table.GetParamsString() #>)
+		{
+<# foreach (var col in table.Params){#>
+			_S("<#= col.Name #>",<#= col.Name #>);
+<# } #> 
+			var _value=_ExecuteScalar<T>();
+<# foreach (var col in table.Params.Where(q=>q.IsOutput==true)){#>
+			<#= col.Name #>=_G<<#= col.GetDotNetType() #>>("<#= col.Name #>");
+<# } #> 
+			return _value;
+		}
+		public DataTable GetDataTable(<#= table.GetParamsString() #>)
+		{
+<# foreach (var col in table.Params){#>
+			_S("<#= col.Name #>",<#= col.Name #>);
+<# } #> 
+			var _value=_GetDataTable();
+<# foreach (var col in table.Params.Where(q=>q.IsOutput==true)){#>
+			<#= col.Name #>=_G<<#= col.GetDotNetType() #>>("<#= col.Name #>");
+<# } #> 
+			return _value;
+		}
+		public DataSet GetDataSet(<#= table.GetParamsString() #>)
+		{
+<# foreach (var col in table.Params){#>
+			_S("<#= col.Name #>",<#= col.Name #>);
+<# } #> 
+			var _value=_GetDataSet();
+<# foreach (var col in table.Params.Where(q=>q.IsOutput==true)){#>
+			<#= col.Name #>=_G<<#= col.GetDotNetType() #>>("<#= col.Name #>");
+<# } #> 
+			return _value;
+		}
+		public List<T> Select<T>(<#= table.GetParamsString() #>) where T : class,new()
+		{
+<# foreach (var col in table.Params){#>
+			_S("<#= col.Name #>",<#= col.Name #>);
+<# } #> 
+			var _value=_Select<T>();
+<# foreach (var col in table.Params.Where(q=>q.IsOutput==true)){#>
+			<#= col.Name #>=_G<<#= col.GetDotNetType() #>>("<#= col.Name #>");
+<# } #> 
+			return _value;
+		}
+		public T Single<T>(<#= table.GetParamsString() #>) where T : class,new()
+		{
+<# foreach (var col in table.Params){#>
+			_S("<#= col.Name #>",<#= col.Name #>);
+<# } #> 
+			var _value=_Single<T>();
+<# foreach (var col in table.Params.Where(q=>q.IsOutput==true)){#>
+			<#= col.Name #>=_G<<#= col.GetDotNetType() #>>("<#= col.Name #>");
+<# } #> 
+			return _value;
+		}
+		public T SingleOrDefault<T>(<#= table.GetParamsString() #>) where T : class,new()
+		{
+<# foreach (var col in table.Params){#>
+			_S("<#= col.Name #>",<#= col.Name #>);
+<# } #> 
+			var _value=_SingleOrDefault<T>();
+<# foreach (var col in table.Params.Where(q=>q.IsOutput==true)){#>
+			<#= col.Name #>=_G<<#= col.GetDotNetType() #>>("<#= col.Name #>");
+<# } #> 
+			return _value;
+		}
+		public T First<T>(<#= table.GetParamsString() #>) where T : class,new()
+		{
+<# foreach (var col in table.Params){#>
+			_S("<#= col.Name #>",<#= col.Name #>);
+<# } #> 
+			var _value=_First<T>();
+<# foreach (var col in table.Params.Where(q=>q.IsOutput==true)){#>
+			<#= col.Name #>=_G<<#= col.GetDotNetType() #>>("<#= col.Name #>");
+<# } #> 
+			return _value;
+		}
+
+		public T FirstOrDefault<T>(<#= table.GetParamsString() #>) where T : class,new()
+		{
+<# foreach (var col in table.Params){#>
+			_S("<#= col.Name #>",<#= col.Name #>);
+<# } #> 
+			var _value=_FirstOrDefault<T>();
+<# foreach (var col in table.Params.Where(q=>q.IsOutput==true)){#>
+			<#= col.Name #>=_G<<#= col.GetDotNetType() #>>("<#= col.Name #>");
+<# } #> 
+			return _value;
+		}
+
+
+	}
+<# }  #>
+}
+
+
+
+
+
+<#+ 
+	public class MysqlSql
+    {
+        public const string ConnString = "database={4};server={0};Port={1};uid={2};pwd={3};charset=utf8;";
+        public const string GetProcedure = "show procedure status where db='{0}' ;";
+        public const string GetCreateProcedure = "show create procedure `{0}`.`{1}` ;";
+
+        public static string GetDotNetType(string DATA_TYPE)
+        {
+            string type = "";
+			DATA_TYPE=DATA_TYPE.ToLower();
+            if (DATA_TYPE == "tinyint") type = "int";
+            else if (DATA_TYPE == "smallint") type = "int";
+            else if (DATA_TYPE == "mediumint") type = "int";
+            else if (DATA_TYPE == "int") type = "int";
+            else if (DATA_TYPE == "bigint") type = "long";
+
+            else if (DATA_TYPE == "decimal") type = "decimal";
+            else if (DATA_TYPE == "float") type = "float";
+            else if (DATA_TYPE == "double") type = "double";
+
+            else if (DATA_TYPE == "datetime") type = "DateTime";
+            else if (DATA_TYPE == "date") type = "DateTime";
+            else if (DATA_TYPE == "time") type = "DateTime";
+            else if (DATA_TYPE == "timestamp") type = "DateTime";
+
+
+
+            else if (DATA_TYPE == "char") type = "string";
+            else if (DATA_TYPE == "varchar") type = "string";
+            else if (DATA_TYPE == "text") type = "string";
+            else if (DATA_TYPE == "longtext") type = "string";
+            else if (DATA_TYPE == "enum") type = "string";
+
+            return type;
+        }
+    }
+
+    public class MysqlHelper
+    {
+        private string table_schema;
+        private string connString;
+        public MysqlHelper(string ServerIP, string post, string User, string Password, string table_schema)
+        {
+            this.connString = string.Format(MysqlSql.ConnString, ServerIP, post, User, Password, table_schema);
+            this.table_schema = table_schema;
+        }
+
+        private Dictionary<string,string> GetGetProcedureName()
+        {
+            MySqlConnection conn = new MySqlConnection(connString);
+            conn.Open();
+			Dictionary<string,string> list = new Dictionary<string,string>();
+            try {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = string.Format(MysqlSql.GetProcedure, table_schema);
+                var read = cmd.ExecuteReader();
+
+                while (read.Read()) {
+                    list.Add(read["Name"].ToString(),read["Comment"].ToString());
+                }
+            } finally {
+                conn.Close();
+            }
+            return list;
+        }
+        private List<MysqlProcedureParam> GetProcedureParam(string tableName)
+        {
+            MySqlConnection conn = new MySqlConnection(connString);
+            conn.Open();
+            List<MysqlProcedureParam> list = new List<MysqlProcedureParam>();
+            try {
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = string.Format(MysqlSql.GetCreateProcedure, table_schema, tableName);
+                var read = cmd.ExecuteReader();
+
+               while (read.Read()) {
+                    var text = read["Create Procedure"].ToString();
+					text=GetProcessDefinition(text);
+				   
+                    var re = new Regex(@"\(([^()]|\([^)]*\))*?\)");
+                    var m = re.Match(text);
+                    if (m.Success) {
+                        var t = m.Value.TrimEnd(')').TrimStart('(').Trim();
+						t = Regex.Replace(t, @"\(.*?\)", "");
+                        if (string.IsNullOrEmpty(t)==false)
+                        {
+		                var sp = t.Split(',');
+                        foreach (var s in sp) {
+							MysqlProcedureParam param = new MysqlProcedureParam();
+							var c=s.Trim();
+							if (c.StartsWith("inout ", StringComparison.CurrentCultureIgnoreCase))
+                            {
+								c=c.Substring(6);
+								param.IsInput=true;
+								param.IsOutput=true;
+                            }
+
+                            if (c.StartsWith("in ", StringComparison.CurrentCultureIgnoreCase))
+                            {
+								param.IsInput=true;
+								c=c.Substring(3);
+                            }
+							if (c.StartsWith("out ", StringComparison.CurrentCultureIgnoreCase))
+                            {
+								c=c.Substring(4);
+								param.IsOutput=true;
+                            }
+                            var p = c.Split(new char[]{ ' '},StringSplitOptions.RemoveEmptyEntries);
+							param.Name = p[0].Trim();
+                            param.Type = p[1];
+                            if (p[1].Contains("(")) {
+                                param.Type = p[1].Substring(0, p[1].IndexOf('('));
+                            }
+                            list.Add(param);
+                        }
+                        }
+         
+                    }
+                }
+            } finally {
+                conn.Close();
+            }
+            return list;
+        }
+		public string GetProcessDefinition(string txt)
+        {
+            txt = Regex.Replace(txt, "--.*$", "", RegexOptions.Multiline);
+            txt = Regex.Replace(txt, "#.*$", "", RegexOptions.Multiline);
+			txt=  txt.Replace("`", "");
+			
+            StringBuilder sb = new StringBuilder();
+
+            var index = 0;
+            for (int i = 0; i < txt.Length; i++) {
+                var t = txt[i];
+                sb.Append(t);
+                if (t == '(') { index = i; break; }
+            }
+
+            var count = 0;
+            for (int i = index + 1; i < txt.Length; i++) {
+                var t = txt[i];
+                sb.Append(t);
+                if (t == '(') {
+                    count++;
+                } else if (t == ')') {
+                    count--;
+                    if (count < 0) break;
+                }
+            }
+
+            return sb.ToString();
+        }
+        public List<MysqlProcedure> GetProcedure()
+        {
+            List<MysqlProcedure> list = new List<MysqlProcedure>();
+            var names = GetGetProcedureName();
+            foreach (var name in names) {
+                MysqlProcedure proc = new MysqlProcedure();
+                proc.Name = name.Key;
+				proc.Comment=name.Value;
+                proc.Params = GetProcedureParam(name.Key);
+                list.Add(proc);
+            }
+            return list;
+        }
+    }
+
+    public class MysqlProcedure
+    {
+        public string Name;
+		public string Comment;
+        public List<MysqlProcedureParam> Params;
+
+		public string GetParamsString()
+        {
+			List<string> list=new List<string>();
+            foreach (var item in Params)
+            {
+                if (item.IsInput==true)
+                {
+					list.Add(string.Format("{0} {1}",item.GetDotNetType(),item.Name));
+                }
+            }
+			return string.Join(",",list);
+        }
+    }
+    public class MysqlProcedureParam
+    {
+        public string Type;
+        public string Name;
+		public bool IsOutput;
+		public bool IsInput;
+
+		public string GetFieldName()
+        {
+			var c=Name.TrimStart('_');
+			return c[0].ToString().ToUpper()+c.Substring(1);
+        }
+        public string GetDotNetType()
+        {
+            return MysqlSql.GetDotNetType(Type);
+        }
+    }
+ #>
