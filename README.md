@@ -5,7 +5,7 @@ ToolGood.ReadyGo
 欢迎使用`ToolGood.ReadyGo`！`ToolGood.ReadyGo` 是一款轻量级的ORM，
 它简单，因为汇聚作者多年经验，它快捷，基于PetaPoco核心，
 它能增加代码的可读性。
-它提供了VS插偷看，使Coding更方便。
+它提供了VS插件，使Coding更方便。
 
 ### 快速上手
 
