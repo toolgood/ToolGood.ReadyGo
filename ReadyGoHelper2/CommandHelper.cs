@@ -183,7 +183,7 @@ namespace ReadyGoHelper
             var typenames = types.Split(',').ToList();
             for (int i = 0; i < typenames.Count; i++) {
                 typenames[i] = typenames[i].Trim();
-                if (typenames[i].StartsWith("Db") || typenames[i].StartsWith("Vm")) {
+                if (typenames[i].StartsWith("Db") || typenames[i].StartsWith("Vm") || typenames[i].StartsWith("Ds")) {
                     typenames[i] = typenames[i].Substring(2);
                 }
             }
