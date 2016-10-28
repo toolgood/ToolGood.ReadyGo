@@ -24,7 +24,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
 
         #endregion 私有变量
 
-        public WhereHelper(SqlHelper helper)
+        internal WhereHelper(SqlHelper helper)
         {
             this._sqlhelper = helper;
             SqlExpression = SqlExpression.Resolve(_sqlhelper._sqlType);
@@ -85,25 +85,46 @@ namespace ToolGood.ReadyGo.WhereHelpers
             base.where(where);
             return this;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="order"></param>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public WhereHelper<T1, T2, T3> OrderBy<T>(Expression<Func<T1, T2, T3, T>> order, OrderType type = OrderType.Asc)
         {
             base.orderBy(order, type);
             return this;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="group"></param>
+        /// <returns></returns>
         public WhereHelper<T1, T2, T3> GroupBy<T>(Expression<Func<T1, T2, T3, T>> group)
         {
             groupBy(group);
             return this;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="having"></param>
+        /// <returns></returns>
         public WhereHelper<T1, T2, T3> Having(Expression<Func<T1, T2, T3, bool>> having)
         {
             base.having(having);
             return this;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="column"></param>
+        /// <param name="asName"></param>
+        /// <returns></returns>
         public WhereHelper<T1, T2, T3> SelectColumn<T>(Expression<Func<T1, T2, T3, T>> column, string asName = null)
         {
             selectColumn(column, asName);
@@ -113,7 +134,11 @@ namespace ToolGood.ReadyGo.WhereHelpers
         #endregion Where OrderBy GroupBy Having
 
         #region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
         public List<TableRow<T1, T2, T3>> Select(string selectSql = null)
         {
             setCache();
@@ -125,7 +150,13 @@ namespace ToolGood.ReadyGo.WhereHelpers
                 return db.Query(row, sql, args).ToList();
             }, "Select");
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
         public Page<TableRow<T1, T2, T3>> Page(long page, long itemsPerPage, string selectSql = null)
         {
             setCache();
@@ -136,7 +167,13 @@ namespace ToolGood.ReadyGo.WhereHelpers
                 return db.Page<T1, T2, T3>(page, itemsPerPage, sql, args);
             }, "Page");
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
         public List<TableRow<T1, T2, T3>> SkipTake(long skip, long take, string selectSql = null)
         {
             setCache();
@@ -148,7 +185,11 @@ namespace ToolGood.ReadyGo.WhereHelpers
                 return db.SkipTake<T1, T2, T3>(skip, take, sql, args);
             }, "SkipTake");
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
         public TableRow<T1, T2, T3> Single(string selectSql = null)
         {
             setCache();
@@ -160,7 +201,11 @@ namespace ToolGood.ReadyGo.WhereHelpers
                 return (db.Query(row, sql, args)).Single();
             }, "Single");
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
         public TableRow<T1, T2, T3> SingleOrDefault(string selectSql = null)
         {
             setCache();
@@ -172,7 +217,11 @@ namespace ToolGood.ReadyGo.WhereHelpers
                 return (db.Query(row, sql, args)).SingleOrDefault();
             }, "SingleOrDefault");
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
         public TableRow<T1, T2, T3> First(string selectSql = null)
         {
             setCache();
@@ -184,7 +233,11 @@ namespace ToolGood.ReadyGo.WhereHelpers
                 return (db.Query(row, sql, args)).First();
             }, "First");
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
         public TableRow<T1, T2, T3> FirstOrDefault(string selectSql = null)
         {
             setCache();
@@ -200,7 +253,11 @@ namespace ToolGood.ReadyGo.WhereHelpers
         #endregion Select Page SkipTake Single SingleOrDefault First FirstOrDefault
 
         #region On
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public WhereHelper<T1, T2, T3> On2(Expression<Func<T1, T2, bool>> where)
         {
             string sql;
@@ -208,7 +265,11 @@ namespace ToolGood.ReadyGo.WhereHelpers
             on2 = sql;
             return this;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public WhereHelper<T1, T2, T3> On3(Expression<Func<T1, T2, T3, bool>> where)
         {
             string sql;

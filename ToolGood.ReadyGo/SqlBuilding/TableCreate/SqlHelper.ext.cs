@@ -7,7 +7,7 @@ namespace ToolGood.ReadyGo
         private SqlTableHelper _tableHelper;
 
         /// <summary>
-        ///
+        /// 
         /// </summary>
         public SqlTableHelper TableHelper
         {

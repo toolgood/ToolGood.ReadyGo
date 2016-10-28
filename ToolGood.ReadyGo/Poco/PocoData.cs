@@ -168,10 +168,10 @@ namespace ToolGood.ReadyGo.Poco
 
             return PocoFactories.Get(key, () => {
                 // Create the method
-                var m = new DynamicMethod("toolgood_" + PocoFactories.Count.ToString(), Type, new Type[] { ColumnType.IDataReaderType , ColumnType.StringType }, true);
+                var m = new DynamicMethod("toolgood_" + PocoFactories.Count.ToString(), Type, new Type[] { typeof(IDataReader), typeof(string) }, true);
                 var il = m.GetILGenerator();
 
-                if (Type == ColumnType.ObjectType) {
+                if (Type == typeof(object)) {
                     // var poco=new T()
                     il.Emit(OpCodes.Newobj, typeof(System.Dynamic.ExpandoObject).GetConstructor(Type.EmptyTypes));          // obj
 
@@ -210,7 +210,7 @@ namespace ToolGood.ReadyGo.Poco
 
                         il.Emit(OpCodes.Callvirt, fnAdd);
                     }
-                } else if (Type.IsValueType || Type == ColumnType.StringType || Type == ColumnType.bytesType) {
+                } else if (Type.IsValueType || Type == typeof(string) || Type == typeof(byte[])) {
                     // Do we need to install a converter?
                     var srcType = reader.GetFieldType(0);
                     var converter = GetConverter(null, srcType, Type);
@@ -327,7 +327,7 @@ namespace ToolGood.ReadyGo.Poco
 
                 il.Emit(OpCodes.Ret);
 
-                return m.CreateDelegate(Expression.GetFuncType(ColumnType.IDataReaderType, ColumnType.StringType, Type));
+                return m.CreateDelegate(Expression.GetFuncType(typeof(IDataReader), typeof(string), Type));
             }
                );
         }
@@ -361,7 +361,7 @@ namespace ToolGood.ReadyGo.Poco
             if (srcType == dstType) return null;
 
             // Standard DateTime->Utc mapper
-            if (pc != null && pc.ForceToUtc && srcType == ColumnType.DateTimeType && (dstType == ColumnType.DateTimeType || dstType == ColumnType.NullDateTimeType)) {
+            if (pc != null && pc.ForceToUtc && srcType == typeof(DateTime) && (dstType == typeof(DateTime) || dstType == typeof(DateTime?))) {
                 return delegate (object src) { return new DateTime(((DateTime)src).Ticks, DateTimeKind.Utc); };
             }
 
@@ -381,9 +381,9 @@ namespace ToolGood.ReadyGo.Poco
                     return delegate (object src) { return Convert.ChangeType(src, backingDstType, null); };
                 }
             } else if (!dstType.IsAssignableFrom(srcType)) {
-                if (dstType.IsEnum && srcType == ColumnType.StringType) {
+                if (dstType.IsEnum && srcType == typeof(string)) {
                     return delegate (object src) { return EnumMapper.EnumFromString(dstType, (string)src); };
-                } else if (dstType == ColumnType.GuidType && srcType == ColumnType.StringType) {
+                } else if (dstType == typeof(Guid) && srcType == typeof(string)) {
                     return delegate (object src) { return Guid.Parse((string)src); };
                 } else {
                     return delegate (object src) { return Convert.ChangeType(src, dstType, null); };

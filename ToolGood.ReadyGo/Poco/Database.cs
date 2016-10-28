@@ -225,18 +225,18 @@ namespace ToolGood.ReadyGo.Poco
             if (t.IsEnum) // PostgreSQL .NET driver wont cast enum to int
             {
                 p.Value = Convert.ChangeType(value, ((Enum)value).GetTypeCode());
-            } else if (t == ColumnType.GuidType && !_provider.HasNativeGuidSupport) {
+            } else if (t == typeof(Guid) && !_provider.HasNativeGuidSupport) {
                 p.Value = value.ToString();
                 p.DbType = DbType.String;
                 p.Size = 40;
-            } else if (t == ColumnType.StringType) {
+            } else if (t == typeof(string)) {
                 // out of memory exception occurs if trying to save more than 4000 characters to SQL Server CE NText column. Set before attempting to set Size, or Size will always max out at 4000
                 if ((value as string).Length + 1 > 4000 && p.GetType().Name == "SqlCeParameter")
                     p.GetType().GetProperty("SqlDbType").SetValue(p, SqlDbType.NText, null);
 
                 p.Size = Math.Max((value as string).Length + 1, 4000); // Help query plan caching by using common size
                 p.Value = value;
-            } else if (t == ColumnType.AnsiStringType) {
+            } else if (t == typeof(AnsiString)) {
                 // Thanks @DataChomp for pointing out the SQL Server indexing performance hit of using wrong string type on varchar
                 p.Size = Math.Max((value as AnsiString).Value.Length + 1, 4000);
                 p.Value = (value as AnsiString).Value;
@@ -1186,10 +1186,10 @@ namespace ToolGood.ReadyGo.Poco
 
             var type = pk != null ? pk.GetType() : pi.PropertyType;
 
-            if (type.IsGenericType && type.GetGenericTypeDefinition() == ColumnType.NullableType || !type.IsValueType)
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>) || !type.IsValueType)
                 return pk == null;
 
-            if (type == ColumnType.StringType)
+            if (type == typeof(string))
                 return string.IsNullOrEmpty((string)pk);
             if (!pi.PropertyType.IsValueType)
                 return pk == null;
@@ -1197,7 +1197,7 @@ namespace ToolGood.ReadyGo.Poco
                 return (long)pk == default(long);
             if (type == typeof(int))
                 return (int)pk == default(int);
-            if (type == ColumnType.GuidType)
+            if (type == typeof(Guid))
                 return (Guid)pk == default(Guid);
             if (type == typeof(ulong))
                 return (ulong)pk == default(ulong);

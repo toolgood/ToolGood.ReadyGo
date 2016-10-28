@@ -52,7 +52,12 @@ namespace ToolGood.ReadyGo
         #endregion 构造函数
 
         #region Add _G _S
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <param name="isOutput"></param>
         public void Add<T>(string name, bool isOutput)
         {
             var _p = _sqlhelper._factory.CreateParameter();
@@ -63,12 +68,22 @@ namespace ToolGood.ReadyGo
             }
             _parameters[name] = _p;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <returns></returns>
         protected T _G<T>(string name)
         {
             return (T)(_parameters[name].Value);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <param name="value"></param>
         protected void _S<T>(string name, T value)
         {
             var _p = _parameters[name];
@@ -95,32 +110,20 @@ namespace ToolGood.ReadyGo
             }
         }
 
-        //protected internal void useCache(int second, string cacheTag = null, ICacheService cacheService = null)
-        //{
-        //    _usedCacheService = true;
-        //    _cacheTime = second;
-        //    _cacheTag = cacheTag;
-        //    _cacheService = cacheService;
-        //}
-
         protected internal void setCache()
         {
             if (_usedCacheService) {
                 _sqlhelper.useCache(_cacheTime, _cacheTag, _cacheService);
-
-                //if (_cacheService != null) {
-                //} else if (string.IsNullOrEmpty(_cacheTag) == false) {
-                //    _sqlhelper.UseCache(_cacheTime, _cacheTag);
-                //} else {
-                //    _sqlhelper.UseCache(_cacheTime);
-                //}
             }
         }
 
         #endregion 05 缓存设置
 
         #region 执行
-
+       /// <summary>
+       /// 
+       /// </summary>
+       /// <returns></returns>
         public int Execute()
         {
             setCache();
@@ -137,7 +140,11 @@ namespace ToolGood.ReadyGo
             }
             return run.Item1;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public T ExecuteScalar<T>()
         {
             setCache();
@@ -155,7 +162,10 @@ namespace ToolGood.ReadyGo
             }
             return run.Item1;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public DataTable ExecuteDataTable()
         {
             setCache();
@@ -173,7 +183,10 @@ namespace ToolGood.ReadyGo
             }
             return run.Item1;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public DataSet ExecuteDataSet()
         {
             setCache();
@@ -191,7 +204,11 @@ namespace ToolGood.ReadyGo
             }
             return run.Item1;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public List<T> Select<T>() where T : class, new()
         {
             setCache();
@@ -208,7 +225,11 @@ namespace ToolGood.ReadyGo
             }
             return run.Item1;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public T Single<T>()
         {
             setCache();
@@ -226,7 +247,11 @@ namespace ToolGood.ReadyGo
             }
             return run.Item1;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public T SingleOrDefault<T>()
         {
             setCache();
@@ -244,7 +269,11 @@ namespace ToolGood.ReadyGo
             }
             return run.Item1;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public T First<T>()
         {
             setCache();
@@ -262,7 +291,11 @@ namespace ToolGood.ReadyGo
             }
             return run.Item1;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public T FirstOrDefault<T>()
         {
             setCache();

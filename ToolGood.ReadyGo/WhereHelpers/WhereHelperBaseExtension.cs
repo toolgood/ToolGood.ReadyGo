@@ -5,19 +5,9 @@ using ToolGood.ReadyGo.Caches;
 using ToolGood.ReadyGo.SqlBuilding;
 using ToolGood.ReadyGo.WhereHelpers;
 
+
 namespace ToolGood.ReadyGo
 {
-    public interface IUseCache
-    {
-        /// <summary>
-        /// 使用缓存
-        /// </summary>
-        /// <param name="second"></param>
-        /// <param name="cacheTag"></param>
-        /// <param name="cacheService"></param>
-        void useCache(int second, string cacheTag = null, ICacheService cacheService = null);
-    }
-
     public static partial class WhereHelperBaseExtension
     {
         #region 判断

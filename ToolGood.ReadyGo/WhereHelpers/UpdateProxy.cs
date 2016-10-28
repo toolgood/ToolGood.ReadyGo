@@ -676,7 +676,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
         private static MethodInfo getInitMethod(Type type)
         {
             var me = InitDict.Get(type, () => {
-                if (type == ColumnType.bytesType) {
+                if (type == typeof(byte[])) {
                     return typeof(UpdateChangeHelper).GetMethod("CreateListByte", BindingFlags.Public | BindingFlags.Static);
                 }
                 if (type == typeof(sbyte[])) {
@@ -684,7 +684,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
                 }
                 StringBuilder sb = new StringBuilder();
                 sb.Append("Create");
-                if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(ColumnType.NullableType)) {
+                if (type.IsGenericType && type.GetGenericTypeDefinition().Equals(typeof(Nullable<>))) {
                     sb.Append("Null");
                     type = type.GetGenericArguments()[0];
                 }
@@ -735,13 +735,13 @@ namespace ToolGood.ReadyGo.WhereHelpers
         {
             var me = EqualsDict.Get(type, () => {
                 if (type.IsEnum) {
-                    return typeof(UpdateChangeHelper).GetMethod("EqualsObject", new Type[] { type, type, ColumnType.StringType, typedict });
+                    return typeof(UpdateChangeHelper).GetMethod("EqualsObject", new Type[] { type, type, typeof(string), typedict });
                 }
-                var m = typeof(UpdateChangeHelper).GetMethod("EqualsObject", new Type[] { type, type, ColumnType.StringType, typedict });
+                var m = typeof(UpdateChangeHelper).GetMethod("EqualsObject", new Type[] { type, type, typeof(string), typedict });
                 if (m != null) {
                     return m;
                 }
-                return typeof(UpdateChangeHelper).GetMethod("EqualsObject", new Type[] { ColumnType.ObjectType, ColumnType.ObjectType, ColumnType.StringType, typedict });
+                return typeof(UpdateChangeHelper).GetMethod("EqualsObject", new Type[] { typeof(object), typeof(object), typeof(string), typedict });
             });
             return me;
         }

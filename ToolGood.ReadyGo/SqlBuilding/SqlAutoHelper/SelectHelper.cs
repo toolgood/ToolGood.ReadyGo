@@ -12,73 +12,72 @@ namespace ToolGood.ReadyGo.SqlBuilding
 {
     internal static partial class SelectHelper
     {
-        private static Regex rxSelect = new Regex(@"\A\s*(SELECT|EXECUTE|CALL|WITH|SET|DECLARE)\s",
-            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-
-        private static Regex rxFrom = new Regex(@"\A\s*FROM\s",
-            RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-        //private static Cache<List<Type>, List<SelectHeader>> SelectDict = new Cache<List<Type>, List<SelectHeader>>();
-
         public static string GetSelectCount<T>(DatabaseProvider DatabaseType, string sql, TableNameManger manger)
         {
             if (sql.StartsWith(";")) return sql.Substring(1);
-            if (rxSelect.IsMatch(sql)) return sql;
+            var ss = SqlSearch.Search(sql);
+            if (ss.HasSelect) return sql;
 
-            if (rxFrom.IsMatch(sql)) {
-                return "SELECT Count(1) " + sql;// string.Format("SELECT Count(1) {1}", cols, sql);
+            if (ss.HasFrom) {
+                return "SELECT Count(1) " + sql;
             }
 
             var pd = PocoData.ForType(typeof(T));
             var fullTableName = DatabaseType.GetTableName(pd, manger);
+
+            if (ss.HasT1) {
+                return string.Format("SELECT Count(1) FROM {0} AS t1 {1}", fullTableName, sql);
+            }
             return string.Format("SELECT Count(1) FROM {0} {1}", fullTableName, sql);
 
         }
-        private static Cache<Tuple<Type, DatabaseProvider>, string> selectClause = new Cache<Tuple<Type, DatabaseProvider>, string>();
         public static string AddSelectClause<T>(DatabaseProvider DatabaseType, string sql, TableNameManger manger)
         {
             if (sql.StartsWith(";")) return sql.Substring(1);
-            if (rxSelect.IsMatch(sql)) return sql;
+            var ss = SqlSearch.Search(sql);
+            if (ss.HasSelect) return sql;
 
-            var type = typeof(T);
-            var selectHeaders = selectClause.Get(Tuple.Create(type, DatabaseType), () => {
-                var pd = PocoData.ForType(typeof(T));
-                var tableName = DatabaseType.EscapeTableName(pd.TableInfo.TableName);
+            StringBuilder s = CreateSelectHeader(typeof(T), DatabaseType, ss.HasT1, manger);
 
-                StringBuilder sb = new StringBuilder();
-                foreach (var col in pd.Columns) {
-                    if (sb.Length > 0) sb.Append(",");
-
-                    if (col.ResultColumn && string.IsNullOrEmpty(col.ResultSql) == false) {
-                        sb.AppendFormat(col.ResultSql, tableName + ".");
-                        sb.Append(" AS '");
-                        sb.Append(col.ColumnName);
-                        sb.Append("'");
-                    } else {
-                        sb.Append(tableName);
-                        sb.Append(".");
-                        sb.Append(DatabaseType.EscapeSqlIdentifier(col.ColumnName));
-                    }
-                }
-                if (sb.Length == 0) {
-                    sb.Append("NULL");
-                }
-                sb.Insert(0, "SELECT ");
-
-                return sb.ToString();
-            });
-
-            StringBuilder s = new StringBuilder();
-            s.Append(selectHeaders);
-
-            if (!rxFrom.IsMatch(sql)) {
+            if (ss.HasFrom==false) {
                 s.Append(" FROM ");
-                var tableName2 = DatabaseType.EscapeTableName(PocoData.ForType(typeof(T)).TableInfo.TableName);
-                s.Append(tableName2);
+                var pd = PocoData.ForType(typeof(T));
+                var fullTableName = DatabaseType.GetTableName(pd, manger);
+                s.Append(fullTableName);
+
+                if (ss.HasT1) s.Append(" AS t1");
             }
             s.Append(" ");
             s.Append(sql);
             return s.ToString();
         }
+        private static StringBuilder CreateSelectHeader(Type type, DatabaseProvider DatabaseType, bool hasT1, TableNameManger manger)
+        {
+            var pd = PocoData.ForType(type);
+            string tableName = hasT1 ? "t1" : DatabaseType.GetTableName(pd, manger);
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var col in pd.Columns) {
+                if (sb.Length > 0) sb.Append(",");
+
+                if (col.ResultColumn && string.IsNullOrEmpty(col.ResultSql) == false) {
+                    sb.AppendFormat(col.ResultSql, tableName + ".");
+                    sb.Append(" AS '");
+                    sb.Append(col.ColumnName);
+                    sb.Append("'");
+                } else {
+                    sb.Append(tableName);
+                    sb.Append(".");
+                    sb.Append(DatabaseType.EscapeSqlIdentifier(col.ColumnName));
+                }
+            }
+            if (sb.Length == 0) {
+                sb.Append("NULL");
+            }
+            sb.Insert(0, "SELECT ");
+            return sb;
+        }
+
 
         public static string CreateSelectHeader(List<SelectHeader> defineHeader, List<Type> types)
         {
@@ -119,7 +118,7 @@ namespace ToolGood.ReadyGo.SqlBuilding
             if (defineHeader == null) defineHeader = new List<SelectHeader>();
             defineHeader.AddRange(GetSelectHeader(types));
 
-            if (outType == ColumnType.ObjectType) {
+            if (outType == typeof(object)) {
                 List<string> asNames = new List<string>();
                 StringBuilder sb = new StringBuilder();
                 foreach (var h in defineHeader) {
@@ -157,27 +156,27 @@ namespace ToolGood.ReadyGo.SqlBuilding
         private static List<SelectHeader> GetSelectHeader(List<Type> types)
         {
             //return SelectDict.Get(types, () => {
-                List<SelectHeader> list = new List<SelectHeader>();
-                for (int i = 0; i < types.Count; i++) {
-                    var pd = PocoData.ForType(types[i]);
-                    foreach (var col in pd.Columns) {
-                        SelectHeader header = new SelectHeader();
-                        header.Table = "t" + (i + 1).ToString();
-                        header.AsName = col.ColumnName;
+            List<SelectHeader> list = new List<SelectHeader>();
+            for (int i = 0; i < types.Count; i++) {
+                var pd = PocoData.ForType(types[i]);
+                foreach (var col in pd.Columns) {
+                    SelectHeader header = new SelectHeader();
+                    header.Table = "t" + (i + 1).ToString();
+                    header.AsName = col.ColumnName;
 
-                        if (col.ResultColumn) {
-                            if (string.IsNullOrEmpty(col.ResultSql)) {
-                                header.QuerySql = header.Table + "." + col.ColumnName;
-                            } else {
-                                header.QuerySql = string.Format(col.ResultSql, header.Table + ".");
-                            }
-                        } else {
+                    if (col.ResultColumn) {
+                        if (string.IsNullOrEmpty(col.ResultSql)) {
                             header.QuerySql = header.Table + "." + col.ColumnName;
+                        } else {
+                            header.QuerySql = string.Format(col.ResultSql, header.Table + ".");
                         }
-                        list.Add(header);
+                    } else {
+                        header.QuerySql = header.Table + "." + col.ColumnName;
                     }
+                    list.Add(header);
                 }
-                return list;
+            }
+            return list;
             //});
 
         }

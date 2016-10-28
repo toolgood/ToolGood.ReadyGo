@@ -5,37 +5,25 @@ namespace ToolGood.ReadyGo.Poco
 {
     internal static class ColumnType
     {
-        public static Type GuidType = typeof(Guid);
-        public static Type AnsiStringType = typeof(AnsiString);
-        public static Type NullableType = typeof(Nullable<>);
-        public static Type bytesType = typeof(byte[]);
-        public static Type sbytesType = typeof(sbyte[]);
-        public static Type StringType = typeof(string);
-        public static Type ObjectType = typeof(object);
-        public static Type DateTimeType = typeof(DateTime);
-        public static Type NullDateTimeType = typeof(DateTime?);
-        public static Type IDataReaderType = typeof(IDataReader);
-
-
         public static bool IsAllowType(Type type)
         {
             if (type == null) return false;
             if (type.IsEnum) return true;
-            if (type == bytesType) return true;
-            if (type == sbytesType) return true;
+            if (type == typeof(byte[])) return true;
+            if (type == typeof(sbyte[])) return true;
             if (type.FullName == "Microsoft.SqlServer.Types.SqlGeography") return true;
             if (type.FullName == "Microsoft.SqlServer.Types.SqlGeometry") return true;
 
             if (type.IsGenericType) {
-                if (type.GetGenericTypeDefinition().Equals(NullableType)) {
+                if (type.GetGenericTypeDefinition().Equals(typeof(Nullable<>))) {
                     type = type.GetGenericArguments()[0];
                 } else {
                     return false;
                 }
             }
 
-            if (type == GuidType) return true;
-            if (type == AnsiStringType) return true;
+            if (type == typeof(Guid)) return true;
+            if (type == typeof(AnsiString)) return true;
             if (type == typeof(TimeSpan)) return true;
             if (type == typeof(DateTimeOffset)) return true;
 
@@ -71,7 +59,7 @@ namespace ToolGood.ReadyGo.Poco
                 if (type.IsEnum) {
                     return true;
                 }
-                if (type.IsGenericType && type.GetGenericTypeDefinition() == NullableType)
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
                     type = type.GetGenericArguments()[0];
 
                 switch (Type.GetTypeCode(type)) {
@@ -98,7 +86,7 @@ namespace ToolGood.ReadyGo.Poco
             if (type.IsEnum) return false;
 
             if (type.IsGenericType) {
-                if (type.GetGenericTypeDefinition().Equals(NullableType)) {
+                if (type.GetGenericTypeDefinition().Equals(typeof(Nullable<>))) {
                     return true;
                 }
             }
@@ -110,7 +98,7 @@ namespace ToolGood.ReadyGo.Poco
             if (type.IsEnum) return type;
 
             if (type.IsGenericType) {
-                if (type.GetGenericTypeDefinition().Equals(NullableType)) {
+                if (type.GetGenericTypeDefinition().Equals(typeof(Nullable<>))) {
                     type = type.GetGenericArguments()[0];
                 }
             }

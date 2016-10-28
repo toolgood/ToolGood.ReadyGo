@@ -21,7 +21,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
 
         #endregion 私有变量
 
-        public WhereHelper(SqlHelper helper)
+        internal WhereHelper(SqlHelper helper)
         {
             this._sqlhelper = helper;
             SqlExpression = SqlExpression.Resolve(_sqlhelper._sqlType);

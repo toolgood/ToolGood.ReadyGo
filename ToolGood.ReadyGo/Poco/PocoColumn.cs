@@ -67,7 +67,7 @@ namespace ToolGood.ReadyGo.Poco
             var t = PropertyInfo.PropertyType;
             if (val.GetType().IsValueType 
                 && PropertyInfo.PropertyType.IsGenericType 
-                && PropertyInfo.PropertyType.GetGenericTypeDefinition() == ColumnType.NullableType)
+                && PropertyInfo.PropertyType.GetGenericTypeDefinition() == typeof(Nullable<>))
                 t = t.GetGenericArguments()[0];
 
             return Convert.ChangeType(val, t);

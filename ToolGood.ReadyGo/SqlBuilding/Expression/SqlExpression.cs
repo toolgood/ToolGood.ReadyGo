@@ -430,7 +430,7 @@ namespace ToolGood.ReadyGo.SqlBuilding
                 return new PartialSqlString(string.Format("{0}.{1}", paramDicts[p], colName));
             }
 
-            var member = Expression.Convert(m, ColumnType.ObjectType);
+            var member = Expression.Convert(m, typeof(object));
             var lambda = Expression.Lambda<Func<object>>(member);
             var getter = lambda.Compile();
             return getter();
@@ -471,7 +471,7 @@ namespace ToolGood.ReadyGo.SqlBuilding
             }
 
             //// TODO : check !
-            //var member = Expression.Convert(nex, ColumnType.ObjectType);
+            //var member = Expression.Convert(nex, typeof(object));
             //var lambda = Expression.Lambda<Func<object>>(member);
             //try {
             //    return lambda.Compile();
@@ -617,7 +617,7 @@ namespace ToolGood.ReadyGo.SqlBuilding
         {
             if (m.Object != null
                 && IsOrHasGenericInterfaceTypeOf(m.Object.Type, typeof(IEnumerable<>),  paramDicts)
-                && m.Object.Type != ColumnType.StringType
+                && m.Object.Type != typeof(string)
                 && m.Method.Name == "Contains") {
                 return m.Arguments.Count == 1;
             }
@@ -640,7 +640,7 @@ namespace ToolGood.ReadyGo.SqlBuilding
         private object ToInPartialString(Expression memberExpr, object quotedColName, string option,
             Dictionary<ParameterExpression, string> paramDicts)
         {
-            var member = Expression.Convert(memberExpr, ColumnType.ObjectType);
+            var member = Expression.Convert(memberExpr, typeof(object));
             var lambda = Expression.Lambda<Func<object>>(member);
             var getter = lambda.Compile();
             List<object> inArgs = new List<object>();

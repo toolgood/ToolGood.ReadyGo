@@ -1,11 +1,11 @@
-﻿using System;
+﻿//using System;
 
-namespace ToolGood.ReadyGo.SqlParser.Exceptions
-{
-    public class ParserException : Exception
-    {
-        public ParserException(string message) : base(message)
-        {
-        }
-    }
-}
+//namespace ToolGood.ReadyGo.SqlParser.Exceptions
+//{
+//    public class ParserException : Exception
+//    {
+//        public ParserException(string message) : base(message)
+//        {
+//        }
+//    }
+//}
