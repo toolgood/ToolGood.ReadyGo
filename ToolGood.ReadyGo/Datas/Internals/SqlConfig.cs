@@ -39,15 +39,17 @@ namespace ToolGood.ReadyGo.Internals
             get { return _sqlHelper._sqlMonitor; }
             set
             {
-                if (_sqlHelper._writeDatabase != null) {
-                    _sqlHelper._writeDatabase.Dispose();
-                    _sqlHelper._writeDatabase = null;
+                if (_sqlHelper._sqlMonitor != value) {
+                    if (_sqlHelper._writeDatabase != null) {
+                        _sqlHelper._writeDatabase.Dispose();
+                        _sqlHelper._writeDatabase = null;
+                    }
+                    if (_sqlHelper._readDatabase != null) {
+                        _sqlHelper._readDatabase.Dispose();
+                        _sqlHelper._readDatabase = null;
+                    }
+                    _sqlHelper._sqlMonitor = value;
                 }
-                if (_sqlHelper._readDatabase != null) {
-                    _sqlHelper._readDatabase.Dispose();
-                    _sqlHelper._readDatabase = null;
-                }
-                _sqlHelper._sqlMonitor = value;
             }
         }
         /// <summary>

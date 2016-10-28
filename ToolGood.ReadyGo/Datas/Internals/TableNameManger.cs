@@ -80,7 +80,7 @@ namespace ToolGood.ReadyGo.Internals
         /// <param name="name"></param>
         /// <param name="tablePrefix"></param>
         /// <param name="tableSuffix"></param>
-        public void Set(string name, string tablePrefix, string tableSuffix)
+        public void Set(string name, string tablePrefix, string tableSuffix="")
         {
             dict[name] = new TableFix() {
                 TablePrefix = tablePrefix,
@@ -113,8 +113,10 @@ namespace ToolGood.ReadyGo.Internals
         /// </summary>
         public void Dispose()
         {
-            dict.Clear();
-            dict = null;
+            if (dict!=null) {
+                dict.Clear();
+                dict = null;
+            }
         }
     }
 }

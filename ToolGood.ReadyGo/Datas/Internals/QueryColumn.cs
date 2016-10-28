@@ -7,6 +7,23 @@
     public class QueryColumn<T>
     {
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+        /// <summary>
         /// 加一
         /// </summary>
         /// <param name="left"></param>
