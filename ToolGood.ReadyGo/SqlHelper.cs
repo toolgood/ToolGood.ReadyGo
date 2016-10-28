@@ -226,7 +226,9 @@ namespace ToolGood.ReadyGo
             if (_writeDatabase != null) {
                 _writeDatabase.Dispose();
             }
-            _tableNameManger.Dispose();
+            if (_tableNameManger!= null) {
+                _tableNameManger.Dispose();
+            }
         }
 
         /// <summary>
@@ -550,7 +552,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> Select<T>(string sql, params object[] args)
+        public List<T> Select<T>(string sql = "", params object[] args)
         {
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
             return Run<List<T>>(sql, args, () => {
@@ -567,7 +569,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Page<T> Page<T>(long page, long itemsPerPage, string sql, params object[] args)
+        public Page<T> Page<T>(long page, long itemsPerPage, string sql = "", params object[] args)
         {
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
             return Run<Page<T>>(sql, args, () => {
@@ -584,7 +586,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> SkipTake<T>(long skip, long take, string sql, params object[] args)
+        public List<T> SkipTake<T>(long skip, long take, string sql = "", params object[] args)
         {
 
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
@@ -637,7 +639,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public T Single<T>(string sql, params object[] args)
+        public T Single<T>(string sql = "", params object[] args)
         {
 
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
@@ -655,7 +657,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public T SingleOrDefault<T>(string sql, params object[] args)
+        public T SingleOrDefault<T>(string sql = "", params object[] args)
         {
 
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
@@ -672,7 +674,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public T First<T>(string sql, params object[] args)
+        public T First<T>(string sql = "", params object[] args)
         {
 
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
@@ -689,7 +691,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public T FirstOrDefault<T>(string sql, params object[] args)
+        public T FirstOrDefault<T>(string sql = "", params object[] args)
         {
 
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
@@ -837,5 +839,26 @@ namespace ToolGood.ReadyGo
 
 
         #endregion Object  Insert Update Delete DeleteById Save
+
+        /// <summary>
+        /// 获取表名
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public string GetTableName<T>()
+        {
+            return GetTableName(typeof(T));
+        }
+        /// <summary>
+        /// 获取表名
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public string GetTableName(Type type)
+        {
+            var pd = PocoData.ForType(type);
+            return _provider.GetTableName(pd, _tableNameManger);
+        }
+
     }
 }

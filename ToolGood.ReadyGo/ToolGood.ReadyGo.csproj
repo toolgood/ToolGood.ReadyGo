@@ -29,7 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\ToolGood.ReadyGo.XML</DocumentationFile>
+    <DocumentationFile>..\..\bin\.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Caches\ICacheService.cs" />
+    <Compile Include="Caches\IUseCache.cs" />
     <Compile Include="Caches\Md5MemoryCacheService.cs" />
     <Compile Include="Caches\MemoryCacheService.cs" />
     <Compile Include="Caches\NullCacheService.cs" />
@@ -108,7 +109,6 @@
     <Compile Include="Providers\DatabaseProviders\SqlServer2012DatabaseProvider.cs" />
     <Compile Include="Providers\DatabaseProviders\SqlServerCEDatabaseProviders.cs" />
     <Compile Include="Providers\DatabaseProviders\SqlServerDatabaseProvider.cs" />
-    <Compile Include="SqlBuilding\Expression\EnumMemberAccess.cs" />
     <Compile Include="SqlBuilding\Expression\ExpressionVisitor.cs" />
     <Compile Include="SqlBuilding\Expression\ObjectExtend.cs" />
     <Compile Include="SqlBuilding\Expression\PartialSqlString.cs" />
@@ -117,11 +117,13 @@
     <Compile Include="SqlBuilding\SqlAutoHelper\SelectHeader.cs" />
     <Compile Include="SqlBuilding\SqlAutoHelper\SelectHelper.cs" />
     <Compile Include="SqlBuilding\SqlAutoHelper\SQLParts.cs" />
+    <Compile Include="SqlBuilding\SqlAutoHelper\SqlSearch.cs" />
     <Compile Include="SqlBuilding\TableCreate\Column.cs" />
     <Compile Include="SqlBuilding\TableCreate\SqlHelper.ext.cs" />
     <Compile Include="SqlBuilding\TableCreate\SqlTableHelper.cs" />
     <Compile Include="SqlBuilding\TableCreate\Table.cs" />
     <Compile Include="SqlHelper.cs" />
+    <Compile Include="SqlHelper.mul.cs" />
     <Compile Include="SqlHelperFactory.cs" />
     <Compile Include="SqlParser\Keywords.cs" />
     <Compile Include="SqlParser\Exceptions\ParserException.cs" />
