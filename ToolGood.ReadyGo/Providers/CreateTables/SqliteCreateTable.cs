@@ -16,14 +16,15 @@ namespace ToolGood.ReadyGo.Providers.CreateTables
         public override string CreateColumn(Table ti, Column ci)
         {
             var type = ci.PropertyType;
+            var isRequired = ci.Required;
             if (type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, true);
-            if (type == typeof(string)) return CreateField(ti, ci, "Text", "", false);
-            if (type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-            if (type == typeof(SByte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-            if (type == typeof(ToolGood.ReadyGo.AnsiString)) return CreateField(ti, ci, "Text", ci.FieldLength, false);
+            if (type == typeof(string)) return CreateField(ti, ci, "Text", "", isRequired);
+            if (type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(SByte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(ToolGood.ReadyGo.AnsiString)) return CreateField(ti, ci, "Text", ci.FieldLength, isRequired);
 
-            var isRequired = ColumnType.IsNullType(type) == false;
-            if (isRequired == false) type = ColumnType.GetBaseType(type);
+            //var isRequired = ColumnType.IsNullType(type) == false;
+            //if (isRequired == false) type = ColumnType.GetBaseType(type);
 
             if (type == typeof(bool)) return CreateField(ti, ci, "int", "1", isRequired);
             if (type == typeof(byte)) return CreateField(ti, ci, "int", "1", isRequired);

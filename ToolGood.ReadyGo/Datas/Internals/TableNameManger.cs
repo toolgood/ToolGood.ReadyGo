@@ -39,13 +39,44 @@ namespace ToolGood.ReadyGo.Internals
         }
 
         private Dictionary<string, TableFix> dict = new Dictionary<string, TableFix>();
+        private Dictionary<Type, string> tableNameDict = new Dictionary<Type, string>();
+
+        /// <summary>
+        /// 设置类型的表名
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="tableName"></param>
+        public void SetTableName(Type type, string tableName)
+        {
+            tableNameDict[type] = tableName;
+        }
+        internal string GetTableName(Type type)
+        {
+            string tableName;
+            if (tableNameDict.TryGetValue(type, out tableName)) {
+                return tableName;
+            }
+            return null;
+        }
+        /// <summary>
+        /// 删除类型的表名
+        /// </summary>
+        /// <param name="type"></param>
+        public void RemoveTableName(Type type)
+        {
+            if (tableNameDict.ContainsKey(type)) {
+                tableNameDict.Remove(type);
+            }
+        }
+
+
 
         /// <summary>
         /// 根据名称获取 TableName
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public TableFix Get(string name)
+        internal TableFix Get(string name)
         {
             if (name == null) return null;
             TableFix tag;
@@ -80,7 +111,7 @@ namespace ToolGood.ReadyGo.Internals
         /// <param name="name"></param>
         /// <param name="tablePrefix"></param>
         /// <param name="tableSuffix"></param>
-        public void Set(string name, string tablePrefix, string tableSuffix="")
+        public void Set(string name, string tablePrefix, string tableSuffix = "")
         {
             dict[name] = new TableFix() {
                 TablePrefix = tablePrefix,
@@ -113,10 +144,17 @@ namespace ToolGood.ReadyGo.Internals
         /// </summary>
         public void Dispose()
         {
-            if (dict!=null) {
+            if (dict != null) {
                 dict.Clear();
-                dict = null;
             }
+            if (tableNameDict != null) {
+                tableNameDict.Clear();
+            }
+        }
+
+        ~TableNameManger()
+        {
+            Dispose();
         }
     }
 }

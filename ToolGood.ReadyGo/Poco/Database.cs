@@ -38,26 +38,21 @@ namespace ToolGood.ReadyGo.Poco
 
         #region 事件 Transactioning Transactioned ConnectionOpened ConnectionClosing ExecutingCommand ExecutedCommand Exceptioned
 
-        public event Action Transactioning;
+        internal event Action Transactioning;
 
-        public event Action Transactioned;
+        internal event Action Transactioned;
 
-        public event Action<IDbConnection> ConnectionOpened;
+        internal event Action<IDbConnection> ConnectionOpened;
 
-        public event Action<IDbConnection> ConnectionClosing;
+        internal event Action<IDbConnection> ConnectionClosing;
 
-        public event Action<IDbCommand> ExecutingCommand;
+        internal event Action<IDbCommand> ExecutingCommand;
 
-        public event Action<IDbCommand> ExecutedCommand;
+        internal event Action<IDbCommand> ExecutedCommand;
 
-        public event Action<Exception> Exceptioned;
+        internal event Action<Exception> Exceptioned;
 
-        /// <summary>
-        ///     Called if an exception occurs during processing of a DB operation.  Override to provide custom logging/handling.
-        /// </summary>
-        /// <param name="x">The exception instance</param>
-        /// <returns>True to re-throw the exception, false to suppress it</returns>
-        public bool OnException(Exception x)
+        bool OnException(Exception x)
         {
             if (Exceptioned != null) {
                 Exceptioned(x);
@@ -65,16 +60,7 @@ namespace ToolGood.ReadyGo.Poco
             return true;
         }
 
-        /// <summary>
-        ///     Called when DB connection opened
-        /// </summary>
-        /// <param name="conn">The newly opened IDbConnection</param>
-        /// <returns>The same or a replacement IDbConnection</returns>
-        /// <remarks>
-        ///     Override this method to provide custom logging of opening connection, or
-        ///     to provide a proxy IDbConnection.
-        /// </remarks>
-        public IDbConnection OnConnectionOpened(IDbConnection conn)
+        IDbConnection OnConnectionOpened(IDbConnection conn)
         {
             if (ConnectionOpened != null) {
                 ConnectionOpened(conn);
@@ -82,58 +68,35 @@ namespace ToolGood.ReadyGo.Poco
             return conn;
         }
 
-        /// <summary>
-        ///     Called when DB connection closed
-        /// </summary>
-        /// <param name="conn">The soon to be closed IDBConnection</param>
-        public void OnConnectionClosing(IDbConnection conn)
+        void OnConnectionClosing(IDbConnection conn)
         {
             if (ConnectionClosing != null) {
                 ConnectionClosing(conn);
             }
         }
 
-        /// <summary>
-        ///     Called just before an DB command is executed
-        /// </summary>
-        /// <param name="cmd">The command to be executed</param>
-        /// <remarks>
-        ///     Override this method to provide custom logging of commands and/or
-        ///     modification of the IDbCommand before it's executed
-        /// </remarks>
-        public void OnExecutingCommand(IDbCommand cmd)
+        void OnExecutingCommand(IDbCommand cmd)
         {
             if (ExecutingCommand != null) {
                 ExecutingCommand(cmd);
             }
         }
 
-        /// <summary>
-        ///     Called on completion of command execution
-        /// </summary>
-        /// <param name="cmd">The IDbCommand that finished executing</param>
-        public void OnExecutedCommand(IDbCommand cmd)
+        void OnExecutedCommand(IDbCommand cmd)
         {
             if (ExecutedCommand != null) {
                 ExecutedCommand(cmd);
             }
         }
 
-        /// <summary>
-        ///     Called when a transaction starts.  Overridden by the T4 template generated database
-        ///     classes to ensure the same DB instance is used throughout the transaction.
-        /// </summary>
-        public void OnBeginTransaction()
+        void OnBeginTransaction()
         {
             if (Transactioning != null) {
                 Transactioning();
             }
         }
 
-        /// <summary>
-        ///     Called when a transaction ends.
-        /// </summary>
-        public void OnEndTransaction()
+        void OnEndTransaction()
         {
             if (Transactioned != null) {
                 Transactioned();
@@ -187,7 +150,7 @@ namespace ToolGood.ReadyGo.Poco
 
         #region CreateParams AddParam
 
-        public List<IDbDataParameter> CreateParams(object[] args)
+        List<IDbDataParameter> CreateParams(object[] args)
         {
             //var _provider = DatabaseProvider.Resolve(_sqlType);
             //var _paramPrefix = _provider.GetParameterPrefix(_connectionString);
@@ -855,35 +818,31 @@ namespace ToolGood.ReadyGo.Poco
 
         public void Insert<T>(List<T> list, TableNameManger tableNameFixManger, bool quick)
         {
-            if (list == null)
-                throw new ArgumentNullException("poco");
+            if (list == null) throw new ArgumentNullException("poco");
             if (list.Count == 0) return;
 
             var pd = PocoData.ForType(typeof(T));
             var tableName = _provider.GetTableName(pd, tableNameFixManger);
 
-
+            var errCount = 0;
             var index = 0;
             while (index < list.Count) {
                 var count = list.Count - index;
-                //if (count >= 100) {
-                //    ExecuteInsert<T>(tableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, 100, quick);
-                //    index += 100;
-                //} else
+                int size = 1;
                 if (count >= 50) {
-                    ExecuteInsert<T>(tableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, 50, quick);
-                    index += 50;
+                    size = 50;
                 } else if (count >= 10) {
-                    ExecuteInsert<T>(tableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, 10, quick);
-                    index += 10;
-                } else {
-                    var poco = list[index];
-                    ExecuteInsert(tableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
-                    index++;
+                    size = 10;
                 }
+                Exception e = ExecuteInsert<T>(tableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, size, quick);
+                if (e != null) {
+                    errCount++;
+                    if (errCount > 3) throw e;
+                }
+                index += size;
             }
         }
-        private void ExecuteInsert<T>(string tableName, string primaryKeyName, bool autoIncrement, List<T> list, int index2, int size, bool quick)
+        private Exception ExecuteInsert<T>(string tableName, string primaryKeyName, bool autoIncrement, List<T> list, int index2, int size, bool quick)
         {
             try {
                 OpenSharedConnection();
@@ -912,7 +871,7 @@ namespace ToolGood.ReadyGo.Poco
                             DoPreExecute(cmd);
                             cmd.ExecuteNonQuery();
                             OnExecutedCommand(cmd);
-                            return;
+                            return null;
                         }
 
                         object id = _provider.ExecuteInsert(this, cmd, primaryKeyName);
@@ -945,10 +904,9 @@ namespace ToolGood.ReadyGo.Poco
                     CloseSharedConnection();
                 }
             } catch (Exception x) {
-                if (OnException(x))
-                    throw;
-                return;
+                OnException(x);
             }
+            return null;
         }
 
 
@@ -958,7 +916,6 @@ namespace ToolGood.ReadyGo.Poco
             var values = new List<string>();
             var _index = 0;
             foreach (var i in pd.Columns) {
-                // Don't insert result columns
                 if (i.ResultColumn) continue;
 
                 // Don't insert the primary key (except under oracle where we need bring in the next sequence value)

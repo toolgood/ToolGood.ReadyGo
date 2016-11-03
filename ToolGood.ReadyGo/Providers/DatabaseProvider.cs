@@ -161,12 +161,17 @@ namespace ToolGood.ReadyGo.Providers
 
         public virtual string GetTableName(PocoData pd, TableNameManger tn)
         {
+            var tableName = tn.GetTableName(pd.Type);
+            if (tableName != null) return tableName;
+
+
             var ti = pd.TableInfo;
             if (ti.TableName.Contains(".")) {
                 return ti.TableName;
             }
             var tag = ti.FixTag;
-            var tableName = ti.TableName;
+            tableName = ti.TableName;
+            if (string.IsNullOrEmpty(tag)) return tableName;
 
             var name = tn.Get(tag);
             if (name != null) {

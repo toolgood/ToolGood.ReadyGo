@@ -5,6 +5,7 @@
     /// </summary>
     public enum SqlType
     {
+        None,
         /// <summary>
         /// Sql Server 数据库
         /// </summary>

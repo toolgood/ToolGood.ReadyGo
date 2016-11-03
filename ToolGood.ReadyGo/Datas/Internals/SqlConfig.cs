@@ -20,6 +20,20 @@ namespace ToolGood.ReadyGo.Internals
             _sqlHelper = helper;
         }
         #region 属性
+        /// <summary>
+        /// 插入操作时，默认时间为现在时间
+        /// </summary>
+        public bool Insert_DateTime_Default_Now { get { return _sqlHelper._setDateTimeDefaultNow; } set { _sqlHelper._setDateTimeDefaultNow = value; } }
+        /// <summary>
+        /// 插入操作时，默认字符串非Null
+        /// </summary>
+        public bool Insert_String_Default_NotNull { get { return _sqlHelper._setStringDefaultNotNull; } set { _sqlHelper._setStringDefaultNotNull = value; } }
+
+        /// <summary>
+        /// 插入操作时，默认Grid自动生成
+        /// </summary>
+        public bool Insert_Guid_Default_New { get { return _sqlHelper._setGuidDefaultNew; } set { _sqlHelper._setGuidDefaultNew = value; } }
+
 
         /// <summary>
         /// 表名修饰助手

@@ -7,15 +7,17 @@ namespace ToolGood.ReadyGo.SqlBuilding.TableCreate
 {
     public class Column
     {
-        public string ColumnName { get; set; }
-        public string Comment { get; set; }
+        public string ColumnName { get; private set; }
+        public string Comment { get; private set; }
 
-        public string DefaultValue { get; set; }
+        public string DefaultValue { get; private set; }
+        public bool Required { get; private set; }
 
-        public Type PropertyType { get; set; }
 
-        public string FieldLength { get; set; }
-        public bool IsText { get; set; }
+        public Type PropertyType { get; private set; }
+
+        public string FieldLength { get; private set; }
+        public bool IsText { get; private set; }
 
         internal static Column FromProperty(PropertyInfo pi)
         {
@@ -36,11 +38,19 @@ namespace ToolGood.ReadyGo.SqlBuilding.TableCreate
             a = pi.GetCustomAttributes(typeof(DefaultValueAttribute), true);
             ci.DefaultValue = a.Length == 0 ? null : (a[0] as DefaultValueAttribute).DefaultValue;
 
+
             a = pi.GetCustomAttributes(typeof(FieldLengthAttribute), true);
             if (a.Length > 0) {
                 ci.IsText = (a[0] as FieldLengthAttribute).IsText;
                 ci.FieldLength = (a[0] as FieldLengthAttribute).FieldLength;
             }
+            var atts = pi.GetCustomAttributes(typeof(RequiredAttribute), true);
+            if (atts.Length > 0) {
+                ci.Required = (atts[0] as RequiredAttribute).Required;
+            } else {
+                ci.Required = ColumnType.IsNullType(ci.PropertyType) == false;
+            }
+            ci.PropertyType = ColumnType.GetBaseType(ci.PropertyType);
 
             return ci;
         }

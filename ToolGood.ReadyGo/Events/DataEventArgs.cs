@@ -7,8 +7,13 @@
             Obj = obj;
             Cancel = false;
         }
-
+        /// <summary>
+        /// 是否取消操作
+        /// </summary>
         public bool Cancel { get; set; }
+        /// <summary>
+        /// 操作对象
+        /// </summary>
         public object Obj { get; set; }
     }
 
@@ -24,7 +29,9 @@
         {
             Obj = obj;
         }
-
+        /// <summary>
+        /// 操作对象
+        /// </summary>
         public object Obj { get; set; }
     }
 
