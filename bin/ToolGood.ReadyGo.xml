@@ -4,136 +4,6 @@
         <name>ToolGood.ReadyGo</name>
     </assembly>
     <members>
-        <member name="T:ToolGood.ReadyGo.Caches.ICacheService">
-             <summary>
-            
-             </summary>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.ICacheService.Has(System.String)">
-            <summary>
-            是否设置
-            </summary>
-            <param name="name"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.ICacheService.Clear(System.String)">
-            <summary>
-            清除缓存
-            </summary>
-            <param name="name"></param>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.ICacheService.Get``1(System.String,System.Func{``0},System.Int32,System.String)">
-            <summary>
-            
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="name"></param>
-            <param name="func"></param>
-            <param name="expiredSecond"></param>
-            <param name="regionName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.IUseCache.useCache(System.Int32,System.String,ToolGood.ReadyGo.Caches.ICacheService)">
-            <summary>
-            使用缓存
-            </summary>
-            <param name="second"></param>
-            <param name="cacheTag"></param>
-            <param name="cacheService"></param>
-        </member>
-        <member name="T:ToolGood.ReadyGo.Caches.Md5MemoryCacheService">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.Md5MemoryCacheService.Get``1(System.String,System.Func{``0},System.Int32,System.String)">
-            <summary>
-            
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="name"></param>
-            <param name="func"></param>
-            <param name="expiredSecond"></param>
-            <param name="regionName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.Md5MemoryCacheService.Has(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="name"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ToolGood.ReadyGo.Caches.MemoryCacheService">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.MemoryCacheService.GetMemoryCache">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.MemoryCacheService.GetTagCache">
-            <summary>
-            
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.MemoryCacheService.Clear(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="name"></param>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.MemoryCacheService.Get``1(System.String,System.Func{``0},System.Int32,System.String)">
-            <summary>
-            
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="name"></param>
-            <param name="func"></param>
-            <param name="expiredSecond"></param>
-            <param name="regionName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.MemoryCacheService.Has(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="name"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ToolGood.ReadyGo.Caches.NullCacheService">
-            <summary>
-            
-            </summary>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.NullCacheService.Clear(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="name"></param>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.NullCacheService.Get``1(System.String,System.Func{``0},System.Int32,System.String)">
-            <summary>
-            
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="name"></param>
-            <param name="func"></param>
-            <param name="expiredSecond"></param>
-            <param name="regionName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Caches.NullCacheService.Has(System.String)">
-            <summary>
-            
-            </summary>
-            <param name="name"></param>
-            <returns></returns>
-        </member>
         <member name="T:ToolGood.ReadyGo.Attributes.ColumnAttribute">
             <summary>
             列标签
@@ -368,6 +238,136 @@
             列名
             </summary>
         </member>
+        <member name="T:ToolGood.ReadyGo.Caches.ICacheService">
+             <summary>
+            
+             </summary>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.ICacheService.Has(System.String)">
+            <summary>
+            是否设置
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.ICacheService.Clear(System.String)">
+            <summary>
+            清除缓存
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.ICacheService.Get``1(System.String,System.Func{``0},System.Int32,System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="name"></param>
+            <param name="func"></param>
+            <param name="expiredSecond"></param>
+            <param name="regionName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.IUseCache.useCache(System.Int32,System.String,ToolGood.ReadyGo.Caches.ICacheService)">
+            <summary>
+            使用缓存
+            </summary>
+            <param name="second"></param>
+            <param name="cacheTag"></param>
+            <param name="cacheService"></param>
+        </member>
+        <member name="T:ToolGood.ReadyGo.Caches.Md5MemoryCacheService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.Md5MemoryCacheService.Get``1(System.String,System.Func{``0},System.Int32,System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="name"></param>
+            <param name="func"></param>
+            <param name="expiredSecond"></param>
+            <param name="regionName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.Md5MemoryCacheService.Has(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ToolGood.ReadyGo.Caches.MemoryCacheService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.MemoryCacheService.GetMemoryCache">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.MemoryCacheService.GetTagCache">
+            <summary>
+            
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.MemoryCacheService.Clear(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.MemoryCacheService.Get``1(System.String,System.Func{``0},System.Int32,System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="name"></param>
+            <param name="func"></param>
+            <param name="expiredSecond"></param>
+            <param name="regionName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.MemoryCacheService.Has(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ToolGood.ReadyGo.Caches.NullCacheService">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.NullCacheService.Clear(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.NullCacheService.Get``1(System.String,System.Func{``0},System.Int32,System.String)">
+            <summary>
+            
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="name"></param>
+            <param name="func"></param>
+            <param name="expiredSecond"></param>
+            <param name="regionName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Caches.NullCacheService.Has(System.String)">
+            <summary>
+            
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
         <member name="M:ToolGood.ReadyGo.Monitor.ISqlMonitor.ToHtml">
             <summary>
             输出 为HTML格式
@@ -430,6 +430,21 @@
         <member name="T:ToolGood.ReadyGo.Internals.SqlConfig">
             <summary>
             数据库配置
+            </summary>
+        </member>
+        <member name="P:ToolGood.ReadyGo.Internals.SqlConfig.Insert_DateTime_Default_Now">
+            <summary>
+            插入操作时，默认时间为现在时间
+            </summary>
+        </member>
+        <member name="P:ToolGood.ReadyGo.Internals.SqlConfig.Insert_String_Default_NotNull">
+            <summary>
+            插入操作时，默认字符串非Null
+            </summary>
+        </member>
+        <member name="P:ToolGood.ReadyGo.Internals.SqlConfig.Insert_Guid_Default_New">
+            <summary>
+            插入操作时，默认Grid自动生成
             </summary>
         </member>
         <member name="P:ToolGood.ReadyGo.Internals.SqlConfig.TableNameManger">
@@ -631,6 +646,19 @@
             ToString
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Internals.TableNameManger.SetTableName(System.Type,System.String)">
+            <summary>
+            设置类型的表名
+            </summary>
+            <param name="type"></param>
+            <param name="tableName"></param>
+        </member>
+        <member name="M:ToolGood.ReadyGo.Internals.TableNameManger.RemoveTableName(System.Type)">
+            <summary>
+            删除类型的表名
+            </summary>
+            <param name="type"></param>
         </member>
         <member name="M:ToolGood.ReadyGo.Internals.TableNameManger.Get(System.String)">
             <summary>
@@ -1136,174 +1164,25 @@
             </summary>
             <param name="size"></param>
         </member>
-        <member name="T:ToolGood.ReadyGo.SQL">
+        <member name="T:ToolGood.ReadyGo.Poco.DefaultValue">
             <summary>
-            支持SelectColumn、GroupBy、Having
+            默认值生成
             </summary>
         </member>
-        <member name="M:ToolGood.ReadyGo.SQL.Sum``1(``0)">
+        <member name="M:ToolGood.ReadyGo.Poco.DefaultValue.SetDefaultValue``1(``0,System.Boolean,System.Boolean,System.Boolean)">
             <summary>
-            求合，
+            设置默认值
             </summary>
             <typeparam name="T"></typeparam>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SQL.CountAll">
-            <summary>
-            取个数
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SQL.CountOfDistinct``1(``0)">
-            <summary>
-            获取非重复个数
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SQL.Count``1(``0)">
-            <summary>
-            求个数
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SQL.Min``1(``0)">
-            <summary>
-            求最小值
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SQL.Max``1(``0)">
-            <summary>
-            求最大值
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SQL.Distinct``1(``0)">
-            <summary>
-            求非重复值
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SQL.Avg``1(``0)">
-            <summary>
-            求平均
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="t"></param>
-            <returns></returns>
-        </member>
-        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.BeforeInsert">
-            <summary>
-            事件：插入对象前
-            </summary>
-        </member>
-        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.BeforeUpdate">
-            <summary>
-            事件：更新对象前
-            </summary>
-        </member>
-        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.BeforeDelete">
-            <summary>
-            事件：删除对象前
-            </summary>
-        </member>
-        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.AfterInsert">
-            <summary>
-            事件：插入对象后
-            </summary>
-        </member>
-        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.AfterUpdate">
-            <summary>
-            事件：更新对象后
-            </summary>
-        </member>
-        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.AfterDelete">
-            <summary>
-            事件：删除对象后
-            </summary>
-        </member>
-        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.BeforeExecuteCommand">
-            <summary>
-            事件：执行Command前
-            </summary>
-        </member>
-        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.AfterExecuteCommand">
-            <summary>
-            事件：执行Command后
-            </summary>
-        </member>
-        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.ExecuteException">
-            <summary>
-            事件：出错
-            </summary>
+            <param name="obj"></param>
+            <param name="setString"></param>
+            <param name="setDateTime"></param>
         </member>
         <member name="M:ToolGood.ReadyGo.Poco.Database.Dispose">
              <summary>
                  Automatically close one open shared connection
             
              </summary>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Poco.Database.OnException(System.Exception)">
-            <summary>
-                Called if an exception occurs during processing of a DB operation.  Override to provide custom logging/handling.
-            </summary>
-            <param name="x">The exception instance</param>
-            <returns>True to re-throw the exception, false to suppress it</returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Poco.Database.OnConnectionOpened(System.Data.IDbConnection)">
-            <summary>
-                Called when DB connection opened
-            </summary>
-            <param name="conn">The newly opened IDbConnection</param>
-            <returns>The same or a replacement IDbConnection</returns>
-            <remarks>
-                Override this method to provide custom logging of opening connection, or
-                to provide a proxy IDbConnection.
-            </remarks>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Poco.Database.OnConnectionClosing(System.Data.IDbConnection)">
-            <summary>
-                Called when DB connection closed
-            </summary>
-            <param name="conn">The soon to be closed IDBConnection</param>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Poco.Database.OnExecutingCommand(System.Data.IDbCommand)">
-            <summary>
-                Called just before an DB command is executed
-            </summary>
-            <param name="cmd">The command to be executed</param>
-            <remarks>
-                Override this method to provide custom logging of commands and/or
-                modification of the IDbCommand before it's executed
-            </remarks>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Poco.Database.OnExecutedCommand(System.Data.IDbCommand)">
-            <summary>
-                Called on completion of command execution
-            </summary>
-            <param name="cmd">The IDbCommand that finished executing</param>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Poco.Database.OnBeginTransaction">
-            <summary>
-                Called when a transaction starts.  Overridden by the T4 template generated database
-                classes to ensure the same DB instance is used throughout the transaction.
-            </summary>
-        </member>
-        <member name="M:ToolGood.ReadyGo.Poco.Database.OnEndTransaction">
-            <summary>
-                Called when a transaction ends.
-            </summary>
         </member>
         <member name="M:ToolGood.ReadyGo.Poco.Database.OpenSharedConnection">
             <summary>
@@ -1490,6 +1369,148 @@
             <summary>
                 表名修改标签
                 可通过此标签添加前缀后缀
+            </summary>
+        </member>
+        <member name="T:ToolGood.ReadyGo.SQL">
+            <summary>
+            支持SelectColumn、GroupBy、Having
+            </summary>
+        </member>
+        <member name="M:ToolGood.ReadyGo.SQL.Sum``1(``0)">
+            <summary>
+            求合，
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.SQL.CountAll">
+            <summary>
+            取个数
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.SQL.CountOfDistinct``1(``0)">
+            <summary>
+            获取非重复个数
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.SQL.Count``1(``0)">
+            <summary>
+            求个数
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.SQL.Min``1(``0)">
+            <summary>
+            求最小值
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.SQL.Max``1(``0)">
+            <summary>
+            求最大值
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.SQL.Distinct``1(``0)">
+            <summary>
+            求非重复值
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ToolGood.ReadyGo.SQL.Avg``1(``0)">
+            <summary>
+            求平均
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="t"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ToolGood.ReadyGo.Events.DataEventArgs.Cancel">
+            <summary>
+            是否取消操作
+            </summary>
+        </member>
+        <member name="P:ToolGood.ReadyGo.Events.DataEventArgs.Obj">
+            <summary>
+            操作对象
+            </summary>
+        </member>
+        <member name="P:ToolGood.ReadyGo.Events.Data2EventArgs.Obj">
+            <summary>
+            操作对象
+            </summary>
+        </member>
+        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.BeforeInsert">
+            <summary>
+            事件：插入对象前
+            </summary>
+        </member>
+        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.BeforeUpdate">
+            <summary>
+            事件：更新对象前
+            </summary>
+        </member>
+        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.BeforeDelete">
+            <summary>
+            事件：删除对象前
+            </summary>
+        </member>
+        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.AfterInsert">
+            <summary>
+            事件：插入对象后
+            </summary>
+        </member>
+        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.AfterUpdate">
+            <summary>
+            事件：更新对象后
+            </summary>
+        </member>
+        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.AfterDelete">
+            <summary>
+            事件：删除对象后
+            </summary>
+        </member>
+        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.BeforeExecuteCommand">
+            <summary>
+            事件：执行Command前
+            </summary>
+        </member>
+        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.AfterExecuteCommand">
+            <summary>
+            事件：执行Command后
+            </summary>
+        </member>
+        <member name="E:ToolGood.ReadyGo.Events.SqlEvents.ExecuteException">
+            <summary>
+            事件：出错
+            </summary>
+        </member>
+        <member name="P:ToolGood.ReadyGo.Events.SqlOperationEventArgs.Sql">
+            <summary>
+            Sql语句
+            </summary>
+        </member>
+        <member name="P:ToolGood.ReadyGo.Events.SqlOperationEventArgs.Args">
+            <summary>
+            参数 
+            </summary>
+        </member>
+        <member name="P:ToolGood.ReadyGo.Events.SqlOperationEventArgs.SqlWithArgs">
+            <summary>
+            Sql语句 带 参数
             </summary>
         </member>
         <member name="M:ToolGood.ReadyGo.Providers.DatabaseProvider.GetFactory">
@@ -1826,7 +1847,6 @@
             SqlHelper 构造方法
             </summary>
             <param name="connectionStringName">xml配置名</param>
-            <param name="type">SqlType类型</param>
         </member>
         <member name="M:ToolGood.ReadyGo.SqlHelper.#ctor(System.String,System.String,ToolGood.ReadyGo.Internals.SqlType)">
             <summary>
@@ -1834,15 +1854,13 @@
             </summary>
             <param name="connectionString">数据库链接字符串</param>
             <param name="providerName">provider名</param>
-            <param name="type">SqlType类型</param>
         </member>
         <member name="M:ToolGood.ReadyGo.SqlHelper.#ctor(System.String,System.Data.Common.DbProviderFactory,ToolGood.ReadyGo.Internals.SqlType)">
             <summary>
             SqlHelper 构造方法
             </summary>
             <param name="connectionString">数据库链接字符串</param>
-            <param name="factory">Provider工厂</param>
-            <param name="type">SqlType类型</param>
+            <param name="factory">provider工厂</param>
         </member>
         <member name="M:ToolGood.ReadyGo.SqlHelper.#ctor(System.String,System.String,System.String,ToolGood.ReadyGo.Internals.SqlType)">
             <summary>
@@ -1851,46 +1869,8 @@
             <param name="writeConnectionString">数据库链接字符串（写）</param>
             <param name="readConnectionString">数据库链接字符串（读）</param>
             <param name="providerName">provider名</param>
-            <param name="type">SqlType类型</param>
         </member>
         <member name="M:ToolGood.ReadyGo.SqlHelper.#ctor(System.String,System.String,System.Data.Common.DbProviderFactory,ToolGood.ReadyGo.Internals.SqlType)">
-            <summary>
-            SqlHelper 构造方法
-            </summary>
-            <param name="writeConnectionString">数据库链接字符串（写）</param>
-            <param name="readConnectionString">数据库链接字符串（读）</param>
-            <param name="factory">provider工厂</param>
-            <param name="type">SqlType类型</param>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelper.#ctor(System.String)">
-            <summary>
-            SqlHelper 构造方法
-            </summary>
-            <param name="connectionStringName">xml配置名</param>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelper.#ctor(System.String,System.String)">
-            <summary>
-            SqlHelper 构造方法
-            </summary>
-            <param name="connectionString">数据库链接字符串</param>
-            <param name="providerName">provider名</param>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelper.#ctor(System.String,System.Data.Common.DbProviderFactory)">
-            <summary>
-            SqlHelper 构造方法
-            </summary>
-            <param name="connectionString">数据库链接字符串</param>
-            <param name="factory">provider工厂</param>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelper.#ctor(System.String,System.String,System.String)">
-            <summary>
-            SqlHelper 构造方法
-            </summary>
-            <param name="writeConnectionString">数据库链接字符串（写）</param>
-            <param name="readConnectionString">数据库链接字符串（读）</param>
-            <param name="providerName">provider名</param>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelper.#ctor(System.String,System.String,System.Data.Common.DbProviderFactory)">
             <summary>
             SqlHelper 构造方法
             </summary>
@@ -2064,7 +2044,7 @@
             <param name="list"></param>
             <param name="quick">为True时，不获取</param>
         </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelper.Insert(System.Object)">
+        <member name="M:ToolGood.ReadyGo.SqlHelper.Insert``1(``0)">
             <summary>
             插入，支持主键自动获取。
             </summary>
@@ -2135,6 +2115,7 @@
             <summary>
             Select 语句，<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2151,6 +2132,7 @@
             <summary>
             Select 语句，<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2166,6 +2148,7 @@
             <summary>
             Select 语句，<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2180,6 +2163,7 @@
             <summary>
             Select 语句，<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2206,6 +2190,7 @@
             <summary>
             Select 语句 获取唯一的对象<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2222,6 +2207,7 @@
             <summary>
             Select 语句 获取唯一的对象<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2237,6 +2223,7 @@
             <summary>
             Select 语句 获取唯一的对象<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3<para></para>
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2251,6 +2238,7 @@
             <summary>
             Select 语句 获取唯一的对象<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2277,6 +2265,7 @@
             <summary>
             Select 语句 获取唯一的对象,默认为null<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2293,6 +2282,7 @@
             <summary>
             Select 语句 获取唯一的对象,默认为null<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2308,6 +2298,7 @@
             <summary>
             Select 语句 获取唯一的对象,默认为null<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2322,6 +2313,7 @@
             <summary>
             Select 语句 获取唯一的对象,默认为null<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2348,6 +2340,7 @@
             <summary>
             Select 语句 获取第一个对象<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2364,6 +2357,7 @@
             <summary>
             Select 语句 获取第一个对象<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2379,6 +2373,7 @@
             <summary>
             Select 语句 获取第一个对象<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2393,6 +2388,7 @@
             <summary>
             Select 语句 获取第一个对象<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2419,6 +2415,7 @@
             <summary>
             Select 语句 获取第一个对象，默认为Null<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2435,6 +2432,7 @@
             <summary>
             Select 语句 获取第一个对象，默认为Null<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2450,6 +2448,7 @@
             <summary>
             Select 语句 获取第一个对象，默认为Null<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2464,6 +2463,7 @@
             <summary>
             Select 语句 获取第一个对象，默认为Null<para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2490,6 +2490,7 @@
             <summary>
             Select 语句，返回Page&lt;T&gt;类型 <para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2508,6 +2509,7 @@
             <summary>
             Select 语句，返回Page&lt;T&gt;类型 <para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2525,6 +2527,7 @@
             <summary>
             Select 语句，返回Page&lt;T&gt;类型 <para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2541,6 +2544,7 @@
             <summary>
             Select 语句，返回Page&lt;T&gt;类型 <para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2571,6 +2575,7 @@
             <summary>
             Select 语句 <para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2589,6 +2594,7 @@
             <summary>
             Select 语句 <para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2606,6 +2612,7 @@
             <summary>
             Select 语句 <para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2622,6 +2629,7 @@
             <summary>
             Select 语句 <para></para>
             可以省略Select部分，系统自动生成Select部分<para></para>
+            可以省略From部分,系统自动生成From部分<para></para>
             From部分 例如： From {t1} as t1,{t2} as t2
             </summary>
             <typeparam name="T1"></typeparam>
@@ -2660,14 +2668,6 @@
             SqlHelper工厂
             </summary>
         </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelperFactory.OpenDatabase(System.String,System.String)">
-            <summary>
-            打开数据据库
-            </summary>
-            <param name="connectionString">链接字符串</param>
-            <param name="providerName">适配器名称</param>
-            <returns></returns>
-        </member>
         <member name="M:ToolGood.ReadyGo.SqlHelperFactory.OpenDatabase(System.String,System.String,ToolGood.ReadyGo.Internals.SqlType)">
             <summary>
             打开数据据库
@@ -2677,27 +2677,12 @@
             <param name="type">SqlType类型</param>
             <returns></returns>
         </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelperFactory.OpenFormConnStr(System.String)">
-            <summary>
-            根据config配置名打开数据据库
-            </summary>
-            <param name="name">配置名</param>
-            <returns></returns>
-        </member>
         <member name="M:ToolGood.ReadyGo.SqlHelperFactory.OpenFormConnStr(System.String,ToolGood.ReadyGo.Internals.SqlType)">
             <summary>
             根据config配置名打开数据据库
             </summary>
             <param name="name">配置名</param>
             <param name="type">SqlType</param>
-            <returns></returns>
-        </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelperFactory.OpenFormConnStr(System.String,System.String)">
-            <summary>
-            根据config配置名打开数据据库
-            </summary>
-            <param name="wirteName">配置名</param>
-            <param name="readName">配置名</param>
             <returns></returns>
         </member>
         <member name="M:ToolGood.ReadyGo.SqlHelperFactory.OpenFormConnStr(System.String,System.String,ToolGood.ReadyGo.Internals.SqlType)">
