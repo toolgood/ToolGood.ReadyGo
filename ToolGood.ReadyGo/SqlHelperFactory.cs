@@ -14,19 +14,9 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="connectionString">链接字符串</param>
         /// <param name="providerName">适配器名称</param>
-        /// <returns></returns>
-        public static SqlHelper OpenDatabase(string connectionString, string providerName)
-        {
-            return new SqlHelper(connectionString, providerName);
-        }
-        /// <summary>
-        /// 打开数据据库
-        /// </summary>
-        /// <param name="connectionString">链接字符串</param>
-        /// <param name="providerName">适配器名称</param>
         /// <param name="type">SqlType类型</param>
         /// <returns></returns>
-        public static SqlHelper OpenDatabase(string connectionString, string providerName,SqlType type)
+        public static SqlHelper OpenDatabase(string connectionString, string providerName, SqlType type = SqlType.None)
         {
             return new SqlHelper(connectionString, providerName, type);
         }
@@ -35,38 +25,12 @@ namespace ToolGood.ReadyGo
         /// 根据config配置名打开数据据库
         /// </summary>
         /// <param name="name">配置名</param>
-        /// <returns></returns>
-        public static SqlHelper OpenFormConnStr(string name)
-        {
-            var c = ConfigurationManager.ConnectionStrings[name];
-            return OpenDatabase(c.ConnectionString, c.ProviderName);
-        }
-
-
-        /// <summary>
-        /// 根据config配置名打开数据据库
-        /// </summary>
-        /// <param name="name">配置名</param>
         /// <param name="type">SqlType</param>
         /// <returns></returns>
-        public static SqlHelper OpenFormConnStr(string name, SqlType type)
+        public static SqlHelper OpenFormConnStr(string name, SqlType type= SqlType.None)
         {
             var c = ConfigurationManager.ConnectionStrings[name];
             return OpenDatabase(c.ConnectionString, c.ProviderName, type);
-        }
-
-
-        /// <summary>
-        /// 根据config配置名打开数据据库
-        /// </summary>
-        /// <param name="wirteName">配置名</param>
-        /// <param name="readName">配置名</param>
-        /// <returns></returns>
-        public static SqlHelper OpenFormConnStr(string wirteName, string readName)
-        {
-            var w = ConfigurationManager.ConnectionStrings[wirteName];
-            var r = ConfigurationManager.ConnectionStrings[wirteName];
-            return new SqlHelper(w.ConnectionString, r.ConnectionString, r.ProviderName);
         }
 
         /// <summary>
@@ -76,11 +40,11 @@ namespace ToolGood.ReadyGo
         /// <param name="readName">配置名</param>
         /// <param name="type">SqlType类型</param>
         /// <returns></returns>
-        public static SqlHelper OpenFormConnStr(string wirteName, string readName, SqlType type)
+        public static SqlHelper OpenFormConnStr(string wirteName, string readName, SqlType type = SqlType.None)
         {
             var w = ConfigurationManager.ConnectionStrings[wirteName];
             var r = ConfigurationManager.ConnectionStrings[wirteName];
-            return new SqlHelper(w.ConnectionString, r.ConnectionString, r.ProviderName,type);
+            return new SqlHelper(w.ConnectionString, r.ConnectionString, r.ProviderName, type);
         }
 
         /// <summary>

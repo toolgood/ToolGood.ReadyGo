@@ -18,6 +18,11 @@ namespace ToolGood.ReadyGo
     public sealed partial class SqlHelper : IDisposable, IUseCache
     {
         #region 私有变量
+        //是否设置默认值
+        internal bool _setDateTimeDefaultNow;
+        internal bool _setStringDefaultNotNull;
+        internal bool _setGuidDefaultNew;
+
 
         // 读写数据库
         internal bool _useTwoDatabase;
@@ -77,60 +82,10 @@ namespace ToolGood.ReadyGo
         /// SqlHelper 构造方法
         /// </summary>
         /// <param name="connectionStringName">xml配置名</param>
-        /// <param name="type">SqlType类型</param>
-        public SqlHelper(string connectionStringName, SqlType type) : this(connectionStringName)
+        public SqlHelper(string connectionStringName, SqlType type = SqlType.None)
         {
             _sqlType = type;
-        }
-        /// <summary>
-        /// SqlHelper 构造方法
-        /// </summary>
-        /// <param name="connectionString">数据库链接字符串</param>
-        /// <param name="providerName">provider名</param>
-        /// <param name="type">SqlType类型</param>
-        public SqlHelper(string connectionString, string providerName, SqlType type) : this(connectionString, providerName)
-        {
-            _sqlType = type;
-        }
-        /// <summary>
-        /// SqlHelper 构造方法
-        /// </summary>
-        /// <param name="connectionString">数据库链接字符串</param>
-        /// <param name="factory">Provider工厂</param>
-        /// <param name="type">SqlType类型</param>
-        public SqlHelper(string connectionString, DbProviderFactory factory, SqlType type) : this(connectionString, factory)
-        {
-            _sqlType = type;
-        }
-        /// <summary>
-        /// SqlHelper 构造方法
-        /// </summary>
-        /// <param name="writeConnectionString">数据库链接字符串（写）</param>
-        /// <param name="readConnectionString">数据库链接字符串（读）</param>
-        /// <param name="providerName">provider名</param>
-        /// <param name="type">SqlType类型</param>
-        public SqlHelper(string writeConnectionString, string readConnectionString, string providerName, SqlType type) : this(writeConnectionString, readConnectionString, providerName)
-        {
-            _sqlType = type;
-        }
-        /// <summary>
-        /// SqlHelper 构造方法
-        /// </summary>
-        /// <param name="writeConnectionString">数据库链接字符串（写）</param>
-        /// <param name="readConnectionString">数据库链接字符串（读）</param>
-        /// <param name="factory">provider工厂</param>
-        /// <param name="type">SqlType类型</param>
-        public SqlHelper(string writeConnectionString, string readConnectionString, DbProviderFactory factory, SqlType type) : this(writeConnectionString, readConnectionString, factory)
-        {
-            _sqlType = type;
-        }
 
-        /// <summary>
-        /// SqlHelper 构造方法
-        /// </summary>
-        /// <param name="connectionStringName">xml配置名</param>
-        public SqlHelper(string connectionStringName)
-        {
             _useTwoDatabase = false;
             var entry = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (entry == null)
@@ -144,8 +99,10 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="connectionString">数据库链接字符串</param>
         /// <param name="providerName">provider名</param>
-        public SqlHelper(string connectionString, string providerName)
+        public SqlHelper(string connectionString, string providerName, SqlType type = SqlType.None)
         {
+            _sqlType = type;
+
             _useTwoDatabase = false;
             _writeConnectionString = connectionString;
             initSqlHelper(providerName);
@@ -155,8 +112,10 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="connectionString">数据库链接字符串</param>
         /// <param name="factory">provider工厂</param>
-        public SqlHelper(string connectionString, DbProviderFactory factory)
+        public SqlHelper(string connectionString, DbProviderFactory factory, SqlType type = SqlType.None)
         {
+            _sqlType = type;
+
             _useTwoDatabase = false;
             _writeConnectionString = connectionString;
             initSqlHelper(null);
@@ -168,8 +127,10 @@ namespace ToolGood.ReadyGo
         /// <param name="writeConnectionString">数据库链接字符串（写）</param>
         /// <param name="readConnectionString">数据库链接字符串（读）</param>
         /// <param name="providerName">provider名</param>
-        public SqlHelper(string writeConnectionString, string readConnectionString, string providerName)
+        public SqlHelper(string writeConnectionString, string readConnectionString, string providerName, SqlType type = SqlType.None)
         {
+            _sqlType = type;
+
             _useTwoDatabase = true;
             _writeConnectionString = writeConnectionString;
             _readConnectionString = readConnectionString;
@@ -182,8 +143,10 @@ namespace ToolGood.ReadyGo
         /// <param name="writeConnectionString">数据库链接字符串（写）</param>
         /// <param name="readConnectionString">数据库链接字符串（读）</param>
         /// <param name="factory">provider工厂</param>
-        public SqlHelper(string writeConnectionString, string readConnectionString, DbProviderFactory factory)
+        public SqlHelper(string writeConnectionString, string readConnectionString, DbProviderFactory factory, SqlType type = SqlType.None)
         {
+            _sqlType = type;
+
             _useTwoDatabase = true;
             _writeConnectionString = writeConnectionString;
             _readConnectionString = readConnectionString;
@@ -205,13 +168,14 @@ namespace ToolGood.ReadyGo
             _connectionType = ConnectionType.Default;
 
             if (_providerName != null) {
-                _sqlType = SqlConfig.GetSqlType(_providerName, _writeConnectionString);
+                if (_sqlType == SqlType.None) {
+                    _sqlType = SqlConfig.GetSqlType(_providerName, _writeConnectionString);
+                }
                 var _provider = DatabaseProvider.Resolve(_sqlType);
                 _factory = _provider.GetFactory();
-            } else {
+            } else if (_sqlType == SqlType.None) {
                 _sqlType = SqlConfig.GetSqlType(_factory.GetType().FullName, _writeConnectionString);
             }
-
             _provider = DatabaseProvider.Resolve(_sqlType);
         }
 
@@ -226,7 +190,7 @@ namespace ToolGood.ReadyGo
             if (_writeDatabase != null) {
                 _writeDatabase.Dispose();
             }
-            if (_tableNameManger!= null) {
+            if (_tableNameManger != null) {
                 _tableNameManger.Dispose();
             }
         }
@@ -713,6 +677,11 @@ namespace ToolGood.ReadyGo
         /// <param name="quick">为True时，不获取</param>
         public void Insert<T>(List<T> list, bool quick = false)
         {
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull|| _setGuidDefaultNew) {
+                foreach (var item in list) {
+                    DefaultValue.SetDefaultValue<T>(item, _setStringDefaultNotNull, _setDateTimeDefaultNow,_setGuidDefaultNew);
+                }
+            }
             if (Events.OnBeforeInsert(list)) return;
             var db = getDatabase(ConnectionType.Write);
             db.Insert(list, _tableNameManger, quick);
@@ -725,8 +694,11 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="poco">对象</param>
         /// <returns></returns>
-        public object Insert(object poco)
+        public object Insert<T>(T poco)
         {
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull|| _setGuidDefaultNew) {
+                DefaultValue.SetDefaultValue<T>(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
+            }
             if (Events.OnBeforeInsert(poco)) return null;
             var db = getDatabase(ConnectionType.Write);
             var obj = db.Insert(poco, _tableNameManger);
@@ -859,6 +831,5 @@ namespace ToolGood.ReadyGo
             var pd = PocoData.ForType(type);
             return _provider.GetTableName(pd, _tableNameManger);
         }
-
     }
 }

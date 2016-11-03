@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using System.Text.RegularExpressions;
 using ToolGood.ReadyGo.Caches;
 using ToolGood.ReadyGo.Providers;
 using ToolGood.ReadyGo.SqlBuilding;
@@ -56,7 +55,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
         {
             if (jump()) return;
             var column = SqlExpression.GetColumnName(field);
-         
+
             if (_where.Length > 0) {
                 _where.Append(" AND ");
             }
@@ -124,27 +123,48 @@ namespace ToolGood.ReadyGo.WhereHelpers
         {
             if (jump()) return;
             where = where.Trim();
+            if (_where.Length > 0) _where.Append(" AND ");
 
-            if (where.StartsWith("where ", StringComparison.CurrentCultureIgnoreCase)) where = where.Substring(6).Trim();
-            Regex re = new Regex(@"(@@(\d+))");
-            var ms = re.Matches(where);
-            if (ms.Count > 0) {
-                Dictionary<string, string> dict = new Dictionary<string, string>();
-                foreach (Match m in ms) {
-                    dict[m.Groups[1].Value] = _paramPrefix + (this._args.Count + int.Parse(m.Groups[2].Value).ToString());
-                }
-                foreach (var item in dict.OrderByDescending(q => q.Key.Length)) {
-                    where = where.Replace(item.Key, item.Value);
-                }
-            } else {
-                where = where.Replace("@@ ", _paramPrefix + this._args.Count.ToString() + " ");
-            }
-            where = where.Replace("@@@", "@@");
+            int start = 0;
+            if (where.StartsWith("where ", StringComparison.CurrentCultureIgnoreCase)) start = 6;
 
-            if (_where.Length > 0) {
-                _where.Append(" AND ");
+            bool isInText = false, isStart = false;
+            var c = 'a';
+            var text = "";
+
+            for (int i = start; i < where.Length; i++) {
+                var t = where[i];
+                if (isInText) {
+                    if (t == c) isInText = false;
+                } else if ("\"'`".Contains(t)) {
+                    isInText = true;
+                    c = t;
+                    isStart = false;
+                } else if (isStart == false) {
+                    if (t == '@') {
+                        isStart = true;
+                        text = "@";
+                        continue;
+                    } 
+                } else if ("@1234567890".Contains(t)) {
+                    text += t;
+                    continue;
+                } else {
+                    if (text == "@@") {
+                        _where.Append(_paramPrefix);
+                        _where.Append(this._args.Count.ToString());
+                    } else if (text == "@@@") {
+                        _where.Append("@@");
+                    } else if (text.StartsWith("@@")) {
+                        int p = this._args.Count + int.Parse(text.Replace("@", ""));
+                        _where.Append(_paramPrefix);
+                        _where.Append(p.ToString());
+                    }
+                    isStart = false;
+                }
+                _where.Append(t);
             }
-            _where.Append(where);
+
             foreach (var item in args) {
                 _args.Add(item);
             }

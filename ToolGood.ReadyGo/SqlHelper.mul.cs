@@ -72,6 +72,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句，<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -91,6 +92,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句，<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -109,6 +111,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句，<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -126,6 +129,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句，<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -161,6 +165,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取唯一的对象<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -180,6 +185,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取唯一的对象<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -198,6 +204,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取唯一的对象<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3<para></para>
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -215,6 +222,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取唯一的对象<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -247,6 +255,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取唯一的对象,默认为null<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -266,6 +275,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取唯一的对象,默认为null<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -284,6 +294,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取唯一的对象,默认为null<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -301,6 +312,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取唯一的对象,默认为null<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -336,6 +348,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取第一个对象<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -355,6 +368,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取第一个对象<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -373,6 +387,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取第一个对象<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -390,6 +405,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取第一个对象<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -422,6 +438,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取第一个对象，默认为Null<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -441,6 +458,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取第一个对象，默认为Null<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -459,6 +477,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取第一个对象，默认为Null<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -476,6 +495,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 获取第一个对象，默认为Null<para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -511,6 +531,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句，返回Page&lt;T&gt;类型 <para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -532,6 +553,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句，返回Page&lt;T&gt;类型 <para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -552,6 +574,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句，返回Page&lt;T&gt;类型 <para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -571,6 +594,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句，返回Page&lt;T&gt;类型 <para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -610,6 +634,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 <para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4,{t5} as t5
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -631,6 +656,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 <para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3,{t4} as t4
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -651,6 +677,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 <para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2,{t3} as t3
         /// </summary>
         /// <typeparam name="T1"></typeparam>
@@ -670,6 +697,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Select 语句 <para></para>
         /// 可以省略Select部分，系统自动生成Select部分<para></para>
+        /// 可以省略From部分,系统自动生成From部分<para></para>
         /// From部分 例如： From {t1} as t1,{t2} as t2
         /// </summary>
         /// <typeparam name="T1"></typeparam>

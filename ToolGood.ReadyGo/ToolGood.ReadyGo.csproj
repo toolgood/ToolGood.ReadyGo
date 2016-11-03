@@ -29,7 +29,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\.xml</DocumentationFile>
+    <DocumentationFile>..\..\bin\ToolGood.ReadyGo.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -50,6 +50,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\RequiredAttribute.cs" />
     <Compile Include="Caches\ICacheService.cs" />
     <Compile Include="Caches\IUseCache.cs" />
     <Compile Include="Caches\Md5MemoryCacheService.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="Datas\Page.cs" />
     <Compile Include="Datas\Internals\QueryColumn.cs" />
     <Compile Include="Datas\Internals\Singleton.cs" />
+    <Compile Include="Poco\DefaultValue.cs" />
     <Compile Include="SqlBuilding\Expression\SQL.cs" />
     <Compile Include="Enums\SqlType.cs" />
     <Compile Include="Events\DataEventArgs.cs" />
