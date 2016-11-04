@@ -2036,13 +2036,13 @@
             <param name="args">SQL 参数</param>
             <returns></returns>
         </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelper.Insert``1(System.Collections.Generic.List{``0},System.Boolean)">
+        <member name="M:ToolGood.ReadyGo.SqlHelper.InsertList``1(System.Collections.Generic.List{``0},System.Boolean)">
             <summary>
             插入集合，支持主键(整数型)自动获取。
             </summary>
             <typeparam name="T"></typeparam>
             <param name="list"></param>
-            <param name="quick">为True时，不获取</param>
+            <param name="quick">为True时，不获取ID</param>
         </member>
         <member name="M:ToolGood.ReadyGo.SqlHelper.Insert``1(``0)">
             <summary>
@@ -2051,14 +2051,14 @@
             <param name="poco">对象</param>
             <returns></returns>
         </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelper.Update(System.Object)">
+        <member name="M:ToolGood.ReadyGo.SqlHelper.Update``1(``0)">
             <summary>
             更新
             </summary>
             <param name="poco">对象</param>
             <returns></returns>
         </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelper.Delete(System.Object)">
+        <member name="M:ToolGood.ReadyGo.SqlHelper.Delete``1(``0)">
             <summary>
             删除
             </summary>
