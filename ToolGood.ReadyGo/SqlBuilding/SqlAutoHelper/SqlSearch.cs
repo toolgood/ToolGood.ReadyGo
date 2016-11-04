@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace ToolGood.ReadyGo.SqlBuilding
 {
     public class SqlSearch
     {
+        private static Regex rxSelect = new Regex(@"\A\s*(SELECT|EXECUTE|CALL|EXEC|SHOW)\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        private static Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         public bool HasSelect { get; private set; }
         public bool HasFrom { get; private set; }
         public bool HasT1 { get; private set; }
@@ -14,14 +17,15 @@ namespace ToolGood.ReadyGo.SqlBuilding
         public static SqlSearch Search(string sql)
         {
             SqlSearch ss = new SqlSearch();
-            sql = sql.Trim();
-            if (sql.Length < 6) return ss;
+            if (sql.Length < 5) return ss;
 
-            if (sql.Substring(0, 6).TrimEnd().ToLower() == "select") {
+            if (rxSelect.IsMatch(sql)) {
                 ss.HasSelect = true;
                 return ss;
             }
-            if (sql.Substring(0, 5).TrimEnd().ToLower() == "from") {
+
+            //sql = sql.Trim();
+            if (rxFrom.IsMatch(sql)) {
                 ss.HasFrom = true;
             }
             bool isInText = false;

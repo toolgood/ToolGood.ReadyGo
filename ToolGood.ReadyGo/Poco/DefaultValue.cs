@@ -38,6 +38,7 @@ namespace ToolGood.ReadyGo.Poco
             List<PropertyInfo> datetimes = new List<PropertyInfo>();
             List<PropertyInfo> datetimeoffsets = new List<PropertyInfo>();
             List<PropertyInfo> strings = new List<PropertyInfo>();
+            List<PropertyInfo> ansiStrings = new List<PropertyInfo>();
             List<PropertyInfo> guids = new List<PropertyInfo>();
             foreach (var item in pd.Columns) {
                 if (item.ResultColumn) continue;
@@ -50,11 +51,13 @@ namespace ToolGood.ReadyGo.Poco
                     strings.Add(pi);
                 } else if (pi.PropertyType == typeof(Guid)) {
                     guids.Add(pi);
+                } else if (pi.PropertyType == typeof(AnsiString)) {
+                    ansiStrings.Add(pi);
                 }
             }
             #endregion
 
-            #region dateTimeType dateTimeOffsetType
+            #region dateTimeType dateTimeOffsetType AnsiString
             var dateTimeType = typeof(DateTime);
             //var getYear = dateTimeType.GetProperty("Year");
             var getNow = dateTimeType.GetProperty("Now", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
@@ -73,6 +76,9 @@ namespace ToolGood.ReadyGo.Poco
             var getEmpty = guidType.GetField("Empty", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
             var getNewGuid = guidType.GetMethod("NewGuid", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
             var getop_Equality3 = guidType.GetMethod("op_Equality", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
+
+
+            var asctor = typeof(AnsiString).GetConstructor(new Type[] { typeof(string) });
 
             #endregion
 
@@ -104,6 +110,38 @@ namespace ToolGood.ReadyGo.Poco
                 }
                 il.MarkLabel(lab1);
             }
+            #endregion
+
+            #region AnsiString
+            if (ansiStrings.Count>0) {
+                il.Emit(OpCodes.Ldarg_1);
+                var lab1 = il.DefineLabel();
+                if (ansiStrings.Count < 7) {
+                    il.Emit(OpCodes.Brfalse_S, lab1);
+                } else {
+                    il.Emit(OpCodes.Brfalse, lab1);
+                }
+
+                for (int i = 0; i < ansiStrings.Count; i++) {
+                    var item = ansiStrings[i];
+                    var lab = il.DefineLabel();
+
+                    il.Emit(OpCodes.Ldarg_0);
+                    il.Emit(OpCodes.Callvirt, item.GetGetMethod());
+                    il.Emit(OpCodes.Brtrue_S, lab);
+
+
+                    il.Emit(OpCodes.Ldarg_0);
+                    il.Emit(OpCodes.Ldstr, "");
+                    il.Emit(OpCodes.Newobj, asctor);
+                    il.Emit(OpCodes.Callvirt, item.GetSetMethod());
+                    il.MarkLabel(lab);
+                }
+                il.MarkLabel(lab1);
+
+            }
+
+
             #endregion
 
             #region date

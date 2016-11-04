@@ -753,7 +753,7 @@ namespace ToolGood.ReadyGo.Poco
         public object Insert(object poco, TableNameManger tableNameFixManger)
         {
             if (poco == null)
-                throw new ArgumentNullException("poco");
+                throw new ArgumentNullException("poco is null");
             var pd = PocoData.ForType(poco.GetType());
             var tableName = _provider.GetTableName(pd, tableNameFixManger);
 

@@ -48,7 +48,11 @@ namespace ToolGood.ReadyGo.SqlBuilding.TableCreate
             if (atts.Length > 0) {
                 ci.Required = (atts[0] as RequiredAttribute).Required;
             } else {
-                ci.Required = ColumnType.IsNullType(ci.PropertyType) == false;
+                if (pi.PropertyType == typeof(string) || pi.PropertyType==typeof(AnsiString)) {
+                    ci.Required = false;
+                } else {
+                    ci.Required = ColumnType.IsNullType(ci.PropertyType) == false;
+                }
             }
             ci.PropertyType = ColumnType.GetBaseType(ci.PropertyType);
 

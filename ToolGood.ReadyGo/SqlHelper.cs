@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
@@ -386,6 +387,7 @@ namespace ToolGood.ReadyGo
         /// <returns>返回受影响的行数</returns>
         public int Execute(string sql, params object[] args)
         {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             return Run<int>(sql, args, () => {
                 Database db;
                 if (_useTwoDatabase && sql.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase)) {
@@ -404,7 +406,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns>返回查询所返回的结果集中第一行的第一列。忽略额外的列或行</returns>
-        public T ExecuteScalar<T>(string sql, params object[] args)
+        public T ExecuteScalar<T>(string sql = "", params object[] args)
         {
             return Run<T>(sql, args, () => {
                 Database db;
@@ -425,6 +427,7 @@ namespace ToolGood.ReadyGo
         /// <returns>返回 DataTable</returns>
         public DataTable ExecuteDataTable(string sql, params object[] args)
         {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             return Run<DataTable>(sql, args, () => {
                 Database db;
                 if (_useTwoDatabase && sql.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase)) {
@@ -444,6 +447,7 @@ namespace ToolGood.ReadyGo
         /// <returns>返回 DataSet</returns>
         public DataSet ExecuteDataSet(string sql, params object[] args)
         {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             return Run<DataSet>(sql, args, () => {
                 Database db;
                 if (_useTwoDatabase && sql.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase)) {
@@ -490,7 +494,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public int Count<T>(string sql, params object[] args)
+        public int Count<T>(string sql = "", params object[] args)
         {
             var pd = PocoData.ForType(typeof(T));
             sql = SelectHelper.GetSelectCount<T>(_provider, sql, _tableNameManger);
@@ -674,12 +678,14 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>
-        /// <param name="quick">为True时，不获取</param>
-        public void Insert<T>(List<T> list, bool quick = false)
+        /// <param name="quick">为True时，不获取ID</param>
+        public void InsertList<T>(List<T> list, bool quick = true) where T : class
         {
-            if (_setDateTimeDefaultNow || _setStringDefaultNotNull|| _setGuidDefaultNew) {
+            if (list == null) throw new ArgumentNullException("list is null.");
+            if (list.Count == 0) return;
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
                 foreach (var item in list) {
-                    DefaultValue.SetDefaultValue<T>(item, _setStringDefaultNotNull, _setDateTimeDefaultNow,_setGuidDefaultNew);
+                    DefaultValue.SetDefaultValue<T>(item, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
                 }
             }
             if (Events.OnBeforeInsert(list)) return;
@@ -687,6 +693,7 @@ namespace ToolGood.ReadyGo
             db.Insert(list, _tableNameManger, quick);
             Events.OnAfterInsert(list);
         }
+        //private void insertList
 
 
         /// <summary>
@@ -694,9 +701,12 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="poco">对象</param>
         /// <returns></returns>
-        public object Insert<T>(T poco)
+        public object Insert<T>(T poco) where T : class
         {
-            if (_setDateTimeDefaultNow || _setStringDefaultNotNull|| _setGuidDefaultNew) {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            if (poco is IList) throw new ArgumentException("poco is a list type.");
+
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
                 DefaultValue.SetDefaultValue<T>(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
             }
             if (Events.OnBeforeInsert(poco)) return null;
@@ -711,8 +721,9 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="poco">对象</param>
         /// <returns></returns>
-        public int Update(object poco)
+        public int Update<T>(T poco) where T : class
         {
+            if (poco == null) throw new ArgumentNullException("poco is null");
             if (Events.OnBeforeUpdate(poco)) return -1;
 
             int r;
@@ -726,8 +737,9 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="poco">对象</param>
         /// <returns></returns>
-        public int Delete(object poco)
+        public int Delete<T>(T poco) where T : class
         {
+            if (poco == null) throw new ArgumentNullException("poco is null");
             if (Events.OnBeforeDelete(poco)) return -1;
 
             var db = getDatabase(ConnectionType.Write);
@@ -745,7 +757,7 @@ namespace ToolGood.ReadyGo
         /// <returns></returns>
         public int Delete<T>(string sql, params object[] args)
         {
-            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql");
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             if (sql.StartsWith("DELETE ", StringComparison.CurrentCultureIgnoreCase)) {
                 var wdb = getDatabase(ConnectionType.Write);
                 return wdb.Execute(sql, args);
@@ -775,6 +787,7 @@ namespace ToolGood.ReadyGo
         /// <param name="poco"></param>
         public void Save(object poco)
         {
+            if (poco == null) throw new ArgumentNullException("poco is null");
             var db = getDatabase(ConnectionType.Write);
             if (db.IsNew(poco)) {
                 Insert(poco);
@@ -791,7 +804,7 @@ namespace ToolGood.ReadyGo
         /// <returns></returns>
         public int Update<T>(string sql, params object[] args)
         {
-            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql");
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 
             if (sql.StartsWith("UPDATE ", StringComparison.CurrentCultureIgnoreCase)) {
                 var wdb = getDatabase(ConnectionType.Write);
@@ -828,6 +841,7 @@ namespace ToolGood.ReadyGo
         /// <returns></returns>
         public string GetTableName(Type type)
         {
+            if (type == null) throw new ArgumentNullException("type is null.");
             var pd = PocoData.ForType(type);
             return _provider.GetTableName(pd, _tableNameManger);
         }
