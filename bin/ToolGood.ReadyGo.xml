@@ -1883,11 +1883,6 @@
             
             </summary>
         </member>
-        <member name="M:ToolGood.ReadyGo.SqlHelper.Finalize">
-            <summary>
-            
-            </summary>
-        </member>
         <member name="M:ToolGood.ReadyGo.SqlHelper.UseTransaction">
             <summary>
             使用事务
