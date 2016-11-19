@@ -29,10 +29,7 @@ namespace ToolGood.ReadyGo.Poco
                 CloseSharedConnection();
             }
         }
-        ~Database()
-        {
-            Dispose();
-        }
+     
 
         #endregion IDisposable
 

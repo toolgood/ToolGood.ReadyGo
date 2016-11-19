@@ -152,9 +152,5 @@ namespace ToolGood.ReadyGo.Internals
             }
         }
 
-        ~TableNameManger()
-        {
-            Dispose();
-        }
     }
 }

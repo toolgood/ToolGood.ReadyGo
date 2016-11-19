@@ -15,6 +15,8 @@ namespace ToolGood.ReadyGo.WhereHelpers
         internal WhereHelper(SqlHelper helper)
         {
             this._sqlhelper = helper;
+            this._provider= DatabaseProvider.Resolve(_sqlhelper._sqlType);
+            this._paramPrefix = _provider.GetParameterPrefix(_sqlhelper._writeConnectionString);
             SqlExpression = SqlExpression.Resolve(_sqlhelper._sqlType);
         }
 

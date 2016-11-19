@@ -196,13 +196,6 @@ namespace ToolGood.ReadyGo
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        ~SqlHelper()
-        {
-            Dispose();
-        }
 
         #endregion 构造方法 释放方法
 

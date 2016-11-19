@@ -22,12 +22,8 @@ namespace ToolGood.ReadyGo.WhereHelpers
         internal DatabaseProvider _provider;
         protected internal string _paramPrefix;
 
-        ~HelperBase()
-        {
-            Dispose();
-        }
-
         #endregion 私有变量
+
 
         protected internal abstract List<Type> GetTypes();
 
@@ -145,30 +141,44 @@ namespace ToolGood.ReadyGo.WhereHelpers
                         isStart = true;
                         text = "@";
                         continue;
-                    } 
+                    }
                 } else if ("@1234567890".Contains(t)) {
                     text += t;
                     continue;
                 } else {
-                    if (text == "@@") {
-                        _where.Append(_paramPrefix);
-                        _where.Append(this._args.Count.ToString());
-                    } else if (text == "@@@") {
-                        _where.Append("@@");
-                    } else if (text.StartsWith("@@")) {
-                        int p = this._args.Count + int.Parse(text.Replace("@", ""));
-                        _where.Append(_paramPrefix);
-                        _where.Append(p.ToString());
-                    }
+                    whereTranslate(_where, text);
                     isStart = false;
                 }
                 _where.Append(t);
             }
+            if (isStart) whereTranslate(_where, text);
+
 
             foreach (var item in args) {
                 _args.Add(item);
             }
         }
+        private void whereTranslate(StringBuilder where, string text)
+        {
+            if (text == "@@") {
+                where.Append(_paramPrefix);
+                where.Append(this._args.Count.ToString());
+            } else if (text == "@@@") {
+                where.Append("@@");
+            } else if (text.StartsWith("@@")) {
+                int p = this._args.Count + int.Parse(text.Replace("@", ""));
+                where.Append(_paramPrefix);
+                where.Append(p.ToString());
+            } else if (text.Length==1) {
+                where.Append(text);
+            } else {
+                int p = int.Parse(text.Replace("@", ""));
+                where.Append(_paramPrefix);
+                where.Append(p.ToString());
+            }
+        }
+
+
 
         protected internal void where(LambdaExpression where)
         {
