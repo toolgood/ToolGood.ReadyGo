@@ -385,6 +385,9 @@ namespace ToolGood.ReadyGo.Poco
                     return delegate (object src) { return EnumMapper.EnumFromString(dstType, (string)src); };
                 } else if (dstType == typeof(Guid) && srcType == typeof(string)) {
                     return delegate (object src) { return Guid.Parse((string)src); };
+                } else if (dstType == typeof(DateTimeOffset) && srcType == typeof(DateTime)) { //新增
+                    return delegate (object src) {
+                        return new DateTimeOffset(DateTime.SpecifyKind((DateTime)src, DateTimeKind.Local));};
                 } else {
                     return delegate (object src) { return Convert.ChangeType(src, dstType, null); };
                 }

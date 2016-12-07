@@ -29,7 +29,7 @@ namespace ToolGood.ReadyGo.Poco
                 CloseSharedConnection();
             }
         }
-     
+
 
         #endregion IDisposable
 
@@ -209,6 +209,8 @@ namespace ToolGood.ReadyGo.Poco
             {
                 p.GetType().GetProperty("UdtTypeName").SetValue(p, "geometry", null); //geography is the equivalent SQL Server Type
                 p.Value = value;
+            } else if (t == typeof(DateTimeOffset)) {
+                p.Value = ((DateTimeOffset)value).LocalDateTime;
             } else {
                 p.Value = value;
             }
@@ -1001,7 +1003,7 @@ namespace ToolGood.ReadyGo.Poco
                                 sb.AppendFormat("{0} = {1}{2}", _provider.EscapeSqlIdentifier(i.ColumnName), _paramPrefix, index++);
 
                                 // Store the parameter in the command
-                                AddParam(cmd, i.GetValue(poco), i.PropertyInfo);
+                                // AddParam(cmd, i.GetValue(poco), i.PropertyInfo);
                             }
 
                             return string.Format("UPDATE {0} SET {1} WHERE {2} = {3}{4}",
