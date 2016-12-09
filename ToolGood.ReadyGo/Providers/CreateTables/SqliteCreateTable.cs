@@ -43,7 +43,7 @@ namespace ToolGood.ReadyGo.Providers.CreateTables
             if (type == typeof(TimeSpan)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
             if (type == typeof(DateTimeOffset)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
 
-            if (type == typeof(Guid)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(Guid)) return CreateField(ti, ci, "Text", "40", isRequired);
 
             throw new Exception("");
         }

@@ -697,7 +697,7 @@ namespace ToolGood.ReadyGo
         public object Insert<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            if (poco is IList) throw new ArgumentException("poco is a list type.");
+            if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
 
             if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
                 DefaultValue.SetDefaultValue<T>(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
