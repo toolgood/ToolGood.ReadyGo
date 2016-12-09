@@ -65,7 +65,6 @@
     <Compile Include="Attributes\ResultColumnAttribute.cs" />
     <Compile Include="Attributes\TableAttribute.cs" />
     <Compile Include="Attributes\UniqueAttribute.cs" />
-    <Compile Include="IdWorker.cs" />
     <Compile Include="Monitor\NullSqlMonitor.cs" />
     <Compile Include="Monitor\SqlMonitor.cs" />
     <Compile Include="Datas\AnsiString.cs" />
