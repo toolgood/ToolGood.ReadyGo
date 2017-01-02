@@ -67,6 +67,7 @@
     <Compile Include="Attributes\UniqueAttribute.cs" />
     <Compile Include="IdWorker.cs" />
     <Compile Include="Monitor\NullSqlMonitor.cs" />
+    <Compile Include="Monitor\OutTextSqlMonitor.cs" />
     <Compile Include="Monitor\SqlMonitor.cs" />
     <Compile Include="Datas\AnsiString.cs" />
     <Compile Include="Datas\Internals\Cache.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Datas\Page.cs" />
     <Compile Include="Datas\Internals\QueryColumn.cs" />
     <Compile Include="Datas\Internals\Singleton.cs" />
+    <Compile Include="Monitor\SqlMonitorType.cs" />
     <Compile Include="Poco\DefaultValue.cs" />
     <Compile Include="SqlBuilding\Expression\SQL.cs" />
     <Compile Include="Enums\SqlType.cs" />
