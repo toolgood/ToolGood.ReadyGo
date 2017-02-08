@@ -39,7 +39,8 @@ namespace ToolGood.ReadyGo.Providers
 
         public override string GetInsertOutputClause(string primaryKeyName)
         {
-            return String.Format(" OUTPUT INSERTED.[{0}]", primaryKeyName);
+            return String.Format(" OUTPUT INSERTED.[{0}] ", primaryKeyName);
+            //return String.Format(" OUTPUT INSERTED.[{0}] INTO [{0}]", primaryKeyName);
         }
     }
 }

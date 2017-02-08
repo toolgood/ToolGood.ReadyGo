@@ -182,6 +182,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
 
         protected internal void where(LambdaExpression where)
         {
+            if (jump()) return;
             string sql;
             SqlExpression.Analysis(where, out sql);
             if (_where.Length > 0) {
@@ -221,11 +222,20 @@ namespace ToolGood.ReadyGo.WhereHelpers
                 table = col.Substring(0, index);
                 col = col.Substring(index + 1);
             }
-            _headers.Insert(0, new SelectHeader() {
-                AsName = asName,
-                Table = table,
-                QuerySql = col
-            });
+            if (asName==null) {
+                _headers.Insert(0, new SelectHeader() {
+                    AsName = col,
+                    Table = table,
+                    QuerySql = col
+                });
+            } else {
+                _headers.Insert(0, new SelectHeader() {
+                    AsName = asName,
+                    Table = table,
+                    QuerySql = col
+                });
+            }
+ 
         }
 
         #endregion SQL拼接方法
