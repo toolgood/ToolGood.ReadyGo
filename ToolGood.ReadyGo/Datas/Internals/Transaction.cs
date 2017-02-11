@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo.Internals
             if (_db != null) {
                 IsAbort = false;
                 _db.CompleteTransaction();
-                //_db = null;
+                _db = null;
             }
         }
 
@@ -38,7 +38,7 @@ namespace ToolGood.ReadyGo.Internals
             if (_db != null) {
                 IsAbort = true;
                 _db.AbortTransaction();
-                //_db = null;
+                _db = null;
             }
         }
 

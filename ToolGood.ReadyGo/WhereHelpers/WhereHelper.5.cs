@@ -18,7 +18,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
     /// <typeparam name="T3"></typeparam>
     /// <typeparam name="T4"></typeparam>
     /// <typeparam name="T5"></typeparam>
-    public partial class WhereHelper<T1, T2, T3, T4, T5> : WhereHelperBase
+    public partial class WhereHelper<T1, T2, T3, T4, T5> : WhereHelperBase, IDeepCloneable<WhereHelper<T1, T2, T3, T4, T5>>
         where T1 : class, new()
         where T2 : class, new()
         where T3 : class, new()
@@ -270,6 +270,52 @@ namespace ToolGood.ReadyGo.WhereHelpers
 
         #endregion Select Page SkipTake Single SingleOrDefault First FirstOrDefault
 
+        #region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        public List<T> Select<T>(Expression<Func<T1, T2, T3, T4, T5, T>> columns)
+        {
+            string sql;
+            SqlExpression.GetColumns(columns, out sql);
+            return _sqlhelper.Select<T>(GetFullSelectSql(sql), _args);
+        }
+        public T Single<T>(Expression<Func<T1, T2, T3, T4, T5, T>> columns)
+        {
+            string sql;
+            SqlExpression.GetColumns(columns, out sql);
+            return _sqlhelper.Single<T>(GetFullSelectSql(sql), _args);
+        }
+        public T SingleOrDefault<T>(Expression<Func<T1, T2, T3, T4, T5, T>> columns)
+        {
+            string sql;
+            SqlExpression.GetColumns(columns, out sql);
+            return _sqlhelper.SingleOrDefault<T>(GetFullSelectSql(sql), _args);
+        }
+        public T First<T>(Expression<Func<T1, T2, T3, T4, T5, T>> columns)
+        {
+            string sql;
+            SqlExpression.GetColumns(columns, out sql);
+            return _sqlhelper.First<T>(GetFullSelectSql(sql), _args);
+        }
+        public T FirstOrDefault<T>(Expression<Func<T1, T2, T3, T4, T5, T>> columns)
+        {
+            string sql;
+            SqlExpression.GetColumns(columns, out sql);
+            return _sqlhelper.FirstOrDefault<T>(GetFullSelectSql(sql), _args);
+        }
+        public List<T> SkipTake<T>(long skip, long take, Expression<Func<T1, T2, T3, T4, T5, T>> columns)
+        {
+            string sql;
+            SqlExpression.GetColumns(columns, out sql);
+            return _sqlhelper.SkipTake<T>(skip, take, GetFullSelectSql(sql), _args);
+        }
+        public Page<T> Page<T>(long page, long itemsPerPage, Expression<Func<T1, T2, T3, T4, T5, T>> columns)
+        {
+            string sql;
+            SqlExpression.GetColumns(columns, out sql);
+            return _sqlhelper.Page<T>(page, itemsPerPage, GetFullSelectSql(sql), _args);
+        }
+
+        #endregion
+
         #region On
         /// <summary>
         /// 
@@ -333,7 +379,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
         {
             UpdateHelper<T1> where = new UpdateHelper<T1>(_sqlhelper);
             where._where = this._where;
-            where._joinOnString =this.GetFromAndJoinOn();
+            where._joinOnString = this.GetFromAndJoinOn();
             where._args.AddRange(this._args);
             where._doNext = this._doNext;
             where.SetValue(action);
@@ -389,6 +435,24 @@ namespace ToolGood.ReadyGo.WhereHelpers
             sb.Append(" ");
             sb.Append(_joinOnString);
             return sb.ToString();
+        }
+        /// <summary>
+        /// 深度复制
+        /// </summary>
+        /// <returns></returns>
+        public WhereHelper<T1, T2, T3, T4, T5> DeepClone()
+        {
+            WhereHelper<T1, T2, T3, T4, T5> newWhere = new WhereHelper<T1, T2, T3, T4, T5>(this._sqlhelper);
+            newWhere._args.AddRange(this._args);
+            newWhere._doNext = this._doNext;
+            newWhere._groupby = this._groupby;
+            newWhere._having = this._having;
+            newWhere._headers.AddRange(this._headers);
+            newWhere._joinOnString = this._joinOnString;
+            newWhere._order = this._order;
+            newWhere._where = this._where;
+
+            return newWhere;
         }
     }
 }

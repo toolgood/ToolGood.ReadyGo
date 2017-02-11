@@ -201,6 +201,27 @@ namespace ToolGood.ReadyGo.SqlBuilding
 
         #region Analysis getColumnName
 
+        public void GetColumns(LambdaExpression exp, out string sql)
+        {
+            Dictionary<ParameterExpression, string> paramDicts = new Dictionary<ParameterExpression, string>();
+            for (int i = 0; i < exp.Parameters.Count; i++) {
+                var item = exp.Parameters[i];
+                paramDicts[item] = "t" + (i + 1).ToString();
+            }
+
+            if (exp.Body.NodeType == ExpressionType.New) {
+                sql = Visit(exp, paramDicts).ToString();
+            } else if (exp.Body.NodeType == ExpressionType.MemberAccess) {
+                sql = getColumnName(paramDicts, exp.Body as MemberExpression);
+
+            } else if (exp.Body.NodeType != ExpressionType.Call) {
+                sql = getColumnName(paramDicts, (exp.Body as UnaryExpression).Operand.Reduce() as MemberExpression);
+
+            }else {
+                var call = exp.Body as MethodCallExpression;
+                sql= VisitSqlMethodCall(paramDicts, call);
+            }
+        }
 
         public void Analysis(LambdaExpression exp, out string sql)
         {
@@ -456,28 +477,14 @@ namespace ToolGood.ReadyGo.SqlBuilding
             } catch (System.InvalidOperationException) {
                 List<PartialSqlString> exprs = VisitExpressionList(nex.Arguments, paramDicts).OfType<PartialSqlString>().ToList();
                 StringBuilder r = new StringBuilder();
-                //for (int i = 0; i < exprs.Count; i++) {
-
-
-                //if (exprs[i] is MemberAccessString) {
-                //    selectMembers.Add(new SelectMember() {
-                //        EntityType = ((MemberAccessString)exprs[i]).Type,
-                //        PocoColumn = ((MemberAccessString)exprs[i]).PocoColumn,
-                //        PocoColumns = ((MemberAccessString)exprs[i]).PocoColumns,
-                //    });
-                //}
-                //}
+                for (int i = 0; i < exprs.Count; i++) {
+                    if (i != 0) r.Append(", ");
+                    r.Append(exprs[i]);
+                    r.Append(" AS ");
+                    r.Append(nex.Members[i].Name);
+                }
                 return r.ToString();
             }
-
-            //// TODO : check !
-            //var member = Expression.Convert(nex, typeof(object));
-            //var lambda = Expression.Lambda<Func<object>>(member);
-            //try {
-            //    return lambda.Compile();
-            //} catch (InvalidOperationException) { // FieldName ?
-            //    return string.Join(",", VisitExpressionList(nex.Arguments,  paramDicts));
-            //}
         }
 
         protected object VisitParameter(ParameterExpression p, Dictionary<ParameterExpression, string> paramDicts)

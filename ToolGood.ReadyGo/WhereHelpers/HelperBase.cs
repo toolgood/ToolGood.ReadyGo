@@ -10,6 +10,12 @@ using ToolGood.ReadyGo.SqlBuilding;
 
 namespace ToolGood.ReadyGo.WhereHelpers
 {
+    public interface IDeepCloneable<T>
+    {
+        T DeepClone();
+    }
+
+
     public abstract class HelperBase : IDisposable
     {
         #region 私有变量
@@ -282,7 +288,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
             return sb.ToString();
         }
 
-        internal string GetWhereSql()
+        public string GetWhereSql()
         {
             StringBuilder sb = new StringBuilder();
             if (_where.Length > 0) {
