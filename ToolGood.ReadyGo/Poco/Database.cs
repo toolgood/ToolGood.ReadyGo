@@ -293,6 +293,12 @@ namespace ToolGood.ReadyGo.Poco
 
                 _sharedConnection = OnConnectionOpened(_sharedConnection);
                 _sharedConnectionDepth++;
+            } else {
+                if (_sharedConnection.State == ConnectionState.Broken)
+                    _sharedConnection.Close();
+
+                if (_sharedConnection.State == ConnectionState.Closed)
+                    _sharedConnection.Open();
             }
             _sharedConnectionDepth++;
         }
