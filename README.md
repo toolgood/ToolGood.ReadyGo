@@ -457,5 +457,11 @@ ToolGood.ReadyGo
 
 ToolGood.ReadyGo 动态语言
 
+###下个版本优化内容
+
+去掉读写分离
+
+优化SQL语句，Single，First之类的，如page方法
+
 
 ----------------------------
