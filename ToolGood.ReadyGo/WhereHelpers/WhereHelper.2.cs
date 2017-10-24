@@ -25,7 +25,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
         {
             this._sqlhelper = helper;
             this._provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
-            this._paramPrefix = _provider.GetParameterPrefix(_sqlhelper._writeConnectionString);
+            this._paramPrefix = _provider.GetParameterPrefix(_sqlhelper._connectionString);
             SqlExpression = SqlExpression.Resolve(_sqlhelper._sqlType);
         }
 
@@ -191,7 +191,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
             var args = _args.ToArray();
             return _sqlhelper.Run(sql, args, () => {
                 TableRow<T1, T2> row = new TableRow<T1, T2>();
-                var db = _sqlhelper.getDatabase(ConnectionType.Read);
+                var db = _sqlhelper.getDatabase();
                 return (db.Query(row, sql, args)).ToList();
             }, "Select");
         }
@@ -202,7 +202,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
             var sql = GetFullSelectSql(selectSql);
             var args = _args.ToArray();
             return _sqlhelper.Run(sql, args, () => {
-                var db = _sqlhelper.getDatabase(ConnectionType.Read);
+                var db = _sqlhelper.getDatabase();
                 return db.Page<T1, T2>(page, itemsPerPage, sql, args);
             }, "Page");
         }
@@ -214,7 +214,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
             var args = _args.ToArray();
             return _sqlhelper.Run(sql, args, () => {
                 TableRow<T1, T2> row = new TableRow<T1, T2>();
-                var db = _sqlhelper.getDatabase(ConnectionType.Read);
+                var db = _sqlhelper.getDatabase();
                 return db.SkipTake<T1, T2>(skip, take, sql, args);
             }, "SkipTake");
         }
@@ -226,7 +226,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
             var args = _args.ToArray();
             return _sqlhelper.Run(sql, args, () => {
                 TableRow<T1, T2> row = new TableRow<T1, T2>();
-                var db = _sqlhelper.getDatabase(ConnectionType.Read);
+                var db = _sqlhelper.getDatabase();
                 return (db.Query(row, sql, args)).Single();
             }, "Single");
         }
@@ -238,7 +238,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
             var args = _args.ToArray();
             return _sqlhelper.Run(sql, args, () => {
                 TableRow<T1, T2> row = new TableRow<T1, T2>();
-                var db = _sqlhelper.getDatabase(ConnectionType.Read);
+                var db = _sqlhelper.getDatabase();
                 return (db.Query(row, sql, args)).SingleOrDefault();
             }, "SingleOrDefault");
         }
@@ -250,7 +250,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
             var args = _args.ToArray();
             return _sqlhelper.Run(sql, args, () => {
                 TableRow<T1, T2> row = new TableRow<T1, T2>();
-                var db = _sqlhelper.getDatabase(ConnectionType.Read);
+                var db = _sqlhelper.getDatabase();
                 return (db.Query(row, sql, args)).First();
             }, "First");
         }
@@ -262,7 +262,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
             var args = _args.ToArray();
             return _sqlhelper.Run(sql, args, () => {
                 TableRow<T1, T2> row = new TableRow<T1, T2>();
-                var db = _sqlhelper.getDatabase(ConnectionType.Read);
+                var db = _sqlhelper.getDatabase();
                 return (db.Query(row, sql, args)).FirstOrDefault();
             }, "FirstOrDefault");
         }

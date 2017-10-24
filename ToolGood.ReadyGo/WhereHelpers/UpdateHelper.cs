@@ -57,7 +57,7 @@ namespace ToolGood.ReadyGo.WhereHelpers
                 //if (pd.TableInfo.PrimaryKey == item.Key) continue;
                 if (sb.Length > 0) sb.Append(", ");
                 sb.AppendFormat("t1.{0} = {1}{2}", dp.EscapeSqlIdentifier(item.Key),
-                       dp.GetParameterPrefix(_sqlhelper._writeConnectionString),
+                       dp.GetParameterPrefix(_sqlhelper._connectionString),
                        _args.Count);
                 _args.Add(item.Value);
             }

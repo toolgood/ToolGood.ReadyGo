@@ -33,19 +33,6 @@ namespace ToolGood.ReadyGo
             return OpenDatabase(c.ConnectionString, c.ProviderName, type);
         }
 
-        /// <summary>
-        /// 根据config配置名打开数据据库
-        /// </summary>
-        /// <param name="wirteName">配置名</param>
-        /// <param name="readName">配置名</param>
-        /// <param name="type">SqlType类型</param>
-        /// <returns></returns>
-        public static SqlHelper OpenFormConnStr(string wirteName, string readName, SqlType type = SqlType.None)
-        {
-            var w = ConfigurationManager.ConnectionStrings[wirteName];
-            var r = ConfigurationManager.ConnectionStrings[wirteName];
-            return new SqlHelper(w.ConnectionString, r.ConnectionString, r.ProviderName, type);
-        }
 
         /// <summary>
         /// 打开Sql Server本地数据库

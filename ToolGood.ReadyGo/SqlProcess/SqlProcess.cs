@@ -129,7 +129,7 @@ namespace ToolGood.ReadyGo
             setCache();
             var args = _parameters.Select(q =>q.Value.Value).ToArray();
             var run = _sqlhelper.Run(ProcessName, args, () => {
-                var db = _sqlhelper.getDatabase(ConnectionType.Write);
+                var db = _sqlhelper.getDatabase();
                 db.commandType = CommandType.StoredProcedure;
                 var dt = db.Execute(ProcessName, _parameters.Select(q => q.Value).ToList());
                 var objs = _Outs.Select(q => q.Value).ToArray();
@@ -151,7 +151,7 @@ namespace ToolGood.ReadyGo
             var args = _parameters.Select(q => q.Value.Value).ToArray();
 
             var run = _sqlhelper.Run(ProcessName, args, () => {
-                var db = _sqlhelper.getDatabase(ConnectionType.Default);
+                var db = _sqlhelper.getDatabase();
                 db.commandType = CommandType.StoredProcedure;
                 var dt = db.ExecuteScalar<T>(ProcessName, _parameters.Select(q => q.Value).ToList());
                 var objs = _Outs.Select(q => q.Value).ToArray();
@@ -172,7 +172,7 @@ namespace ToolGood.ReadyGo
             var args = _parameters.Select(q => q.Value.Value).ToArray();
 
             var run = _sqlhelper.Run(ProcessName, args, () => {
-                var db = _sqlhelper.getDatabase(ConnectionType.Write);
+                var db = _sqlhelper.getDatabase();
                 db.commandType = CommandType.StoredProcedure;
                 var dt = db.GetDataTable(ProcessName, _parameters.Select(q => q.Value).ToList());
                 var objs = _Outs.Select(q => q.Value).ToArray();
@@ -193,7 +193,7 @@ namespace ToolGood.ReadyGo
             var args = _parameters.Select(q => q.Value.Value).ToArray();
 
             var run = _sqlhelper.Run(ProcessName, args, () => {
-                var db = _sqlhelper.getDatabase(ConnectionType.Write);
+                var db = _sqlhelper.getDatabase();
                 db.commandType = CommandType.StoredProcedure;
                 var dt = db.ExecuteDataSet(ProcessName, _parameters.Select(q => q.Value).ToList());
                 var objs = _Outs.Select(q => q.Value).ToArray();
@@ -214,7 +214,7 @@ namespace ToolGood.ReadyGo
             setCache();
             var args = _parameters.Select(q => q.Value.Value).ToArray();
             var run = _sqlhelper.Run(ProcessName, args, () => {
-                var db = _sqlhelper.getDatabase(ConnectionType.Write);
+                var db = _sqlhelper.getDatabase();
                 db.commandType = CommandType.StoredProcedure;
                 var dt = db.Query<T>(ProcessName, _parameters.Select(q => q.Value).ToList()).ToList();
                 var objs = _Outs.Select(q => q.Value).ToArray();
@@ -236,7 +236,7 @@ namespace ToolGood.ReadyGo
             var args = _parameters.Select(q => q.Value.Value).ToArray();
 
             var run = _sqlhelper.Run(ProcessName, args, () => {
-                var db = _sqlhelper.getDatabase(ConnectionType.Write);
+                var db = _sqlhelper.getDatabase();
                 db.commandType = CommandType.StoredProcedure;
                 var dt = db.Query<T>(ProcessName, _parameters.Select(q => q.Value).ToList()).Single();
                 var objs = _Outs.Select(q => q.Value).ToArray();
@@ -258,7 +258,7 @@ namespace ToolGood.ReadyGo
             var args = _parameters.Select(q => q.Value.Value).ToArray();
 
             var run = _sqlhelper.Run(ProcessName, args, () => {
-                var db = _sqlhelper.getDatabase(ConnectionType.Write);
+                var db = _sqlhelper.getDatabase();
                 db.commandType = CommandType.StoredProcedure;
                 var dt = db.Query<T>(ProcessName, _parameters.Select(q => q.Value).ToList()).SingleOrDefault();
                 var objs = _Outs.Select(q => q.Value).ToArray();
@@ -280,7 +280,7 @@ namespace ToolGood.ReadyGo
             var args = _parameters.Select(q => q.Value.Value).ToArray();
 
             var run = _sqlhelper.Run(ProcessName, args, () => {
-                var db = _sqlhelper.getDatabase(ConnectionType.Write);
+                var db = _sqlhelper.getDatabase();
                 db.commandType = CommandType.StoredProcedure;
                 var dt = db.Query<T>(ProcessName, _parameters.Select(q => q.Value).ToList()).First();
                 var objs = _Outs.Select(q => q.Value).ToArray();
@@ -302,7 +302,7 @@ namespace ToolGood.ReadyGo
             var args = _parameters.Select(q => q.Value.Value).ToArray();
 
             var run = _sqlhelper.Run(ProcessName, args, () => {
-                var db = _sqlhelper.getDatabase(ConnectionType.Write);
+                var db = _sqlhelper.getDatabase();
                 db.commandType = CommandType.StoredProcedure;
 
                 var dt = db.Query<T>(ProcessName, _parameters.Select(q => q.Value).ToList()).FirstOrDefault();

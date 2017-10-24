@@ -16,11 +16,10 @@ namespace ToolGood.ReadyGo.Monitor
             cur.Parent = root;
         }
 
-        public void ConnectionOpened(ConnectionType type)
+        public void ConnectionOpened()
         {
             SqlMonitorItem item = new SqlMonitorItem();
             item.Layer = cur.Layer + 1;
-            item.Type = type;
             item.Parent = cur;
             item.StartTime = DateTime.Now;
             item.Sql += "开始连接...";
@@ -28,11 +27,10 @@ namespace ToolGood.ReadyGo.Monitor
             cur = item;
         }
 
-        public void ConnectionClosing(ConnectionType type)
+        public void ConnectionClosing()
         {
             SqlMonitorItem item = new SqlMonitorItem();
             item.Layer = cur.Layer + 1;
-            item.Type = type;
             item.Parent = cur;
             item.StartTime = DateTime.Now;
             item.EndTime = DateTime.Now;
@@ -43,11 +41,10 @@ namespace ToolGood.ReadyGo.Monitor
             cur = cur.Parent;
         }
 
-        public void Transactioning(ConnectionType type)
+        public void Transactioning( )
         {
             SqlMonitorItem item = new SqlMonitorItem();
             item.Layer = cur.Layer + 1;
-            item.Type = type;
             item.Parent = cur;
             item.StartTime = DateTime.Now;
             item.Sql += "开始事务...";
@@ -55,11 +52,10 @@ namespace ToolGood.ReadyGo.Monitor
             cur = item;
         }
 
-        public void Transactioned(ConnectionType type)
+        public void Transactioned( )
         {
             SqlMonitorItem item = new SqlMonitorItem();
             item.Layer = cur.Layer + 1;
-            item.Type = type;
             item.Parent = cur;
             item.StartTime = DateTime.Now;
             item.EndTime = DateTime.Now;
@@ -70,11 +66,10 @@ namespace ToolGood.ReadyGo.Monitor
             cur = cur.Parent;
         }
 
-        public void ExecutingCommand(ConnectionType type, string sql, object[] args)
+        public void ExecutingCommand(  string sql, object[] args)
         {
             SqlMonitorItem item = new SqlMonitorItem();
             item.Layer = cur.Layer + 1;
-            item.Type = type;
             item.Parent = cur;
             item.StartTime = DateTime.Now;
             item.Sql = sql;
@@ -83,13 +78,13 @@ namespace ToolGood.ReadyGo.Monitor
             cur = item;
         }
 
-        public void ExecutedCommand(ConnectionType type, string sql, object[] args)
+        public void ExecutedCommand(  string sql, object[] args)
         {
             cur.EndTime = DateTime.Now;
             cur = cur.Parent;
         }
 
-        public void Exception(ConnectionType type, string message)
+        public void Exception( string message)
         {
             cur.EndTime = DateTime.Now;
             cur.Exception = message;
@@ -120,7 +115,6 @@ namespace ToolGood.ReadyGo.Monitor
         private class SqlMonitorItem
         {
             public SqlMonitorItem Parent;
-            public ConnectionType Type;
             public int Layer;
             public string Sql;
             public string Exception;
@@ -131,13 +125,6 @@ namespace ToolGood.ReadyGo.Monitor
             {
                 sb.Append(new string(' ', Layer * 2));
 
-                if (Type == ConnectionType.Default) {
-                    sb.Append("[默]");
-                } else if (Type == ConnectionType.Write) {
-                    sb.Append("[写]");
-                } else {
-                    sb.Append("[读]");
-                }
                 sb.AppendFormat("{0}[{1}ms]：", StartTime.ToString("HH:mm:ss"), (int)(EndTime - StartTime).TotalMilliseconds);
                 sb.Append(Sql);
                 if (string.IsNullOrEmpty(Exception) == false) {

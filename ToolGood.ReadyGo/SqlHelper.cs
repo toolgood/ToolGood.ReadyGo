@@ -26,18 +26,13 @@ namespace ToolGood.ReadyGo
 
 
         // 读写数据库
-        internal bool _useTwoDatabase;
-        internal string _writeConnectionString;
-        internal string _readConnectionString;
+        internal string _connectionString;
         internal DbProviderFactory _factory;
-        internal Database _writeDatabase;
-        internal Database _readDatabase;
+        internal Database _database;
 
         // 缓存设置
         internal ICacheService _cacheService;
-        internal bool _usedCacheService;
         internal bool _usedCacheServiceOnce;
-        internal int _cacheTime;
         internal int _cacheTimeOnce;
         internal string _cacheTag;
 
@@ -50,7 +45,6 @@ namespace ToolGood.ReadyGo
         internal TableNameManger _tableNameManger;
         internal SqlConfig _sqlConfig;
         internal SqlType _sqlType;
-        internal ConnectionType _connectionType;
         internal SqlRecord _sql;
         internal ISqlMonitor _sqlMonitor;
         private DatabaseProvider _provider;
@@ -87,11 +81,10 @@ namespace ToolGood.ReadyGo
         {
             _sqlType = type;
 
-            _useTwoDatabase = false;
             var entry = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (entry == null)
                 throw new InvalidOperationException(string.Format("Can't find a connection string with the name '{0}'", connectionStringName));
-            _writeConnectionString = entry.ConnectionString;
+            _connectionString = entry.ConnectionString;
             initSqlHelper(entry.ProviderName);
         }
 
@@ -104,8 +97,7 @@ namespace ToolGood.ReadyGo
         {
             _sqlType = type;
 
-            _useTwoDatabase = false;
-            _writeConnectionString = connectionString;
+            _connectionString = connectionString;
             initSqlHelper(providerName);
         }
         /// <summary>
@@ -117,43 +109,11 @@ namespace ToolGood.ReadyGo
         {
             _sqlType = type;
 
-            _useTwoDatabase = false;
-            _writeConnectionString = connectionString;
+            _connectionString = connectionString;
             initSqlHelper(null);
         }
 
-        /// <summary>
-        /// SqlHelper 构造方法
-        /// </summary>
-        /// <param name="writeConnectionString">数据库链接字符串（写）</param>
-        /// <param name="readConnectionString">数据库链接字符串（读）</param>
-        /// <param name="providerName">provider名</param>
-        public SqlHelper(string writeConnectionString, string readConnectionString, string providerName, SqlType type = SqlType.None)
-        {
-            _sqlType = type;
 
-            _useTwoDatabase = true;
-            _writeConnectionString = writeConnectionString;
-            _readConnectionString = readConnectionString;
-            initSqlHelper(providerName);
-        }
-
-        /// <summary>
-        /// SqlHelper 构造方法
-        /// </summary>
-        /// <param name="writeConnectionString">数据库链接字符串（写）</param>
-        /// <param name="readConnectionString">数据库链接字符串（读）</param>
-        /// <param name="factory">provider工厂</param>
-        public SqlHelper(string writeConnectionString, string readConnectionString, DbProviderFactory factory, SqlType type = SqlType.None)
-        {
-            _sqlType = type;
-
-            _useTwoDatabase = true;
-            _writeConnectionString = writeConnectionString;
-            _readConnectionString = readConnectionString;
-            _factory = factory;
-            initSqlHelper(null);
-        }
 
         private void initSqlHelper(string _providerName)
         {
@@ -166,16 +126,14 @@ namespace ToolGood.ReadyGo
             _sql.SqlMonitor = _sqlMonitor;
 
 
-            _connectionType = ConnectionType.Default;
-
             if (_providerName != null) {
                 if (_sqlType == SqlType.None) {
-                    _sqlType = SqlConfig.GetSqlType(_providerName, _writeConnectionString);
+                    _sqlType = SqlConfig.GetSqlType(_providerName, _connectionString);
                 }
                 var _provider = DatabaseProvider.Resolve(_sqlType);
                 _factory = _provider.GetFactory();
             } else if (_sqlType == SqlType.None) {
-                _sqlType = SqlConfig.GetSqlType(_factory.GetType().FullName, _writeConnectionString);
+                _sqlType = SqlConfig.GetSqlType(_factory.GetType().FullName, _connectionString);
             }
             _provider = DatabaseProvider.Resolve(_sqlType);
         }
@@ -185,11 +143,8 @@ namespace ToolGood.ReadyGo
         /// </summary>
         public void Dispose()
         {
-            if (_readDatabase != null) {
-                _readDatabase.Dispose();
-            }
-            if (_writeDatabase != null) {
-                _writeDatabase.Dispose();
+            if (_database != null) {
+                _database.Dispose();
             }
             if (_tableNameManger != null) {
                 _tableNameManger.Dispose();
@@ -201,22 +156,13 @@ namespace ToolGood.ReadyGo
 
         #region 私有方法
 
-        internal Database getDatabase(ConnectionType type)
+        internal Database getDatabase()
         {
-            Database db;
-            if (_useTwoDatabase == false) {
-                db = getWriteDatabase();
-            } else if (_connectionType == ConnectionType.Default) {
-                if (type == ConnectionType.Read) {
-                    db = getWriteDatabase();
-                } else {
-                    db = getReadDatabase();
-                }
-            } else if (_connectionType == ConnectionType.Read && type == ConnectionType.Read) {
-                db = getReadDatabase();
-            } else {
-                db = getWriteDatabase();
+            if (_database == null) {
+                _database = new Database(_connectionString, _factory, _sqlType);
+                initDatabase(_database);
             }
+            Database db = _database;
 
             db.CommandTimeout = _commandTimeout;
             db.OneTimeCommandTimeout = _oneTimeCommandTimeout;
@@ -234,52 +180,29 @@ namespace ToolGood.ReadyGo
                 _sql.LastCacheTime = _cacheTimeOnce;
                 _sql.LastUsedCacheService = _usedCacheServiceOnce;
                 _sql.LastCacheTag = _cacheTag;
-            } else {
-                _sql.LastCacheTime = _cacheTime;
-                _sql.LastUsedCacheService = _usedCacheService;
-                _sql.LastCacheTag = null;
             }
-
             _oneTimeCommandTimeout = 0;
             return db;
-        }
-
-        private Database getWriteDatabase()
-        {
-            if (_writeDatabase == null) {
-                _writeDatabase = new Database(_writeConnectionString, _factory, _sqlType);
-                initDatabase(_writeDatabase);
-            }
-            return _writeDatabase;
-        }
-
-        private Database getReadDatabase()
-        {
-            if (_readDatabase == null) {
-                _readDatabase = new Database(_readConnectionString, _factory, _sqlType);
-                initDatabase(_readDatabase);
-            }
-            return _readDatabase;
         }
 
         private void initDatabase(Database db)
         {
             db.ConnectionOpened += (cmd) => {
-                _sqlMonitor.ConnectionOpened(_connectionType);
+                _sqlMonitor.ConnectionOpened();
             };
             db.ConnectionClosing += (cmd) => {
-                _sqlMonitor.ConnectionClosing(_connectionType);
+                _sqlMonitor.ConnectionClosing();
             };
             db.Transactioning += () => {
-                _sqlMonitor.Transactioning(_connectionType);
+                _sqlMonitor.Transactioning();
             };
             db.Transactioned += () => {
-                _sqlMonitor.Transactioned(_connectionType);
+                _sqlMonitor.Transactioned();
             };
 
             db.ExecutingCommand += (cmd) => {
                 var objs = (from IDataParameter parameter in cmd.Parameters select parameter.Value).ToArray();
-                _sqlMonitor.ExecutingCommand(_connectionType, cmd.CommandText, objs);
+                _sqlMonitor.ExecutingCommand(cmd.CommandText, objs);
 
                 _sql.LastSQL = cmd.CommandText;
                 _sql.LastArgs = objs;
@@ -288,26 +211,25 @@ namespace ToolGood.ReadyGo
             };
             db.ExecutedCommand += (cmd) => {
                 var objs = (from IDataParameter parameter in cmd.Parameters select parameter.Value).ToArray();
-                _sqlMonitor.ExecutedCommand(_connectionType, cmd.CommandText, objs);
+                _sqlMonitor.ExecutedCommand(cmd.CommandText, objs);
 
                 _events.OnExecutedCommand(cmd.CommandText, objs);
             };
             db.Exceptioned += (e) => {
-                _sqlMonitor.Exception(_connectionType, e.Message);
+                _sqlMonitor.Exception(e.Message);
                 _sql.LastErrorMessage = e.Message;
             };
         }
 
         internal T Run<T>(string sql, object[] args, Func<T> func, params string[] methodtags)
         {
-            if (_usedCacheService == false && _usedCacheServiceOnce == false) return func();
+            if (_usedCacheServiceOnce == false) return func();
             _usedCacheServiceOnce = false;//记录一次
 
             StringBuilder sb = new StringBuilder();
-            if (_usedCacheServiceOnce) {
-                sb.Append(_cacheTag);
-                sb.Append("|");
-            }
+            sb.Append(_cacheTag);
+            sb.Append("|");
+
             sb.Append(sql);
             sb.Append("|");
             sb.Append(typeof(T).FullName);
@@ -327,10 +249,7 @@ namespace ToolGood.ReadyGo
             }
             string tag = sb.ToString();// getMd5String(sb.ToString());
 
-            if (_usedCacheServiceOnce) {
-                return _cacheService.Get(tag, func, _cacheTimeOnce, _cacheTag);
-            }
-            return _cacheService.Get(tag, func, _cacheTime, null);
+            return _cacheService.Get(tag, func, _cacheTimeOnce, _cacheTag);
         }
 
         #endregion 私有方法
@@ -342,7 +261,7 @@ namespace ToolGood.ReadyGo
         /// <returns></returns>
         public Transaction UseTransaction()
         {
-            var db = getDatabase(_connectionType);
+            var db = getDatabase();
 
             return new Transaction(db, _isolationLevel);
         }
@@ -382,12 +301,8 @@ namespace ToolGood.ReadyGo
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             return Run<int>(sql, args, () => {
-                Database db;
-                if (_useTwoDatabase && sql.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase)) {
-                    db = getDatabase(ConnectionType.Read);
-                } else {
-                    db = getDatabase(ConnectionType.Write);
-                }
+                Database db = getDatabase();
+
                 return db.Execute(sql, args);
             }, "Execute");
         }
@@ -402,12 +317,8 @@ namespace ToolGood.ReadyGo
         public T ExecuteScalar<T>(string sql = "", params object[] args)
         {
             return Run<T>(sql, args, () => {
-                Database db;
-                if (_useTwoDatabase && sql.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase)) {
-                    db = getDatabase(ConnectionType.Read);
-                } else {
-                    db = getDatabase(ConnectionType.Write);
-                }
+                Database db = getDatabase();
+
                 return db.ExecuteScalar<T>(sql, args);
             }, "ExecuteScalar");
         }
@@ -422,12 +333,8 @@ namespace ToolGood.ReadyGo
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             return Run<DataTable>(sql, args, () => {
-                Database db;
-                if (_useTwoDatabase && sql.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase)) {
-                    db = getDatabase(ConnectionType.Read);
-                } else {
-                    db = getDatabase(ConnectionType.Write);
-                }
+                Database db = getDatabase();
+
                 return db.ExecuteDataTable(sql, args);
             }, "GetDataTable");
         }
@@ -442,12 +349,8 @@ namespace ToolGood.ReadyGo
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             return Run<DataSet>(sql, args, () => {
-                Database db;
-                if (_useTwoDatabase && sql.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase)) {
-                    db = getDatabase(ConnectionType.Read);
-                } else {
-                    db = getDatabase(ConnectionType.Write);
-                }
+                Database db = getDatabase();
+
                 return db.ExecuteDataSet(sql, args);
             }, "GetDataTable");
         }
@@ -493,12 +396,8 @@ namespace ToolGood.ReadyGo
             sql = SelectHelper.GetSelectCount<T>(_provider, sql, _tableNameManger);
 
             return Run(sql, args, () => {
-                Database db;
-                if (_useTwoDatabase && sql.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase)) {
-                    db = getDatabase(ConnectionType.Read);
-                } else {
-                    db = getDatabase(ConnectionType.Write);
-                }
+                Database db = getDatabase();
+
                 return db.ExecuteScalar<int>(sql, args);
             }, "Count");
         }
@@ -517,7 +416,7 @@ namespace ToolGood.ReadyGo
         {
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
             return Run<List<T>>(sql, args, () => {
-                var db = getDatabase(ConnectionType.Read);
+                Database db = getDatabase();
                 return db.Query<T>(sql, args).ToList();
             }, "Select");
         }
@@ -534,7 +433,7 @@ namespace ToolGood.ReadyGo
         {
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
             return Run<Page<T>>(sql, args, () => {
-                var db = getDatabase(ConnectionType.Read);
+                Database db = getDatabase();
                 return db.Page<T>(page, itemsPerPage, sql, args);
             }, "Page", page.ToString(), itemsPerPage.ToString());
         }
@@ -553,7 +452,7 @@ namespace ToolGood.ReadyGo
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
 
             return Run<List<T>>(sql, args, () => {
-                var db = getDatabase(ConnectionType.Read);
+                Database db = getDatabase();
                 return db.SkipTake<T>(skip, take, sql, args);
             }, "SkipTake", skip.ToString(), take.ToString());
         }
@@ -606,7 +505,7 @@ namespace ToolGood.ReadyGo
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
 
             return Run<T>(sql, args, () => {
-                var db = getDatabase(ConnectionType.Read);
+                Database db = getDatabase();
                 return db.Query<T>(sql, args).Single();
             }, "Single");
         }
@@ -623,7 +522,7 @@ namespace ToolGood.ReadyGo
 
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
             return Run<T>(sql, args, () => {
-                var db = getDatabase(ConnectionType.Read);
+                Database db = getDatabase();
                 return db.Query<T>(sql, args).SingleOrDefault();
             }, "SingleOrDefault");
         }
@@ -640,7 +539,7 @@ namespace ToolGood.ReadyGo
 
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
             return Run<T>(sql, args, () => {
-                var db = getDatabase(ConnectionType.Read);
+                Database db = getDatabase();
                 return db.Query<T>(sql, args).First();
             }, "First");
         }
@@ -657,7 +556,7 @@ namespace ToolGood.ReadyGo
 
             sql = SelectHelper.AddSelectClause<T>(_provider, sql, _tableNameManger);
             return Run<T>(sql, args, () => {
-                var db = getDatabase(ConnectionType.Read);
+                Database db = getDatabase();
                 return db.Query<T>(sql, args).FirstOrDefault();
             }, "FirstOrDefault");
         }
@@ -682,7 +581,7 @@ namespace ToolGood.ReadyGo
                 }
             }
             if (Events.OnBeforeInsert(list)) return;
-            var db = getDatabase(ConnectionType.Write);
+            Database db = getDatabase();
             db.Insert(list, _tableNameManger, quick);
             Events.OnAfterInsert(list);
         }
@@ -703,7 +602,7 @@ namespace ToolGood.ReadyGo
                 DefaultValue.SetDefaultValue<T>(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
             }
             if (Events.OnBeforeInsert(poco)) return null;
-            var db = getDatabase(ConnectionType.Write);
+            Database db = getDatabase();
             var obj = db.Insert(poco, _tableNameManger);
             Events.OnAfterInsert(poco);
             return obj;
@@ -720,7 +619,7 @@ namespace ToolGood.ReadyGo
             if (Events.OnBeforeUpdate(poco)) return -1;
 
             int r;
-            var db = getDatabase(ConnectionType.Write);
+            Database db = getDatabase();
             r = db.Update(poco, _tableNameManger);
             Events.OnAfterUpdate(poco);
             return r;
@@ -735,7 +634,7 @@ namespace ToolGood.ReadyGo
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (Events.OnBeforeDelete(poco)) return -1;
 
-            var db = getDatabase(ConnectionType.Write);
+            Database db = getDatabase();
             var t = db.Delete(poco, _tableNameManger);
 
             Events.OnAfterDelete(poco);
@@ -752,14 +651,14 @@ namespace ToolGood.ReadyGo
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             if (sql.StartsWith("DELETE ", StringComparison.CurrentCultureIgnoreCase)) {
-                var wdb = getDatabase(ConnectionType.Write);
+                var wdb = getDatabase();
                 return wdb.Execute(sql, args);
             }
 
             var pd = PocoData.ForType(typeof(T));
 
             var tableName = _provider.GetTableName(pd, _tableNameManger);
-            var db = getDatabase(ConnectionType.Write);
+            var db = getDatabase();
 
             return db.Execute(string.Format("DELETE FROM {0} {1}", tableName, sql), args);
         }
@@ -771,7 +670,7 @@ namespace ToolGood.ReadyGo
         /// <returns></returns>
         public int DeleteById<T>(object primaryKey)
         {
-            var db = getDatabase(ConnectionType.Write);
+            Database db = getDatabase();
             return db.Delete<T>(primaryKey, _tableNameManger);
         }
         /// <summary>
@@ -781,7 +680,7 @@ namespace ToolGood.ReadyGo
         public void Save(object poco)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            var db = getDatabase(ConnectionType.Write);
+            Database db = getDatabase();
             if (db.IsNew(poco)) {
                 Insert(poco);
             } else {
@@ -800,14 +699,14 @@ namespace ToolGood.ReadyGo
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 
             if (sql.StartsWith("UPDATE ", StringComparison.CurrentCultureIgnoreCase)) {
-                var wdb = getDatabase(ConnectionType.Write);
+                Database wdb = getDatabase();
                 return wdb.Execute(sql, args);
             }
 
             var pd = PocoData.ForType(typeof(T));
 
             var tableName = _provider.GetTableName(pd, _tableNameManger);
-            var db = getDatabase(ConnectionType.Write);
+            Database db = getDatabase();
 
             return db.Execute(string.Format("UPDATE {0} {1}", tableName, sql), args);
         }

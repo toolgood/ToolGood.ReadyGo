@@ -13,19 +13,19 @@
         /// <returns></returns>
         string ToText();
 
-        void ConnectionClosing(ConnectionType type);
+        void ConnectionClosing();
 
-        void ConnectionOpened(ConnectionType type);
+        void ConnectionOpened( );
 
-        void Exception(ConnectionType type, string message);
+        void Exception(  string message);
 
-        void ExecutedCommand(ConnectionType type, string sql, object[] args);
+        void ExecutedCommand( string sql, object[] args);
 
-        void ExecutingCommand(ConnectionType type, string sql, object[] args);
+        void ExecutingCommand( string sql, object[] args);
 
-        void Transactioned(ConnectionType type);
+        void Transactioned();
 
-        void Transactioning(ConnectionType type);
+        void Transactioning();
     }
 
 

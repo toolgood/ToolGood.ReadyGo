@@ -29,7 +29,7 @@ namespace ToolGood.ReadyGo.Monitor
         }
 
 
-        public void ConnectionClosing(ConnectionType type)
+        public void ConnectionClosing( )
         {
             Action<string> action;
             if (dict.TryGetValue(SqlMonitorType.ConnectionClosing, out action)) {
@@ -38,7 +38,7 @@ namespace ToolGood.ReadyGo.Monitor
             }
         }
 
-        public void ConnectionOpened(ConnectionType type)
+        public void ConnectionOpened( )
         {
             Action<string> action;
             if (dict.TryGetValue(SqlMonitorType.ConnectionOpened, out action)) {
@@ -47,7 +47,7 @@ namespace ToolGood.ReadyGo.Monitor
             }
         }
 
-        public void Exception(ConnectionType type, string message)
+        public void Exception( string message)
         {
             Action<string> action;
             if (dict.TryGetValue(SqlMonitorType.Exception, out action)) {
@@ -57,7 +57,7 @@ namespace ToolGood.ReadyGo.Monitor
         }
         private DateTime StartTime;
 
-        public void ExecutedCommand(ConnectionType type, string sql, object[] args)
+        public void ExecutedCommand( string sql, object[] args)
         {
             Action<string> action;
             if (dict.TryGetValue(SqlMonitorType.ExecutedCommand, out action)) {
@@ -68,7 +68,7 @@ namespace ToolGood.ReadyGo.Monitor
             }
         }
 
-        public void ExecutingCommand(ConnectionType type, string sql, object[] args)
+        public void ExecutingCommand(  string sql, object[] args)
         {
             StartTime = DateTime.Now;
         }
@@ -83,7 +83,7 @@ namespace ToolGood.ReadyGo.Monitor
             return null;
         }
 
-        public void Transactioned(ConnectionType type)
+        public void Transactioned()
         {
             Action<string> action;
             if (dict.TryGetValue(SqlMonitorType.Transactioned, out action)) {
@@ -92,7 +92,7 @@ namespace ToolGood.ReadyGo.Monitor
             }
         }
 
-        public void Transactioning(ConnectionType type)
+        public void Transactioning( )
         {
             Action<string> action;
             if (dict.TryGetValue(SqlMonitorType.Transactioning, out action)) {

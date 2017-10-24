@@ -72,6 +72,18 @@ namespace ToolGood.ReadyGo.Poco
                     return true;
                 if (p.Name.Equals(ti.TableName + "_Id", StringComparison.OrdinalIgnoreCase))
                     return true;
+                var atts = p.GetCustomAttributes(typeof(ColumnAttribute), true);
+                if (atts.Length>0) {
+                    var att = atts[0] as ColumnAttribute;
+                    if (att.Name.Equals(type.Name + "Id", StringComparison.OrdinalIgnoreCase))
+                        return true;
+                    if (att.Name.Equals(type.Name + "_Id", StringComparison.OrdinalIgnoreCase))
+                        return true;
+                    if (att.Name.Equals(ti.TableName + "Id", StringComparison.OrdinalIgnoreCase))
+                        return true;
+                    if (att.Name.Equals(ti.TableName + "_Id", StringComparison.OrdinalIgnoreCase))
+                        return true;
+                }
                 return false;
             });
             if (prop != null) {
@@ -87,8 +99,8 @@ namespace ToolGood.ReadyGo.Poco
         {
             if (pi.CanRead == false || pi.CanWrite == false) return null;
             if (ColumnType.IsAllowType(pi.PropertyType) == false) return null;
-            var a = pi.GetCustomAttributes(typeof(IgnoreAttribute), true);
-            if (a.Length > 0) return null;
+            if (pi.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0) return null;
+            if (pi.GetCustomAttributes(typeof(NotQueryColumnAttribute), true).Length > 0) return null;
 
             var ci = new PocoColumn();
             ci.PropertyName = pi.Name;

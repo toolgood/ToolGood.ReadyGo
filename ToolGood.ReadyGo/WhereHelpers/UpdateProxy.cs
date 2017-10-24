@@ -8,6 +8,12 @@ using ToolGood.ReadyGo.Poco;
 
 namespace ToolGood.ReadyGo.WhereHelpers
 {
+    public interface IUpdateChange
+    {
+
+    }
+
+
     /// <summary>
     /// 
     /// </summary>

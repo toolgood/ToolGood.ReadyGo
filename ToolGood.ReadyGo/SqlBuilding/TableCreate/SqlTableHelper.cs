@@ -16,7 +16,7 @@ namespace ToolGood.ReadyGo.SqlBuilding.TableCreate
         internal SqlTableHelper(SqlHelper helper)
         {
             _helper = helper;
-            database = helper.getDatabase(ConnectionType.Default);
+            database = helper.getDatabase();
             dbType = DatabaseProvider.Resolve(_helper._sqlType);
             tableHelper = CreateTableHelper.Resolve(_helper._sqlType);
         }
@@ -98,7 +98,7 @@ namespace ToolGood.ReadyGo.SqlBuilding.TableCreate
         /// <param name="type"></param>
         public void CreateTable(Type type)
         {
-            var database = _helper.getDatabase(ConnectionType.Write);
+            var database = _helper.getDatabase();
             database.Execute(GetCreateTable(type), new object[0]);
             var sql = GetCreateIndex(type);
             if (sql!="") {
@@ -127,7 +127,7 @@ namespace ToolGood.ReadyGo.SqlBuilding.TableCreate
         /// <param name="type"></param>
         public void DeleteTable(Type type)
         {
-            var database = _helper.getDatabase(ConnectionType.Write);
+            var database = _helper.getDatabase();
 
             database.Execute(GetDeleteTable(type), new object[0]);
         }
@@ -138,7 +138,7 @@ namespace ToolGood.ReadyGo.SqlBuilding.TableCreate
         /// <param name="type"></param>
         public void ResetTable(Type type)
         {
-            var database = _helper.getDatabase(ConnectionType.Write);
+            var database = _helper.getDatabase();
             database.Execute(GetDeleteTable(type), new object[0]);
 
             CreateTable(type);

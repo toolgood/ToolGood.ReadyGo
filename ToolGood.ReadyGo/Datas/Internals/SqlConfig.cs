@@ -54,22 +54,16 @@ namespace ToolGood.ReadyGo.Internals
             set
             {
                 if (_sqlHelper._sqlMonitor != value) {
-                    if (_sqlHelper._writeDatabase != null) {
-                        _sqlHelper._writeDatabase.Dispose();
-                        _sqlHelper._writeDatabase = null;
+                    if (_sqlHelper._database != null) {
+                        _sqlHelper._database.Dispose();
+                        _sqlHelper._database = null;
                     }
-                    if (_sqlHelper._readDatabase != null) {
-                        _sqlHelper._readDatabase.Dispose();
-                        _sqlHelper._readDatabase = null;
-                    }
+  
                     _sqlHelper._sqlMonitor = value;
                 }
             }
         }
-        /// <summary>
-        /// 连接类型 读写类型
-        /// </summary>
-        public ConnectionType ConnectionType { get { return _sqlHelper._connectionType; } }
+
         /// <summary>
         /// SQL语言类型
         /// </summary>
@@ -81,11 +75,7 @@ namespace ToolGood.ReadyGo.Internals
         /// <summary>
         /// 数据库链接字符串【写】
         /// </summary>
-        public string WriteConnectionString { get { return _sqlHelper._writeConnectionString; } }
-        /// <summary>
-        /// 数据库链接字符串【读】
-        /// </summary>
-        public string ReadConnectionString { get { return _sqlHelper._readConnectionString; } }
+        public string WriteConnectionString { get { return _sqlHelper._connectionString; } }
 
         /// <summary>
         /// 数据库执行超出时间
@@ -104,19 +94,12 @@ namespace ToolGood.ReadyGo.Internals
         /// 缓存服务
         /// </summary>
         public ICacheService CacheService { get { return _sqlHelper._cacheService; } set { _sqlHelper._cacheService = value; } }
-        /// <summary>
-        /// 是否使用缓存
-        /// </summary>
-        public bool UsedCacheService { get { return _sqlHelper._usedCacheService; } set { _sqlHelper._usedCacheService = value; } }
+
         /// <summary>
         /// 是否使用缓存  当前这次
         /// </summary>
         public bool UsedCacheServiceOnce { get { return _sqlHelper._usedCacheServiceOnce; } set { _sqlHelper._usedCacheServiceOnce = value; } }
 
-        /// <summary>
-        /// 缓存时间
-        /// </summary>
-        public int CacheTime { get { return _sqlHelper._cacheTime; } set { _sqlHelper._cacheTime = value; } }
 
         /// <summary>
         /// 缓存时间 当前这次

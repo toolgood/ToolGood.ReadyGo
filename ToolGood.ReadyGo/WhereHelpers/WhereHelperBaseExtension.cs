@@ -502,7 +502,7 @@ namespace ToolGood.ReadyGo
         public static int Count(this WhereHelperBase t, string selectSql = null)
         {
             t.setCache();
-            return t._sqlhelper.getDatabase(ConnectionType.Read).Execute(t.GetCountSql(selectSql), t._args.ToArray());
+            return t._sqlhelper.getDatabase().Execute(t.GetCountSql(selectSql), t._args.ToArray());
         }
         /// <summary>
         /// 执行返回DataTable

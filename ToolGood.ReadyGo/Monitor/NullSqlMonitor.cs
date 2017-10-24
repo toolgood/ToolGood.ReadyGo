@@ -7,23 +7,23 @@ namespace ToolGood.ReadyGo.Monitor
 {
     public class NullSqlMonitor : ISqlMonitor
     {
-        public void ConnectionClosing(ConnectionType type)
+        public void ConnectionClosing()
         {
         }
 
-        public void ConnectionOpened(ConnectionType type)
+        public void ConnectionOpened()
         {
         }
 
-        public void Exception(ConnectionType type, string message)
+        public void Exception( string message)
         {
         }
 
-        public void ExecutedCommand(ConnectionType type, string sql, object[] args)
+        public void ExecutedCommand( string sql, object[] args)
         {
         }
 
-        public void ExecutingCommand(ConnectionType type, string sql, object[] args)
+        public void ExecutingCommand( string sql, object[] args)
         {
         }
 
@@ -38,11 +38,11 @@ namespace ToolGood.ReadyGo.Monitor
 
         }
 
-        public void Transactioned(ConnectionType type)
+        public void Transactioned( )
         {
         }
 
-        public void Transactioning(ConnectionType type)
+        public void Transactioning( )
         {
         }
     }

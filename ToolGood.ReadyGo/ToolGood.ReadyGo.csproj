@@ -50,21 +50,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\RequiredAttribute.cs" />
+    <Compile Include="Attributes\NotQueryColumnAttribute.cs" />
+    <Compile Include="Attributes\CreateTableAttributes\RequiredAttribute.cs" />
     <Compile Include="Caches\ICacheService.cs" />
     <Compile Include="Caches\IUseCache.cs" />
     <Compile Include="Caches\Md5MemoryCacheService.cs" />
     <Compile Include="Caches\MemoryCacheService.cs" />
     <Compile Include="Caches\NullCacheService.cs" />
     <Compile Include="Attributes\ColumnAttribute.cs" />
-    <Compile Include="Attributes\DefaultValueAttribute.cs" />
-    <Compile Include="Attributes\FieldLengthAttribute.cs" />
+    <Compile Include="Attributes\CreateTableAttributes\DefaultValueAttribute.cs" />
+    <Compile Include="Attributes\CreateTableAttributes\FieldLengthAttribute.cs" />
     <Compile Include="Attributes\IgnoreAttribute.cs" />
-    <Compile Include="Attributes\IndexAttribute.cs" />
+    <Compile Include="Attributes\CreateTableAttributes\IndexAttribute.cs" />
     <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
     <Compile Include="Attributes\ResultColumnAttribute.cs" />
     <Compile Include="Attributes\TableAttribute.cs" />
-    <Compile Include="Attributes\UniqueAttribute.cs" />
+    <Compile Include="Attributes\CreateTableAttributes\UniqueAttribute.cs" />
     <Compile Include="IdWorker.cs" />
     <Compile Include="Monitor\NullSqlMonitor.cs" />
     <Compile Include="Monitor\OutTextSqlMonitor.cs" />
@@ -75,7 +76,6 @@
     <Compile Include="Datas\Internals\SqlRecord.cs" />
     <Compile Include="Datas\Internals\TableNameManger.cs" />
     <Compile Include="Datas\Internals\Transaction.cs" />
-    <Compile Include="Enums\ConnectionType.cs" />
     <Compile Include="Datas\TableRow.cs" />
     <Compile Include="Enums\JoinType.cs" />
     <Compile Include="Enums\OrderType.cs" />

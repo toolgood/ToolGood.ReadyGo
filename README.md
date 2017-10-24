@@ -55,7 +55,6 @@ public User FindUser(int userId,string userName,string nickName)
   * 采用AOP思路，不破坏原有类。
 * 支持存储过程。
 * 支持缓存。
-* 支持代码层的读写分离。
 * 支持SQL执行监控。
 * 带Sql Parser。
 * 带VS Coding插件。
@@ -375,22 +374,9 @@ using ToolGood.ReadyGo.Caches
     helper.Config.CacheTime = 20;
 ````
 
+#### 8、SQL执行监控
 
-#### 8、使用代码层的读写分离
-```` csharp
-    public class NullCacheService : ICacheService
-    {
-        ...
-    }
-    var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "wifi86", "root", "123456");
-    helper.Config.CacheService = new NullCacheService();
-    helper.Config.CacheTime = 20;
-````
-
-
-#### 9、SQL执行监控
-
-#### 9.1、上一次SQL执行语句
+#### 8.1、上一次SQL执行语句
 
 ```` csharp
     var sql = helper.Sql.LastSQL;
@@ -407,7 +393,7 @@ using ToolGood.ReadyGo.Caches
 
 
 
-#### 9.2、查看监控
+#### 8.2、查看监控
 ```` csharp
 using ToolGood.ReadyGo.Monitor
 
@@ -418,7 +404,7 @@ var text = sqlMonitor.ToText();
 
 
 
-#### 9.3、替换监控类
+#### 8.3、替换监控类
 
 ```` csharp
 using ToolGood.ReadyGo.Monitor
@@ -433,7 +419,7 @@ helper.Config.SqlMonitor = new NullSqlMonitor();
 
 
 
-#### 10、速度对比
+#### 9、速度对比
 
 <table>
 	<tr>
@@ -459,7 +445,6 @@ ToolGood.ReadyGo 动态语言
 
 ###下个版本优化内容
 
-去掉读写分离
 
 优化SQL语句，Single，First之类的，如page方法
 
