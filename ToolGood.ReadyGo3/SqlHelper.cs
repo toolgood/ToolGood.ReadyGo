@@ -139,7 +139,7 @@ namespace ToolGood.ReadyGo3
             foreach (var txt in txts) {
                 var sp = txt.Split('=');
                 if (sp.Length != 2) continue;
-                if (sp[0].ToLower()== "database") {
+                if (sp[0].ToLower() == "database") {
                     _schemaName = sp[1];
                     break;
                 }
@@ -415,7 +415,7 @@ namespace ToolGood.ReadyGo3
 
         #endregion Execute ExecuteScalar GetDataTable GetDataSet Exists
 
-        #region Select Page SkipTake
+        #region Select Page Select
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -429,6 +429,38 @@ namespace ToolGood.ReadyGo3
                 Database db = getDatabase();
                 return db.Query<T>(sql, args).ToList();
             }, "Select");
+        }
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="offset">跳过</param>
+        /// <param name="limit">获取个数</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> Select<T>(long limit,  string sql = "", params object[] args)
+        {
+            return Run<List<T>>(sql, args, () => {
+                Database db = getDatabase();
+                return db.SkipTake<T>(0, limit, sql, args);
+            }, "Select","0", limit.ToString());
+        }
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="offset">跳过</param>
+        /// <param name="limit">获取个数</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> Select<T>(long limit, long offset, string sql = "", params object[] args)
+        {
+            return Run<List<T>>(sql, args, () => {
+                Database db = getDatabase();
+                return db.SkipTake<T>(offset, limit, sql, args);
+            }, "Select", offset.ToString(), limit.ToString());
         }
         /// <summary>
         /// 执行SQL 查询,返回Page类型
@@ -446,24 +478,9 @@ namespace ToolGood.ReadyGo3
                 return db.Page<T>(page, itemsPerPage, sql, args);
             }, "Page", page.ToString(), itemsPerPage.ToString());
         }
-        /// <summary>
-        /// 执行SQL 查询,返回集合
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="skip">跳过</param>
-        /// <param name="take">获取个数</param>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public List<T> SkipTake<T>(long skip, long take, string sql = "", params object[] args)
-        {
-            return Run<List<T>>(sql, args, () => {
-                Database db = getDatabase();
-                return db.SkipTake<T>(skip, take, sql, args);
-            }, "SkipTake", skip.ToString(), take.ToString());
-        }
 
-        #endregion Select Page SkipTake
+
+        #endregion Select Page Select
 
         #region Single SingleOrDefault First FirstOrDefault
 

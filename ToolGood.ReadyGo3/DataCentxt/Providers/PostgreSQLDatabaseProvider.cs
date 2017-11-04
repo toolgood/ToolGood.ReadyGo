@@ -89,7 +89,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
         /// </summary>
         /// <param name="funName"></param>
         /// <returns></returns>
-        public static bool IsFunctionUseDefaultFormat(string funName)
+        public override bool IsFunctionUseDefaultFormat(string funName)
         {
             return functionDict.ContainsKey(funName) == false;
         }
@@ -99,7 +99,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
         /// <param name="sqlType"></param>
         /// <param name="funName"></param>
         /// <returns></returns>
-        public static string GetFunctionFormat(  string funName)
+        public override string GetFunctionFormat(  string funName)
         {
             return functionDict[funName];
         }

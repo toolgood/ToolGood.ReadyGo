@@ -561,7 +561,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         #endregion
 
-        #region operation: SkipTake
+        #region operation: Select
 
         /// <summary>
         ///     Retrieves a range of records from result set

@@ -25,13 +25,13 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
         public override string Delete(List<QTable> tables, QColumnBase pk, string tableName, string fromtable, string jointables, string where)
         {
             //http://bbs.csdn.net/topics/340167958
-            return "DELETE distinctrow t1.* FROM " + fromtable + " " + jointables + " WHERE " + where;
+            return $"DELETE distinctrow t1.* FROM {fromtable} {jointables} WHERE {where};";
         }
 
         public override string Update(List<QTable> tables, string setValues, string fromtable, string jointables, string where)
         {
             // http://blog.csdn.net/hsg77/article/details/6128253
-            return "UPDATE " + fromtable + " " + jointables + " SET " + setValues + " WHERE " + where;
+            return $"UPDATE {fromtable} {jointables} SET {setValues} WHERE {where}; " ;
         }
 
         public override string Select(List<QTable> tables, bool useDistinct, int limit, int offset, List<string> selectColumns, string fromtable, string jointables, string where, string order, string group, string having)

@@ -11,7 +11,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
     partial class SqlBuilder : IDataGet<SqlBuilder>
     {
         /// <summary>
-        /// 只能用一次，用过后请重新设置，不包括 GetCount
+        /// 只能用一次，用过后请重新设置，不包括 SelectCount
         /// </summary>
         /// <returns></returns>
         public SqlBuilder Distinct()
@@ -20,18 +20,18 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return this;
         }
 
-        #region GetCount
-        public int GetCount()
+        #region SelectCount
+        public int SelectCount()
         {
             return getCount(null);
         }
 
-        public int GetCount(string distinctColumn)
+        public int SelectCount(string distinctColumn)
         {
             return getCount(distinctColumn);
         }
 
-        public int GetCount(QColumnBase distinctColumn)
+        public int SelectCount(QColumnBase distinctColumn)
         {
             var column = ((IColumnConvert)distinctColumn).ToSql(_provider, _tables.Count);
             return getCount(column);
@@ -110,16 +110,16 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         }
 
 
-        #region GetSingle GetSingleOrDefault GetFirst GetFirstOrDefault
-        public T GetSingle<T>()
+        #region Single SingleOrDefault First FirstOrDefault
+        public T Single<T>()
         {
             return getSingle<T>(GetSelectColumns<T>());
         }
-        public T GetSingle<T>(params string[] columns)
+        public T Single<T>(params string[] columns)
         {
             return getSingle<T>(columns.ToList());
         }
-        public T GetSingle<T>(params QColumnBase[] columns)
+        public T Single<T>(params QColumnBase[] columns)
         {
             return getSingle<T>(ToSelectColumns(columns));
         }
@@ -132,15 +132,15 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
 
 
-        public T GetSingleOrDefault<T>()
+        public T SingleOrDefault<T>()
         {
             return getSingleOrDefault<T>(GetSelectColumns<T>());
         }
-        public T GetSingleOrDefault<T>(params string[] columns)
+        public T SingleOrDefault<T>(params string[] columns)
         {
             return getSingleOrDefault<T>(columns.ToList());
         }
-        public T GetSingleOrDefault<T>(params QColumnBase[] columns)
+        public T SingleOrDefault<T>(params QColumnBase[] columns)
         {
             return getSingleOrDefault<T>(ToSelectColumns(columns));
         }
@@ -153,15 +153,15 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
 
 
-        public T GetFirst<T>()
+        public T First<T>()
         {
             return getFirst<T>(GetSelectColumns<T>());
         }
-        public T GetFirst<T>(params string[] columns)
+        public T First<T>(params string[] columns)
         {
             return getFirst<T>(columns.ToList());
         }
-        public T GetFirst<T>(params QColumnBase[] columns)
+        public T First<T>(params QColumnBase[] columns)
         {
             return getFirst<T>(ToSelectColumns(columns));
         }
@@ -174,15 +174,15 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
 
 
-        public T GetFirstOrDefault<T>()
+        public T FirstOrDefault<T>()
         {
             return getFirstOrDefault<T>(GetSelectColumns<T>());
         }
-        public T GetFirstOrDefault<T>(params string[] columns)
+        public T FirstOrDefault<T>(params string[] columns)
         {
             return getFirstOrDefault<T>(columns.ToList());
         }
-        public T GetFirstOrDefault<T>(params QColumnBase[] columns)
+        public T FirstOrDefault<T>(params QColumnBase[] columns)
         {
             return getFirstOrDefault<T>(ToSelectColumns(columns));
         }
@@ -195,51 +195,51 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         #endregion
 
-        #region GetList
-        public List<T> GetList<T>()
+        #region Select
+        public List<T> Select<T>()
         {
             var columns = GetSelectColumns<T>();
             return getList<T>(-1, -1, columns);
         }
 
-        public List<T> GetList<T>(params string[] columns)
+        public List<T> Select<T>(params string[] columns)
         {
             return getList<T>(-1, -1, columns.ToList());
         }
 
-        public List<T> GetList<T>(params QColumnBase[] columns)
+        public List<T> Select<T>(params QColumnBase[] columns)
         {
             return getList<T>(-1, -1, ToSelectColumns(columns));
         }
 
-        public List<T> GetList<T>(int limit)
+        public List<T> Select<T>(int limit)
         {
             var columns = GetSelectColumns<T>();
             return getList<T>(limit, -1, columns);
         }
 
-        public List<T> GetList<T>(int limit, params string[] columns)
+        public List<T> Select<T>(int limit, params string[] columns)
         {
             return getList<T>(limit, -1, columns.ToList());
         }
 
-        public List<T> GetList<T>(int limit, params QColumnBase[] columns)
+        public List<T> Select<T>(int limit, params QColumnBase[] columns)
         {
             return getList<T>(limit, -1, ToSelectColumns(columns));
         }
 
-        public List<T> GetList<T>(int limit, int offset)
+        public List<T> Select<T>(int limit, int offset)
         {
             var columns = GetSelectColumns<T>();
             return getList<T>(limit, offset, columns);
         }
 
-        public List<T> GetList<T>(int limit, int offset, params string[] columns)
+        public List<T> Select<T>(int limit, int offset, params string[] columns)
         {
             return getList<T>(limit, offset, columns.ToList());
         }
 
-        public List<T> GetList<T>(int limit, int offset, params QColumnBase[] columns)
+        public List<T> Select<T>(int limit, int offset, params QColumnBase[] columns)
         {
             return getList<T>(limit, offset, ToSelectColumns(columns));
         }

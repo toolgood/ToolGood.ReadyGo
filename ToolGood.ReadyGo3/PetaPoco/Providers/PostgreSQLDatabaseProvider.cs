@@ -31,14 +31,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
         public override string EscapeSqlIdentifier(string sqlIdentifier)
         {
-            return string.Format("\"{0}\"", sqlIdentifier);
+            return $"\"{sqlIdentifier}\"";
         }
 
         public override object ExecuteInsert(Database db, System.Data.IDbCommand cmd, string primaryKeyName)
         {
             if (primaryKeyName != null)
             {
-                cmd.CommandText += string.Format("returning {0} as NewID", EscapeSqlIdentifier(primaryKeyName));
+                cmd.CommandText += $"returning {EscapeSqlIdentifier(primaryKeyName)} as NewID";
                 return db.ExecuteScalarHelper(cmd);
             }
             else

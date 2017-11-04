@@ -14,37 +14,37 @@ namespace ToolGood.ReadyGo3.DataCentxt.Interfaces
     {
         Table Distinct();
 
-        int GetCount();
-        int GetCount(string distinctColumn);
-        int GetCount(QColumnBase distinctColumn);
+        int SelectCount();
+        int SelectCount(string distinctColumn);
+        int SelectCount(QColumnBase distinctColumn);
 
-        T GetSingle<T>();
-        T GetSingle<T>(params string[] columns);
-        T GetSingle<T>(params QColumnBase[] columns);
+        T Single<T>();
+        T Single<T>(params string[] columns);
+        T Single<T>(params QColumnBase[] columns);
 
-        T GetSingleOrDefault<T>();
-        T GetSingleOrDefault<T>(params string[] columns);
-        T GetSingleOrDefault<T>(params QColumnBase[] columns);
+        T SingleOrDefault<T>();
+        T SingleOrDefault<T>(params string[] columns);
+        T SingleOrDefault<T>(params QColumnBase[] columns);
 
-        T GetFirst<T>();
-        T GetFirst<T>(params string[] columns);
-        T GetFirst<T>(params QColumnBase[] columns);
+        T First<T>();
+        T First<T>(params string[] columns);
+        T First<T>(params QColumnBase[] columns);
 
-        T GetFirstOrDefault<T>();
-        T GetFirstOrDefault<T>(params string[] columns);
-        T GetFirstOrDefault<T>(params QColumnBase[] columns);
+        T FirstOrDefault<T>();
+        T FirstOrDefault<T>(params string[] columns);
+        T FirstOrDefault<T>(params QColumnBase[] columns);
 
-        List<T> GetList<T>();
-        List<T> GetList<T>(params string[] columns);
-        List<T> GetList<T>(params QColumnBase[] columns);
+        List<T> Select<T>();
+        List<T> Select<T>(params string[] columns);
+        List<T> Select<T>(params QColumnBase[] columns);
    
-        List<T> GetList<T>(int limit);
-        List<T> GetList<T>(int limit, params string[] columns);
-        List<T> GetList<T>(int limit, params QColumnBase[] columns);
+        List<T> Select<T>(int limit);
+        List<T> Select<T>(int limit, params string[] columns);
+        List<T> Select<T>(int limit, params QColumnBase[] columns);
 
-        List<T> GetList<T>(int limit, int offset);
-        List<T> GetList<T>(int limit, int offset, params string[] columns);
-        List<T> GetList<T>(int limit, int offset, params QColumnBase[] columns);
+        List<T> Select<T>(int limit, int offset);
+        List<T> Select<T>(int limit, int offset, params string[] columns);
+        List<T> Select<T>(int limit, int offset, params QColumnBase[] columns);
 
         Page<T> GetPage<T>(int page, int size);
         Page<T> GetPage<T>(int page, int size, params string[] columns);

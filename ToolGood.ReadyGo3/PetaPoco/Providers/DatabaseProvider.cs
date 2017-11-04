@@ -11,7 +11,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
     /// <summary>
     ///     Base class for DatabaseType handlers - provides default/common handling for different database engines
     /// </summary>
-    public abstract class DatabaseProvider 
+    public abstract class DatabaseProvider
     {
         /// <summary>
         ///     Gets the DbProviderFactory for this database provider.
@@ -101,8 +101,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <returns>The final SQL query that should be executed.</returns>
         public virtual string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)
         {
-            var sql = string.Format("{0}\nLIMIT @{1} OFFSET @{2}", parts.Sql, args.Length, args.Length + 1);
-            args = args.Concat(new object[] { take, skip }).ToArray();
+            string sql;
+            if (skip > 0) {
+                sql = $"{parts.Sql}\nLIMIT @{args.Length} OFFSET @{args.Length + 1}";
+                args = args.Concat(new object[] { take, skip }).ToArray();
+            } else {
+                sql = $"{parts.Sql}\nLIMIT @{args.Length}";
+                args = args.Concat(new object[] { take }).ToArray();
+            }
             return sql;
         }
 
@@ -159,8 +165,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         protected DbProviderFactory GetFactory(params string[] assemblyQualifiedNames)
         {
             Type ft = null;
-            foreach (var assemblyName in assemblyQualifiedNames)
-            {
+            foreach (var assemblyName in assemblyQualifiedNames) {
                 ft = Type.GetType(assemblyName);
                 if (ft != null)
                     break;

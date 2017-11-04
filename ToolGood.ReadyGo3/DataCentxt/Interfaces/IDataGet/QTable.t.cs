@@ -19,114 +19,114 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return list.ToArray();
         }
 
-        #region GetSingle GetSingleOrDefault GetFirst GetFirstOrDefault
+        #region Single SingleOrDefault First FirstOrDefault
 
         public T GetSingle()
         {
-            return GetSingle<T>(getSelectColumn());
+            return Single<T>(getSelectColumn());
         }
 
         public T GetSingle(params string[] columns)
         {
-            return GetSingle<T>(columns);
+            return Single<T>(columns);
         }
 
         public T GetSingle(params QColumnBase[] columns)
         {
-            return GetSingle<T>(columns);
+            return Single<T>(columns);
         }
 
         public T GetSingleOrDefault()
         {
-            return GetSingleOrDefault<T>(getSelectColumn());
+            return SingleOrDefault<T>(getSelectColumn());
         }
 
         public T GetSingleOrDefault(params string[] columns)
         {
-            return GetSingleOrDefault<T>(columns);
+            return SingleOrDefault<T>(columns);
         }
 
         public T GetSingleOrDefault(params QColumnBase[] columns)
         {
-            return GetSingleOrDefault<T>(columns);
+            return SingleOrDefault<T>(columns);
         }
 
         public T GetFirst()
         {
-            return GetFirst<T>(getSelectColumn());
+            return First<T>(getSelectColumn());
         }
 
         public T GetFirst(params string[] columns)
         {
-            return GetFirst<T>(columns);
+            return First<T>(columns);
         }
 
         public T GetFirst(params QColumnBase[] columns)
         {
-            return GetFirst<T>(columns);
+            return First<T>(columns);
         }
 
         public T GetFirstOrDefault()
         {
-            return GetFirstOrDefault<T>(getSelectColumn());
+            return FirstOrDefault<T>(getSelectColumn());
         }
 
         public T GetFirstOrDefault(params string[] columns)
         {
-            return GetFirstOrDefault<T>(columns);
+            return FirstOrDefault<T>(columns);
         }
 
         public T GetFirstOrDefault(params QColumnBase[] columns)
         {
-            return GetFirstOrDefault<T>(columns);
+            return FirstOrDefault<T>(columns);
         }
         #endregion
 
-        #region GetList
+        #region Select
 
         public List<T> GetList()
         {
-            return GetList<T>(getSelectColumn());
+            return Select<T>(getSelectColumn());
         }
 
         public List<T> GetList(params string[] columns)
         {
-            return GetList<T>(columns);
+            return Select<T>(columns);
         }
 
         public List<T> GetList(params QColumnBase[] columns)
         {
-            return GetList<T>(columns);
+            return Select<T>(columns);
         }
 
         public List<T> GetList(int limit)
         {
-            return GetList<T>(limit, getSelectColumn());
+            return Select<T>(limit, getSelectColumn());
         }
 
         public List<T> GetList(int limit, params string[] columns)
         {
-            return GetList<T>(limit, columns);
+            return Select<T>(limit, columns);
         }
 
         public List<T> GetList(int limit, params QColumnBase[] columns)
         {
-            return GetList<T>(limit, columns);
+            return Select<T>(limit, columns);
         }
 
         public List<T> GetList(int limit, int offset)
         {
-            return GetList<T>(limit, offset, getSelectColumn());
+            return Select<T>(limit, offset, getSelectColumn());
         }
 
         public List<T> GetList(int limit, int offset, params string[] columns)
         {
-            return GetList<T>(limit, offset, columns);
+            return Select<T>(limit, offset, columns);
         }
 
         public List<T> GetList(int limit, int offset, params QColumnBase[] columns)
         {
-            return GetList<T>(limit, offset, columns);
+            return Select<T>(limit, offset, columns);
         }
 
         public Page<T> GetPage(int page, int size)

@@ -39,7 +39,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
         public override string EscapeSqlIdentifier(string sqlIdentifier)
         {
-            return string.Format("\"{0}\"", sqlIdentifier.ToUpperInvariant());
+            return $"\"{sqlIdentifier.ToUpperInvariant()}\"";
         }
 
         public override string GetAutoIncrementExpression(TableInfo ti)

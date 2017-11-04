@@ -32,7 +32,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
 
         public override string Delete(List<QTable> tables, QColumnBase pk, string tableName, string fromtable, string jointables, string where)
         {
-            return "DELETE t1 FROM " + fromtable+ " " + jointables+ " WHERE " + where;
+            return $"DELETE t1 FROM {fromtable} {jointables} WHERE {where};";
         }
 
         public override string Select(List<QTable> tables, bool useDistinct, int limit, int offset, List<string> selectColumns, string fromtable, string jointables, string where, string order, string group, string having)

@@ -41,13 +41,6 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
             StringBuilder sb = new StringBuilder();
             sb.Append("SELECT ");
             if (useDistinct) sb.Append("DISTINCT ");
-            sb.Append("FIRST ");
-            sb.Append(limit);
-            if (offset >= 0) {
-                sb.Append(" SKIP ");
-                sb.Append(offset);
-            }
-            sb.Append(" ");
             sb.Append(string.Join(",", selectColumns));
             sb.Append(" FROM ");
             sb.Append(fromtable);
@@ -71,6 +64,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
                 sb.Append(" ORDER BY ");
                 sb.Append(order);
             }
+            sb.AppendFormat($" ROWS {offset + 1} TO {offset + limit}");
             return sb.ToString();
         }
 

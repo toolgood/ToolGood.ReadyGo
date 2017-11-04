@@ -51,7 +51,7 @@ namespace ToolGood.ReadyGo3.Test.Tests
         {
             var helper = Config.TempHelper;
             var list = helper.Select<DbAdmin>();
-            var list2 = helper.SkipTake<DbAdmin>(1, 2);
+            var list2 = helper.Select<DbAdmin>(1, 2);
             var page = helper.Page<DbAdmin>(1, 10);
 
 

@@ -15,7 +15,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
         public override string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)
         {
-            var sql = string.Format("{0}\nROWS @{1} TO @{2}", parts.Sql, args.Length, args.Length + 1);
+            var sql = $"{parts.Sql}\nROWS @{args.Length} TO @{args.Length + 1}";
             args = args.Concat(new object[] { skip + 1, skip + take }).ToArray();
             return sql;
         }

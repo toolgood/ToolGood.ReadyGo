@@ -33,13 +33,9 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public virtual string Delete(List<QTable> tables, QColumnBase pk, string tableName, string fromtable, string jointables, string where)
         {
             if (object.Equals(pk, null)) throw new NoPrimaryKeyException();
-            return "DELETE " + tableName
-                   + " WHERE " + ((IColumnConvert)pk).ToSql(this, 1) + " IN ("
-                   + "SELECT " + ((IColumnConvert)pk).ToSql(this, tables.Count)
-                   + " FROM " + fromtable
-                   + " " + jointables
-                   + " WHERE " + where
-                   + ")";
+            var pk1 = ((IColumnConvert) pk).ToSql(this, 1);
+            var pk2 = ((IColumnConvert)pk).ToSql(this, tables.Count);
+            return $"DELETE {tableName} WHERE {pk1} IN (SELECT {pk2} FROM {fromtable} {jointables} WHERE {where});";
         }
 
         public virtual string Update(List<QTable> tables, string setValues, string fromtable, string jointables, string where)
