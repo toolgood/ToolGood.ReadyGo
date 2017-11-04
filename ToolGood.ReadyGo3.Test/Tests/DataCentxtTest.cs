@@ -16,7 +16,7 @@ namespace ToolGood.ReadyGo3.Test.Tests
         {
             TbAdminMenu tb = new TbAdminMenu();
             var list = tb.GetList();
-
+            
             var list2 = tb.Where(tb.ParentID == 0).GetList();
 
             var menu = tb.Where(tb.Name == "管理面板").GetFirst();

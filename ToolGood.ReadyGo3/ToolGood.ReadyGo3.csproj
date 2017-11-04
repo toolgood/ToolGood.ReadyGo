@@ -63,6 +63,9 @@
     <Compile Include="DataCentxt\Enums\ColumnType.cs" />
     <Compile Include="DataCentxt\Enums\WhereType.cs" />
     <Compile Include="DataCentxt\Interfaces\IDataGet\QTable.t.cs" />
+    <Compile Include="DataCentxt\Interfaces\IPrecondition.cs" />
+    <Compile Include="DataCentxt\Interfaces\IPrecondition\QTable.t.cs" />
+    <Compile Include="DataCentxt\Interfaces\IPrecondition\SqlBuilder.cs" />
     <Compile Include="DataCentxt\Interfaces\ISQL\QTable.t.cs" />
     <Compile Include="DataCentxt\Providers\FirebirdDbDatabaseProvider.cs" />
     <Compile Include="DataCentxt\Providers\MsAccessDbDatabaseProvider.cs" />

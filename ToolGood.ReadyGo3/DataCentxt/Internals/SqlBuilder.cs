@@ -19,6 +19,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         private List<QCondition> _having = new List<QCondition>();
         private bool _useDistinct = false;
         private bool _usedSchemaName = false;
+        private bool _jump = false;
 
         public SqlBuilder(QTable table)
         {
