@@ -5,30 +5,11 @@ ToolGood.ReadyGo
 欢迎使用`ToolGood.ReadyGo`！`ToolGood.ReadyGo` 是一款轻量级的ORM，
 它简单，因为汇聚作者多年经验，它快捷，基于PetaPoco核心，
 它能增加代码的可读性。
-它提供了VS插件，使Coding更方便。
 
 ### 快速上手
 
 ```` csharp
-public class User
-{
-	public int Id {get;set;}
-	public string UserName {get;set;}
-	public string Password {get;set;}
-	public string NickName {get;set;}
-}
-
-using ToolGood.ReadyGo;
-
-public User FindUser(int userId,string userName,string nickName)
-{
-    var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "web", "root", "123456");
-    return helper.CreateWhere<User>()
-        .IfTrue(userId > 0).Where((u) => u.Id == userId)
-        .IfSet(userName).Where((u) => u.UserName == userName)
-        .IfSet(nickName).Where((u) => u.NickName == nickName)
-        .SingleOrDefault();
-}
+测试版本补充中
 `````
 
 
@@ -48,8 +29,6 @@ public User FindUser(int userId,string userName,string nickName)
 * 支持动态SELECT
   * 支持返回dynamic。
   * 语法类似LINQ
-  * 支持动态多表SELECT。
-  * 支持表名修饰。
 * 支持动态UPDATE
   * 语法类似LINQ。
   * 采用AOP思路，不破坏原有类。
@@ -57,7 +36,6 @@ public User FindUser(int userId,string userName,string nickName)
 * 支持缓存。
 * 支持SQL执行监控。
 * 带Sql Parser。
-* 带VS Coding插件。
 
 
 #### 1、数据表生成与删除
@@ -137,8 +115,7 @@ helper.Events.ExecuteException += Events_ExecuteException;
 ```` csharp
     using (var tran=helper.UseTransaction()) {
         ...
-        tran.Complete();//提交 默认
-        tran.Abort();//取消
+
     }
 ````
 
@@ -186,27 +163,6 @@ helper.Update<User>("Set [Name]=@0 WHERE [Id]=@1", "Test", 1);
 
 
 
-##### 3.4、类中的OnLoaded方法
-
-```` csharp
-public class User
-{
-    public int Id {get;set;}
-    public int UserType {get;set;}
-    public string UserName {get;set;}
-    public string Password {get;set;}
-    public string NickName {get;set;}
-    public bool IsLoad {get;set;}
-
-    public void OnLoaded()
-    {
-        IsLoad=true;
-    }
-}
-var user1 = helper.Single<User>("where [Id]=@0", 1);
-Console.WriteLine(user1.IsLoad.ToString());
-````
-
 
 #### 4、动态查询
 ##### 4.1、单表查询
@@ -229,89 +185,9 @@ public User FindUser(int userId,string userName,string nickName)
 * `Select`、`Page`、`SkipTake`、`Single`、`SingleOrDefault`、`First`、`FirstOrDefault`、`Count`、`ExecuteDataTable`、`ExecuteDataSet`
 * `Select<T>`、`Page<T>`、`SkipTake<T>`、`Single<T>`、`SingleOrDefault<T>`、`First<T>`、`FirstOrDefault<T>`
 
-##### 4.2、多表查询
-
-```` csharp
-    var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "web", "root", "123456");
-    var list = helper.CreateWhere<User1, UserPay>()
-            .On2((u, up) => u.AutoID == up.UserID)
-            .Where((u, up) => u.AutoID == 8)
-            .Where((u, up) => up.State == 1)
-            .Select();
-````
-最多支持5个数据表，常用方法比单表查询多一点
-* `On2`、`On3`、`On4`、`On5`
-
-
-##### 4.4、表名修饰
-```` csharp
-[Table("Users",fixTag:"Admin")]
-public class User
-{
-    public int Id {get;set;}
-    public int UserType {get;set;}
-    public string UserName {get;set;}
-    public string Password {get;set;}
-    public string NickName {get;set;}
-    public bool IsLoad {get;set;}
-
-    public void OnLoaded()
-    {
-        IsLoad=true;
-    }
-}
-helper.TableNameManger.Set("Admin", "Db", "");
-var user1 = helper.Single<User>("where [Id]=@0", 1);
-// SELECT * FROM DbUsers where [Id]=@0
-````
-
-##### 4.4、辅助类SQL
-```` csharp
-    var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "web", "root", "123456");
-    var list1 = helper.CreateWhere<User1, UserPay>()
-            .On2((u, up) => u.AutoID == up.UserID)
-            .Where((u, up) => u.AutoID == 8)
-            .SelectColumn((u, up) => SQL.Sum(up.Money), "TotlePay")
-            .SelectColumn((u, up) =>up.UserID)
-            .Select<dynamic>();
-````
 
 #### 5、动态UPDATE
-##### 5.1、一个简单的动态UPDATE
-```` csharp
-helper.CreateWhere<User>()
-    .Where((u) => u.Id == userId)
-    .SetValue((u) => u.NickName = "Test")
-    .Update();
 
-var users = helper.CreateWhere<User>()
-                .Where((u) => u.Id == userId)
-                .SetValue((u) => u.NickName = "Test")
-                .UpdateAndSelect();
-````
-
-##### 5.2、Update与UpdateAndSelect区别
-    `Update`与`UpdateAndSelect`本质的区别是：
-    1. `Update`使用SQL语言更新，只支持直接赋值。
-    2. `UpdateAndSelect`先SELECT，然后在代码端执行Action，再UPDATE。
-
-```` csharp
-helper.CreateWhere<User>()
-    .Where((u) => u.Id == userId)
-    .SetValue((u) => u.UserName = "Test")
-    .SetValue((u)=>u.NickName=u.NickName+"u")
-    .Update();
-````
-运行上面的代码，你会发现`UserName`修改了，而`NickName`未修改。
-
-```` csharp
-helper.CreateWhere<User>()
-    .Where((u) => u.Id == userId)
-    .SetValue((u) => u.UserName = "Test")
-    .SetValue((u)=>u.NickName=u.NickName+"u")
-    .UpdateAndSelect();
-````
-运行上面的代码，你会发现`UserName`和`NickName`都修改了。
 
 
 #### 6、存储过程
@@ -383,12 +259,7 @@ using ToolGood.ReadyGo.Caches
     var args = helper.Sql.LastArgs;
     var cmd = helper.Sql.LastCommand;
     var err = helper.Sql.LastErrorMessage;
-    var commandTimeout = helper.Sql.LastCommandTimeout;
 
-    var isUsed = helper.Sql.LastUsedCacheService;
-    var cacheService = helper.Sql.LastCacheService;
-    var cacheTime = helper.Sql.LastCacheTime;
-    var cacheTag = helper.Sql.LastCacheTag;
 ````
 
 
@@ -443,10 +314,4 @@ ToolGood.ReadyGo
 
 ToolGood.ReadyGo 动态语言
 
-###下个版本优化内容
 
-
-优化SQL语句，Single，First之类的，如page方法
-
-
-----------------------------

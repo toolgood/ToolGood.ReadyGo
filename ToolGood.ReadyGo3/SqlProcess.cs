@@ -58,7 +58,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T"></typeparam>
         /// <param name="name"></param>
         /// <param name="isOutput"></param>
-        protected void AddDataParameter<T>(string name, bool isOutput)
+        protected void Add<T>(string name, bool isOutput)
         {
             var _p = _sqlhelper._factory.CreateParameter();
             _p.ParameterName = name;
