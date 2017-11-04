@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{33EEBB86-5A6D-40E8-AE75-83F008C158DC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
+    <AssemblyName>ToolGood.ReadyGo3</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Properties\ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attributes\ColumnAttribute.cs" />
+    <Compile Include="Attributes\CreateTableAttributes\DefaultValueAttribute.cs" />
+    <Compile Include="Attributes\CreateTableAttributes\FieldLengthAttribute.cs" />
+    <Compile Include="Attributes\CreateTableAttributes\IndexAttribute.cs" />
+    <Compile Include="Attributes\CreateTableAttributes\RequiredAttribute.cs" />
+    <Compile Include="Attributes\CreateTableAttributes\UniqueAttribute.cs" />
+    <Compile Include="Attributes\ExplicitColumnsAttribute.cs" />
+    <Compile Include="Attributes\IgnoreAttribute.cs" />
+    <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
+    <Compile Include="Attributes\ResultColumnAttribute.cs" />
+    <Compile Include="Attributes\TableAttribute.cs" />
+    <Compile Include="DataCentxt\Enums\ColumnChangeType.cs" />
+    <Compile Include="DataCentxt\Enums\ColumnType.cs" />
+    <Compile Include="DataCentxt\Enums\WhereType.cs" />
+    <Compile Include="DataCentxt\Interfaces\IDataGet\QTable.t.cs" />
+    <Compile Include="DataCentxt\Interfaces\ISQL\QTable.t.cs" />
+    <Compile Include="DataCentxt\Providers\FirebirdDbDatabaseProvider.cs" />
+    <Compile Include="DataCentxt\Providers\MsAccessDbDatabaseProvider.cs" />
+    <Compile Include="DataCentxt\Providers\MySqlDatabaseProvider.cs" />
+    <Compile Include="DataCentxt\Providers\OracleDatabaseProvider.cs" />
+    <Compile Include="DataCentxt\Providers\PostgreSQLDatabaseProvider.cs" />
+    <Compile Include="DataCentxt\Providers\SQLiteDatabaseProvider.cs" />
+    <Compile Include="DataCentxt\Providers\SqlServerCEDatabaseProviders.cs" />
+    <Compile Include="DataCentxt\Providers\SqlServerDatabaseProvider.cs" />
+    <Compile Include="DataCentxt\Exceptions\ColumnTypeException.cs" />
+    <Compile Include="DataCentxt\Exceptions\NoColumnException.cs" />
+    <Compile Include="DataCentxt\Exceptions\NoJoinOnException.cs" />
+    <Compile Include="DataCentxt\Exceptions\NoPrimaryKeyException.cs" />
+    <Compile Include="DataCentxt\Exceptions\NoWhereException.cs" />
+    <Compile Include="DataCentxt\Exceptions\DatabaseUnsupportException.cs" />
+    <Compile Include="DataCentxt\Interfaces\IConvertToSql\QColumn.cs" />
+    <Compile Include="DataCentxt\Interfaces\IConvertToSql\QCondition.cs" />
+    <Compile Include="DataCentxt\Interfaces\IConvertToSql\QTable.cs" />
+    <Compile Include="DataCentxt\Interfaces\IConvertToSql\SqlBuilder.cs" />
+    <Compile Include="DataCentxt\Interfaces\IDataGet.cs" />
+    <Compile Include="DataCentxt\Interfaces\IDataGet\QTable.cs" />
+    <Compile Include="DataCentxt\Interfaces\IDataGet\SqlBuilder.IDataGet.cs" />
+    <Compile Include="DataCentxt\Interfaces\IDataSet.cs" />
+    <Compile Include="DataCentxt\Interfaces\IDataSet\QTable.t.cs" />
+    <Compile Include="DataCentxt\Interfaces\IDataSet\SqlBuilder.IDataSet.cs" />
+    <Compile Include="DataCentxt\Interfaces\ISQL.cs" />
+    <Compile Include="DataCentxt\Interfaces\ISQL\SqlBuilder.ISQL.cs" />
+    <Compile Include="DataCentxt\Internals\OrderItem.cs" />
+    <Compile Include="DataCentxt\Internals\QCondition.cs" />
+    <Compile Include="DataCentxt\Internals\SqlBuilder.cs" />
+    <Compile Include="DataCentxt\Providers\DatabaseProvider.cs" />
+    <Compile Include="DataCentxt\QColumn.cs" />
+    <Compile Include="DataCentxt\QColumn.Function.cs" />
+    <Compile Include="DataCentxt\QColumn.inherit.cs" />
+    <Compile Include="DataCentxt\QColumn.operator.cs" />
+    <Compile Include="DataCentxt\QColumn.SqlFunction.cs" />
+    <Compile Include="DataCentxt\QTable.cs" />
+    <Compile Include="Enums\JoinType.cs" />
+    <Compile Include="Enums\OrderType.cs" />
+    <Compile Include="Enums\SqlType.cs" />
+    <Compile Include="Gadget\AnsiString.cs" />
+    <Compile Include="Gadget\Caches\ICacheService.cs" />
+    <Compile Include="Gadget\Caches\Md5MemoryCacheService.cs" />
+    <Compile Include="Gadget\Caches\MemoryCacheService.cs" />
+    <Compile Include="Gadget\Caches\NullCacheService.cs" />
+    <Compile Include="Gadget\Events\DataEventArgs.cs" />
+    <Compile Include="Gadget\Events\SqlErrorEventArgs.cs" />
+    <Compile Include="Gadget\Internals\SqlEvents.cs" />
+    <Compile Include="Gadget\Events\SqlOperationEventArgs.cs" />
+    <Compile Include="Gadget\IdWorker.cs" />
+    <Compile Include="Gadget\Internals\DefaultValue.cs" />
+    <Compile Include="Gadget\Internals\SqlConfig.cs" />
+    <Compile Include="Gadget\Internals\SqlRecord.cs" />
+    <Compile Include="Gadget\Monitor\ISqlMonitor.cs" />
+    <Compile Include="Gadget\Monitor\NullSqlMonitor.cs" />
+    <Compile Include="Gadget\Monitor\OutTextSqlMonitor.cs" />
+    <Compile Include="Gadget\Monitor\SqlMonitor.cs" />
+    <Compile Include="Gadget\Monitor\SqlMonitorType.cs" />
+    <Compile Include="Gadget\Page.cs" />
+    <Compile Include="Gadget\TableManager\ColumnInfo.cs" />
+    <Compile Include="Gadget\TableManager\Providers\DatabaseProvider.cs" />
+    <Compile Include="Gadget\TableManager\Providers\MySqlDatabaseProvider.cs" />
+    <Compile Include="Gadget\TableManager\Providers\SQLiteDatabaseProvider.cs" />
+    <Compile Include="Gadget\TableManager\Providers\SqlServerDatabaseProvider.cs" />
+    <Compile Include="Gadget\TableManager\SqlHelper.ext.cs" />
+    <Compile Include="Gadget\TableManager\SqlTableHelper.cs" />
+    <Compile Include="Gadget\TableManager\TableInfo.cs" />
+    <Compile Include="PetaPoco\Core\ColumnInfo.cs" />
+    <Compile Include="PetaPoco\Core\ExpandoColumn.cs" />
+    <Compile Include="PetaPoco\Core\Mappers.cs" />
+    <Compile Include="PetaPoco\Core\PocoColumn.cs" />
+    <Compile Include="PetaPoco\Core\PocoData.cs" />
+    <Compile Include="PetaPoco\Core\StandardMapper.cs" />
+    <Compile Include="PetaPoco\Core\TableInfo.cs" />
+    <Compile Include="PetaPoco\Core\Transaction.cs" />
+    <Compile Include="PetaPoco\Database.cs" />
+    <Compile Include="PetaPoco\Providers\DatabaseProvider.cs" />
+    <Compile Include="PetaPoco\Providers\FirebirdDbDatabaseProvider.cs" />
+    <Compile Include="PetaPoco\Providers\MsAccessDbDatabaseProvider.cs" />
+    <Compile Include="PetaPoco\Providers\MySqlDatabaseProvider.cs" />
+    <Compile Include="PetaPoco\Providers\OracleDatabaseProvider.cs" />
+    <Compile Include="PetaPoco\Providers\PostgreSQLDatabaseProvider.cs" />
+    <Compile Include="PetaPoco\Providers\SQLiteDatabaseProvider.cs" />
+    <Compile Include="PetaPoco\Providers\SqlServer2012DatabaseProvider.cs" />
+    <Compile Include="PetaPoco\Providers\SqlServerCEDatabaseProviders.cs" />
+    <Compile Include="PetaPoco\Providers\SqlServerDatabaseProvider.cs" />
+    <Compile Include="PetaPoco\Utilities\AutoSelectHelper.cs" />
+    <Compile Include="PetaPoco\Utilities\Cache.cs" />
+    <Compile Include="PetaPoco\Utilities\EnumMapper.cs" />
+    <Compile Include="PetaPoco\Utilities\PagingHelper.cs" />
+    <Compile Include="PetaPoco\Utilities\Singleton.cs" />
+    <Compile Include="PetaPoco\Utilities\SQLParts.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SqlHelper.cs" />
+    <Compile Include="SqlHelperFactory.cs" />
+    <Compile Include="SqlProcess.cs" />
+    <Compile Include="T4\ObjectToQTable1.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ObjectToQTable.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="T4\ObjectToQTable.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ObjectToQTable1.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\ToolGood.ReadyGo.snk" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
