@@ -46,35 +46,35 @@ namespace ToolGood.ReadyGo3.DataCentxt.Interfaces
         List<T> Select<T>(int limit, int offset, params string[] columns);
         List<T> Select<T>(int limit, int offset, params QColumnBase[] columns);
 
-        Page<T> GetPage<T>(int page, int size);
-        Page<T> GetPage<T>(int page, int size, params string[] columns);
-        Page<T> GetPage<T>(int page, int size, params QColumnBase[] columns);
+        Page<T> Page<T>(int page, int size);
+        Page<T> Page<T>(int page, int size, params string[] columns);
+        Page<T> Page<T>(int page, int size, params QColumnBase[] columns);
 
 
-        DataTable GetDataTable();
-        DataTable GetDataTable(params string[] columns);
-        DataTable GetDataTable(params QColumnBase[] columns);
+        DataTable ExecuteDataTable();
+        DataTable ExecuteDataTable(params string[] columns);
+        DataTable ExecuteDataTable(params QColumnBase[] columns);
 
-        DataTable GetDataTable(int limit);
-        DataTable GetDataTable(int limit, params string[] columns);
-        DataTable GetDataTable(int limit, params QColumnBase[] columns);
+        DataTable ExecuteDataTable(int limit);
+        DataTable ExecuteDataTable(int limit, params string[] columns);
+        DataTable ExecuteDataTable(int limit, params QColumnBase[] columns);
 
-        DataTable GetDataTable(int limit, int offset);
-        DataTable GetDataTable(int limit, int offset, params string[] columns);
-        DataTable GetDataTable(int limit, int offset, params QColumnBase[] columns);
+        DataTable ExecuteDataTable(int limit, int offset);
+        DataTable ExecuteDataTable(int limit, int offset, params string[] columns);
+        DataTable ExecuteDataTable(int limit, int offset, params QColumnBase[] columns);
 
 
-        DataSet GetDataSet();
-        DataSet GetDataSet(params string[] columns);
-        DataSet GetDataSet(params QColumnBase[] columns);
+        DataSet ExecuteDataSet();
+        DataSet ExecuteDataSet(params string[] columns);
+        DataSet ExecuteDataSet(params QColumnBase[] columns);
 
-        DataSet GetDataSet(int limit);
-        DataSet GetDataSet(int limit, params string[] columns);
-        DataSet GetDataSet(int limit, params QColumnBase[] columns);
+        DataSet ExecuteDataSet(int limit);
+        DataSet ExecuteDataSet(int limit, params string[] columns);
+        DataSet ExecuteDataSet(int limit, params QColumnBase[] columns);
 
-        DataSet GetDataSet(int limit, int offset);
-        DataSet GetDataSet(int limit, int offset, params string[] columns);
-        DataSet GetDataSet(int limit, int offset, params QColumnBase[] columns);
+        DataSet ExecuteDataSet(int limit, int offset);
+        DataSet ExecuteDataSet(int limit, int offset, params string[] columns);
+        DataSet ExecuteDataSet(int limit, int offset, params QColumnBase[] columns);
 
     }
 }

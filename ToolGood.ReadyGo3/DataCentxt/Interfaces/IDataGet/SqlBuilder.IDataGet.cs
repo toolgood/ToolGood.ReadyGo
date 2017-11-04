@@ -253,19 +253,19 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         #endregion
 
-        #region GetPage
-        public Page<T> GetPage<T>(int page, int size)
+        #region Page
+        public Page<T> Page<T>(int page, int size)
         {
             var columns = GetSelectColumns();
             return getPage<T>(page, size, columns);
         }
 
-        public Page<T> GetPage<T>(int page, int size, params string[] columns)
+        public Page<T> Page<T>(int page, int size, params string[] columns)
         {
             return getPage<T>(page, size, columns.ToList());
         }
 
-        public Page<T> GetPage<T>(int page, int size, params QColumnBase[] columns)
+        public Page<T> Page<T>(int page, int size, params QColumnBase[] columns)
         {
             return getPage<T>(page, size, ToSelectColumns(columns));
         }
@@ -287,51 +287,51 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         #endregion
 
-        #region GetDataTable
-        public DataTable GetDataTable()
+        #region ExecuteDataTable
+        public DataTable ExecuteDataTable()
         {
             var columns = GetSelectColumns();
             return getDataTable(-1, -1, columns);
         }
 
-        public DataTable GetDataTable(params string[] columns)
+        public DataTable ExecuteDataTable(params string[] columns)
         {
             return getDataTable(-1, -1, columns.ToList());
         }
 
-        public DataTable GetDataTable(params QColumnBase[] columns)
+        public DataTable ExecuteDataTable(params QColumnBase[] columns)
         {
             return getDataTable(-1, -1, ToSelectColumns(columns));
         }
 
-        public DataTable GetDataTable(int limit)
+        public DataTable ExecuteDataTable(int limit)
         {
             var columns = GetSelectColumns();
             return getDataTable(limit, -1, columns);
         }
 
-        public DataTable GetDataTable(int limit, params string[] columns)
+        public DataTable ExecuteDataTable(int limit, params string[] columns)
         {
             return getDataTable(limit, -1, columns.ToList());
         }
 
-        public DataTable GetDataTable(int limit, params QColumnBase[] columns)
+        public DataTable ExecuteDataTable(int limit, params QColumnBase[] columns)
         {
             return getDataTable(limit, -1, ToSelectColumns(columns));
         }
 
-        public DataTable GetDataTable(int limit, int offset)
+        public DataTable ExecuteDataTable(int limit, int offset)
         {
             var columns = GetSelectColumns();
             return getDataTable(limit, offset, columns);
         }
 
-        public DataTable GetDataTable(int limit, int offset, params string[] columns)
+        public DataTable ExecuteDataTable(int limit, int offset, params string[] columns)
         {
             return getDataTable(limit, offset, columns.ToList());
         }
 
-        public DataTable GetDataTable(int limit, int offset, params QColumnBase[] columns)
+        public DataTable ExecuteDataTable(int limit, int offset, params QColumnBase[] columns)
         {
             return getDataTable(limit, offset, ToSelectColumns(columns));
         }
@@ -345,51 +345,51 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         #endregion
 
-        #region GetDataSet
-        public DataSet GetDataSet()
+        #region ExecuteDataSet
+        public DataSet ExecuteDataSet()
         {
             var columns = GetSelectColumns();
             return getDataSet(-1, -1, columns);
         }
 
-        public DataSet GetDataSet(params string[] columns)
+        public DataSet ExecuteDataSet(params string[] columns)
         {
             return getDataSet(-1, -1, columns.ToList());
         }
 
-        public DataSet GetDataSet(params QColumnBase[] columns)
+        public DataSet ExecuteDataSet(params QColumnBase[] columns)
         {
             return getDataSet(-1, -1, ToSelectColumns(columns));
         }
 
-        public DataSet GetDataSet(int limit)
+        public DataSet ExecuteDataSet(int limit)
         {
             var columns = GetSelectColumns();
             return getDataSet(limit, -1, columns);
         }
 
-        public DataSet GetDataSet(int limit, params string[] columns)
+        public DataSet ExecuteDataSet(int limit, params string[] columns)
         {
             return getDataSet(limit, -1, columns.ToList());
         }
 
-        public DataSet GetDataSet(int limit, params QColumnBase[] columns)
+        public DataSet ExecuteDataSet(int limit, params QColumnBase[] columns)
         {
             return getDataSet(limit, -1, ToSelectColumns(columns));
         }
 
-        public DataSet GetDataSet(int limit, int offset)
+        public DataSet ExecuteDataSet(int limit, int offset)
         {
             var columns = GetSelectColumns();
             return getDataSet(limit, offset, columns);
         }
 
-        public DataSet GetDataSet(int limit, int offset, params string[] columns)
+        public DataSet ExecuteDataSet(int limit, int offset, params string[] columns)
         {
             return getDataSet(limit, offset, columns.ToList());
         }
 
-        public DataSet GetDataSet(int limit, int offset, params QColumnBase[] columns)
+        public DataSet ExecuteDataSet(int limit, int offset, params QColumnBase[] columns)
         {
             return getDataSet(limit, offset, ToSelectColumns(columns));
         }

@@ -298,7 +298,7 @@ namespace ToolGood.ReadyGo3
 
         #endregion UseTransaction UseCache UseRecord
 
-        #region Execute ExecuteScalar GetDataTable GetDataSet Exists
+        #region Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
 
         /// <summary>
         /// 执行 SQL 语句，并返回受影响的行数
@@ -345,7 +345,7 @@ namespace ToolGood.ReadyGo3
                 Database db = getDatabase();
                 sql = formatSql(sql);
                 return db.ExecuteDataTable(sql, args);
-            }, "GetDataTable");
+            }, "ExecuteDataTable");
         }
 
         /// <summary>
@@ -361,7 +361,7 @@ namespace ToolGood.ReadyGo3
                 Database db = getDatabase();
                 sql = formatSql(sql);
                 return db.ExecuteDataSet(sql, args);
-            }, "GetDataTable");
+            }, "ExecuteDataTable");
         }
 
         /// <summary>
@@ -386,10 +386,9 @@ namespace ToolGood.ReadyGo3
         public bool Exists<T>(object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T), null);
-
-            var sql = string.Format("SELECT * FROM {0} WHERE {1}=@0",
-                    _provider.EscapeSqlIdentifier(pd.TableInfo.TableName),
-                _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey));
+            var table = _provider.EscapeSqlIdentifier(pd.TableInfo.TableName);
+            var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+            var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
             return Count<T>(sql, primaryKey) > 0;
         }
 
@@ -403,9 +402,9 @@ namespace ToolGood.ReadyGo3
         public int Count<T>(string sql = "", params object[] args)
         {
             var pd = PocoData.ForType(typeof(T), null);
-
-            sql = string.Format("SELECT COUNT(*) FROM {0} {1}",
-                 _provider.EscapeSqlIdentifier(pd.TableInfo.TableName), sql);
+            var table = _provider.EscapeSqlIdentifier(pd.TableInfo.TableName);
+            sql = formatSql(sql);
+            sql = $"SELECT COUNT(*) FROM {table} {sql}";
 
             return Run(sql, args, () => {
                 Database db = getDatabase();
@@ -413,7 +412,7 @@ namespace ToolGood.ReadyGo3
             }, "Count");
         }
 
-        #endregion Execute ExecuteScalar GetDataTable GetDataSet Exists
+        #endregion Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
 
         #region Select Page Select
         /// <summary>
@@ -426,6 +425,7 @@ namespace ToolGood.ReadyGo3
         public List<T> Select<T>(string sql = "", params object[] args)
         {
             return Run<List<T>>(sql, args, () => {
+                sql = formatSql(sql);
                 Database db = getDatabase();
                 return db.Query<T>(sql, args).ToList();
             }, "Select");
@@ -439,12 +439,13 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> Select<T>(long limit,  string sql = "", params object[] args)
+        public List<T> Select<T>(long limit, string sql = "", params object[] args)
         {
             return Run<List<T>>(sql, args, () => {
                 Database db = getDatabase();
-                return db.SkipTake<T>(0, limit, sql, args);
-            }, "Select","0", limit.ToString());
+                sql = formatSql(sql);
+                return db.Query<T>(0, limit, sql, args).ToList();
+            }, "Select",limit.ToString());
         }
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -459,7 +460,8 @@ namespace ToolGood.ReadyGo3
         {
             return Run<List<T>>(sql, args, () => {
                 Database db = getDatabase();
-                return db.SkipTake<T>(offset, limit, sql, args);
+                sql = formatSql(sql);
+                return db.Query<T>(offset, limit, sql, args).ToList();
             }, "Select", offset.ToString(), limit.ToString());
         }
         /// <summary>
@@ -475,6 +477,7 @@ namespace ToolGood.ReadyGo3
         {
             return Run<Page<T>>(sql, args, () => {
                 Database db = getDatabase();
+                sql = formatSql(sql);
                 return db.Page<T>(page, itemsPerPage, sql, args);
             }, "Page", page.ToString(), itemsPerPage.ToString());
         }
@@ -493,8 +496,8 @@ namespace ToolGood.ReadyGo3
         public T SingleById<T>(object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T), null);
-
-            var sql = string.Format("WHERE {0}=@0", _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey));
+            var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+            var sql = $"WHERE {pk}=@0";
 
             return Single<T>(sql, primaryKey);
         }
@@ -508,7 +511,8 @@ namespace ToolGood.ReadyGo3
         public T SingleOrDefaultById<T>(object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T), null);
-            var sql = string.Format("WHERE {0}=@0", _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey));
+            var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+            var sql = $"WHERE {pk}=@0";
             return SingleOrDefault<T>(sql, primaryKey);
         }
 
@@ -524,7 +528,7 @@ namespace ToolGood.ReadyGo3
             return Run<T>(sql, args, () => {
                 sql = formatSql(sql);
                 Database db = getDatabase();
-                return db.Query<T>(sql, args).Single();
+                return db.Query<T>(0, 2, sql, args).Single();
             }, "Single");
         }
 
@@ -540,7 +544,7 @@ namespace ToolGood.ReadyGo3
             return Run<T>(sql, args, () => {
                 sql = formatSql(sql);
                 Database db = getDatabase();
-                return db.Query<T>(sql, args).SingleOrDefault();
+                return db.Query<T>(0, 2, sql, args).SingleOrDefault();
             }, "SingleOrDefault");
         }
 
@@ -556,7 +560,7 @@ namespace ToolGood.ReadyGo3
             return Run<T>(sql, args, () => {
                 sql = formatSql(sql);
                 Database db = getDatabase();
-                return db.Query<T>(sql, args).First();
+                return db.Query<T>(0, 1, sql, args).First();
             }, "First");
         }
 
@@ -572,7 +576,7 @@ namespace ToolGood.ReadyGo3
             return Run<T>(sql, args, () => {
                 sql = formatSql(sql);
                 Database db = getDatabase();
-                return db.Query<T>(sql, args).FirstOrDefault();
+                return db.Query<T>(0, 1, sql, args).FirstOrDefault();
             }, "FirstOrDefault");
         }
 

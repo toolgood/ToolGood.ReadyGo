@@ -131,60 +131,60 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         public Page<T> GetPage(int page, int size)
         {
-            return GetPage<T>(page, size, getSelectColumn());
+            return Page<T>(page, size, getSelectColumn());
         }
 
         public Page<T> GetPage(int page, int size, params string[] columns)
         {
-            return GetPage<T>(page, size, columns);
+            return Page<T>(page, size, columns);
         }
 
         public Page<T> GetPage(int page, int size, params QColumnBase[] columns)
         {
-            return GetPage<T>(page, size, columns);
+            return Page<T>(page, size, columns);
         }
         #endregion
 
 
 
-        #region GetDataTable
-        public DataTable GetDataTable()
+        #region ExecuteDataTable
+        public DataTable ExecuteDataTable()
         {
             var columns = getSelectColumn();
-            return GetDataTable(-1, -1, columns);
+            return ExecuteDataTable(-1, -1, columns);
         }
 
-        public DataTable GetDataTable(int limit)
+        public DataTable ExecuteDataTable(int limit)
         {
             var columns = getSelectColumn();
-            return GetDataTable(limit, -1, columns);
+            return ExecuteDataTable(limit, -1, columns);
         }
 
-        public DataTable GetDataTable(int limit, int offset)
+        public DataTable ExecuteDataTable(int limit, int offset)
         {
             var columns = getSelectColumn();
-            return GetDataTable(limit, offset, columns);
+            return ExecuteDataTable(limit, offset, columns);
         }
 
         #endregion
 
-        #region GetDataSet
-        public DataSet GetDataSet()
+        #region ExecuteDataSet
+        public DataSet ExecuteDataSet()
         {
             var columns = getSelectColumn();
-            return GetDataSet(-1, -1, columns);
+            return ExecuteDataSet(-1, -1, columns);
         }
 
-        public DataSet GetDataSet(int limit)
+        public DataSet ExecuteDataSet(int limit)
         {
             var columns = getSelectColumn();
-            return GetDataSet(limit, -1, columns);
+            return ExecuteDataSet(limit, -1, columns);
         }
 
-        public DataSet GetDataSet(int limit, int offset)
+        public DataSet ExecuteDataSet(int limit, int offset)
         {
             var columns = getSelectColumn();
-            return GetDataSet(limit, offset, columns);
+            return ExecuteDataSet(limit, offset, columns);
         }
 
         #endregion
