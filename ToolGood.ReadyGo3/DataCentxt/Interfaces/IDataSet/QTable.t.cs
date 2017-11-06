@@ -43,7 +43,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public int Update()
         {
-            return getSqlBuilder().Update();
+            return GetSqlBuilder().Update();
         }
         /// <summary>
         /// 删除
@@ -51,7 +51,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public int Delete()
         {
-            return getSqlBuilder().Delete();
+            return GetSqlBuilder().Delete();
         }
         /// <summary>
         /// 插入
@@ -60,14 +60,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public object Insert(bool returnInsertId=true)
         {
-            var config = _sqlHelper.Config;
+            var config = GetSqlHelper().Config;
             if (config.Insert_DateTime_Default_Now 
                 || config.Insert_Guid_Default_New
                 || config.Insert_String_Default_NotNull) {
                 ((ITableConvert) this).SetDefaultValue(config.Insert_DateTime_Default_Now,
                     config.Insert_String_Default_NotNull, config.Insert_Guid_Default_New);
             }
-            return getSqlBuilder().Insert(returnInsertId);
+            return GetSqlBuilder().Insert(returnInsertId);
         }
     }
 }

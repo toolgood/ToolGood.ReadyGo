@@ -6,7 +6,7 @@ using ToolGood.ReadyGo3;
 using ToolGood.ReadyGo3.Attributes;
 using ToolGood.ReadyGo3.DataCentxt;
 
-namespace ToolGood.ReadyGo3.Test.Datas
+namespace ToolGood.ReadyGo3
 {
 }
 

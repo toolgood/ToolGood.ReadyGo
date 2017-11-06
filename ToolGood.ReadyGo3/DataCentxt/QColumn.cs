@@ -8,7 +8,6 @@ using ToolGood.ReadyGo3.DataCentxt.Internals;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
-    [Serializable]
     public partial class QColumnBase
     {
         protected internal ColumnType _columnType;

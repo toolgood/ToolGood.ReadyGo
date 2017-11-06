@@ -21,13 +21,15 @@ namespace ToolGood.ReadyGo3
         private static string _lastConnectionString;
         private static DbProviderFactory _lastFactory;
         private static string _lastProviderName;
-        private static SqlType _lastSqlType;
+        [ThreadStatic]
+        internal static SqlHelper _lastSqlHelper;
+
 
         //是否设置默认值
         internal bool _setDateTimeDefaultNow;
         internal bool _setStringDefaultNotNull;
         internal bool _setGuidDefaultNew;
-
+      
 
         // 读写数据库
         internal string _connectionString;
@@ -52,7 +54,7 @@ namespace ToolGood.ReadyGo3
         internal SqlRecord _sql;
         internal ISqlMonitor _sqlMonitor;
         internal DatabaseProvider _provider;
-
+        internal bool _isDisposable;
 
         #endregion 私有变量
 
@@ -159,13 +161,15 @@ namespace ToolGood.ReadyGo3
 
             if (_sqlType == SqlType.None) {
                 _sqlType = DatabaseProvider.GetSqlType(providerName ?? _factory.GetType().FullName, _connectionString);
-                _lastSqlType = _sqlType;
             }
             _provider = DatabaseProvider.Resolve(_sqlType);
             if (_factory == null) {
                 _factory = _provider.GetFactory();
                 _lastFactory = _factory;
 
+            }
+            if (_lastSqlHelper==null|| _lastSqlHelper._isDisposable) {
+                _lastSqlHelper = this;
             }
         }
 
@@ -174,6 +178,7 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         public void Dispose()
         {
+            _isDisposable = true;
             if (_database != null) {
                 _database.Dispose();
             }

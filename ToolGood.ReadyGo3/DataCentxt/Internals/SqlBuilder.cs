@@ -10,7 +10,16 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
     public partial class SqlBuilder : IDisposable
     {
         internal DatabaseProvider _provider;
-        private SqlHelper _sqlHelper;
+        internal DatabaseProvider Provider
+        {
+            get
+            {
+                if (_provider==null) {
+                    _provider = DatabaseProvider.Resolve(_tables[0].GetSqlType());
+                }
+                return _provider;
+            }
+        }
         internal List<QTable> _tables = new List<QTable>();
         private QWhereCondition whereCondition = new QWhereCondition();
         private string _joinOnText;
@@ -24,21 +33,20 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public SqlBuilder(QTable table)
         {
             AddTable(table);
-            _provider = DatabaseProvider.Resolve(table._sqlType);
         }
 
         internal void AddTable(QTable table)
         {
             _tables.Add(table);
             table._asName = "t" + _tables.Count;
-            if (_sqlHelper == null) {
-                if (table._connStringName != null) {
-                    _sqlHelper = SqlHelperFactory.OpenFormConnStr(table._connStringName);
-                } else {
-                    _sqlHelper = table._sqlHelper;
-                }
+            if (string.IsNullOrEmpty(table._schemaName)==false ) {
+                SetUsedSchemaName();
             }
-            SetUsedSchemaName();
+        }
+
+        private SqlHelper GetSqlHelper()
+        {
+           return _tables[0].GetSqlHelper();
         }
 
         private void SetUsedSchemaName()
@@ -47,9 +55,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                 bool hasSchemaName = false;
                 string schemaName = "";
 
-                if (string.IsNullOrEmpty(_sqlHelper._schemaName)==false) {
+                if (string.IsNullOrEmpty(GetSqlHelper()._schemaName)==false) {
                     hasSchemaName = true;
-                    schemaName = _sqlHelper._schemaName;
+                    schemaName = GetSqlHelper()._schemaName;
                 }
                 foreach (var item in _tables) {
                     if (string.IsNullOrEmpty(item._schemaName) == false) {
@@ -89,7 +97,8 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                 table._joinType = JoinType.Inner;
                 table._sqlBuilder = null;
             }
-
+            _tables.Clear();
+            _tables = null;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
 {
     partial class QColumnBase
     {
-        private static QColumn CreateFunctionColumn2(string funName, string funFormat, params object[] args)
+        protected static QColumn CreateFunctionColumn2(string funName, string funFormat, params object[] args)
         {
             QColumn column = new QColumn();
             column._columnType = Enums.ColumnType.Function;
@@ -18,11 +18,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
             column._functionArgs = args;
             return column;
         }
-        private static QCondition CreateCondition(QColumnBase col1, string op, QColumnBase col2)
+        protected static QCondition CreateCondition(QColumnBase col1, string op, QColumnBase col2)
         {
             return new QColumnColumnCondition(col1, op, col2);
         }
-        private static QCondition CreateCondition(QColumnBase col1, string op, object col2)
+        protected static QCondition CreateCondition(QColumnBase col1, string op, object col2)
         {
             return new QColumnValueCondition(col1, op, col2);
         }
@@ -250,6 +250,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         #endregion
 
+
         #region operator Null
 
         public static QCondition operator ==(QColumnBase col, DBNull Null)
@@ -275,6 +276,10 @@ namespace ToolGood.ReadyGo3.DataCentxt
         #endregion
 
         #region operator ==
+        public static QCondition operator ==(QColumnBase col, bool value)
+        {
+            return CreateCondition(col, "=", value);
+        }
         public static QCondition operator ==(QColumnBase col, Int16 value)
         {
             return CreateCondition(col, "=", value);
@@ -325,6 +330,10 @@ namespace ToolGood.ReadyGo3.DataCentxt
         #endregion
 
         #region operator !=
+        public static QCondition operator !=(QColumnBase col, bool value)
+        {
+            return CreateCondition(col, "<>", value);
+        }
         public static QCondition operator !=(QColumnBase col, Int16 value)
         {
             return CreateCondition(col, "<>", value);

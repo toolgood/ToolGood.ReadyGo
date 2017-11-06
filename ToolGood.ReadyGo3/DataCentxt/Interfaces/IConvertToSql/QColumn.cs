@@ -80,7 +80,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         SqlBuilder IColumnConvert.GetSqlBuilder()
         {
             if (_table != null) {
-                return _table.getSqlBuilder();
+                return _table.GetSqlBuilder();
             }
             foreach (var item in _functionArgs) {
                 if (item is QColumnBase) {

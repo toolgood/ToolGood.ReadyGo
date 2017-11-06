@@ -11,27 +11,27 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
     {
         public int Delete()
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullDeleteSql(_provider);
-            return _sqlHelper.Delete(sql);
+            var sql = ((ISqlBuilderConvert)this).GetFullDeleteSql(Provider);
+            return GetSqlHelper().Delete(sql);
         }
 
         public object Insert(bool returnInsertId = true)
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullInsertSql(_provider);
+            var sql = ((ISqlBuilderConvert)this).GetFullInsertSql(Provider);
             if (returnInsertId) {
                 var pk = ((ITableConvert) _tables[0]).GetPrimaryKey();
                 if (object.Equals(pk,null)) {
                     throw new NoPrimaryKeyException();
                 }
-                return _sqlHelper.Insert(sql, pk._columnName);
+                return GetSqlHelper().Insert(sql, pk._columnName);
             }
-            return _sqlHelper.Execute(sql);
+            return GetSqlHelper().Execute(sql);
         }
 
         public int Update()
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullUpdateSql(_provider);
-            return _sqlHelper.Update(sql);
+            var sql = ((ISqlBuilderConvert)this).GetFullUpdateSql(Provider);
+            return GetSqlHelper().Update(sql);
         }
     }
 }

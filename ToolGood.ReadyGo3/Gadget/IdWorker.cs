@@ -14,11 +14,11 @@ namespace ToolGood.ReadyGo3
     public class IdWorker
     {
         //机器标识位数
-        const int WorkerIdBits = 5;
+        private const int WorkerIdBits = 5;
         //序列号识位数
-        const int SequenceBits = 18;
+        private const int SequenceBits = 18;
         //机器ID最大值
-        const long MaxWorkerId = -1L ^ (-1L << WorkerIdBits);
+        private const long MaxWorkerId = -1L ^ (-1L << WorkerIdBits);
         //序列号ID最大值
         private const long SequenceMask = -1L ^ (-1L << SequenceBits);
         //机器ID偏左移12位
@@ -26,15 +26,10 @@ namespace ToolGood.ReadyGo3
         //时间秒左移22位
         private const int TimestampLeftShift = SequenceBits + WorkerIdBits ;
 
-        private long _sequence = 0L;
+        public long Sequence = 0L;
         private long _lastTimestamp = -1L;
 
         public long WorkerId { get; protected set; }
-        public long Sequence
-        {
-            get { return _sequence; }
-            internal set { _sequence = value; }
-        }
 
         /// <summary>
         /// IdWorker
@@ -50,7 +45,7 @@ namespace ToolGood.ReadyGo3
         
             //先检验再赋值
             WorkerId = workerId;
-            _sequence = sequence;
+            Sequence = sequence;
         }
 
         readonly object _lock = new Object();
@@ -66,19 +61,19 @@ namespace ToolGood.ReadyGo3
                 //如果上次生成时间和当前时间相同,在同一毫秒内
                 if (_lastTimestamp == timestamp) {
                     //sequence自增，和sequenceMask相与一下，去掉高位
-                    _sequence = (_sequence + 1) & SequenceMask;
+                    Sequence = (Sequence + 1) & SequenceMask;
                     //判断是否溢出,也就是每毫秒内超过1024，当为1024时，与sequenceMask相与，sequence就等于0
-                    if (_sequence == 0) {
+                    if (Sequence == 0) {
                         //等待到下一毫秒
                         timestamp = TilNextMillis(_lastTimestamp);
                     }
                 } else {
                     //如果和上次生成时间不同,重置sequence，就是下一毫秒开始，sequence计数重新从0开始累加,
-                    _sequence = 0;
+                    Sequence = 0;
                 }
 
                 _lastTimestamp = timestamp;
-                return (timestamp << TimestampLeftShift) | (WorkerId << WorkerIdShift) | _sequence;
+                return (timestamp << TimestampLeftShift) | (WorkerId << WorkerIdShift) | Sequence;
             }
         }
 

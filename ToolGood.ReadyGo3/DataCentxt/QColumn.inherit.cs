@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Enums;
+using ToolGood.ReadyGo3.DataCentxt.Exceptions;
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 
 namespace ToolGood.ReadyGo3.DataCentxt
@@ -102,6 +103,15 @@ namespace ToolGood.ReadyGo3.DataCentxt
             };
         }
 
+        public static QCondition operator !(QTableColumn<T> col)
+        {
+            if (typeof(T) != typeof(bool)) {
+                throw new ColumnTypeException();
+            }
+            return CreateCondition(col, "<>", true);
+        }
+
+
 
         public static implicit operator QTableColumn<T>(Int16 value)
         {
@@ -178,7 +188,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             object obj = ChangeType(value, typeof(T));
             return new QTableColumn<T>() { _value = (T)obj, _columnType = Enums.ColumnType.Value };
         }
-        private static object ChangeType(object value, Type type)
+        internal static object ChangeType(object value, Type type)
         {
             if (value == null && type.IsGenericType) return Activator.CreateInstance(type);
             if (value == null) return null;

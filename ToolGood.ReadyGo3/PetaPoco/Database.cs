@@ -15,7 +15,7 @@ using ToolGood.ReadyGo3.PetaPoco.Utilities;
 
 namespace ToolGood.ReadyGo3.PetaPoco
 {
-    public class Database
+    public class Database: IDisposable
     {
         #region IDisposable
 

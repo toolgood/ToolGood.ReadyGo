@@ -8,17 +8,15 @@ using ToolGood.ReadyGo3.Gadget.Internals;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
-    [Serializable]
-    public abstract partial class QTable:IDisposable
+    public abstract partial class QTable : IDisposable
     {
         public string __TableName__ { get { return _tableName; } set { _tableName = value.Trim(); } }
         public string __SchemaName__ { get { return _schemaName; } set { _schemaName = value.Trim(); } }
-        public SqlRecord __SQL__ { get { return _sqlHelper.Sql; } }
+        public SqlRecord __SQL__ { get { return GetSqlHelper().Sql; } }
 
-        internal bool _singleSqlHelper;
-        internal SqlHelper _sqlHelper;
-        internal SqlType _sqlType;
-        internal string _connStringName;
+        private bool _singleSqlHelper;
+        private SqlHelper _sqlHelper;
+        private readonly string _connStringName;
         internal SqlBuilder _sqlBuilder;
         internal string _schemaName;
         internal string _tableName;
@@ -26,6 +24,32 @@ namespace ToolGood.ReadyGo3.DataCentxt
         internal JoinType _joinType;
         internal QJoinCondition _joinCondition;
         internal Dictionary<string, QTableColumn> _columns = new Dictionary<string, QTableColumn>();
+
+        protected QTable()
+        {
+            Init();
+        }
+        protected QTable(string connStringName)
+        {
+            _connStringName = connStringName;
+            Init();
+        }
+        protected QTable(SqlHelper sqlHelper)
+        {
+            _singleSqlHelper = false;
+            _sqlHelper = sqlHelper;
+            Init();
+        }
+        public void Dispose()
+        {
+            if (_singleSqlHelper) {
+                if (_sqlHelper != null) {
+                    _sqlHelper.Dispose();
+                }
+            }
+        }
+
+
 
         #region AddColumn
         private QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk, bool resultColumn, string resultSql)
@@ -39,7 +63,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             _columns.Add(fieldName.ToLower(), column);
             return column;
         }
-        protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk = false)
+        protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk)
         {
             return AddColumn<T>(columnName, fieldName, isPk, false, null);
         }
@@ -48,15 +72,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return AddColumn<T>(columnName, fieldName, false, true, null);
         }
         #endregion
-
-        protected internal SqlBuilder getSqlBuilder()
-        {
-            if (_sqlBuilder == null) {
-                _sqlBuilder = new SqlBuilder(this);
-            }
-            return _sqlBuilder;
-        }
-
         public void Clear()
         {
             if (_sqlBuilder != null) {
@@ -64,46 +79,45 @@ namespace ToolGood.ReadyGo3.DataCentxt
             }
         }
 
-        public void Dispose()
+
+        protected abstract void Init();
+        protected internal SqlHelper GetSqlHelper()
         {
-            if (_singleSqlHelper) {
-                if (_sqlHelper!=null) {
-                    _sqlHelper.Dispose();
+            if (_sqlHelper == null || _sqlHelper._isDisposable) {
+                if (string.IsNullOrEmpty(_connStringName) == false) {
+                    _singleSqlHelper = true;
+                    _sqlHelper = new SqlHelper(_connStringName);
+                } else if (SqlHelper._lastSqlHelper != null && SqlHelper._lastSqlHelper._isDisposable == false) {
+                    _singleSqlHelper = false;
+                    _sqlHelper = SqlHelper._lastSqlHelper;
+                } else {
+                    _singleSqlHelper = true;
+                    _sqlHelper = new SqlHelper();
                 }
             }
+            return _sqlHelper;
+        }
+        protected internal SqlType GetSqlType()
+        {
+            return GetSqlHelper()._sqlType;
+        }
+        protected internal SqlBuilder GetSqlBuilder()
+        {
+            if (_sqlBuilder == null) {
+                _sqlBuilder = new SqlBuilder(this);
+            }
+            return _sqlBuilder;
         }
     }
 
     public abstract partial class QTable<T> : QTable
         where T : class
     {
-        protected QTable()
-        {
-            _singleSqlHelper = true;
-            _sqlHelper = new SqlHelper();
-            _sqlType = _sqlHelper._sqlType;
-            Init();
-        }
+        protected QTable() : base() { }
 
-        protected QTable(string connStringName)
-        {
-            _singleSqlHelper = true;
-            _connStringName = connStringName;
-            _sqlHelper = new SqlHelper(connStringName);
-            _sqlType = _sqlHelper._sqlType;
-            Init();
+        protected QTable(string connStringName) : base(connStringName) { }
 
-        }
-        protected QTable(SqlHelper sqlHelper)
-        {
-            _singleSqlHelper = false;
-            _sqlHelper = sqlHelper;
-            _sqlType = _sqlHelper._sqlType;
-            Init();
-        }
-
-        protected abstract void Init();
-
+        protected QTable(SqlHelper sqlHelper) : base(sqlHelper) { }
 
     }
 

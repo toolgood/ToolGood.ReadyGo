@@ -8,7 +8,7 @@
         /// <summary>
         ///     The string value
         /// </summary>
-        public string Value { get; private set; }
+        public string Value;
 
         /// <summary>
         ///     Constructs an AnsiString

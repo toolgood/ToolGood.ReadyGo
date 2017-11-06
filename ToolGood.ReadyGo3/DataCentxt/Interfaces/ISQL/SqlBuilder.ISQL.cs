@@ -20,7 +20,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                 sql = "(" + sql + ")";
             }
 
-            whereCondition = whereCondition.And(new QCodeCondition("EXISTS " + _provider.FormatSql(sql, args)));
+            whereCondition = whereCondition.And(new QCodeCondition("EXISTS " + Provider.FormatSql(sql, args)));
 
         }
 
@@ -33,22 +33,22 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             if (sql.StartsWith("(") == false) {
                 sql = "(" + sql + ")";
             }
-            whereCondition = whereCondition.And(new QCodeCondition("NOT EXISTS " + _provider.FormatSql(sql, args)));
+            whereCondition = whereCondition.And(new QCodeCondition("NOT EXISTS " + Provider.FormatSql(sql, args)));
         }
 
         public void Where(string @where, params object[] args)
         {
             if (_jump) { _jump = false; return; }
-            whereCondition = whereCondition.And(new QCodeCondition(_provider.FormatSql(@where, args)));
+            whereCondition = whereCondition.And(new QCodeCondition(Provider.FormatSql(@where, args)));
         }
 
         public void JoinWithOn(string joinWithOn)
         {
             if (_jump) { _jump = false; return; }
             if (_joinOnText == null) {
-                _joinOnText = _provider.FormatSql(joinWithOn, null);
+                _joinOnText = Provider.FormatSql(joinWithOn, null);
             } else {
-                _joinOnText += " " + _provider.FormatSql(joinWithOn, null);
+                _joinOnText += " " + Provider.FormatSql(joinWithOn, null);
             }
         }
 

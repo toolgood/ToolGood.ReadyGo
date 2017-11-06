@@ -7,7 +7,7 @@ using ToolGood.ReadyGo3.Gadget.Caches;
 using ToolGood.ReadyGo3.PetaPoco;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
-namespace ToolGood.ReadyGo
+namespace ToolGood.ReadyGo3
 {
     public abstract class SqlProcess : IDisposable
     {

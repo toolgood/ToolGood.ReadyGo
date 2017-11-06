@@ -15,7 +15,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public QTable<T> Distinct()
         {
-            getSqlBuilder().Distinct();
+            GetSqlBuilder().Distinct();
             return this;
         }
         /// <summary>
@@ -24,7 +24,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public int SelectCount()
         {
-            return getSqlBuilder().SelectCount();
+            return GetSqlBuilder().SelectCount();
         }
         /// <summary>
         /// 获取数量
@@ -33,7 +33,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public int SelectCount(string distinctColumn)
         {
-            return getSqlBuilder().SelectCount(distinctColumn);
+            return GetSqlBuilder().SelectCount(distinctColumn);
         }
         /// <summary>
         /// 获取数量
@@ -42,7 +42,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public int SelectCount(QColumnBase distinctColumn)
         {
-            return getSqlBuilder().SelectCount(distinctColumn);
+            return GetSqlBuilder().SelectCount(distinctColumn);
         }
         /// <summary>
         /// 获取唯一对象,不能为Null，如果返回2列则报错，查询时添加limit 2
@@ -51,7 +51,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table Single<Table>()
         {
-            return getSqlBuilder().Single<Table>();
+            return GetSqlBuilder().Single<Table>();
         }
         /// <summary>
         /// 获取唯一对象,不能为Null，如果返回2列则报错，查询时添加limit 2
@@ -61,7 +61,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table Single<Table>(params string[] columns)
         {
-            return getSqlBuilder().Single<Table>(columns);
+            return GetSqlBuilder().Single<Table>(columns);
         }
         /// <summary>
         /// 获取唯一对象,不能为Null，如果返回2列则报错，查询时添加limit 2
@@ -71,7 +71,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table Single<Table>(params QColumnBase[] columns)
         {
-            return getSqlBuilder().Single<Table>(columns);
+            return GetSqlBuilder().Single<Table>(columns);
         }
         /// <summary>
         /// 获取唯一对象,可以为Null，如果返回2列则报错，查询时添加limit 2
@@ -80,7 +80,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table SingleOrDefault<Table>()
         {
-            return getSqlBuilder().SingleOrDefault<Table>();
+            return GetSqlBuilder().SingleOrDefault<Table>();
         }
         /// <summary>
         /// 获取唯一对象,可以为Null，如果返回2列则报错，查询时添加limit 2
@@ -90,7 +90,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table SingleOrDefault<Table>(params string[] columns)
         {
-            return getSqlBuilder().SingleOrDefault<Table>(columns);
+            return GetSqlBuilder().SingleOrDefault<Table>(columns);
         }
         /// <summary>
         /// 获取唯一对象,可以为Null，如果返回2列则报错，查询时添加limit 2
@@ -100,7 +100,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table SingleOrDefault<Table>(params QColumnBase[] columns)
         {
-            return getSqlBuilder().SingleOrDefault<Table>(columns);
+            return GetSqlBuilder().SingleOrDefault<Table>(columns);
         }
         /// <summary>
         /// 获取第一个对象,不能为Null，查询时添加limit 1
@@ -109,7 +109,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table First<Table>()
         {
-            return getSqlBuilder().First<Table>();
+            return GetSqlBuilder().First<Table>();
         }
         /// <summary>
         /// 获取第一个对象,不能为Null，查询时添加limit 1
@@ -119,7 +119,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table First<Table>(params string[] columns)
         {
-            return getSqlBuilder().First<Table>(columns);
+            return GetSqlBuilder().First<Table>(columns);
         }
         /// <summary>
         /// 获取第一个对象,不能为Null，查询时添加limit 1
@@ -129,7 +129,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table First<Table>(params QColumnBase[] columns)
         {
-            return getSqlBuilder().First<Table>(columns);
+            return GetSqlBuilder().First<Table>(columns);
         }
         /// <summary>
         /// 获取第一个对象,可以为Null，查询时添加limit 1
@@ -138,7 +138,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table FirstOrDefault<Table>()
         {
-            return getSqlBuilder().FirstOrDefault<Table>();
+            return GetSqlBuilder().FirstOrDefault<Table>();
         }
         /// <summary>
         /// 获取第一个对象,可以为Null，查询时添加limit 1
@@ -148,7 +148,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table FirstOrDefault<Table>(params string[] columns)
         {
-            return getSqlBuilder().FirstOrDefault<Table>(columns);
+            return GetSqlBuilder().FirstOrDefault<Table>(columns);
         }
         /// <summary>
         /// 获取第一个对象,可以为Null，查询时添加limit 1
@@ -158,7 +158,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Table FirstOrDefault<Table>(params QColumnBase[] columns)
         {
-            return getSqlBuilder().FirstOrDefault<Table>(columns);
+            return GetSqlBuilder().FirstOrDefault<Table>(columns);
         }
         /// <summary>
         /// 获取对象集合
@@ -167,7 +167,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public List<Table> Select<Table>()
         {
-            return getSqlBuilder().Select<Table>();
+            return GetSqlBuilder().Select<Table>();
         }
         /// <summary>
         /// 获取对象集合
@@ -177,7 +177,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public List<Table> Select<Table>(params string[] columns)
         {
-            return getSqlBuilder().Select<Table>(columns);
+            return GetSqlBuilder().Select<Table>(columns);
         }
         /// <summary>
         /// 获取对象集合
@@ -187,7 +187,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public List<Table> Select<Table>(params QColumnBase[] columns)
         {
-            return getSqlBuilder().Select<Table>(columns);
+            return GetSqlBuilder().Select<Table>(columns);
         }
         /// <summary>
         /// 获取对象集合
@@ -197,7 +197,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public List<Table> Select<Table>(int limit)
         {
-            return getSqlBuilder().Select<Table>(limit);
+            return GetSqlBuilder().Select<Table>(limit);
         }
         /// <summary>
         /// 获取对象集合
@@ -208,7 +208,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public List<Table> Select<Table>(int limit, params string[] columns)
         {
-            return getSqlBuilder().Select<Table>(limit, columns);
+            return GetSqlBuilder().Select<Table>(limit, columns);
         }
         /// <summary>
         /// 获取对象集合
@@ -219,7 +219,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public List<Table> Select<Table>(int limit, params QColumnBase[] columns)
         {
-            return getSqlBuilder().Select<Table>(limit, columns);
+            return GetSqlBuilder().Select<Table>(limit, columns);
         }
         /// <summary>
         /// 获取对象集合
@@ -230,7 +230,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public List<Table> Select<Table>(int limit, int offset)
         {
-            return getSqlBuilder().Select<Table>(limit, offset);
+            return GetSqlBuilder().Select<Table>(limit, offset);
         }
         /// <summary>
         /// 获取对象集合
@@ -242,7 +242,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public List<Table> Select<Table>(int limit, int offset, params string[] columns)
         {
-            return getSqlBuilder().Select<Table>(limit, offset, columns);
+            return GetSqlBuilder().Select<Table>(limit, offset, columns);
         }
         /// <summary>
         /// 获取对象集合
@@ -254,7 +254,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public List<Table> Select<Table>(int limit, int offset, params QColumnBase[] columns)
         {
-            return getSqlBuilder().Select<Table>(limit, offset, columns);
+            return GetSqlBuilder().Select<Table>(limit, offset, columns);
         }
         /// <summary>
         /// 获取对象集合,【页集合】
@@ -265,7 +265,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Page<Table> Page<Table>(int page, int size)
         {
-            return getSqlBuilder().Page<Table>(page, size);
+            return GetSqlBuilder().Page<Table>(page, size);
         }
         /// <summary>
         /// 获取对象集合,【页集合】
@@ -277,7 +277,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Page<Table> Page<Table>(int page, int size, params string[] columns)
         {
-            return getSqlBuilder().Page<Table>(page, size, columns);
+            return GetSqlBuilder().Page<Table>(page, size, columns);
         }
         /// <summary>
         /// 获取对象集合,【页集合】
@@ -289,7 +289,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public Page<Table> Page<Table>(int page, int size, params QColumnBase[] columns)
         {
-            return getSqlBuilder().Page<Table>(page, size, columns);
+            return GetSqlBuilder().Page<Table>(page, size, columns);
         }
 
         /// <summary>
@@ -299,7 +299,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataTable ExecuteDataTable(params string[] columns)
         {
-            return getSqlBuilder().ExecuteDataTable(columns);
+            return GetSqlBuilder().ExecuteDataTable(columns);
         }
         /// <summary>
         /// 获取DataTable对象
@@ -308,7 +308,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataTable ExecuteDataTable(params QColumnBase[] columns)
         {
-            return getSqlBuilder().ExecuteDataTable(columns);
+            return GetSqlBuilder().ExecuteDataTable(columns);
         }
 
         /// <summary>
@@ -319,7 +319,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataTable ExecuteDataTable(int limit, params string[] columns)
         {
-            return getSqlBuilder().ExecuteDataTable(limit, columns);
+            return GetSqlBuilder().ExecuteDataTable(limit, columns);
         }
         /// <summary>
         /// 获取DataTable对象
@@ -329,7 +329,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataTable ExecuteDataTable(int limit, params QColumnBase[] columns)
         {
-            return getSqlBuilder().ExecuteDataTable(limit, columns);
+            return GetSqlBuilder().ExecuteDataTable(limit, columns);
         }
 
         /// <summary>
@@ -341,7 +341,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataTable ExecuteDataTable(int limit, int offset, params string[] columns)
         {
-            return getSqlBuilder().ExecuteDataTable(limit, offset, columns);
+            return GetSqlBuilder().ExecuteDataTable(limit, offset, columns);
         }
         /// <summary>
         /// 获取DataTable对象
@@ -352,7 +352,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataTable ExecuteDataTable(int limit, int offset, params QColumnBase[] columns)
         {
-            return getSqlBuilder().ExecuteDataTable(limit, offset, columns);
+            return GetSqlBuilder().ExecuteDataTable(limit, offset, columns);
         }
 
         /// <summary>
@@ -362,7 +362,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataSet ExecuteDataSet(params string[] columns)
         {
-            return getSqlBuilder().ExecuteDataSet(columns);
+            return GetSqlBuilder().ExecuteDataSet(columns);
         }
         /// <summary>
         /// 获取DataSet对象
@@ -371,7 +371,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataSet ExecuteDataSet(params QColumnBase[] columns)
         {
-            return getSqlBuilder().ExecuteDataSet(columns);
+            return GetSqlBuilder().ExecuteDataSet(columns);
         }
 
         /// <summary>
@@ -382,7 +382,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataSet ExecuteDataSet(int limit, params string[] columns)
         {
-            return getSqlBuilder().ExecuteDataSet(limit, columns);
+            return GetSqlBuilder().ExecuteDataSet(limit, columns);
         }
         /// <summary>
         /// 获取DataSet对象
@@ -392,7 +392,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataSet ExecuteDataSet(int limit, params QColumnBase[] columns)
         {
-            return getSqlBuilder().ExecuteDataSet(limit, columns);
+            return GetSqlBuilder().ExecuteDataSet(limit, columns);
         }
 
         /// <summary>
@@ -404,7 +404,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataSet ExecuteDataSet(int limit, int offset, params string[] columns)
         {
-            return getSqlBuilder().ExecuteDataSet(limit, offset, columns);
+            return GetSqlBuilder().ExecuteDataSet(limit, offset, columns);
         }
         /// <summary>
         /// 获取DataSet对象
@@ -415,7 +415,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public DataSet ExecuteDataSet(int limit, int offset, params QColumnBase[] columns)
         {
-            return getSqlBuilder().ExecuteDataSet(limit, offset, columns);
+            return GetSqlBuilder().ExecuteDataSet(limit, offset, columns);
         }
     }
 }

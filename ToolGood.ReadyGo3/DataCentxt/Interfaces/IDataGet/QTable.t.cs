@@ -8,7 +8,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
 {
     partial class QTable<T>
     {
-
         private QColumnBase[] getSelectColumn()
         {
             List<QColumnBase> list = new List<QColumnBase>();
@@ -21,62 +20,62 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         #region Single SingleOrDefault First FirstOrDefault
 
-        public T GetSingle()
+        public T Single()
         {
             return Single<T>(getSelectColumn());
         }
 
-        public T GetSingle(params string[] columns)
+        public T Single(params string[] columns)
         {
             return Single<T>(columns);
         }
 
-        public T GetSingle(params QColumnBase[] columns)
+        public T Single(params QColumnBase[] columns)
         {
             return Single<T>(columns);
         }
 
-        public T GetSingleOrDefault()
+        public T SingleOrDefault()
         {
             return SingleOrDefault<T>(getSelectColumn());
         }
 
-        public T GetSingleOrDefault(params string[] columns)
+        public T SingleOrDefault(params string[] columns)
         {
             return SingleOrDefault<T>(columns);
         }
 
-        public T GetSingleOrDefault(params QColumnBase[] columns)
+        public T SingleOrDefault(params QColumnBase[] columns)
         {
             return SingleOrDefault<T>(columns);
         }
 
-        public T GetFirst()
+        public T First()
         {
             return First<T>(getSelectColumn());
         }
 
-        public T GetFirst(params string[] columns)
+        public T First(params string[] columns)
         {
             return First<T>(columns);
         }
 
-        public T GetFirst(params QColumnBase[] columns)
+        public T First(params QColumnBase[] columns)
         {
             return First<T>(columns);
         }
 
-        public T GetFirstOrDefault()
+        public T FirstOrDefault()
         {
             return FirstOrDefault<T>(getSelectColumn());
         }
 
-        public T GetFirstOrDefault(params string[] columns)
+        public T FirstOrDefault(params string[] columns)
         {
             return FirstOrDefault<T>(columns);
         }
 
-        public T GetFirstOrDefault(params QColumnBase[] columns)
+        public T FirstOrDefault(params QColumnBase[] columns)
         {
             return FirstOrDefault<T>(columns);
         }
@@ -84,62 +83,62 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         #region Select
 
-        public List<T> GetList()
+        public List<T> Select()
         {
             return Select<T>(getSelectColumn());
         }
 
-        public List<T> GetList(params string[] columns)
+        public List<T> Select(params string[] columns)
         {
             return Select<T>(columns);
         }
 
-        public List<T> GetList(params QColumnBase[] columns)
+        public List<T> Select(params QColumnBase[] columns)
         {
             return Select<T>(columns);
         }
 
-        public List<T> GetList(int limit)
+        public List<T> Select(int limit)
         {
             return Select<T>(limit, getSelectColumn());
         }
 
-        public List<T> GetList(int limit, params string[] columns)
+        public List<T> Select(int limit, params string[] columns)
         {
             return Select<T>(limit, columns);
         }
 
-        public List<T> GetList(int limit, params QColumnBase[] columns)
+        public List<T> Select(int limit, params QColumnBase[] columns)
         {
             return Select<T>(limit, columns);
         }
 
-        public List<T> GetList(int limit, int offset)
+        public List<T> Select(int limit, int offset)
         {
             return Select<T>(limit, offset, getSelectColumn());
         }
 
-        public List<T> GetList(int limit, int offset, params string[] columns)
+        public List<T> Select(int limit, int offset, params string[] columns)
         {
             return Select<T>(limit, offset, columns);
         }
 
-        public List<T> GetList(int limit, int offset, params QColumnBase[] columns)
+        public List<T> Select(int limit, int offset, params QColumnBase[] columns)
         {
             return Select<T>(limit, offset, columns);
         }
 
-        public Page<T> GetPage(int page, int size)
+        public Page<T> Page(int page, int size)
         {
             return Page<T>(page, size, getSelectColumn());
         }
 
-        public Page<T> GetPage(int page, int size, params string[] columns)
+        public Page<T> Page(int page, int size, params string[] columns)
         {
             return Page<T>(page, size, columns);
         }
 
-        public Page<T> GetPage(int page, int size, params QColumnBase[] columns)
+        public Page<T> Page(int page, int size, params QColumnBase[] columns)
         {
             return Page<T>(page, size, columns);
         }

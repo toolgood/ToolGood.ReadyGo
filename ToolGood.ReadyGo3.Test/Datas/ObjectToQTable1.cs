@@ -21,10 +21,9 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<System.DateTime> _AddingTime;
         private QTableColumn<string> _AdminGroupName;
 
-        public TbAdmin() : base(Config.DbHelper) { }
+        public TbAdmin() : base() { }
 		public TbAdmin(SqlHelper sqlHelper) : base(sqlHelper) { }
 		public TbAdmin(string connStringName) : base(connStringName) { }
-
 
         protected override void Init()
         {
@@ -104,10 +103,9 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<bool> _IsDelete;
         private QTableColumn<System.DateTime> _AddingTime;
 
-        public TbAdminGroup() : base(Config.DbHelper) { }
+        public TbAdminGroup() : base() { }
 		public TbAdminGroup(SqlHelper sqlHelper) : base(sqlHelper) { }
 		public TbAdminGroup(string connStringName) : base(connStringName) { }
-
 
         protected override void Init()
         {
@@ -163,10 +161,9 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<bool> _State;
         private QTableColumn<System.DateTime> _AddingTime;
 
-        public TbAdminLoginLog() : base(Config.DbHelper) { }
+        public TbAdminLoginLog() : base() { }
 		public TbAdminLoginLog(SqlHelper sqlHelper) : base(sqlHelper) { }
 		public TbAdminLoginLog(string connStringName) : base(connStringName) { }
-
 
         protected override void Init()
         {
@@ -226,10 +223,9 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<bool> _IsDelete;
         private QTableColumn<System.DateTime> _AddingTime;
 
-        public TbAdminMenu() : base(Config.DbHelper) { }
+        public TbAdminMenu() : base() { }
 		public TbAdminMenu(SqlHelper sqlHelper) : base(sqlHelper) { }
 		public TbAdminMenu(string connStringName) : base(connStringName) { }
-
 
         protected override void Init()
         {
@@ -307,10 +303,9 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<string> _Code;
         private QTableColumn<string> _ActionName;
 
-        public TbAdminMenuPass() : base(Config.DbHelper) { }
+        public TbAdminMenuPass() : base() { }
 		public TbAdminMenuPass(SqlHelper sqlHelper) : base(sqlHelper) { }
 		public TbAdminMenuPass(string connStringName) : base(connStringName) { }
-
 
         protected override void Init()
         {

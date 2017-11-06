@@ -17,7 +17,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> WhereExists(string sql, params object[] args)
         {
-            getSqlBuilder().WhereExists(sql, args);
+            GetSqlBuilder().WhereExists(sql, args);
             return this;
         }
         /// <summary>
@@ -28,7 +28,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> WhereNotExists(string sql, params object[] args)
         {
-            getSqlBuilder().WhereNotExists(sql, args);
+            GetSqlBuilder().WhereNotExists(sql, args);
             return this;
         }
         /// <summary>
@@ -37,9 +37,21 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="where">不用写【where】，sql语句，列标识使用 [ ] ，参数使用 @数字</param>
         /// <param name="args">参数组</param>
         /// <returns></returns>
+        public QTable<T> Where(QTableColumn<bool> column)
+        {
+            GetSqlBuilder().Where((QColumnValueCondition)column);
+            return this;
+        }
+
+        /// <summary>
+        /// 累加到【Where】语句，连接使用【AND】
+        /// </summary>
+        /// <param name="where">不用写【where】，sql语句，列标识使用 [ ] ，参数使用 @数字</param>
+        /// <param name="args">参数组</param>
+        /// <returns></returns>
         public  QTable<T> Where(string @where, params object[] args)
         {
-            getSqlBuilder().Where(@where, args);
+            GetSqlBuilder().Where(@where, args);
             return this;
         }
         /// <summary>
@@ -49,7 +61,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> JoinWithOn(string joinWithOn)
         {
-            getSqlBuilder().JoinWithOn(joinWithOn);
+            GetSqlBuilder().JoinWithOn(joinWithOn);
             return this;
         }
         /// <summary>
@@ -59,7 +71,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> GroupBy(string groupBy)
         {
-            getSqlBuilder().GroupBy(groupBy);
+            GetSqlBuilder().GroupBy(groupBy);
             return this;
         }
         /// <summary>
@@ -69,7 +81,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> Having(string having)
         {
-            getSqlBuilder().Having(having);
+            GetSqlBuilder().Having(having);
             return this;
         }
         /// <summary>
@@ -79,7 +91,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> OrderBy(string orderBy)
         {
-            getSqlBuilder().OrderBy(orderBy);
+            GetSqlBuilder().OrderBy(orderBy);
             return this;
         }
 
@@ -90,7 +102,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> Where(QCondition @where)
         {
-            getSqlBuilder().Where(@where);
+            GetSqlBuilder().Where(@where);
             return this;
         }
         /// <summary>
@@ -101,7 +113,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> Join(QTable table, JoinType joinType = JoinType.Inner)
         {
-            getSqlBuilder().Join(table, joinType);
+            GetSqlBuilder().Join(table, joinType);
             return this;
         }
         /// <summary>
@@ -113,7 +125,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> Join(QTable table, JoinType joinType, QJoinCondition @on)
         {
-            getSqlBuilder().Join(table, joinType, @on);
+            GetSqlBuilder().Join(table, joinType, @on);
             return this;
         }
         /// <summary>
@@ -123,7 +135,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> LeftJoin(QTable table)
         {
-            getSqlBuilder().LeftJoin(table);
+            GetSqlBuilder().LeftJoin(table);
             return this;
         }
         /// <summary>
@@ -134,7 +146,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> LeftJoin(QTable table, QJoinCondition @on)
         {
-            getSqlBuilder().LeftJoin(table, @on);
+            GetSqlBuilder().LeftJoin(table, @on);
             return this;
         }
         /// <summary>
@@ -144,7 +156,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> RightJoin(QTable table)
         {
-            getSqlBuilder().RightJoin(table);
+            GetSqlBuilder().RightJoin(table);
             return this;
         }
         /// <summary>
@@ -155,7 +167,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> RightJoin(QTable table, QJoinCondition @on)
         {
-            getSqlBuilder().RightJoin(table, @on);
+            GetSqlBuilder().RightJoin(table, @on);
             return this;
         }
 
@@ -166,7 +178,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> InnerJoin(QTable table)
         {
-            getSqlBuilder().InnerJoin(table);
+            GetSqlBuilder().InnerJoin(table);
             return this;
         }
 
@@ -178,7 +190,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> InnerJoin(QTable table, QJoinCondition @on)
         {
-            getSqlBuilder().InnerJoin(table, @on);
+            GetSqlBuilder().InnerJoin(table, @on);
             return this;
         }
 
@@ -189,7 +201,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> FullJoin(QTable table)
         {
-            getSqlBuilder().FullJoin(table);
+            GetSqlBuilder().FullJoin(table);
             return this;
         }
         /// <summary>
@@ -200,7 +212,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> FullJoin(QTable table, QJoinCondition @on)
         {
-            getSqlBuilder().FullJoin(table, @on);
+            GetSqlBuilder().FullJoin(table, @on);
             return this;
         }
 
@@ -211,7 +223,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> On(QJoinCondition @on)
         {
-            getSqlBuilder().On(@on);
+            GetSqlBuilder().On(@on);
             return this;
         }
 
@@ -223,7 +235,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> GroupBy(QColumn column, params QColumn[] columns)
         {
-            getSqlBuilder().GroupBy(column, columns);
+            GetSqlBuilder().GroupBy(column, columns);
             return this;
         }
         /// <summary>
@@ -233,7 +245,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> Having(QCondition having)
         {
-            getSqlBuilder().Having(having);
+            GetSqlBuilder().Having(having);
             return this;
         }
         /// <summary>
@@ -244,7 +256,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public  QTable<T> OrderBy(QColumn column, OrderType orderType = OrderType.Asc)
         {
-            getSqlBuilder().OrderBy(column, orderType);
+            GetSqlBuilder().OrderBy(column, orderType);
             return this;
         }
 
@@ -257,7 +269,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public NewT Join<NewT>(JoinType joinType = JoinType.Inner) where NewT : QTable
         {
-            return getSqlBuilder().Join<NewT>(joinType);
+            return GetSqlBuilder().Join<NewT>(joinType);
         }
 
         /// <summary>
@@ -267,7 +279,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public NewT LeftJoin<NewT>() where NewT : QTable
         {
-            return getSqlBuilder().LeftJoin<NewT>();
+            return GetSqlBuilder().LeftJoin<NewT>();
         }
         /// <summary>
         /// 累加到【Join】语句 Right Join 类型
@@ -276,7 +288,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public NewT RightJoin<NewT>() where NewT : QTable
         {
-            return getSqlBuilder().RightJoin<NewT>();
+            return GetSqlBuilder().RightJoin<NewT>();
         }
         /// <summary>
         /// 累加到【Join】语句 Inner Join 类型
@@ -285,7 +297,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public NewT InnerJoin<NewT>() where NewT : QTable
         {
-            return getSqlBuilder().InnerJoin<NewT>();
+            return GetSqlBuilder().InnerJoin<NewT>();
         }
         /// <summary>
         /// 累加到【Join】语句 Full Join 类型
@@ -294,7 +306,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public NewT FullJoin<NewT>() where NewT : QTable
         {
-            return getSqlBuilder().FullJoin<NewT>();
+            return GetSqlBuilder().FullJoin<NewT>();
         }
 
     }

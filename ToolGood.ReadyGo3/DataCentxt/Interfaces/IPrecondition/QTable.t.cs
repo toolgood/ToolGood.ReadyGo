@@ -10,49 +10,49 @@ namespace ToolGood.ReadyGo3.DataCentxt
    {
        public QTable<T> IfTrue(bool b)
        {
-           getSqlBuilder().IfTrue(b);
+           GetSqlBuilder().IfTrue(b);
            return this;
        }
 
        public QTable<T> IfFalse(bool b)
        {
-           getSqlBuilder().IfFalse(b);
+           GetSqlBuilder().IfFalse(b);
            return this;
        }
 
        public QTable<T> IfSet(string txt)
        {
-           getSqlBuilder().IfSet(txt);
+           GetSqlBuilder().IfSet(txt);
            return this;
        }
 
        public QTable<T> IfNotSet(string txt)
        {
-           getSqlBuilder().IfNotSet(txt);
+           GetSqlBuilder().IfNotSet(txt);
            return this;
        }
 
        public QTable<T> IfNullOrEmpty(string value)
        {
-           getSqlBuilder().IfNullOrEmpty(value);
+           GetSqlBuilder().IfNullOrEmpty(value);
            return this;
        }
 
        public QTable<T> IfNullOrWhiteSpace(string value)
        {
-           getSqlBuilder().IfNullOrWhiteSpace(value);
+           GetSqlBuilder().IfNullOrWhiteSpace(value);
            return this;
        }
 
        public QTable<T> IfNull(object obj)
        {
-           getSqlBuilder().IfNull(obj);
+           GetSqlBuilder().IfNull(obj);
            return this;
        }
 
        public QTable<T> IfNotNull(object obj)
        {
-           getSqlBuilder().IfNotNull(obj);
+           GetSqlBuilder().IfNotNull(obj);
            return this;
        }
    }

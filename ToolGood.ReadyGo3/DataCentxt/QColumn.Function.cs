@@ -14,7 +14,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         {
             if (_columnType != Enums.ColumnType.Column) throw new ColumnTypeException();
 
-            var code = _table.getSqlBuilder()._provider.FormatSql(sql, args);
+            var code = _table.GetSqlBuilder().Provider.FormatSql(sql, args);
             if (code.StartsWith("(")) {
                 return new QColumnValueCondition(this, "IN " + code);
             }

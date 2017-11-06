@@ -129,8 +129,12 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             leftColumn = column1;
             this.op = op;
         }
-
-    }
+        public static implicit operator QColumnValueCondition(QTableColumn<bool> value)
+        {
+            object obj = QTableColumn<bool>.ChangeType(value, typeof(bool));
+            return new QColumnValueCondition(value, "=", obj);
+        }
+}
     public partial class QColumnColumnCondition : QCondition
     {
         internal QColumnBase leftColumn;
@@ -160,5 +164,8 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             //leftColumn = column1;
             //rightColumn = column2;
         }
+
+
+
     }
 }

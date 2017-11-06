@@ -13,7 +13,7 @@
 <#
     //------------------------- 以下为 设置信息 --------------------------------------
     // 输出命名空间
-    string nameSpace="ToolGood.ReadyGo3.Test.Datas";
+    string nameSpace="ToolGood.ReadyGo3";
     // 原类前缀
     string oldClassPrefix="Db";
     // 新类前缀
@@ -21,9 +21,10 @@
     // 初始化默认连接字符串名称
     string connectionStringName="";
     // 初始化默认SqlHelper获取方式,当上面没设置时有效
-    string sqlHelper="Config.DbHelper";
+    string sqlHelper="";
 
     //------------------------- 以下为 模板代码 --------------------------------------
+	var baseInitString=connectionStringName==""?sqlHelper:connectionStringName;
     this.VisualStudioHelper = new AutomationHelper(this.Host);
     var project = VisualStudioHelper.CurrentProject;
     var allClasses = VisualStudioHelper.GetAllCodeElementsOfType(project.CodeModel.CodeElements, EnvDTE.vsCMElement.vsCMElementClass, false);
@@ -56,11 +57,9 @@ namespace <#=        nameSpace #>
         private QTableColumn<<#=                pi.Type.AsString #>> _<#=                pi.Name #>;
 <#        } #>
 
-<#        if  (connectionStringName!="") { #>
-        public <#= GetClass(codeClass,oldClassPrefix,newClassPrefix) #>() : base("<#=connectionStringName#>") { }
-<#        }else if (sqlHelper!="") { #>
-        public <#= GetClass(codeClass,oldClassPrefix,newClassPrefix) #>() : base(<#=sqlHelper#>) { }
-<#        } #>
+        public <#= GetClass(codeClass,oldClassPrefix,newClassPrefix) #>() : base(<#=baseInitString#>) { }
+		public <#= GetClass(codeClass,oldClassPrefix,newClassPrefix) #>(SqlHelper sqlHelper) : base(sqlHelper) { }
+		public <#= GetClass(codeClass,oldClassPrefix,newClassPrefix) #>(string connStringName) : base(connStringName) { }
 
         protected override void Init()
         {
