@@ -38,9 +38,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Interfaces
         NewT FullJoin<NewT>() where NewT : QTable;
 
 
-        T GroupBy(QColumn column, params QColumn[] columns);
+        T GroupBy(QColumnBase column, params QColumnBase[] columns);
         T Having(QCondition having);
-        T OrderBy(QColumn column, OrderType orderType = OrderType.Asc);
+        T OrderBy(QColumnBase column, OrderType orderType = OrderType.Asc);
     }
 
     public interface ISQL
@@ -74,8 +74,8 @@ namespace ToolGood.ReadyGo3.DataCentxt.Interfaces
         NewT FullJoin<NewT>() where NewT : QTable;
 
 
-        void GroupBy(QColumn column, params QColumn[] columns);
+        void GroupBy(QColumnBase column, params QColumnBase[] columns);
         void Having(QCondition having);
-        void OrderBy(QColumn column, OrderType orderType = OrderType.Asc);
+        void OrderBy(QColumnBase column, OrderType orderType = OrderType.Asc);
     }
 }

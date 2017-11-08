@@ -13,7 +13,7 @@
 <#
     //------------------------- 以下为 设置信息 --------------------------------------
     // 输出命名空间
-    string nameSpace="ToolGood.ReadyGo3";
+    string nameSpace="ToolGood.SoMain.Web.Datas";
     // 原类前缀
     string oldClassPrefix="Db";
     // 新类前缀

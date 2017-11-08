@@ -153,6 +153,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
             object obj = ChangeType(value, typeof(T));
             return new QTableColumn<T>() { _value = (T)obj, _columnType = Enums.ColumnType.Value };
         }
+        public static implicit operator QTableColumn<T>(Double value)
+        {
+            object obj = ChangeType(value, typeof(T));
+            return new QTableColumn<T>() { _value = (T)obj, _columnType = Enums.ColumnType.Value };
+        }
         public static implicit operator QTableColumn<T>(DateTime value)
         {
             object obj = ChangeType(value, typeof(T));

@@ -233,7 +233,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="column">列</param>
         /// <param name="columns">列</param>
         /// <returns></returns>
-        public  QTable<T> GroupBy(QColumn column, params QColumn[] columns)
+        public  QTable<T> GroupBy(QColumnBase column, params QColumnBase[] columns)
         {
             GetSqlBuilder().GroupBy(column, columns);
             return this;
@@ -254,7 +254,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="column">列</param>
         /// <param name="orderType">order类型</param>
         /// <returns></returns>
-        public  QTable<T> OrderBy(QColumn column, OrderType orderType = OrderType.Asc)
+        public  QTable<T> OrderBy(QColumnBase column, OrderType orderType = OrderType.Asc)
         {
             GetSqlBuilder().OrderBy(column, orderType);
             return this;

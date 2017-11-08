@@ -8,11 +8,11 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
     public partial class OrderItem 
     {
-        private QColumn column;
+        private QColumnBase column;
         private OrderType orderType;
         private string orderString;
 
-        public OrderItem(QColumn column, OrderType orderType)
+        public OrderItem(QColumnBase column, OrderType orderType)
         {
             this.column = column;
             this.orderType = orderType;

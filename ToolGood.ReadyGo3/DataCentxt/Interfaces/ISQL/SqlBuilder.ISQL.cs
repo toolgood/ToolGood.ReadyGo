@@ -240,7 +240,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         }
 
 
-        public void GroupBy(QColumn column, params QColumn[] columns)
+        public void GroupBy(QColumnBase column, params QColumnBase[] columns)
         {
             if (_jump) { _jump = false; return; }
 
@@ -259,7 +259,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         }
 
-        public void OrderBy(QColumn column, OrderType orderType = OrderType.Asc)
+        public void OrderBy(QColumnBase column, OrderType orderType = OrderType.Asc)
         {
             if (_jump) { _jump = false; return; }
 
