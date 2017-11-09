@@ -12,7 +12,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public int Delete()
         {
             var sql = ((ISqlBuilderConvert)this).GetFullDeleteSql(Provider);
-            return GetSqlHelper().Delete(sql);
+            return GetSqlHelper().Execute(sql);
         }
 
         public object Insert(bool returnInsertId = true)
@@ -31,7 +31,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public int Update()
         {
             var sql = ((ISqlBuilderConvert)this).GetFullUpdateSql(Provider);
-            return GetSqlHelper().Update(sql);
+            return GetSqlHelper().Execute(sql);
         }
     }
 }

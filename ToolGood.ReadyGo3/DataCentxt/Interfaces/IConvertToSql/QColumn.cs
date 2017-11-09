@@ -37,7 +37,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         {
             if (_columnType == Enums.ColumnType.None) throw new ColumnTypeException();
             if (_columnType == Enums.ColumnType.Value)
-                return provider.ConvertTo(((QTableColumn) this).GetValue());
+                return provider.ConvertTo(((QTableColumn)this).GetValue());
 
             if (_columnType == Enums.ColumnType.Column) {
                 if (tableCount > 1) {
@@ -51,7 +51,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
             string function = _functionFormat;
             if (_columnType == Enums.ColumnType.Function) {
-                if (provider.IsFunctionUseDefaultFormat(_functionName)==false) {
+                if (provider.IsFunctionUseDefaultFormat(_functionName) == false) {
                     function = provider.GetFunctionFormat(_functionName);
                 }
             }
@@ -73,7 +73,15 @@ namespace ToolGood.ReadyGo3.DataCentxt
             if (object.Equals(col, null)) throw new NullReferenceException();
             if (col._changeType == Enums.ColumnChangeType.None) throw new ArgumentNullException();
             var left = ((IColumnConvert)col).ToSql(provider, tableCount);
-            var right = ((IColumnConvert)col.GetNewValue()).ToSql(provider, tableCount);
+
+            var column = ((QTableColumn)this);
+            string right;
+            if (column._changeType == Enums.ColumnChangeType.NewValue) {
+                right = provider.ConvertTo(column.GetValue());
+            } else {
+                right = ((IColumnConvert)col.GetNewValue()).ToSql(provider, tableCount);
+            }
+
             return left + " = " + right;
         }
 

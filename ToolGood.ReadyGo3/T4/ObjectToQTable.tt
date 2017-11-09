@@ -84,6 +84,21 @@ namespace <#=        nameSpace #>
 <#            } #>
 
 <#        } #>
+
+        public void SetValues(IEnumerable<string> newKeys, <#=codeClass.FullName #> value)
+        {
+            foreach (var key in newKeys) {
+                switch (key.ToLower()) {
+<#      foreach  (EnvDTE.CodeProperty pi in pis) { #>
+<#            if(IsResultColumn(pi)==false){ #>
+					case "<#= pi.Name.ToLower() #>": SetValue("<#= pi.Name.ToLower() #>", value.<#= pi.Name #>); break;
+<#            } #>
+<#		} #>
+                    default: break;
+                }
+            }
+        }
+
     }
 
 <#    } #>
@@ -433,7 +448,7 @@ namespace <#=        nameSpace #>
 		
             foreach(EnvDTE.ProjectItem item in items)
             {
-                ret.Add(item);
+                ret.Add(item); 
                 ret.AddRange(GetProjectItemsRecursively(item.ProjectItems));
             }
 
