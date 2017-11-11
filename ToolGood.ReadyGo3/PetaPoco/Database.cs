@@ -550,7 +550,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             OneTimeCommandTimeout = saveTimeout;
 
             // Get the records
-            result.Items = Query<T>(sql, args).ToList();
+            result.Items = Query<T>(sqlPage, args).ToList();
 
             // Done
             return result;
@@ -563,31 +563,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         #region operation: Query
 
-        ///// <summary>
-        /////     Retrieves a range of records from result set
-        ///// </summary>
-        ///// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        ///// <param name="skip">The number of rows at the start of the result set to skip over</param>
-        ///// <param name="take">The number of rows to retrieve</param>
-        ///// <param name="sql">The base SQL query</param>
-        ///// <param name="args">Arguments to any embedded parameters in the SQL statement</param>
-        ///// <returns>A List of results</returns>
-        ///// <remarks>
-        /////     ToolGood.ReadyGo3.PetaPoco will automatically modify the supplied SELECT statement to only retrieve the
-        /////     records for the specified range.
-        ///// </remarks>
-        //public List<T> SkipTake<T>(long skip, long take, string sql, params object[] args)
-        //{
-        //    string sqlCount, sqlPage;
-        //    BuildPageQueries<T>(skip, take, sql, ref args, out sqlCount, out sqlPage);
-        //    return Query<T>(sql, args).ToList();
-        //}
-
         public IEnumerable<T> Query<T>(long skip, long take, string sql, params object[] args)
         {
             string sqlCount, sqlPage;
             BuildPageQueries<T>(0, take, sql, ref args, out sqlCount, out sqlPage);
-            return Query<T>(sql, args);
+            return Query<T>(sqlPage, args);
         }
 
         /// <summary>
