@@ -62,16 +62,16 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// SQL操作事件
         /// </summary>
-        public SqlEvents Events { get { return _events; } }
+        public SqlEvents _Events { get { return _events; } }
 
         /// <summary>
         /// 数据库配置
         /// </summary>
-        public SqlConfig Config { get { return _sqlConfig; } }
+        public SqlConfig _Config { get { return _sqlConfig; } }
         /// <summary>
         /// SQL设置
         /// </summary>
-        public SqlRecord Sql { get { return _sql; } }
+        public SqlRecord _Sql { get { return _sql; } }
 
         #endregion 共公属性
 
@@ -234,7 +234,7 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="sql"></param>
         /// <returns></returns>
-        private string formatSql(string sql)
+        internal string formatSql(string sql)
         {
             bool usedEscapeSql = false;
             char escapeSql = '`';
@@ -603,10 +603,10 @@ namespace ToolGood.ReadyGo3
                     DefaultValue.SetDefaultValue<T>(item, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
                 }
             }
-            if (Events.OnBeforeInsert(list)) return;
+            if (_Events.OnBeforeInsert(list)) return;
             Database db = getDatabase();
             db.Insert(list);
-            Events.OnAfterInsert(list);
+            _Events.OnAfterInsert(list);
         }
 
         /// <summary>
@@ -622,10 +622,10 @@ namespace ToolGood.ReadyGo3
             if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
                 DefaultValue.SetDefaultValue<T>(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
             }
-            if (Events.OnBeforeInsert(poco)) return null;
+            if (_Events.OnBeforeInsert(poco)) return null;
             Database db = getDatabase();
             var obj = db.Insert(poco);
-            Events.OnAfterInsert(poco);
+            _Events.OnAfterInsert(poco);
             return obj;
         }
 
@@ -644,12 +644,12 @@ namespace ToolGood.ReadyGo3
         public int Update<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            if (Events.OnBeforeUpdate(poco)) return -1;
+            if (_Events.OnBeforeUpdate(poco)) return -1;
 
             int r;
             Database db = getDatabase();
             r = db.Update(poco);
-            Events.OnAfterUpdate(poco);
+            _Events.OnAfterUpdate(poco);
             return r;
         }
         /// <summary>
@@ -660,12 +660,12 @@ namespace ToolGood.ReadyGo3
         public int Delete<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            if (Events.OnBeforeDelete(poco)) return -1;
+            if (_Events.OnBeforeDelete(poco)) return -1;
 
             Database db = getDatabase();
             var t = db.Delete(poco);
 
-            Events.OnAfterDelete(poco);
+            _Events.OnAfterDelete(poco);
             return t;
         }
         /// <summary>

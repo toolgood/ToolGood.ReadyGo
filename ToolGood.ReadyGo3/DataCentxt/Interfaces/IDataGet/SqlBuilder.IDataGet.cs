@@ -100,7 +100,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                     var col = item.Value;
                     if (columns.Contains(col._columnName)) {
                         columns.Remove(col._columnName);
-                        selectColumns.Add(((IColumnConvert) col).ToSql(Provider, _tables.Count));
+                        selectColumns.Add(((IColumnConvert) col).ToSelectColumn(Provider, _tables.Count));
                     }
                 }
             }

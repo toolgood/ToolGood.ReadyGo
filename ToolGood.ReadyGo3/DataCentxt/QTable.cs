@@ -12,7 +12,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
     {
         public string __TableName__ { get { return _tableName; } set { _tableName = value.Trim(); } }
         public string __SchemaName__ { get { return _schemaName; } set { _schemaName = value.Trim(); } }
-        public SqlRecord __SQL__ { get { return GetSqlHelper().Sql; } }
+        public SqlRecord __SQL__ { get { return GetSqlHelper()._Sql; } }
 
         private bool _singleSqlHelper;
         private SqlHelper _sqlHelper;
@@ -60,6 +60,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             column._isPrimaryKey = isPk;
             column._isResultColumn = resultColumn;
             column._resultSql = resultSql;
+            column._table = this;
             _columns.Add(fieldName.ToLower(), column);
             return column;
         }
@@ -69,7 +70,13 @@ namespace ToolGood.ReadyGo3.DataCentxt
         }
         protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, string resultSql)
         {
-            return AddColumn<T>(columnName, fieldName, false, true, null);
+            if (string.IsNullOrEmpty(resultSql) == false) {
+                resultSql = resultSql.Replace("{0}.", "{0}");
+                if (resultSql[0] != '(') {
+                    resultSql = "(" + resultSql + ")";
+                }
+            }
+            return AddColumn<T>(columnName, fieldName, false, true, resultSql);
         }
         #endregion
         public void Clear()

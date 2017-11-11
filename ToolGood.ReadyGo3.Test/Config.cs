@@ -29,9 +29,9 @@ namespace ToolGood.ReadyGo3.Test
             get {
                 if (_insertHelper == null) {
                     _insertHelper = SqlHelperFactory.OpenSqliteFile(DbFile);
-                    _insertHelper.Config.Insert_DateTime_Default_Now = true;
-                    _insertHelper.Config.Insert_Guid_Default_New = true;
-                    _insertHelper.Config.Insert_String_Default_NotNull = true;
+                    _insertHelper._Config.Insert_DateTime_Default_Now = true;
+                    _insertHelper._Config.Insert_Guid_Default_New = true;
+                    _insertHelper._Config.Insert_String_Default_NotNull = true;
                 }
                 return _insertHelper;
             }

@@ -60,7 +60,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public object Insert(bool returnInsertId=true)
         {
-            var config = GetSqlHelper().Config;
+            var config = GetSqlHelper()._Config;
             if (config.Insert_DateTime_Default_Now 
                 || config.Insert_Guid_Default_New
                 || config.Insert_String_Default_NotNull) {

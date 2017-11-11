@@ -27,6 +27,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
     {
         string IColumnConvert.ToSelectColumn(DatabaseProvider provider, int tableCount)
         {
+            if (this._isResultColumn && string.IsNullOrEmpty(this._resultSql) == false) {
+                var sql = _resultSql.Replace("{0}", ((ITableConvert)_table).ToSql(provider, false)+".");
+                sql = _table.GetSqlHelper().formatSql(sql);
+                return sql + " AS '" + _columnName + "'";
+            }
             if (string.IsNullOrEmpty(_asName)) {
                 return ((IColumnConvert)this).ToSql(provider, tableCount);
             }
