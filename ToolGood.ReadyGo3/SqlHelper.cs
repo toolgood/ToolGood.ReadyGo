@@ -56,6 +56,7 @@ namespace ToolGood.ReadyGo3
         internal DatabaseProvider _provider;
         internal bool _isDisposable;
 
+
         #endregion 私有变量
 
         #region 共公属性
@@ -72,6 +73,9 @@ namespace ToolGood.ReadyGo3
         /// SQL设置
         /// </summary>
         public SqlRecord _Sql { get { return _sql; } }
+
+
+        public bool _IsDisposed { get { return _isDisposable; } }
 
         #endregion 共公属性
 

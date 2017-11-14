@@ -448,7 +448,7 @@ namespace <#=        nameSpace #>
 		
             foreach(EnvDTE.ProjectItem item in items)
             {
-                ret.Add(item); 
+                ret.Add(item);
                 ret.AddRange(GetProjectItemsRecursively(item.ProjectItems));
             }
 
