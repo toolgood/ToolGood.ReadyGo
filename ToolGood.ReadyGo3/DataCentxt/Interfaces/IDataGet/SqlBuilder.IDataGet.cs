@@ -101,6 +101,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                     if (columns.Contains(col._columnName)) {
                         columns.Remove(col._columnName);
                         selectColumns.Add(((IColumnConvert) col).ToSelectColumn(Provider, _tables.Count));
+                    } else if (columns.Contains(col._asName)) {
+                        columns.Remove(col._asName);
+                        selectColumns.Add(((IColumnConvert)col).ToSelectColumn(Provider, _tables.Count));
                     }
                 }
             }
