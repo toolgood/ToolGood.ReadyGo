@@ -39,7 +39,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public QTable<T> Where(QTableColumn<bool> column)
         {
-            GetSqlBuilder().Where((QColumnValueCondition)column);
+            GetSqlBuilder().Where(column==true);
             return this;
         }
 
