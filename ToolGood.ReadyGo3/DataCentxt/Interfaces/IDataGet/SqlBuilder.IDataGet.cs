@@ -258,7 +258,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         #region Page
         public Page<T> Page<T>(int page, int size)
         {
-            var columns = GetSelectColumns();
+            var columns = GetSelectColumns<T>();
             return getPage<T>(page, size, columns);
         }
 
