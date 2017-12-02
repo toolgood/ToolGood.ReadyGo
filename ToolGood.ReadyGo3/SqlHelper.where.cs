@@ -152,9 +152,12 @@ namespace ToolGood.ReadyGo3
             if (string.IsNullOrWhiteSpace(sql)) {
                 throw new ArgumentNullException("sql");
             }
-            sql = _provider.FormatSql(sql, null);
+            if (sql.StartsWith("where ", StringComparison.CurrentCultureIgnoreCase)) {
+                sql = sql.Substring(6);
+            }
+            sql = _provider.FormatSql(sql, args);
             if (_where == null) {
-                _where = sql;
+                _where = sql;  
             } else {
                 _where += " AND " + sql;
             }
@@ -182,6 +185,9 @@ namespace ToolGood.ReadyGo3
             if (string.IsNullOrWhiteSpace(groupBy)) {
                 throw new ArgumentNullException("groupBy");
             }
+            if (groupBy.StartsWith("group By ", StringComparison.CurrentCultureIgnoreCase)) {
+                groupBy = groupBy.Substring(9);
+            }
             groupBy = _provider.FormatSql(groupBy, null);
 
             if (_groupBy == null) {
@@ -197,6 +203,9 @@ namespace ToolGood.ReadyGo3
             if (_jump) { _jump = false; return this; }
             if (string.IsNullOrWhiteSpace(having)) {
                 throw new ArgumentNullException("having");
+            }
+            if (having.StartsWith("having ", StringComparison.CurrentCultureIgnoreCase)) {
+                having = having.Substring(7);
             }
             having = _provider.FormatSql(having, null);
 
@@ -214,6 +223,9 @@ namespace ToolGood.ReadyGo3
             if (_jump) { _jump = false; return this; }
             if (string.IsNullOrWhiteSpace(orderBy)) {
                 throw new ArgumentNullException("orderBy");
+            }
+            if (orderBy.StartsWith("order By ", StringComparison.CurrentCultureIgnoreCase)) {
+                orderBy = orderBy.Substring(9);
             }
             orderBy = _provider.FormatSql(orderBy, null);
 

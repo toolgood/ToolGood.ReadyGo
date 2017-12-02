@@ -165,6 +165,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             for (int i = 0; i < cols.Count; i++) {
                 var col = cols[i];
                 if (col._changeType == Enums.ColumnChangeType.None) continue;
+    
                 stringBuilder.Append(((IColumnConvert)col).ToSql(provider, 0));
                 stringBuilder.Append(",");
             }
@@ -183,7 +184,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             for (int i = 0; i < cols.Count; i++) {
                 var col = cols[i];
                 if (col._changeType == Enums.ColumnChangeType.None) continue;
-
+ 
                 var obj = provider.ConvertTo(col.GetValue());
                 stringBuilder.Append(obj);
                 stringBuilder.Append(",");
