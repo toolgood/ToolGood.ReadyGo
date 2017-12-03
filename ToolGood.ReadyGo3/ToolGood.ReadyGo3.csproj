@@ -62,6 +62,7 @@
     <Compile Include="DataCentxt\Enums\ColumnChangeType.cs" />
     <Compile Include="DataCentxt\Enums\ColumnType.cs" />
     <Compile Include="DataCentxt\Enums\WhereType.cs" />
+    <Compile Include="DataCentxt\Exceptions\SqlExecuteException.cs" />
     <Compile Include="DataCentxt\Interfaces\IDataGet\QTable.t.cs" />
     <Compile Include="DataCentxt\Interfaces\IPrecondition.cs" />
     <Compile Include="DataCentxt\Interfaces\IPrecondition\QTable.t.cs" />

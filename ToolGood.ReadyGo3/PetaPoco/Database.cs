@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using ToolGood.ReadyGo3.DataCentxt.Exceptions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.PetaPoco.Utilities;
@@ -312,7 +313,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             System.Diagnostics.Debug.WriteLine(x.ToString());
             System.Diagnostics.Debug.WriteLine(_sqlHelper._sql.LastCommand);
-
+ 
             _sqlHelper._sqlMonitor.Exception(x.Message);
             _sqlHelper._sql.LastErrorMessage = x.Message;
 
@@ -400,7 +401,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 }
             } catch (Exception x) {
                 if (OnException(x))
-                    throw;
+                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                 return -1;
             }
         }
@@ -433,7 +434,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 }
             } catch (Exception x) {
                 if (OnException(x))
-                    throw;
+                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                 return default(T);
             }
         }
@@ -597,7 +598,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         OnExecutedCommand(cmd);
                     } catch (Exception x) {
                         if (OnException(x))
-                            throw;
+                            throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                         yield break;
                     }
                     var factory = pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, r.FieldCount, r, _defaultMapper) as Func<IDataReader, T>;
@@ -610,7 +611,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                                 poco = factory(r);
                             } catch (Exception x) {
                                 if (OnException(x))
-                                    throw;
+                                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                                 yield break;
                             }
 
@@ -727,7 +728,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 }
             } catch (Exception x) {
                 if (OnException(x))
-                    throw;
+                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                 return null;
             }
         }
@@ -746,7 +747,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 }
             } catch (Exception x) {
                 if (OnException(x))
-                    throw;
+                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                 return null;
             }
         }
@@ -982,7 +983,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 }
             } catch (Exception x) {
                 if (OnException(x))
-                    throw;
+                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                 return -1;
             }
         }
