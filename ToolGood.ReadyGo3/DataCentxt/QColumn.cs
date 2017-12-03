@@ -15,6 +15,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         protected internal QTable _table;
         protected internal string _columnName;
         protected internal bool _isPrimaryKey;
+        protected internal bool _isAutoIncrement;
         protected internal bool _isResultColumn;
         protected internal string _resultSql;
         // Function 信息

@@ -52,7 +52,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
 
         #region AddColumn
-        private QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk, bool resultColumn, string resultSql)
+        private QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk,bool isAutoIncrement, bool resultColumn, string resultSql)
         {
             QTableColumn<T> column = new QTableColumn<T>();
             column._columnType = Enums.ColumnType.Column;
@@ -61,12 +61,24 @@ namespace ToolGood.ReadyGo3.DataCentxt
             column._isResultColumn = resultColumn;
             column._resultSql = resultSql;
             column._table = this;
+            column._isAutoIncrement = isAutoIncrement;
             _columns.Add(fieldName.ToLower(), column);
             return column;
         }
-        protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk)
+        protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk,bool? isAutoIncrement=null)
         {
-            return AddColumn<T>(columnName, fieldName, isPk, false, null);
+            if (isPk) {
+                if (isAutoIncrement == null) {
+                    var type = typeof(T);
+                    if (type == typeof(Int16) || type == typeof(int) || type == typeof(Int64) ||
+                        type == typeof(UInt16) || type == typeof(UInt32) || type == typeof(UInt64)) {
+                        return AddColumn<T>(columnName, fieldName, isPk, true, false, null);
+                    }
+                    return AddColumn<T>(columnName, fieldName, isPk, false, false, null);
+                }
+                return AddColumn<T>(columnName, fieldName, isPk, isAutoIncrement.Value, false, null);
+            }
+            return AddColumn<T>(columnName, fieldName, isPk, false, false, null);
         }
         protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, string resultSql)
         {
@@ -76,7 +88,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
                     resultSql = "(" + resultSql + ")";
                 }
             }
-            return AddColumn<T>(columnName, fieldName, false, true, resultSql);
+            return AddColumn<T>(columnName, fieldName, false, false, true, resultSql);
         }
         #endregion
         public void Clear()

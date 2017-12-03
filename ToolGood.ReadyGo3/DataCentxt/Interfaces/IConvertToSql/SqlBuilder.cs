@@ -50,24 +50,29 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             var table = _tables[0];
             if (((ITableConvert)table).IsSetPrimaryKey()) {
                 var pk = ((ITableConvert)table).GetPrimaryKey();
-                QColumnValueCondition condition;
-                if (pk._fieldType == "string") {
-                    condition = (QColumnValueCondition)(pk == (string)pk.GetValue());
-                } else if (pk._fieldType == "int32") {
-                    condition = (QColumnValueCondition)(pk == (int)pk.GetValue());
-                } else if (pk._fieldType == "int64") {
-                    condition = (QColumnValueCondition)(pk == (long)pk.GetValue());
-                } else if (pk._fieldType == "uint32") {
-                    condition = (QColumnValueCondition)(pk == (uint)pk.GetValue());
-                } else if (pk._fieldType == "uint64") {
-                    condition = (QColumnValueCondition)(pk == (ulong)pk.GetValue());
-                } else if (pk._fieldType == "guid") {
-                    condition = (QColumnValueCondition)(pk == ((Guid)pk.GetValue()).ToString());
-                } else {
-                    condition = (QColumnValueCondition)(pk == (int)pk.GetValue());
-                }
+                return ((IColumnConvert)pk).ToSql(provider, _tables.Count) + " = " + pk.GetValue().ToString();
 
-                return ((IConditionConvert)condition).ToSql(provider, _tables.Count);
+                //QColumnValueCondition condition;
+                //if (pk._fieldType == "string") {
+                //    condition = (QColumnValueCondition)(pk == (string)pk.GetValue());
+                //} else if (pk._fieldType == "int16") {
+                //    condition = (QColumnValueCondition)(pk == (Int16)pk.GetValue());
+                //} else if (pk._fieldType == "int32") {
+                //    condition = (QColumnValueCondition)(pk == (int)pk.GetValue());
+                //} else if (pk._fieldType == "int64") {
+                //    condition = (QColumnValueCondition)(pk == (long)pk.GetValue());
+                //} else if (pk._fieldType == "uint16") {
+                //    condition = (QColumnValueCondition)(pk == (UInt16)pk.GetValue());
+                //} else if (pk._fieldType == "uint32") {
+                //    condition = (QColumnValueCondition)(pk == (uint)pk.GetValue());
+                //} else if (pk._fieldType == "uint64") {
+                //    condition = (QColumnValueCondition)(pk == (ulong)pk.GetValue());
+                //} else if (pk._fieldType == "guid") {
+                //    condition = (QColumnValueCondition)(pk == ((Guid)pk.GetValue()).ToString());
+                //} else {
+                //    condition = (QColumnValueCondition)(pk == (int)pk.GetValue());
+                //}
+                //return ((IConditionConvert)condition).ToSql(provider, _tables.Count);
             }
             throw new ArgumentNullException("where is not set!");
         }
@@ -151,7 +156,6 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             stringBuilder.Remove(0, 1);
             return stringBuilder.ToString();
         }
-
         string ISqlBuilderConvert.GetInsertHeaderSql(DatabaseProvider provider)
         {
             var table = (ITableConvert)_tables[0];
@@ -164,8 +168,11 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             stringBuilder.Append(" (");
             for (int i = 0; i < cols.Count; i++) {
                 var col = cols[i];
+                if (col._isPrimaryKey && col._isAutoIncrement) continue;
+                if ("bool|int16|int32|int64|uint16|uint32|uint64|single|double|decimal".Contains(col._fieldType) == false) {
+                    if (col._changeType == Enums.ColumnChangeType.None) continue;
+                }
                 if (col._changeType == Enums.ColumnChangeType.None) continue;
-    
                 stringBuilder.Append(((IColumnConvert)col).ToSql(provider, 0));
                 stringBuilder.Append(",");
             }
@@ -183,12 +190,13 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             stringBuilder.Append("(");
             for (int i = 0; i < cols.Count; i++) {
                 var col = cols[i];
-                if (col._changeType == Enums.ColumnChangeType.None) continue;
- 
+                if (col._isPrimaryKey && col._isAutoIncrement) continue;
+                if ("bool|int16|int32|int64|uint16|uint32|uint64|single|double|decimal".Contains(col._fieldType) == false) {
+                    if (col._changeType == Enums.ColumnChangeType.None) continue;
+                }
                 var obj = provider.ConvertTo(col.GetValue());
                 stringBuilder.Append(obj);
                 stringBuilder.Append(",");
-
             }
             stringBuilder[stringBuilder.Length - 1] = ')';
             return stringBuilder.ToString();
