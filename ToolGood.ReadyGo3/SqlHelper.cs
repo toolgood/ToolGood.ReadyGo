@@ -540,6 +540,14 @@ namespace ToolGood.ReadyGo3
                 return db.Query<T>(0, 2, sql, args).Single();
             }, "Single");
         }
+        internal T _Single<T>(string sql = "", params object[] args)
+        {
+            return Run<T>(sql, args, () => {
+                //sql = formatSql(sql);
+                Database db = getDatabase();
+                return db.Query<T>(sql, args).Single();
+            }, "Single");
+        }
 
         /// <summary>
         /// 获取唯一一个类型，若数量大于1，则抛出异常
@@ -556,6 +564,14 @@ namespace ToolGood.ReadyGo3
                 return db.Query<T>(0, 2, sql, args).SingleOrDefault();
             }, "SingleOrDefault");
         }
+        internal T _SingleOrDefault<T>(string sql = "", params object[] args)
+        {
+            return Run<T>(sql, args, () => {
+                //sql = formatSql(sql);
+                Database db = getDatabase();
+                return db.Query<T>(sql, args).SingleOrDefault();
+            }, "SingleOrDefault");
+        }
 
         /// <summary>
         /// 获取第一个类型，若数量为0，则抛出异常
@@ -570,6 +586,14 @@ namespace ToolGood.ReadyGo3
                 sql = formatSql(sql);
                 Database db = getDatabase();
                 return db.Query<T>(0, 1, sql, args).First();
+            }, "First");
+        }
+        internal T _First<T>(string sql = "", params object[] args)
+        {
+            return Run<T>(sql, args, () => {
+                //sql = formatSql(sql);
+                Database db = getDatabase();
+                return db.Query<T>(sql, args).First();
             }, "First");
         }
 
@@ -589,6 +613,15 @@ namespace ToolGood.ReadyGo3
             }, "FirstOrDefault");
         }
 
+
+        internal T _FirstOrDefault<T>(string sql = "", params object[] args)
+        {
+            return Run<T>(sql, args, () => {
+                //sql = formatSql(sql);
+                Database db = getDatabase();
+                return db.Query<T>(sql, args).FirstOrDefault();
+            }, "FirstOrDefault");
+        }
         #endregion Single SingleOrDefault First FirstOrDefault
 
         #region Object  Insert Update Delete DeleteById Save

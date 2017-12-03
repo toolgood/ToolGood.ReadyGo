@@ -402,7 +402,7 @@ namespace ToolGood.ReadyGo3
         {
             var sql = GetFullSelectSql(2, 0, columns);
             _useDistinct = false;
-            return _helper.Single<Table>(sql);
+            return _helper._Single<Table>(sql);
         }
         public T Single()
         {
@@ -425,7 +425,7 @@ namespace ToolGood.ReadyGo3
         {
             var sql = GetFullSelectSql(2, 0, columns);
             _useDistinct = false;
-            return _helper.SingleOrDefault<Table>(sql);
+            return _helper._SingleOrDefault<Table>(sql);
         }
         public T SingleOrDefault()
         {
@@ -449,7 +449,7 @@ namespace ToolGood.ReadyGo3
         {
             var sql = GetFullSelectSql(1, 0, columns);
             _useDistinct = false;
-            return _helper.First<Table>(sql);
+            return _helper._First<Table>(sql);
         }
         public T First()
         {
@@ -473,7 +473,7 @@ namespace ToolGood.ReadyGo3
         {
             var sql = GetFullSelectSql(1, 0, columns);
             _useDistinct = false;
-            return _helper.FirstOrDefault<Table>(sql);
+            return _helper._FirstOrDefault<Table>(sql);
         }
         public T FirstOrDefault()
         {
