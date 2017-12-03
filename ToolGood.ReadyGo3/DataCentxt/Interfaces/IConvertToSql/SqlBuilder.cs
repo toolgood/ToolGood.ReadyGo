@@ -169,10 +169,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             for (int i = 0; i < cols.Count; i++) {
                 var col = cols[i];
                 if (col._isPrimaryKey && col._isAutoIncrement) continue;
-                if ("bool|int16|int32|int64|uint16|uint32|uint64|single|double|decimal".Contains(col._fieldType) == false) {
+                if ("boolean|int16|int32|int64|uint16|uint32|uint64|single|double|decimal".Contains(col._fieldType) == false) {
                     if (col._changeType == Enums.ColumnChangeType.None) continue;
                 }
-                if (col._changeType == Enums.ColumnChangeType.None) continue;
                 stringBuilder.Append(((IColumnConvert)col).ToSql(provider, 0));
                 stringBuilder.Append(",");
             }
@@ -191,7 +190,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             for (int i = 0; i < cols.Count; i++) {
                 var col = cols[i];
                 if (col._isPrimaryKey && col._isAutoIncrement) continue;
-                if ("bool|int16|int32|int64|uint16|uint32|uint64|single|double|decimal".Contains(col._fieldType) == false) {
+                if ("boolean|int16|int32|int64|uint16|uint32|uint64|single|double|decimal".Contains(col._fieldType) == false) {
                     if (col._changeType == Enums.ColumnChangeType.None) continue;
                 }
                 var obj = provider.ConvertTo(col.GetValue());

@@ -20,6 +20,10 @@ namespace ToolGood.ReadyGo3
         {
             return new SqlHelper<T>(this, where);
         }
+        public SqlHelper<T> Where<T>(string where,params object[] args) where T : class
+        {
+            return new SqlHelper<T>(this, where, args);
+        }
     }
 
     public class SqlHelper<T> where T : class
@@ -44,6 +48,12 @@ namespace ToolGood.ReadyGo3
             _helper = helper;
             _provider = DatabaseProvider.Resolve(helper._sqlType);
             _where = where;
+        }
+        internal SqlHelper(SqlHelper helper, string where,object[] args)
+        {
+            _helper = helper;
+            _provider = DatabaseProvider.Resolve(helper._sqlType);
+            _where = _provider.FormatSql(where, args);
         }
 
         #region IfTrue IfSet IfNullOrEmpty IfNull
