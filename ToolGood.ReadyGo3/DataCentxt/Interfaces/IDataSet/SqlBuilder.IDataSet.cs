@@ -15,7 +15,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return GetSqlHelper().Execute(sql);
         }
 
-        public object Insert(bool returnInsertId = true)
+        public object Insert(bool returnInsertId = false)
         {
             var sql = ((ISqlBuilderConvert)this).GetFullInsertSql(Provider);
             if (returnInsertId) {

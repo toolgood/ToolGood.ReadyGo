@@ -58,7 +58,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// </summary>
         /// <param name="returnInsertId">是否返回插入的ID</param>
         /// <returns></returns>
-        public object Insert(bool returnInsertId=true)
+        public object Insert(bool returnInsertId=false)
         {
             var config = GetSqlHelper()._Config;
             if (config.Insert_DateTime_Default_Now 
