@@ -9,7 +9,8 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="EnvDTE" #>
 <#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
-<#@ output extension=".cs" #>
+<#@ output extension=".txt" #>
+
 <#
     //------------------------- 以下为 设置信息 --------------------------------------
     // 输出命名空间
@@ -17,7 +18,7 @@
     // 原类前缀
     string oldClassPrefix="Db";
     // 新类前缀
-    string newClassPrefix="Tb";
+    string newClassPrefix="";
     // 初始化默认连接字符串名称
     string connectionStringName="";
     // 初始化默认SqlHelper获取方式,当上面没设置时有效
@@ -42,9 +43,15 @@ using ToolGood.ReadyGo3.DataCentxt;
 namespace <#=        nameSpace #>
 {
 <#    foreach(EnvDTE.CodeClass codeClass in allClasses){ #>
-	<#= GetSummary(codeClass.DocComment) #>
-    public class <#=            GetClass(codeClass,oldClassPrefix,newClassPrefix) #> : QTable<<#=codeClass.FullName #>>
+    public class <#=            GetClass(codeClass,oldClassPrefix,newClassPrefix) #>Model
     {
+		#region Model Base
+        private Dictionary<string, object> _dictionary = new Dictionary<string, object>();
+        private void SetValue(string txt, object value){_dictionary[txt] = value;}
+		private T GetValue<T>(string txt) { return _dictionary.ContainsKey(txt) ? (T) _dictionary[txt] : default(T); } 
+		public Dictionary<string, object> GetChange() { return _dictionary; }
+		#endregion
+ 
 <#      var allProperty = VisualStudioHelper.GetAllCodeElementsOfType(codeClass.Members, EnvDTE.vsCMElement.vsCMElementProperty, false); 
         var pis =new List<EnvDTE80.CodeProperty2>();
         foreach  (EnvDTE80.CodeProperty2 pi in allProperty) {
@@ -53,53 +60,14 @@ namespace <#=        nameSpace #>
                     pis.Add(pi);
                 }
             }
-        }                   
-        foreach  (EnvDTE.CodeProperty pi in pis) { #>
-        private QTableColumn<<#=                pi.Type.AsString #>> _<#=                pi.Name #>;
-<#        } #>
-
-        public <#= GetClass(codeClass,oldClassPrefix,newClassPrefix) #>() : base(<#=baseInitString#>) { }
-		public <#= GetClass(codeClass,oldClassPrefix,newClassPrefix) #>(SqlHelper sqlHelper) : base(sqlHelper) { }
-		public <#= GetClass(codeClass,oldClassPrefix,newClassPrefix) #>(string connStringName) : base(connStringName) { }
-
-        protected override void Init()
-        {
-            __SchemaName__ = "<#=            GetSchemaName(codeClass) #>";
-            __TableName__ = "<#=            GetTableName(codeClass) #>";
-
-<#        foreach  (EnvDTE.CodeProperty pi in pis) { #>
-<#            if(IsResultColumn(pi)){ #>
-            _<#=                    pi.Name #> = AddColumn<<#= pi.Type.AsString #>>("<#= GetColumnName(pi) #>", "<#= pi.Name #>", "<#=                    GetResultSql(pi) #>");
-<#            } else { #>
-            _<#=                    pi.Name #> = AddColumn<<#= pi.Type.AsString #>>("<#= GetColumnName(pi) #>", "<#= pi.Name #>", <#= GetPkFlag(pi,codeClass) #>);
-<#            } #>
-<#        } #>
-        }
-
+        }  #>
 <#        foreach  (EnvDTE.CodeProperty pi in pis) { #>
         <#=                GetSummary(pi.DocComment) #>
-<#            if(IsResultColumn(pi)){ #>
-        public QTableColumn<<#= pi.Type.AsString #>> <#= pi.Name #> { get { return _<#= pi.Name #>; } }
-<#            } else { #>
-        public QTableColumn<<#= pi.Type.AsString #>> <#= pi.Name #> { get { return _<#= pi.Name #>; } set { _<#= pi.Name #>.NewValue = value; } }
-<#            } #>
+<#            if(IsResultColumn(pi)==false){ #>
+		public <#= pi.Type.AsString #> <#= pi.Name #> { get { return GetValue<<#= pi.Type.AsString #>>("<#= pi.Name #>"); } set { SetValue("<#= pi.Name #>",value); } }
+ <#            } #>
 
 <#        } #>
-
-        public void SetValues(IEnumerable<string> newKeys, <#=codeClass.FullName #> value)
-        {
-            foreach (var key in newKeys) {
-                switch (key.ToLower()) {
-<#      foreach  (EnvDTE.CodeProperty pi in pis) { #>
-<#            if(IsResultColumn(pi)==false){ #>
-					case "<#= pi.Name.ToLower() #>": SetValue("<#= pi.Name.ToLower() #>", value.<#= pi.Name #>); break;
-<#            } #>
-<#		} #>
-                    default: break;
-                }
-            }
-        }
-
     }
 
 <#    } #>

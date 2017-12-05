@@ -164,16 +164,25 @@
     <Compile Include="SqlHelper.where.cs" />
     <Compile Include="SqlHelperFactory.cs" />
     <Compile Include="SqlProcess.cs" />
-    <Compile Include="T4\ObjectToQTable1.cs">
+    <Compile Include="T4\ObjectToQTable.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>ObjectToQTable.tt</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="T4\ObjectToModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ObjectToModel.txt</LastGenOutput>
+    </Content>
+    <Content Include="T4\ObjectToModel.txt">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ObjectToModel.tt</DependentUpon>
+    </Content>
     <Content Include="T4\ObjectToQTable.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ObjectToQTable1.cs</LastGenOutput>
+      <LastGenOutput>ObjectToQTable.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>
