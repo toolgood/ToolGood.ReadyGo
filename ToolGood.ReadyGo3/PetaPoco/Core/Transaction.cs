@@ -1,9 +1,11 @@
-﻿namespace ToolGood.ReadyGo3.PetaPoco
+﻿using System;
+
+namespace ToolGood.ReadyGo3.PetaPoco
 {
     /// <summary>
     ///     Transaction object helps maintain transaction depth counts
     /// </summary>
-    public class Transaction 
+    public class Transaction : IDisposable
     {
         private Database _db;
 
