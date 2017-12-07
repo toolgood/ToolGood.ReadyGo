@@ -134,6 +134,14 @@
     <Compile Include="Gadget\TableManager\SqlHelper.ext.cs" />
     <Compile Include="Gadget\TableManager\SqlTableHelper.cs" />
     <Compile Include="Gadget\TableManager\TableInfo.cs" />
+    <Compile Include="LinQ\Expressions\ObjectExtend.cs" />
+    <Compile Include="LinQ\Expressions\PartialSqlString.cs" />
+    <Compile Include="LinQ\Expressions\SQL.cs" />
+    <Compile Include="LinQ\Expressions\SqlExpression.cs" />
+    <Compile Include="LinQ\HelperBase.cs" />
+    <Compile Include="LinQ\SqlHelper.ext.cs" />
+    <Compile Include="LinQ\WhereHelper.1.cs" />
+    <Compile Include="LinQ\WhereHelperBaseExtension.cs" />
     <Compile Include="PetaPoco\Core\ColumnInfo.cs" />
     <Compile Include="PetaPoco\Core\ExpandoColumn.cs" />
     <Compile Include="PetaPoco\Core\Mappers.cs" />

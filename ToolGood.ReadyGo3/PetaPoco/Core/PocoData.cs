@@ -91,7 +91,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             return ForType(t, defaultMapper);
         }
 
-        public static PocoData ForType(Type type, StandardMapper defaultMapper)
+        public static PocoData ForType(Type type, StandardMapper defaultMapper=null)
         {
             if (type == typeof(System.Dynamic.ExpandoObject))
                 throw new InvalidOperationException("Can't use dynamic types with this method");

@@ -12,15 +12,33 @@ namespace ToolGood.ReadyGo3
 {
     partial class SqlHelper
     {
+        /// <summary>
+        /// 动态Sql拼接，不支持Linq;
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public SqlHelper<T> Where<T>() where T : class
         {
             return new SqlHelper<T>(this);
         }
+        /// <summary>
+        /// 动态Sql拼接，不支持Linq;
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public SqlHelper<T> Where<T>(string where) where T : class
         {
             return new SqlHelper<T>(this, where);
         }
-        public SqlHelper<T> Where<T>(string where,params object[] args) where T : class
+        /// <summary>
+        /// 动态Sql拼接，不支持Linq;
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="where"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public SqlHelper<T> Where<T>(string where, params object[] args) where T : class
         {
             return new SqlHelper<T>(this, where, args);
         }
@@ -49,7 +67,7 @@ namespace ToolGood.ReadyGo3
             _provider = DatabaseProvider.Resolve(helper._sqlType);
             _where = where;
         }
-        internal SqlHelper(SqlHelper helper, string where,object[] args)
+        internal SqlHelper(SqlHelper helper, string where, object[] args)
         {
             _helper = helper;
             _provider = DatabaseProvider.Resolve(helper._sqlType);
@@ -129,7 +147,7 @@ namespace ToolGood.ReadyGo3
             if (string.IsNullOrWhiteSpace(sql)) {
                 throw new ArgumentNullException("sql");
             }
-            if (sql.StartsWith("(") == false) {
+            if (sql[0] != '(' || sql[sql.Length - 1] != ')') {
                 sql = "(" + sql + ")";
             }
             sql = "EXISTS " + _provider.FormatSql(sql, args);
@@ -147,7 +165,7 @@ namespace ToolGood.ReadyGo3
             if (string.IsNullOrWhiteSpace(sql)) {
                 throw new ArgumentNullException("sql");
             }
-            if (sql.StartsWith("(") == false) {
+            if (sql[0] != '(' || sql[sql.Length - 1] != ')') {
                 sql = "(" + sql + ")";
             }
             sql = "NOT EXISTS " + _provider.FormatSql(sql, args);
@@ -168,9 +186,15 @@ namespace ToolGood.ReadyGo3
             if (sql.StartsWith("where ", StringComparison.CurrentCultureIgnoreCase)) {
                 sql = sql.Substring(6);
             }
-            sql = _provider.FormatSql(sql, args);
+            if (sql[0]!='(' || sql[sql.Length-1]!=')') {
+                if (sql.IndexOf(" or ", StringComparison.CurrentCultureIgnoreCase) >= 0) {
+                    sql = "(" + sql + ")";
+                }
+            }
+
+           sql = _provider.FormatSql(sql, args);
             if (_where == null) {
-                _where = sql;  
+                _where = sql;
             } else {
                 _where += " AND " + sql;
             }
