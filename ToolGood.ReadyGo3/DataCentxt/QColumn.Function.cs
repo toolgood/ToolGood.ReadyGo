@@ -316,26 +316,31 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         public QCondition Like(string txt)
         {
+            if (txt == null) return QCondition.False;
             return new QColumnValueCondition(this, "LIKE '" + txt + "'");
         }
 
         public QCondition UnLike(string txt)
         {
+            if (txt == null) return QCondition.False;
             return new QColumnValueCondition(this, "NOT LIKE '" + txt + "'");
         }
 
         public QCondition Contains(string txt)
         {
+            if (txt == null) return QCondition.False;
             return new QColumnValueCondition(this, "LIKE '%" + EscapeParam(txt) + "%'");
         }
 
         public QCondition StartsWith(string txt)
         {
+            if (txt == null) return QCondition.False;
             return new QColumnValueCondition(this, "LIKE '" + EscapeParam(txt) + "%'");
         }
 
         public QCondition EndsWith(string txt)
         {
+            if (txt == null) return QCondition.False;
             return new QColumnValueCondition(this, "LIKE '%" + EscapeParam(txt) + "'");
         }
 
