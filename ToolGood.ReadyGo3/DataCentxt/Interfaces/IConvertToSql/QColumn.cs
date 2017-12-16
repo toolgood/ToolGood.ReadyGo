@@ -28,8 +28,13 @@ namespace ToolGood.ReadyGo3.DataCentxt
         string IColumnConvert.ToSelectColumn(DatabaseProvider provider, int tableCount)
         {
             if (this._isResultColumn && string.IsNullOrEmpty(this._resultSql) == false) {
-                var sql = _resultSql.Replace("{0}", ((ITableConvert)_table).ToSql(provider, false)+".");
-                sql = _table.GetSqlHelper().formatSql(sql);
+                string sql;
+                if (tableCount>1) {
+                    sql = _resultSql.Replace("{0}", _table._asName + ".");
+                } else {
+                    sql = _resultSql.Replace("{0}", ((ITableConvert)_table).ToSql(provider, false) + ".");
+                }
+                 sql = _table.GetSqlHelper().formatSql(sql);
                 return sql + " AS '" + _columnName + "'";
             }
             if (string.IsNullOrEmpty(_asName)) {
@@ -46,7 +51,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
             if (_columnType == Enums.ColumnType.Column) {
                 if (tableCount > 1) {
-                    return _table._asName + provider.EscapeSqlIdentifier(_columnName);
+                    return _table._asName + "." + provider.EscapeSqlIdentifier(_columnName);
                 }
                 return provider.EscapeSqlIdentifier(_columnName);
             }

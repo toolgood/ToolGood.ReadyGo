@@ -112,18 +112,18 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
     {
         string IConditionConvert.ToSql(DatabaseProvider provider, int tableCount)
         {
-            return ((IConditionConvert)leftColumn).ToSql(provider, tableCount) + " " + Op + " "
-                + ((IConditionConvert)rightColumn).ToSql(provider, tableCount);
+            return ((IColumnConvert)leftColumn).ToSql(provider, tableCount) + " " + Op + " "
+                + ((IColumnConvert)rightColumn).ToSql(provider, tableCount);
         }
 
         void IConditionConvert.ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
         {
-            stringBuilder.Append(((IConditionConvert)leftColumn).ToSql(provider, tableCount));
+            stringBuilder.Append(((IColumnConvert)leftColumn).ToSql(provider, tableCount));
             stringBuilder.Append(" ");
 
             stringBuilder.Append(Op);
             stringBuilder.Append(" ");
-            stringBuilder.Append(((IConditionConvert)rightColumn).ToSql(provider, tableCount));
+            stringBuilder.Append(((IColumnConvert)rightColumn).ToSql(provider, tableCount));
         }
     }
 
