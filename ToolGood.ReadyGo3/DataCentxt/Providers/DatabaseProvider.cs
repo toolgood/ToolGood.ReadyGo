@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -117,11 +118,20 @@ namespace ToolGood.ReadyGo3.DataCentxt
             int p = int.Parse(text.Replace("@", ""));
             var value = args[p];
             if (value is QColumnBase) {
-                var sb = ((IColumnConvert)value).GetSqlBuilder();
+                var sb = ((IColumnConvert) value).GetSqlBuilder();
                 if (sb == null) {
                     throw new ArgumentNullException();
                 }
-                where.Append(((IColumnConvert)value).ToSql(this, sb._tables.Count));
+                where.Append(((IColumnConvert) value).ToSql(this, sb._tables.Count));
+            } else if (value is IList) {
+                // TODO: 未判断IList的数量，
+
+                where.Append("(");
+                foreach (var item in (IList)value) {
+                    where.Append(ConvertTo(item));
+                    where.Append(",");
+                }
+                where[where.Length - 1] = ')';
             } else {
                 where.Append(ConvertTo(value));
             }
