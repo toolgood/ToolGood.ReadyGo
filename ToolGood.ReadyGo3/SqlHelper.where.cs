@@ -65,6 +65,9 @@ namespace ToolGood.ReadyGo3
         {
             _helper = helper;
             _provider = DatabaseProvider.Resolve(helper._sqlType);
+            if (where.StartsWith("where ", StringComparison.CurrentCultureIgnoreCase)) {
+                where = where.Substring(6);
+            }
             _where = where;
         }
         internal SqlHelper(SqlHelper helper, string where, object[] args)
