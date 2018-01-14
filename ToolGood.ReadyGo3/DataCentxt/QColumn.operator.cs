@@ -321,7 +321,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
             if (value == null) {
                 return new QColumnValueCondition(col, "IS NULL");
             }
-            return CreateCondition(col, "=", value);
+            return CreateCondition(col, "=", EscapeParam(value));
+        }
+        public static QCondition operator ==(QColumnBase col, char value)
+        {
+            return CreateCondition(col, "=", EscapeParam(value.ToString()));
         }
         public static QCondition operator ==(QColumnBase col, DateTime value)
         {
@@ -375,7 +379,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
             if (value == null) {
                 return new QColumnValueCondition(col, "IS NOT NULL");
             }
-            return CreateCondition(col, "<>", value);
+            return CreateCondition(col, "<>", EscapeParam( value));
+        }
+        public static QCondition operator !=(QColumnBase col, char value)
+        {
+            return CreateCondition(col, "<>", EscapeParam(value.ToString()));
         }
         public static QCondition operator !=(QColumnBase col, DateTime value)
         {
@@ -570,7 +578,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return CreateCondition(col, "<=", value);
         }
         #endregion
-
 
 
     }

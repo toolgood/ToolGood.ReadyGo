@@ -37,29 +37,61 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public QCondition In(params string[] array)
         {
             if (array.Length == 0) return QCondition.False;
-            if (array.Length == 1) return new QColumnValueCondition(this, "=", array[0]);
-            return new QColumnValueCondition(this, "IN ('" + string.Join("','", array) + "')");
+            if (array.Length == 1) return new QColumnValueCondition(this, "=", EscapeParam(array[0]));
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("IN (");
+            for (int i = 0; i < array.Length; i++) {
+                stringBuilder.Append("'");
+                stringBuilder.Append(EscapeParam(array[i]));
+                stringBuilder.Append("',");
+            }
+            stringBuilder[stringBuilder.Length - 1] = ')';
+            return new QColumnValueCondition(this, stringBuilder.ToString());
         }
 
         public QCondition In(IList<string> array)
         {
             if (array.Count == 0) return QCondition.False;
-            if (array.Count == 1) return new QColumnValueCondition(this, "=", array[0]);
-            return new QColumnValueCondition(this, "IN ('" + string.Join("','", array) + "')");
+            if (array.Count == 1) return new QColumnValueCondition(this, "=", EscapeParam(array[0]));
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("IN (");
+            for (int i = 0; i < array.Count; i++) {
+                stringBuilder.Append("'");
+                stringBuilder.Append(EscapeParam(array[i]));
+                stringBuilder.Append("',");
+            }
+            stringBuilder[stringBuilder.Length - 1] = ')';
+            return new QColumnValueCondition(this, stringBuilder.ToString());
         }
 
         public QCondition UnIn(params string[] array)
         {
             if (array.Length == 0) return QCondition.False;
-            if (array.Length == 1) return new QColumnValueCondition(this, "=", array[0]);
-            return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
+            if (array.Length == 1) return new QColumnValueCondition(this, "<>", EscapeParam(array[0]));
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("NOT IN (");
+            for (int i = 0; i < array.Length; i++) {
+                stringBuilder.Append("'");
+                stringBuilder.Append(EscapeParam(array[i]));
+                stringBuilder.Append("',");
+            }
+            stringBuilder[stringBuilder.Length - 1] = ')';
+            return new QColumnValueCondition(this, stringBuilder.ToString());
         }
 
         public QCondition UnIn(IList<string> array)
         {
             if (array.Count == 0) return QCondition.False;
-            if (array.Count == 1) return new QColumnValueCondition(this, "=", array[0]);
-            return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
+            if (array.Count == 1) return new QColumnValueCondition(this, "<>", EscapeParam(array[0]));
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("NOT IN (");
+            for (int i = 0; i < array.Count; i++) {
+                stringBuilder.Append("'");
+                stringBuilder.Append(EscapeParam(array[i]));
+                stringBuilder.Append("',");
+            }
+            stringBuilder[stringBuilder.Length - 1] = ')';
+            return new QColumnValueCondition(this, stringBuilder.ToString());
         }
 
         public QCondition In(params short[] array)
@@ -79,14 +111,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public QCondition UnIn(params short[] array)
         {
             if (array.Length == 0) return QCondition.False;
-            if (array.Length == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Length == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
         public QCondition UnIn(IList<short> array)
         {
             if (array.Count == 0) return QCondition.False;
-            if (array.Count == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Count == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
@@ -107,14 +139,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public QCondition UnIn(params int[] array)
         {
             if (array.Length == 0) return QCondition.False;
-            if (array.Length == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Length == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
         public QCondition UnIn(IList<int> array)
         {
             if (array.Count == 0) return QCondition.False;
-            if (array.Count == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Count == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
@@ -135,14 +167,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public QCondition UnIn(params long[] array)
         {
             if (array.Length == 0) return QCondition.False;
-            if (array.Length == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Length == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
         public QCondition UnIn(IList<long> array)
         {
             if (array.Count == 0) return QCondition.False;
-            if (array.Count == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Count == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
@@ -163,14 +195,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public QCondition UnIn(params ushort[] array)
         {
             if (array.Length == 0) return QCondition.False;
-            if (array.Length == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Length == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
         public QCondition UnIn(IList<ushort> array)
         {
             if (array.Count == 0) return QCondition.False;
-            if (array.Count == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Count == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
@@ -191,14 +223,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public QCondition UnIn(params uint[] array)
         {
             if (array.Length == 0) return QCondition.False;
-            if (array.Length == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Length == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
         public QCondition UnIn(IList<uint> array)
         {
             if (array.Count == 0) return QCondition.False;
-            if (array.Count == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Count == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
@@ -219,14 +251,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public QCondition UnIn(params ulong[] array)
         {
             if (array.Length == 0) return QCondition.False;
-            if (array.Length == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Length == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
         public QCondition UnIn(IList<ulong> array)
         {
             if (array.Count == 0) return QCondition.False;
-            if (array.Count == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Count == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
@@ -247,14 +279,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public QCondition UnIn(params float[] array)
         {
             if (array.Length == 0) return QCondition.False;
-            if (array.Length == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Length == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
         public QCondition UnIn(IList<float> array)
         {
             if (array.Count == 0) return QCondition.False;
-            if (array.Count == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Count == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
@@ -275,14 +307,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public QCondition UnIn(params double[] array)
         {
             if (array.Length == 0) return QCondition.False;
-            if (array.Length == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Length == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
         public QCondition UnIn(IList<double> array)
         {
             if (array.Count == 0) return QCondition.False;
-            if (array.Count == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Count == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
@@ -303,27 +335,27 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public QCondition UnIn(params decimal[] array)
         {
             if (array.Length == 0) return QCondition.False;
-            if (array.Length == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Length == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
         public QCondition UnIn(IList<decimal> array)
         {
             if (array.Count == 0) return QCondition.False;
-            if (array.Count == 1) return new QColumnValueCondition(this, "=", array[0]);
+            if (array.Count == 1) return new QColumnValueCondition(this, "<>", array[0]);
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
         public QCondition Like(string txt)
         {
             if (txt == null) return QCondition.False;
-            return new QColumnValueCondition(this, "LIKE '" + txt + "'");
+            return new QColumnValueCondition(this, "LIKE '" + EscapeLikeParam(txt) + "'");
         }
 
         public QCondition UnLike(string txt)
         {
             if (txt == null) return QCondition.False;
-            return new QColumnValueCondition(this, "NOT LIKE '" + txt + "'");
+            return new QColumnValueCondition(this, "NOT LIKE '" + EscapeLikeParam(txt) + "'");
         }
 
         public QCondition Contains(string txt)
@@ -344,9 +376,20 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QColumnValueCondition(this, "LIKE '%" + EscapeParam(txt) + "'");
         }
 
-        internal string EscapeParam(string param)
+        internal static string EscapeParam(string param)
         {
-            return param.Replace(@"\", @"\\\\")
+            return param.Replace(@"\", @"\\")
+                .Replace("_", @"\_")
+                .Replace("%", @"\%")
+                .Replace("'", @"\'")
+                .Replace("[", @"\[")
+                .Replace("]", @"\]");
+        }
+
+        internal string EscapeLikeParam(string param)
+        {
+            param = param.Replace(@"\\", @"\").Replace("''", "'").Replace("\'", "'");
+            return param.Replace(@"\", @"\\")
                 .Replace("_", @"\_")
                 .Replace("%", @"\%")
                 .Replace("'", @"\'")

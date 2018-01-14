@@ -40,7 +40,7 @@ namespace ToolGood.ReadyGo3
 
         /// <summary>
         /// 每一页数量
-        /// </int>
+        /// </summary>
         public long PageSize { get; set; }
 
         /// <summary>

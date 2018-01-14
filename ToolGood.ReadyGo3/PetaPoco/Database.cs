@@ -763,7 +763,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(typeof(T), null);
             var tableName = pd.TableInfo.TableName;
 
-            var errCount = 0;
             var index = 0;
             while (index < list.Count) {
                 var count = list.Count - index;
