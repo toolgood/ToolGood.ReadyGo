@@ -107,6 +107,7 @@
     <Compile Include="DataCentxt\QColumn.SqlFunction.cs" />
     <Compile Include="DataCentxt\QTable.cs" />
     <Compile Include="Enums\JoinType.cs" />
+    <Compile Include="Enums\LikeType.cs" />
     <Compile Include="Enums\OrderType.cs" />
     <Compile Include="Enums\SqlType.cs" />
     <Compile Include="Gadget\AnsiString.cs" />

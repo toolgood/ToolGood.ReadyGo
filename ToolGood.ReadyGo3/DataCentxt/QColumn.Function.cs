@@ -357,38 +357,63 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QColumnValueCondition(this, "NOT IN ('" + string.Join("','", array) + "')");
         }
 
-        public QCondition Like(string txt)
+        public QCondition Like(string txt, LikeType type = LikeType.Default)
         {
             if (txt == null) return QCondition.False;
-            return new QColumnValueCondition(this, "LIKE '" + EscapeLikeParam(txt) + "'");
+            switch (type) {
+                case LikeType.Default:
+                    return new QColumnValueCondition(this, "LIKE '" + EscapeLikeParam2(txt) + "'");
+                case LikeType.StartWith:
+                    return new QColumnValueCondition(this, "LIKE '%" + EscapeLikeParam(txt) + "'");
+                case LikeType.EndWith:
+                    return new QColumnValueCondition(this, "LIKE '" + EscapeLikeParam(txt) + "%'");
+                case LikeType.Contains:
+                default:
+                    return new QColumnValueCondition(this, "LIKE '%" + EscapeLikeParam(txt) + "%'");
+            }
         }
 
-        public QCondition NotLike(string txt)
+        public QCondition NotLike(string txt, LikeType type = LikeType.Default)
         {
             if (txt == null) return QCondition.False;
-            return new QColumnValueCondition(this, "NOT LIKE '" + EscapeLikeParam(txt) + "'");
-        }
+            switch (type) {
+                case LikeType.Default:
+                    return new QColumnValueCondition(this, "NOT LIKE '" + EscapeLikeParam2(txt) + "'");
+                case LikeType.StartWith:
+                    return new QColumnValueCondition(this, "NOT LIKE '%" + EscapeLikeParam(txt) + "'");
+                case LikeType.EndWith:
+                    return new QColumnValueCondition(this, "NOT LIKE '" + EscapeLikeParam(txt) + "%'");
+                case LikeType.Contains:
+                default:
+                    return new QColumnValueCondition(this, "NOT LIKE '%" + EscapeLikeParam(txt) + "%'");
+            }
+         }
 
         public QCondition Contains(string txt)
         {
             if (txt == null) return QCondition.False;
-            return new QColumnValueCondition(this, "LIKE '%" + EscapeParam(txt) + "%'");
+            return new QColumnValueCondition(this, "LIKE '%" + EscapeLikeParam(txt) + "%'");
         }
 
         public QCondition StartsWith(string txt)
         {
             if (txt == null) return QCondition.False;
-            return new QColumnValueCondition(this, "LIKE '" + EscapeParam(txt) + "%'");
+            return new QColumnValueCondition(this, "LIKE '" + EscapeLikeParam(txt) + "%'");
         }
 
         public QCondition EndsWith(string txt)
         {
             if (txt == null) return QCondition.False;
-            return new QColumnValueCondition(this, "LIKE '%" + EscapeParam(txt) + "'");
+            return new QColumnValueCondition(this, "LIKE '%" + EscapeLikeParam(txt) + "'");
         }
 
         internal static string EscapeParam(string param)
         {
+            return param.Replace(@"\", @"\\").Replace("'", @"\'");
+        }
+
+        internal static string EscapeLikeParam(string param)
+        {
             return param.Replace(@"\", @"\\")
                 .Replace("_", @"\_")
                 .Replace("%", @"\%")
@@ -397,15 +422,10 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 .Replace("]", @"\]");
         }
 
-        internal string EscapeLikeParam(string param)
+        internal string EscapeLikeParam2(string param)
         {
             param = param.Replace(@"\\", @"\").Replace("''", "'").Replace("\'", "'");
-            return param.Replace(@"\", @"\\")
-                .Replace("_", @"\_")
-                .Replace("%", @"\%")
-                .Replace("'", @"\'")
-                .Replace("[", @"\[")
-                .Replace("]", @"\]");
+            return param.Replace(@"\", @"\\").Replace("'", @"\'");
         }
     }
 }

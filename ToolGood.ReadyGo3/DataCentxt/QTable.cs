@@ -91,6 +91,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return AddColumn<T>(columnName, fieldName, false, false, true, resultSql);
         }
         #endregion
+
         public void Clear()
         {
             if (_sqlBuilder != null) {

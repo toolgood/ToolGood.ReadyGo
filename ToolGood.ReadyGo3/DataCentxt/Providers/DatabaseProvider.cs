@@ -33,8 +33,8 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         public virtual string Delete(List<QTable> tables, QColumnBase pk, string tableName, string fromtable, string jointables, string where)
         {
-            if (object.Equals(pk, null)) throw new NoPrimaryKeyException();
-            var pk1 = ((IColumnConvert) pk).ToSql(this, 1);
+            if (object.Equals(pk, null) ) throw new NoPrimaryKeyException();
+            var pk1 = ((IColumnConvert)pk).ToSql(this, 1);
             var pk2 = ((IColumnConvert)pk).ToSql(this, tables.Count);
             return $"DELETE {tableName} WHERE {pk1} IN (SELECT {pk2} FROM {fromtable} {jointables} WHERE {where});";
         }
@@ -118,24 +118,30 @@ namespace ToolGood.ReadyGo3.DataCentxt
             int p = int.Parse(text.Replace("@", ""));
             var value = args[p];
             if (value is QColumnBase) {
-                var sb = ((IColumnConvert) value).GetSqlBuilder();
+                var sb = ((IColumnConvert)value).GetSqlBuilder();
                 if (sb == null) {
                     throw new ArgumentNullException();
                 }
-                where.Append(((IColumnConvert) value).ToSql(this, sb._tables.Count));
-            } else if (value is IList) {
-                // TODO: 未判断IList的数量，
-
-                where.Append("(");
-                foreach (var item in (IList)value) {
-                    where.Append(ConvertTo(item));
-                    where.Append(",");
+                where.Append(((IColumnConvert)value).ToSql(this, sb._tables.Count));
+            } else if (value is ICollection) {
+                var v = (ICollection)value;
+                if (v.Count == 0) {
+                    where.Append("(Null)");
+                    where.Append(" AND 1=2 ");
+                } else {
+                    where.Append("(");
+                    foreach (var item in (ICollection)value) {
+                        where.Append(ConvertTo(item));
+                        where.Append(",");
+                    }
+                    where[where.Length - 1] = ')';
                 }
-                where[where.Length - 1] = ')';
             } else {
                 where.Append(ConvertTo(value));
             }
         }
+
+
 
         /// <summary>
         /// 转化成SQL语言的片段，value不能为Null.
