@@ -136,7 +136,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
                 }
             }
             if (string.IsNullOrEmpty(ci.Comment) == false) {
-                sb.AppendFormat(" COMMENT '{0}'", ci.Comment.Replace("\'", "''"));
+                sb.AppendFormat(" COMMENT '{0}'", ci.Comment.Replace("'", @"\'"));
             }
             return sb.ToString();
         }

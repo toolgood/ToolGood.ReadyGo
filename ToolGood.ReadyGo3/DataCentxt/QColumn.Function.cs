@@ -424,7 +424,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         internal string EscapeLikeParam2(string param)
         {
-            param = param.Replace(@"\\", @"\").Replace("''", "'").Replace("\'", "'");
+            param = param.Replace(@"\\", @"\").Replace("''", "'").Replace(@"\'", "'");
             return param.Replace(@"\", @"\\").Replace("'", @"\'");
         }
     }
