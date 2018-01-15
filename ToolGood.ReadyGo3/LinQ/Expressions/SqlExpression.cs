@@ -43,7 +43,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         #region 可重写的方法
         protected virtual string GetQuotedValue(string paramValue)
         {
-            return "'" + paramValue.Replace("'", "''") + "'";
+            return "'" + paramValue.Replace(@"\",@"\\").Replace("'", @"\'") + "'";
         }
         protected virtual string GetQuotedValue(object value, Type fieldType)
         {

@@ -379,7 +379,7 @@ namespace ToolGood.ReadyGo3.LinQ
                     if (sb.Length > 0) { sb.Append(","); }
                     sb.Append(h.QuerySql);
                     sb.Append(" As '");
-                    sb.Append(h.AsName.Replace("'", "''"));
+                    sb.Append(h.AsName.Replace(@"\",@"\\").Replace("'", @"\'"));
                     if (asNames.Contains(h.AsName)) {
                         sb.Append("_");
                         sb.Append(asNames.Count(q => q == h.AsName).ToString());
@@ -398,7 +398,7 @@ namespace ToolGood.ReadyGo3.LinQ
                         if (sb.Length > 0) { sb.Append(","); }
                         sb.Append(h.QuerySql);
                         sb.Append(" As '");
-                        sb.Append(h.AsName.Replace("'", "''"));
+                        sb.Append(h.AsName.Replace(@"\",@"\\").Replace("'", @"\'"));
                         sb.Append("'");
                     }
                 }
