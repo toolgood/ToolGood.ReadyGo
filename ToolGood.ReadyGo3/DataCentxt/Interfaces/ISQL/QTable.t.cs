@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+////using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
-    partial class QTable<T> : ISQL<QTable<T>>
+    partial class QTable<T> //: ISQL<QTable<T>>
     {
         /// <summary>
         /// 【Exists】语句,累加到【Where】语句，连接使用【AND】
@@ -233,7 +233,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="column">列</param>
         /// <param name="columns">列</param>
         /// <returns></returns>
-        public  QTable<T> GroupBy(QColumnBase column, params QColumnBase[] columns)
+        public  QTable<T> GroupBy(QColumn column, params QColumn[] columns)
         {
             GetSqlBuilder().GroupBy(column, columns);
             return this;
@@ -254,7 +254,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="column">列</param>
         /// <param name="orderType">order类型</param>
         /// <returns></returns>
-        public  QTable<T> OrderBy(QColumnBase column, OrderType orderType = OrderType.Asc)
+        public  QTable<T> OrderBy(QColumn column, OrderType orderType = OrderType.Asc)
         {
             GetSqlBuilder().OrderBy(column, orderType);
             return this;

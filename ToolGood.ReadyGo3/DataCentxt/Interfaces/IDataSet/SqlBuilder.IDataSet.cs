@@ -2,24 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+////using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-    partial class SqlBuilder : IDataSet
+    partial class SqlBuilder //: IDataSet
     {
         public int Delete()
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullDeleteSql(Provider);
+            var sql = (this).GetFullDeleteSql(Provider);
             return GetSqlHelper().Execute(sql);
         }
 
         public object Insert(bool returnInsertId = false)
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullInsertSql(Provider);
+            var sql = (this).GetFullInsertSql(Provider);
             if (returnInsertId) {
-                var pk = ((ITableConvert) _tables[0]).GetPrimaryKey();
+                var pk = ( _tables[0]).GetPrimaryKey();
                 if (object.Equals(pk,null)) {
                     throw new NoPrimaryKeyException();
                 }
@@ -30,7 +30,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         public int Update()
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullUpdateSql(Provider);
+            var sql = (this).GetFullUpdateSql(Provider);
             return GetSqlHelper().Execute(sql);
         }
     }

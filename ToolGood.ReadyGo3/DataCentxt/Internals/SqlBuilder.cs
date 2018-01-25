@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
@@ -24,7 +24,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         private QWhereCondition whereCondition = new QWhereCondition();
         private string _joinOnText;
         private List<OrderItem> _orderBys = new List<OrderItem>();
-        private List<QColumnBase> _groupBy = new List<QColumnBase>();
+        private List<QColumn> _groupBy = new List<QColumn>();
         private List<QCondition> _having = new List<QCondition>();
         private bool _useDistinct = false;
         private bool _usedSchemaName = false;

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Providers
 {
@@ -24,7 +24,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
             return $"`{sqlIdentifier}`";
         }
 
-        public override string Delete(List<QTable> tables, QColumnBase pk, string tableName, string fromtable, string jointables, string where)
+        public override string Delete(List<QTable> tables, QColumn pk, string tableName, string fromtable, string jointables, string where)
         {
             return $"DELETE t1 FROM {fromtable} {jointables} WHERE {where};" ;
         }

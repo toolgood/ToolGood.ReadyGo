@@ -2,33 +2,52 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+using ToolGood.ReadyGo3.DataCentxt.Enums;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Providers
 {
     public class PostgreSQLDatabaseProvider : DatabaseProvider
     {
-        protected static readonly Dictionary<string, string> functionDict = new Dictionary<string, string>();
-
-        static PostgreSQLDatabaseProvider()
+ 
+        public override string CreateFunction(SqlFunction function, params object[] args)
         {
             //  https://www.postgresql.org/docs/9.1/static/functions-math.html
             //  https://www.postgresql.org/docs/9.1/static/functions-string.html
             //  https://www.postgresql.org/docs/9.1/static/functions-datetime.html
-            functionDict.Add( "LEN", "LENGTH({0})");
-            functionDict.Add( "DATEDIFF", "AGE(TIMESTAMP {0}, TIMESTAMP {1})");
-            functionDict.Add( "YEAR", "EXTRACT(YEAR FROM TIMESTAMP {0})");
-            functionDict.Add( "MONTH", "EXTRACT(MONTH FROM TIMESTAMP {0})");
-            functionDict.Add( "DAY", "EXTRACT(DAY FROM TIMESTAMP {0})");
-            functionDict.Add( "HOUR", "EXTRACT(HOUR FROM TIMESTAMP {0})");
-            functionDict.Add( "MINUTE", "EXTRACT(MINUTE FROM TIMESTAMP {0})");
-            functionDict.Add( "SECOND", "EXTRACT(SECOND FROM TIMESTAMP {0})");
-            functionDict.Add( "DAYOFYEAR", "EXTRACT(DAYOFYEAR FROM TIMESTAMP {0})");
-            functionDict.Add( "WEEK", "EXTRACT(WEEK FROM TIMESTAMP {0})");
-            functionDict.Add( "WEEKDAY", "EXTRACT(WEEKDAY FROM TIMESTAMP {0})");
-            functionDict.Add( "SubString3", "SUBSTR({0}, {1}, {2})");
-            functionDict.Add( "SubString2", "SUBSTR({0}, {1})");
+            switch (function) {
+                case SqlFunction.Fuction: break;
+                case SqlFunction.Len: return CreateFunction("LENGTH({0})", args);
+                case SqlFunction.Max: break;
+                case SqlFunction.Min: break;
+                case SqlFunction.Avg: break;
+                case SqlFunction.Sum: break;
+                case SqlFunction.Count: break;
+                case SqlFunction.CountDistinct: break;
+                case SqlFunction.DatePart: break;
+                case SqlFunction.DateDiff: return CreateFunction("AGE(TIMESTAMP {0}, TIMESTAMP {1})", args);
+                case SqlFunction.Year: return CreateFunction("EXTRACT(YEAR FROM TIMESTAMP {0})", args);
+                case SqlFunction.Month: return CreateFunction("EXTRACT(MONTH FROM TIMESTAMP {0})", args);
+                case SqlFunction.Day: return CreateFunction("EXTRACT(DAY FROM TIMESTAMP {0})", args);
+                case SqlFunction.Hour: return CreateFunction("EXTRACT(HOUR FROM TIMESTAMP {0})", args);
+                case SqlFunction.Minute: return CreateFunction("EXTRACT(MINUTE FROM TIMESTAMP {0})", args);
+                case SqlFunction.Second: return CreateFunction("EXTRACT(SECOND FROM TIMESTAMP {0})", args);
+                case SqlFunction.DayOfYear: return CreateFunction("EXTRACT(DAYOFYEAR FROM TIMESTAMP {0})", args);
+                case SqlFunction.Week: return CreateFunction("EXTRACT(WEEK FROM TIMESTAMP {0})", args);
+                case SqlFunction.WeekDay: return CreateFunction("EXTRACT(WEEKDAY FROM TIMESTAMP {0})", args);
+                case SqlFunction.SubString3: return CreateFunction("SUBSTR({0}, {1}, {2})", args);
+                case SqlFunction.SubString2: return CreateFunction("SUBSTR({0}, {1})", args);
+                case SqlFunction.Left: break;
+                case SqlFunction.Right: break;
+                case SqlFunction.Lower: break;
+                case SqlFunction.Upper: break;
+                case SqlFunction.Ascii: break;
+                case SqlFunction.Concat: break;
+                default: break;
+            }
+            return base.CreateFunction(function, args);
         }
+
         public PostgreSQLDatabaseProvider()
         {
             usedEscapeSql = true;
@@ -84,24 +103,6 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
             return $"\"{sqlIdentifier}\"";
         }
 
-        /// <summary>
-        /// 方法是否使用默认格式化
-        /// </summary>
-        /// <param name="funName"></param>
-        /// <returns></returns>
-        public override bool IsFunctionUseDefaultFormat(string funName)
-        {
-            return functionDict.ContainsKey(funName) == false;
-        }
-        /// <summary>
-        /// 获取非默认格式化
-        /// </summary>
-        /// <param name="sqlType"></param>
-        /// <param name="funName"></param>
-        /// <returns></returns>
-        public override string GetFunctionFormat(  string funName)
-        {
-            return functionDict[funName];
-        }
+ 
     }
 }

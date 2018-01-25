@@ -3,47 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 
-namespace ToolGood.ReadyGo3.DataCentxt.Interfaces
-{
-    public interface ITableConvert
-    {
-        string ToSql(DatabaseProvider provider, bool schemaName);
-
-
-        // QTable
-        string ToTableSql(DatabaseProvider provider, int tableCount, bool schemaName);
-
-        string ToJoinSql(DatabaseProvider provider, int tableCount, bool schemaName);
-
-        List<QTableColumn> GetUpdateColumns();
-
-        List<QTableColumn> GetInsertColumns();
-
-        QTableColumn GetPrimaryKey();
-
-        bool IsSetPrimaryKey();
-
-        /// <summary>
-        /// 获取 update Set 关联的Column 
-        /// 用于Oracle Update with Join
-        /// </summary>
-        /// <returns></returns>
-        List<QTableColumn> GetUpdateSetRelationColumn();
-
-        void SetDefaultValue(bool datetimeUsedNow, bool stringUsedEmpty, bool guidUsedNew);
-
-
-
-    }
-}
 namespace ToolGood.ReadyGo3.DataCentxt
 {
-    partial class QTable : ITableConvert
+    partial class QTable
     {
-        string ITableConvert.ToSql(DatabaseProvider provider, bool schemaName)
+        internal string ToSql(DatabaseProvider provider, bool schemaName)
         {
             if (schemaName && string.IsNullOrEmpty(_schemaName) == false) {
                 return provider.EscapeSqlIdentifier(_schemaName) + "." + provider.EscapeSqlIdentifier(_tableName);
@@ -52,15 +19,15 @@ namespace ToolGood.ReadyGo3.DataCentxt
         }
 
 
-        string ITableConvert.ToTableSql(DatabaseProvider provider, int tableCount, bool schemaName)
+        internal string ToTableSql(DatabaseProvider provider, int tableCount, bool schemaName)
         {
             if (tableCount > 1) {
-                return ((ITableConvert)this).ToSql(provider, schemaName) + " AS " + _asName;
+                return (this).ToSql(provider, schemaName) + " AS " + _asName;
             }
-            return ((ITableConvert)this).ToSql(provider, schemaName);
+            return (this).ToSql(provider, schemaName);
         }
 
-        string ITableConvert.ToJoinSql(DatabaseProvider provider, int tableCount, bool schemaName)
+        internal string ToJoinSql(DatabaseProvider provider, int tableCount, bool schemaName)
         {
             if (_joinCondition == null) throw new NoJoinOnException();
             StringBuilder stringBuilder = new StringBuilder();
@@ -72,14 +39,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 stringBuilder.Append("FULL ");
             }
             stringBuilder.Append("JOIN ");
-            var table = ((ITableConvert)this).ToTableSql(provider, tableCount, schemaName);
+            var table = (this).ToTableSql(provider, tableCount, schemaName);
             stringBuilder.Append(table);
             stringBuilder.Append(" ON ");
-            ((IConditionConvert)_joinCondition).ToSql(stringBuilder, provider, tableCount);
+            (_joinCondition).ToSql(stringBuilder, provider, tableCount);
             return stringBuilder.ToString();
         }
 
-        List<QTableColumn> ITableConvert.GetUpdateColumns()
+        internal List<QTableColumn> GetUpdateColumns()
         {
             List<QTableColumn> list = new List<QTableColumn>();
             foreach (var item in _columns) {
@@ -94,7 +61,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return list;
         }
 
-        List<QTableColumn> ITableConvert.GetInsertColumns()
+        internal List<QTableColumn> GetInsertColumns()
         {
             List<QTableColumn> list = new List<QTableColumn>();
             foreach (var item in _columns) {
@@ -105,7 +72,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return list;
         }
 
-        QTableColumn ITableConvert.GetPrimaryKey()
+        internal QTableColumn GetPrimaryKey()
         {
             foreach (var item in _columns) {
                 var col = item.Value;
@@ -116,7 +83,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return null;
         }
 
-        bool ITableConvert.IsSetPrimaryKey()
+        internal bool IsSetPrimaryKey()
         {
             foreach (var item in _columns) {
                 var col = item.Value;
@@ -127,25 +94,26 @@ namespace ToolGood.ReadyGo3.DataCentxt
             throw new NoPrimaryKeyException();
         }
 
-        void ITableConvert.SetDefaultValue(bool datetimeUsedNow, bool stringUsedEmpty, bool guidUsedNew)
+        internal void SetDefaultValue(bool datetimeUsedNow, bool stringUsedEmpty, bool guidUsedNew)
         {
-            foreach (var item in _columns) {
-                var col = item.Value;
-                if (col._changeType == Enums.ColumnChangeType.None) {
-                    if (col._fieldType == "string") {
-                        col.SetValue("");
-                    } else if (col._fieldType == "datetime") {
-                        col.SetValue(DateTime.Now);
-                    } else if (col._fieldType == "guid") {
-                        col.SetValue(Guid.NewGuid());
-                    }
+            if (datetimeUsedNow || stringUsedEmpty || guidUsedNew) {
+                foreach (var item in _columns) {
+                    var col = item.Value;
+                    if (col._changeType == Enums.ColumnChangeType.None)
+                        if (col._fieldType == "string") {
+                            if (stringUsedEmpty) col.SetValue("");
+                        } else if (col._fieldType == "datetime") {
+                            if (datetimeUsedNow) col.SetValue(DateTime.Now);
+                        } else if (col._fieldType == "guid") {
+                            if (guidUsedNew) col.SetValue(Guid.NewGuid());
+                        }
                 }
             }
         }
 
-        List<QTableColumn> ITableConvert.GetUpdateSetRelationColumn()
+        internal List<QTableColumn> GetUpdateSetRelationColumn()
         {
-            var cols = ((ITableConvert)this).GetUpdateColumns();
+            var cols = (this).GetUpdateColumns();
             List<QTableColumn> list = new List<QTableColumn>();
 
             foreach (var col in cols) {
@@ -158,7 +126,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return list.Distinct().ToList();
         }
 
-        private void GetAllTableColumn(QColumnBase column, List<QTableColumn> list)
+        private void GetAllTableColumn(QColumn column, List<QTableColumn> list)
         {
             if (column._columnType == Enums.ColumnType.Code) return;
             if (column._columnType == Enums.ColumnType.None) return;
@@ -171,8 +139,8 @@ namespace ToolGood.ReadyGo3.DataCentxt
             if (args == null) return;
 
             foreach (var item in args) {
-                if (item is QColumnBase) {
-                    GetAllTableColumn((QColumnBase)item, list);
+                if (item is QColumn) {
+                    GetAllTableColumn((QColumn)item, list);
                 }
             }
         }

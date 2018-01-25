@@ -1,25 +1,768 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using ToolGood.ReadyGo3.LinQ.Expressions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.LinQ
 {
-    public partial class WhereHelper<T1> : WhereHelperBase, IDeepCloneable<WhereHelper<T1>>
+    public partial class WhereHelper<T1>
         where T1 : class, new()
     {
         internal WhereHelper(SqlHelper helper)
         {
             this._sqlhelper = helper;
-            this._provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
-            this._paramPrefix = _provider.GetParameterPrefix(_sqlhelper._connectionString);
-            SqlExpression = ToolGood.ReadyGo3.LinQ.Expressions.SqlExpression.Resolve(_sqlhelper._sqlType);
+            //this._provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
+            this._paramPrefix = DatabaseProvider.Resolve(_sqlhelper._sqlType).GetParameterPrefix(_sqlhelper._connectionString);
+            SqlExpression = new Expressions.SqlExpression(_sqlhelper._sqlType);
+        }
+        #region  01 私有变量
+        private SqlExpression SqlExpression;
+        private SqlHelper _sqlhelper;
+        private List<object> _args = new List<object>();
+        private StringBuilder _where = new StringBuilder();
+        private string _joinOnString = "";
+        private List<SelectHeader> _includeColumns = new List<SelectHeader>();
+        private List<string> _excludeColumns = new List<string>();
+         private string _paramPrefix;
+
+        private string _order = "";
+        private string _groupby = "";
+        private string _having = "";
+
+        #endregion  
+
+        #region 02 SQL拼接 基础方法
+
+        private bool _doNext = true;
+
+        private bool jump()
+        {
+            if (_doNext == false) {
+                _doNext = true;
+                return true;
+            }
+            return false;
         }
 
-        #region WhereIn Where OrderBy Having
+        private void ifTrue(bool iftrue)
+        {
+            _doNext = iftrue;
+        }
+
+        private void whereNotIn(LambdaExpression field, ICollection args)
+        {
+            if (jump()) return;
+            var column = SqlExpression.GetColumnName(field);
+
+            if (_where.Length > 0) {
+                _where.Append(" AND ");
+            }
+            if (args.Count == 0) {
+                _where.Append("1=1");
+                return;
+            }
+            _where.Append(column);
+            if (args.Count == 1) {
+                _where.Append(" <> ");
+                _where.Append(_paramPrefix);
+                _where.Append(_args.Count.ToString());
+                return;
+            } else {
+                _where.Append(" NOT IN (");
+                for (int i = 0; i < args.Count; i++) {
+                    if (i > 0) {
+                        _where.Append(",");
+                    }
+                    _where.Append(_paramPrefix);
+                    _where.Append((_args.Count + i).ToString());
+                }
+                _where.Append(")");
+            }
+            foreach (var item in args) {
+                _args.Add(item);
+            }
+        }
+
+        private void whereIn(LambdaExpression field, ICollection args)
+        {
+            if (jump()) return;
+            var column = SqlExpression.GetColumnName(field);
+
+            if (_where.Length > 0) {
+                _where.Append(" AND ");
+            }
+            if (args.Count == 0) {
+                _where.Append("1=2");
+                return;
+            }
+            _where.Append(column);
+            if (args.Count == 1) {
+                _where.Append(" = ");
+                _where.Append(_paramPrefix);
+                _where.Append(_args.Count.ToString());
+                return;
+            } else {
+                _where.Append(" IN (");
+                for (int i = 0; i < args.Count; i++) {
+                    if (i > 0) {
+                        _where.Append(",");
+                    }
+                    _where.Append(_paramPrefix);
+                    _where.Append((_args.Count + i).ToString());
+                }
+                _where.Append(")");
+            }
+            foreach (var item in args) {
+                _args.Add(item);
+            }
+        }
+
+        private void where(string where, ICollection args)
+        {
+            if (jump()) return;
+            where = where.Trim();
+            if (_where.Length > 0) _where.Append(" AND ");
+
+            int start = 0;
+            if (where.StartsWith("where ", StringComparison.CurrentCultureIgnoreCase)) start = 6;
+
+            bool isInText = false, isStart = false;
+            var c = 'a';
+            var text = "";
+
+            for (int i = start; i < where.Length; i++) {
+                var t = where[i];
+                if (isInText) {
+                    if (t == c) isInText = false;
+                } else if ("\"'`".Contains(t)) {
+                    isInText = true;
+                    c = t;
+                    isStart = false;
+                } else if (isStart == false) {
+                    if (t == '@') {
+                        isStart = true;
+                        text = "@";
+                        continue;
+                    }
+                } else if ("@1234567890".Contains(t)) {
+                    text += t;
+                    continue;
+                } else {
+                    whereTranslate(_where, text);
+                    isStart = false;
+                }
+                _where.Append(t);
+            }
+            if (isStart) whereTranslate(_where, text);
+
+
+            foreach (var item in args) {
+                _args.Add(item);
+            }
+        }
+        private void whereTranslate(StringBuilder where, string text)
+        {
+            if (text == "@@") {
+                where.Append(_paramPrefix);
+                where.Append(this._args.Count.ToString());
+            } else if (text == "@@@") {
+                where.Append("@@");
+            } else if (text.StartsWith("@@")) {
+                int p = this._args.Count + int.Parse(text.Replace("@", ""));
+                where.Append(_paramPrefix);
+                where.Append(p.ToString());
+            } else if (text.Length == 1) {
+                where.Append(text);
+            } else {
+                int p = int.Parse(text.Replace("@", ""));
+                where.Append(_paramPrefix);
+                where.Append(p.ToString());
+            }
+        }
+
+        private void where(LambdaExpression where)
+        {
+            if (jump()) return;
+            string sql;
+            SqlExpression.Analysis(where, out sql);
+            if (_where.Length > 0) {
+                _where.Append(" AND ");
+            }
+            _where.Append(sql);
+        }
+
+        private void join(string join)
+        {
+            if (jump()) return;
+            _joinOnString += " " + join;
+        }
+
+        private void includeColumn(LambdaExpression column, string asName)
+        {
+            if (jump()) return;
+            var col = SqlExpression.GetColumnName(column);
+            includeColumn(col, asName);
+        }
+        private void includeColumn(string col, string asName)
+        {
+            if (jump()) return;
+            var index = col.IndexOf('.');
+            string table = null;
+            if (index > -1) {
+                table = col.Substring(0, index);
+                col = col.Substring(index + 1);
+            }
+            if (asName == null) {
+                _includeColumns.Insert(0, new SelectHeader() {
+                    AsName = col,
+                    Table = table,
+                    QuerySql = col
+                });
+            } else {
+                _includeColumns.Insert(0, new SelectHeader() {
+                    AsName = asName,
+                    Table = table,
+                    QuerySql = col
+                });
+            }
+
+        }
+
+        private void excludeColumn(LambdaExpression column)
+        {
+            if (jump()) return;
+            var col = SqlExpression.GetColumnName(column);
+            excludeColumn(col);
+        }
+        private void excludeColumn(string col)
+        {
+            if (jump()) return;
+            var index = col.IndexOf('.');
+            //string table = null;
+            if (index > -1) {
+                //table = col.Substring(0, index);
+                col = col.Substring(index + 1);
+            }
+            _excludeColumns.Add(col);
+        }
+
+
+        private void orderBy(LambdaExpression order, OrderType type)
+        {
+            if (jump()) return;
+            var column = SqlExpression.GetColumnName(order);
+            if (type == OrderType.Asc) {
+                orderBySql(column + " ASC");
+            } else {
+                orderBySql(column + " DESC");
+            }
+        }
+
+        private void orderBySql(string order)
+        {
+            if (jump()) return;
+            if (_order.Length > 0) {
+                _order += ",";
+            }
+            _order += order;
+        }
+
+        private void groupBy(LambdaExpression group)
+        {
+            if (jump()) return;
+            var column = SqlExpression.GetColumnName(group);
+            this.groupBy(column);
+        }
+
+        private void groupBy(string groupby)
+        {
+            if (jump()) return;
+            groupby = groupby.Trim().Trim(',');
+            if (groupby.StartsWith("group by ", StringComparison.CurrentCultureIgnoreCase))
+                groupby = groupby.Substring(9).Trim();
+            if (string.IsNullOrWhiteSpace(groupby)) return;
+            if (_groupby.Length > 0) {
+                _groupby += ",";
+            }
+            _groupby += groupby;
+        }
+        private void having(LambdaExpression having)
+        {
+            if (jump()) return;
+            string sql;
+            SqlExpression.Analysis(having, out sql);
+            this.having(sql);
+        }
+        private void having(string having)
+        {
+            if (jump()) return;
+            having = having.Trim().Trim(',');
+            if (having.StartsWith("having ", StringComparison.CurrentCultureIgnoreCase))
+                having = having.Substring(7).Trim();
+
+            if (string.IsNullOrWhiteSpace(having)) return;
+            if (_having.Length > 0) {
+                _having += ",";
+            }
+            _having += having;
+        }
+        #endregion SQL拼接方法
+
+        #region 03 判断
+
+        /// <summary>
+        /// IfTrue 如果为假会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="ifTrue"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfTrue(bool ifTrue)
+        {
+            this.ifTrue(ifTrue);
+            return this;
+        }
+
+        /// <summary>
+        /// IfFalse 如果为真会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="ifTrue"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfFalse(bool ifTrue)
+        {
+            this.ifTrue(ifTrue == false);
+            return this;
+        }
+
+        /// <summary>
+        /// IfSet  如果字符串未设置，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfSet(string txt)
+        {
+            this.ifTrue(string.IsNullOrEmpty(txt) == false);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotSet  如果字符串已设置，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotSet(string txt)
+        {
+            this.ifTrue(string.IsNullOrEmpty(txt));
+            return this;
+        }
+
+        /// <summary>
+        /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNull(string txt)
+        {
+            this.ifTrue(txt == null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotNull(string txt)
+        {
+            this.ifTrue(txt != null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNull(short? txt)
+        {
+            this.ifTrue(txt == null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotNull(short? txt)
+        {
+            this.ifTrue(txt != null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNull(int? txt)
+        {
+            this.ifTrue(txt == null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotNull(int? txt)
+        {
+            this.ifTrue(txt != null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNull(long? txt)
+        {
+            this.ifTrue(txt == null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotNull(long? txt)
+        {
+            this.ifTrue(txt != null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNull(ushort? txt)
+        {
+            this.ifTrue(txt == null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotNull(ushort? txt)
+        {
+            this.ifTrue(txt != null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNull(uint? txt)
+        {
+            this.ifTrue(txt == null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotNull(uint? txt)
+        {
+            this.ifTrue(txt != null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNull(ulong? txt)
+        {
+            this.ifTrue(txt == null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotNull(ulong? txt)
+        {
+            this.ifTrue(txt != null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNull(float? txt)
+        {
+            this.ifTrue(txt == null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotNull(float? txt)
+        {
+            this.ifTrue(txt != null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNull(double? txt)
+        {
+            this.ifTrue(txt == null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotNull(double? txt)
+        {
+            this.ifTrue(txt != null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNull(decimal? txt)
+        {
+            this.ifTrue(txt == null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotNull(decimal? txt)
+        {
+            this.ifTrue(txt != null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNull(DateTime? txt)
+        {
+            this.ifTrue(txt == null);
+            return this;
+        }
+
+        /// <summary>
+        /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfNotNull(DateTime? txt)
+        {
+            this.ifTrue(txt != null);
+            return this;
+        }
+
+        #endregion 判断
+
+        #region 04 Sql 拼接
+        /// <summary>
+        /// 自动添加 “NOT EXISTS ” 也会自动添加 “SELECT * ”
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="where"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> AddNotExistsSql(string where, params object[] args)
+        {
+            where = where.TrimStart();
+            if (where.StartsWith("NOT EXISTS ", StringComparison.CurrentCultureIgnoreCase) == false) {
+                if (where.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
+                    where = string.Format("NOT EXISTS(SELECT * {0})", where);
+                } else {
+                    where = string.Format("NOT EXISTS({0})", where);
+                }
+            }
+            this.where(where, args);
+            return this;
+        }
+        /// <summary>
+        /// 自动添加 “EXISTS ” 也会自动添加 “SELECT * ”
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="where"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> AddExistsSql(string where, params object[] args)
+        {
+            where = where.TrimStart();
+            if (where.StartsWith("EXISTS ", StringComparison.CurrentCultureIgnoreCase) == false) {
+                if (where.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
+                    where = string.Format("EXISTS(SELECT * {0})", where);
+                } else {
+                    where = string.Format("EXISTS({0})", where);
+                }
+            }
+            this.where(where, args);
+            return this;
+        }
+        /// <summary>
+        /// 添加 Where
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="where"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> AddWhereSql(string where, params object[] args)
+        {
+            this.where(where, args);
+            return this;
+        }
+        /// <summary>
+        /// 添加 Order By SQL语句
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="order"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> AddOrderBySql(string order)
+        {
+            this.orderBySql(order);
+            return this;
+        }
+        /// <summary>
+        /// 添加 Group By SQL语句
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="groupby"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> AddGroupBySql(string groupby)
+        {
+            this.groupBy(groupby);
+            return this;
+        }
+        /// <summary>
+        /// 添加 Having SQL语句
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="having"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> AddHavingSql(string having)
+        {
+            this.having(having);
+            return this;
+        }
+        /// <summary>
+        /// 添加 Join On SQL语句
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="t"></param>
+        /// <param name="having"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> AddJoinSql(string joinWithOn)
+        {
+            this.join(joinWithOn);
+            return this;
+        }
+
+        #endregion Sql 拼接
+
+        #region 05 Sql拼接 LINQ WhereIn Where OrderBy Having
         /// <summary>
         /// 
         /// </summary>
@@ -29,7 +772,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> WhereNotIn<T>(Expression<Func<T1, T>> field, ICollection args)
         {
-            base.whereNotIn(field, args);
+            this.whereNotIn(field, args);
             return this;
         }
         /// <summary>
@@ -52,7 +795,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> WhereIn<T>(Expression<Func<T1, T>> field, ICollection args)
         {
-            base.whereIn(field, args);
+            this.whereIn(field, args);
             return this;
         }
         /// <summary>
@@ -73,7 +816,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> Where(Expression<Func<T1, bool>> where)
         {
-            base.where(where);
+            this.where(where);
             return this;
         }
         /// <summary>
@@ -85,7 +828,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> OrderBy<T>(Expression<Func<T1, T>> order, OrderType type = OrderType.Asc)
         {
-            base.orderBy(order, type);
+            this.orderBy(order, type);
             return this;
         }
         /// <summary>
@@ -106,7 +849,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> Having(Expression<Func<T1, bool>> having)
         {
-            base.having(having);
+            this.having(having);
             return this;
         }
         /// <summary>
@@ -116,15 +859,14 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="column"></param>
         /// <param name="asName"></param>
         /// <returns></returns>
-        public WhereHelper<T1> SelectColumn<T>(Expression<Func<T1, T>> column, string asName = null)
-        {
-            selectColumn(column, asName);
-            return this;
-        }
+
 
 
 
         #endregion WhereIn Where OrderBy Having
+
+        #region 06 查询 Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+
 
         #region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
         /// <summary>
@@ -253,46 +995,399 @@ namespace ToolGood.ReadyGo3.LinQ
         }
 
         #endregion
+        #endregion
 
-
-        protected internal override List<Type> GetTypes()
+        #region 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        /// <summary>
+        /// 获取数量
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public int Count(string selectSql = null)
         {
-            return new List<Type>() { typeof(T1) };
+            return this._sqlhelper.getDatabase().Execute(this.GetCountSql(selectSql), this._args.ToArray());
+        }
+        /// <summary>
+        /// 执行返回DataTable
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public DataTable ExecuteDataTable(string selectSql = null)
+        {
+            return this._sqlhelper.ExecuteDataTable(this.GetFullSelectSql(selectSql), this._args.ToArray());
+        }
+        /// <summary>
+        /// 执行返回DataSet
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public DataSet ExecuteDataSet(string selectSql = null)
+        {
+            return this._sqlhelper.ExecuteDataSet(this.GetFullSelectSql(selectSql), this._args.ToArray());
+        }
+        /// <summary>
+        /// 执行返回集合
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public List<T> Select<T>(string selectSql = null)
+        {
+            var sql = getSelect<T>(selectSql);
+            return this._sqlhelper.Select<T>(this.GetFullSelectSql(sql), this._args.ToArray());
+        }
+        /// <summary>
+        /// 执行
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public T Single<T>(string selectSql = null)
+        {
+            var sql = getSelect<T>(selectSql);
+            return this._sqlhelper.Single<T>(this.GetFullSelectSql(sql), this._args.ToArray());
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public T SingleOrDefault<T>(string selectSql = null)
+        {
+            var sql = getSelect<T>(selectSql);
+            return this._sqlhelper.SingleOrDefault<T>(this.GetFullSelectSql(sql), this._args.ToArray());
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public T First<T>(string selectSql = null)
+        {
+            var sql = getSelect<T>(selectSql);
+            return this._sqlhelper.First<T>(this.GetFullSelectSql(sql), this._args.ToArray());
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public T FirstOrDefault<T>(string selectSql = null)
+        {
+            var sql = getSelect<T>(selectSql);
+            return this._sqlhelper.FirstOrDefault<T>(this.GetFullSelectSql(sql), this._args.ToArray());
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public Page<T> Page<T>(long page, long itemsPerPage, string selectSql = null)
+        {
+            var sql = getSelect<T>(selectSql);
+            return this._sqlhelper.Page<T>(page, itemsPerPage, this.GetFullSelectSql(sql), this._args.ToArray());
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public List<T> SkipTake<T>(long skip, long take, string selectSql = null)
+        {
+            var sql = getSelect<T>(selectSql);
+            return this._sqlhelper.Select<T>(skip, take, this.GetFullSelectSql(sql), this._args.ToArray());
         }
 
-        protected internal override string GetFromAndJoinOn()
+        private string getSelect<T>(string selectSql)
+        {
+            if (string.IsNullOrEmpty(selectSql) == false) {
+                if (selectSql.StartsWith("Select", StringComparison.CurrentCultureIgnoreCase)) {
+                    return selectSql;
+                }
+                return "SELECT " + selectSql;
+            }
+            return CreateSelectHeader(typeof(T), this._includeColumns);
+        }
+        #endregion
+
+        #region 08 包含列 排除列
+        /// <summary>
+        /// 排除列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="column"></param>
+        /// <param name="asName"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> ExcludeColumn<T>(Expression<Func<T1, T>> column)
+        {
+            excludeColumn(column);
+            return this;
+        }
+        /// <summary>
+        /// 排除列
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> ExcludeColumn(string columns)
+        {
+            var cols = columns.Split(',');
+            foreach (var col in cols) {
+                excludeColumn(col);
+            }
+            return this;
+        }
+        /// <summary>
+        /// 包含列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="column"></param>
+        /// <param name="asName"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IncludeColumn<T>(Expression<Func<T1, T>> column, string asName = null)
+        {
+            includeColumn(column, asName);
+            return this;
+        }
+        #endregion
+
+
+
+
+
+        #region 04 获取Sql和args方法
+        /// <summary>
+        ///
+        /// </summary>
+        /// <returns></returns>
+        public object[] GetArgs()
+        {
+            return _args.ToArray();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        public string GetFullSelectSql(string select = null)
+        {
+            if (select == null) {
+                select = CreateSelectHeader(_includeColumns);
+            }
+            if (select.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase) == false) {
+                select = "SELECT " + select;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(select);
+            sb.Append(" ");
+            sb.Append(GetFromAndJoinOn());
+            sb.Append(_joinOnString);
+
+            if (_where.Length > 0) {
+                sb.Append(" WHERE ");
+                sb.Append(_where);
+            }
+
+            if (_groupby.Length > 0) {
+                sb.Append(" GROUP BY ");
+                sb.Append(_groupby);
+                if (_having.Length > 0) {
+                    sb.Append(" HAVING ");
+                    sb.Append(_having);
+                }
+            }
+            if (_order.Length > 0) {
+                sb.Append(" ORDER BY ");
+                sb.Append(_order);
+            }
+
+            return sb.ToString();
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        public string GetCountSql(string select = null)
+        {
+            if (select == null) {
+                select = "SELECT Count(1) ";
+            }
+            if (select.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase) == false) {
+                select = "SELECT " + select;
+            }
+            StringBuilder sb = new StringBuilder();
+            sb.Append(select);
+            sb.Append(_joinOnString);
+            if (_where.Length > 0) {
+                sb.Append(" WHERE ");
+                sb.Append(_where);
+            }
+
+            if (_groupby.Length > 0) {
+                sb.Append(" GROUP BY ");
+                sb.Append(_groupby);
+                if (_having.Length > 0) {
+                    sb.Append(" HAVING ");
+                    sb.Append(_having);
+                }
+            }
+            return sb.ToString();
+        }
+
+
+        private  string CreateSelectHeader(List<SelectHeader> defineHeader)
+        {
+            var headers = GetSelectHeader();
+            if (defineHeader != null && defineHeader.Count > 0) {
+                foreach (var header in defineHeader) {
+                    SelectHeader h;
+                    if (string.IsNullOrEmpty(header.Table)) {
+                        h = defineHeader.FirstOrDefault(q => q.AsName == header.AsName);
+                    } else {
+                        h = defineHeader.FirstOrDefault(q => q.AsName == header.AsName && q.Table == header.Table);
+                    }
+                    if (h != null) {
+                        h.QuerySql = header.QuerySql;
+                    } else {
+                        headers.Add(h);
+                    }
+                }
+            }
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var h in headers) {
+                if (sb.Length > 0) sb.Append(",");
+                sb.Append(h.QuerySql);
+                sb.Append(" As ");
+                if (h.Table != "t1") {
+                    sb.Append(h.Table);
+                    sb.Append("_");
+                }
+                sb.Append(h.AsName);
+            }
+            sb.Insert(0, "SELECT ");
+            return sb.ToString();
+        }
+
+        private  string CreateSelectHeader(Type outType, List<SelectHeader> defineHeader)
+        {
+            if (defineHeader == null) defineHeader = new List<SelectHeader>();
+            defineHeader.AddRange(GetSelectHeader());
+
+            if (outType == typeof(object)) {
+                List<string> asNames = new List<string>();
+                StringBuilder sb = new StringBuilder();
+                foreach (var h in defineHeader) {
+                    if (sb.Length > 0) { sb.Append(","); }
+                    sb.Append(h.QuerySql);
+                    sb.Append(" As '");
+                    sb.Append(h.AsName.Replace(@"\", @"\\").Replace("'", @"\'"));
+                    if (asNames.Contains(h.AsName)) {
+                        sb.Append("_");
+                        sb.Append(asNames.Count(q => q == h.AsName).ToString());
+                    }
+                    sb.Append("'");
+                    asNames.Add(h.AsName);
+                }
+                sb.Insert(0, "SELECT ");
+                return sb.ToString();
+            } else {
+                var pd = PocoData.ForType(outType);
+                StringBuilder sb = new StringBuilder();
+                foreach (var item in pd.Columns) {
+                    var h = defineHeader.FirstOrDefault(q => q.AsName == item.Value.ColumnName);
+                    if (h != null) {
+                        if (sb.Length > 0) { sb.Append(","); }
+                        sb.Append(h.QuerySql);
+                        sb.Append(" As '");
+                        sb.Append(h.AsName.Replace(@"\", @"\\").Replace("'", @"\'"));
+                        sb.Append("'");
+                    }
+                }
+                sb.Insert(0, "SELECT ");
+                return sb.ToString();
+            }
+        }
+
+        private  List<SelectHeader> GetSelectHeader()
+        {
+            List<SelectHeader> list = new List<SelectHeader>();
+
+            var pd = PocoData.ForType(typeof(T1));
+            foreach (var col in pd.Columns) {
+                if (_excludeColumns.Contains(col.Value.ColumnName)) continue;
+
+                SelectHeader header = new SelectHeader();
+                header.Table = "t1";// + (i + 1).ToString();
+                header.AsName = col.Value.ColumnName;
+
+                if (col.Value.ResultColumn) {
+                    if (string.IsNullOrEmpty(col.Value.ResultSql)) {
+                        header.QuerySql = header.Table + "." + col.Value.ColumnName;
+                    } else {
+                        header.QuerySql = string.Format(col.Value.ResultSql, header.Table + ".");
+                    }
+                } else {
+                    header.QuerySql = header.Table + "." + col.Value.ColumnName;
+                }
+                list.Add(header);
+            }
+            foreach (var item in _includeColumns) {
+                SelectHeader header = new SelectHeader();
+                header.AsName = item.AsName;
+                header.Table = item.Table;
+                header.QuerySql = item.QuerySql;
+                list.Add(header);
+            }
+            return list;
+        }
+
+        private string GetFromAndJoinOn()
         {
             var pd1 = PocoData.ForType(typeof(T1));
             var dp = DatabaseProvider.Resolve(_sqlhelper._sqlType);
             StringBuilder sb = new StringBuilder();
             sb.Append("FROM ");
+            sb.Append(dp.EscapeSqlIdentifier(pd1.TableInfo.TableName));
 
-
-
-            //sb.Append(dp.GetTableName(pd1, _sqlhelper._tableNameManger));
             sb.Append(" AS t1 ");
             sb.Append(" ");
             sb.Append(_joinOnString);
             return sb.ToString();
         }
 
-        /// <summary>
-        /// 深度复制
-        /// </summary>
-        /// <returns></returns>
-        public WhereHelper<T1> DeepClone()
-        {
-            WhereHelper<T1> newWhere = new WhereHelper<T1>(this._sqlhelper);
-            newWhere._args.AddRange(this._args);
-            newWhere._doNext = this._doNext;
-            newWhere._groupby = this._groupby;
-            newWhere._having = this._having;
-            newWhere._headers.AddRange(this._headers);
-            newWhere._joinOnString = this._joinOnString;
-            newWhere._order = this._order;
-            newWhere._where = this._where;
+        #endregion 04 获取Sql和args方法
 
-            return newWhere;
+        public virtual void Dispose()
+        {
+            _args = null;
+            _where = null;
+            _joinOnString = null;
+
+            _order = null;
+            _groupby = null;
+            _having = null;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
+
+
     }
 }

@@ -2,168 +2,155 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
-    partial class QColumnBase
+    partial class QColumn
     {
-        private QColumn CreateFunctionColumn(string funName, string funFormat, params object[] args)
-        {
-            QColumn column = new QColumn();
-            if (string.IsNullOrEmpty(funName)) {
-                column._columnType = Enums.ColumnType.FunctionFormat;
-            } else {
-                column._columnType = Enums.ColumnType.Function;
-                column._functionName = funName;
-            }
-            column._functionFormat = funFormat;
-            column._functionArgs = args;
-            return column;
-        }
 
         #region 常用SQL函数
         /// <summary>
         /// 返回字符串str的长度
         /// </summary>
         /// <returns></returns>
-        public QColumn Len()
+        public QSqlColumn Len()
         {
-            return CreateFunctionColumn("Len", "LEN({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Len, this);
         }
         /// <summary>
         /// 求最大值
         /// </summary>
         /// <returns></returns>
-        public QColumn Max()
+        public QSqlColumn Max()
         {
-            return CreateFunctionColumn("Max", "MAX({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Max, this);
         }
         /// <summary>
         /// 求最小值
         /// </summary>
         /// <returns></returns>
-        public QColumn Min()
+        public QSqlColumn Min()
         {
-            return CreateFunctionColumn("Min", "MIN({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Min, this);
         }
         /// <summary>
         /// 求平均值
         /// </summary>
         /// <returns></returns>
-        public QColumn Avg()
+        public QSqlColumn Avg()
         {
-            return CreateFunctionColumn("Avg", "AVG({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Avg, this);
         }
         /// <summary>
         /// 求和
         /// </summary>
         /// <returns></returns>
-        public QColumn Sum()
+        public QSqlColumn Sum()
         {
-            return CreateFunctionColumn("Sum", "SUM({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Sum, this);
         }
         /// <summary>
         /// 求个数
         /// </summary>
         /// <param name="distinct"></param>
         /// <returns></returns>
-        public QColumn Count(bool distinct)
+        public QSqlColumn Count(bool distinct)
         {
             if (distinct) {
-                return CreateFunctionColumn("CountDistinct", "COUNT(DISTINCT {0})", this);
+                return new QSqlColumn(Enums.SqlFunction.CountDistinct, this);
             }
-            return CreateFunctionColumn("Count", "COUNT({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Count, this);
         }
         /// <summary>
         /// 返回日期格式，不适应所有数据库，请少用
         /// </summary>
         /// <param name="part"></param>
         /// <returns></returns>
-        public QColumn DatePart(string part)
+        public QSqlColumn DatePart(string part)
         {
-            return CreateFunctionColumn("DatePart", "DATEPART({0},{1})", part, this);
+            return new QSqlColumn(Enums.SqlFunction.DatePart, this);
         }
         /// <summary>
         /// 求日期间隔天数
         /// </summary>
         /// <param name="date"></param>
         /// <returns></returns>
-        public QColumn DateDiff(DateTime date)
+        public QSqlColumn DateDiff(DateTime date)
         {
-            return CreateFunctionColumn("DateDiff", "DATEDIFF({0},{1})", this, date);
+            return new QSqlColumn(Enums.SqlFunction.DateDiff, this, date);
         }
         /// <summary>
         /// 获取年份
         /// </summary>
         /// <returns></returns>
-        public QColumn Year()
+        public QSqlColumn Year()
         {
-            return CreateFunctionColumn("Year", "YEAR({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Year, this);
         }
         /// <summary>
         /// 获取月份
         /// </summary>
         /// <returns></returns>
-        public QColumn Month()
+        public QSqlColumn Month()
         {
-            return CreateFunctionColumn("Month", "MONTH({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Month, this);
         }
         /// <summary>
         /// 获取日
         /// </summary>
         /// <returns></returns>
-        public QColumn Day()
+        public QSqlColumn Day()
         {
-            return CreateFunctionColumn("Day", "DAY({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Day, this);
         }
         /// <summary>
         /// 获取小时
         /// </summary>
         /// <returns></returns>
-        public QColumn Hour()
+        public QSqlColumn Hour()
         {
-            return CreateFunctionColumn("Hour", "HOUR({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Hour, this);
         }
         /// <summary>
         /// 获取分钟
         /// </summary>
         /// <returns></returns>
-        public QColumn Minute()
+        public QSqlColumn Minute()
         {
-            return CreateFunctionColumn("Minute", "MINUTE({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Minute, this);
         }
         /// <summary>
         /// 获取分
         /// </summary>
         /// <returns></returns>
-        public QColumn Second()
+        public QSqlColumn Second()
         {
-            return CreateFunctionColumn("Second", "SECOND({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Second, this);
         }
         /// <summary>
         /// 返回年份为日期的天，范围为1至366。
         /// </summary>
         /// <returns></returns>
-        public QColumn DayOfYear()
+        public QSqlColumn DayOfYear()
         {
-            return CreateFunctionColumn("DayOfYear", "DAYOFYEAR({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.DayOfYear, this);
         }
         /// <summary>
         /// 返回日期的星期数
         /// </summary>
         /// <returns></returns>
-        public QColumn Week()
+        public QSqlColumn Week()
         {
-            return CreateFunctionColumn("Week", "WEEK({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Week, this);
         }
         /// <summary>
         /// 返回一个日期的工作日索引值，即星期一为0，星期二为1，星期日为6。
         /// </summary>
         /// <returns></returns>
-        public QColumn WeekDay()
+        public QSqlColumn WeekDay()
         {
-            return CreateFunctionColumn("WeekDay", "WEEKDAY({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.WeekDay, this);
         }
         /// <summary>
         /// 返回一个从位置start开始的长度为length子串
@@ -171,70 +158,108 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
-        public QColumn SubString(int start, int length)
+        public QSqlColumn SubString(int start, int length)
         {
-            return CreateFunctionColumn("SubString3", "SUBSTRING({0},{1},{2})", this, start, length);
+            return new QSqlColumn(Enums.SqlFunction.SubString3, this,start,length);
         }
         /// <summary>
         /// 返回一个从位置start开始的子串
         /// </summary>
         /// <param name="start"></param>
         /// <returns></returns>
-        public QColumn SubString(int start)
+        public QSqlColumn SubString(int start)
         {
-            return CreateFunctionColumn("SubString2", "SUBSTRING({0},{1})", this, start);
+            return new QSqlColumn(Enums.SqlFunction.SubString2, this,start);
         }
         /// <summary>
         /// 返回字符串str最左边的 len 个字符
         /// </summary>
         /// <param name="length"></param>
         /// <returns></returns>
-        public QColumn Left(int length)
+        public QSqlColumn Left(int length)
         {
-            return CreateFunctionColumn("Left", "LEFT({0},{1})", this, length);
+            return new QSqlColumn(Enums.SqlFunction.Left, this,length);
         }
         /// <summary>
         /// 返回字符串str最右边的 len 个字符
         /// </summary>
         /// <param name="length"></param>
         /// <returns></returns>
-        public QColumn Right(int length)
+        public QSqlColumn Right(int length)
         {
-            return CreateFunctionColumn("Right", "RIGHT({0},{1})", this, length);
+            return new QSqlColumn(Enums.SqlFunction.Right, this,length);
         }
 
         /// <summary>
         /// 返回根据当前字符集映射转为小写字母。
         /// </summary>
         /// <returns></returns>
-        public QColumn Lower()
+        public QSqlColumn Lower()
         {
-            return CreateFunctionColumn("Lower", "LOWER({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Lower, this);
         }
         /// <summary>
         /// 返回根据当前字符集映射转为大写字母。
         /// </summary>
         /// <returns></returns>
-        public QColumn Upper()
+        public QSqlColumn Upper()
         {
-            return CreateFunctionColumn("Upper", "UPPER({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Upper, this);
         }
         /// <summary>
         /// 返回字符串str的最左字符的数值。
         /// </summary>
         /// <returns></returns>
-        public QColumn Ascii()
+        public QSqlColumn Ascii()
         {
-            return CreateFunctionColumn("Ascii", "ASCII({0})", this);
+            return new QSqlColumn(Enums.SqlFunction.Ascii, this);
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public QSqlColumn Concat()
+        {
+            return new QSqlColumn(Enums.SqlFunction.Concat, this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public QSqlColumn Trim()
+        {
+            return new QSqlColumn(Enums.SqlFunction.Trim, this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public QSqlColumn LTrim()
+        {
+            return new QSqlColumn(Enums.SqlFunction.LTrim, this);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public QSqlColumn RTrim()
+        {
+            return new QSqlColumn(Enums.SqlFunction.RTrim, this);
+
+        }
+
         /// <summary>
         /// 使用自定义函数，{0}代表当前Column
         /// </summary>
         /// <param name="format"></param>
         /// <returns></returns>
-        public QColumn Function(string format)
+        public QSqlColumn Function(string format)
         {
-            return CreateFunctionColumn("", format, this);
+            return new QSqlColumn(Enums.SqlFunction.Fuction, format, this);
         }
         #endregion
     }

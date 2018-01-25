@@ -38,7 +38,7 @@ namespace ToolGood.ReadyGo3
         internal string _schemaName;
 
         // 缓存设置
-        internal ICacheService _cacheService;
+        internal ICacheService _cacheService = new MemoryCacheService();
         internal bool _usedCacheServiceOnce;
         internal int _cacheTimeOnce;
         internal string _cacheTag;
@@ -48,11 +48,11 @@ namespace ToolGood.ReadyGo3
         internal int _oneTimeCommandTimeout;
         internal IsolationLevel? _isolationLevel;
 
-        internal SqlEvents _events;
+        internal SqlEvents _events = new SqlEvents();
         internal SqlConfig _sqlConfig;
         internal SqlType _sqlType;
-        internal SqlRecord _sql;
-        internal ISqlMonitor _sqlMonitor;
+        internal SqlRecord _sql = new SqlRecord();
+        internal ISqlMonitor _sqlMonitor = new NullSqlMonitor();
         internal DatabaseProvider _provider;
         internal bool _isDisposable;
 
@@ -106,7 +106,7 @@ namespace ToolGood.ReadyGo3
 
             var entry = ConfigurationManager.ConnectionStrings[connectionStringName];
             if (entry == null)
-                throw new InvalidOperationException(string.Format("Can't find a connection string with the name '{0}'", connectionStringName));
+                throw new InvalidOperationException($"Can't find a connection string with the name '{connectionStringName}'");
             initSqlHelper(entry.ConnectionString, entry.ProviderName);
         }
 
@@ -155,14 +155,8 @@ namespace ToolGood.ReadyGo3
                 }
             }
 
-
-            _cacheService = new MemoryCacheService();
-            _events = new SqlEvents();
             _sqlConfig = new SqlConfig(this);
-            _sql = new SqlRecord();
-            _sqlMonitor = new NullSqlMonitor();
-
-
+ 
             if (_sqlType == SqlType.None) {
                 _sqlType = DatabaseProvider.GetSqlType(providerName ?? _factory.GetType().FullName, _connectionString);
             }
@@ -183,9 +177,7 @@ namespace ToolGood.ReadyGo3
         public void Dispose()
         {
             _isDisposable = true;
-            if (_database != null) {
-                _database.Dispose();
-            }
+            _database?.Dispose();
         }
 
 

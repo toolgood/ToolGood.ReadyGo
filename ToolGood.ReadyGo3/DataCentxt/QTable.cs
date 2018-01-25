@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 using ToolGood.ReadyGo3.Gadget.Internals;
 
@@ -137,7 +137,10 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         protected QTable(string connStringName) : base(connStringName) { }
 
-        protected QTable(SqlHelper sqlHelper) : base(sqlHelper) { }
+        protected QTable(SqlHelper sqlHelper) : base(sqlHelper)
+        {
+            
+        }
 
     }
 

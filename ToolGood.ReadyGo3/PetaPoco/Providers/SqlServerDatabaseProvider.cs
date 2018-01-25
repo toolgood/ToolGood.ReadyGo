@@ -51,7 +51,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
         public override string GetInsertOutputClause(string primaryKeyName)
         {
-            return String.Format(" OUTPUT INSERTED.[{0}]", primaryKeyName);
+            return $" OUTPUT INSERTED.[{primaryKeyName}]";
         }
     }
 }

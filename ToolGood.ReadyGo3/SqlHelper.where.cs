@@ -5,8 +5,9 @@ using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 using ToolGood.ReadyGo3.DataCentxt.Internals;
+using ToolGood.ReadyGo3.Mosaic;
 
 namespace ToolGood.ReadyGo3
 {
@@ -21,6 +22,7 @@ namespace ToolGood.ReadyGo3
         {
             return new SqlHelper<T>(this);
         }
+
         /// <summary>
         /// 动态Sql拼接，不支持Linq;
         /// </summary>
@@ -31,6 +33,7 @@ namespace ToolGood.ReadyGo3
         {
             return new SqlHelper<T>(this, where);
         }
+
         /// <summary>
         /// 动态Sql拼接，不支持Linq;
         /// </summary>
@@ -43,7 +46,10 @@ namespace ToolGood.ReadyGo3
             return new SqlHelper<T>(this, where, args);
         }
     }
+}
 
+namespace ToolGood.ReadyGo3.Mosaic
+{
     public class SqlHelper<T> where T : class
     {
         private SqlHelper _helper;
@@ -189,13 +195,13 @@ namespace ToolGood.ReadyGo3
             if (sql.StartsWith("where ", StringComparison.CurrentCultureIgnoreCase)) {
                 sql = sql.Substring(6);
             }
-            if (sql[0]!='(' || sql[sql.Length-1]!=')') {
+            if (sql[0] != '(' || sql[sql.Length - 1] != ')') {
                 if (sql.IndexOf(" or ", StringComparison.CurrentCultureIgnoreCase) >= 0) {
                     sql = "(" + sql + ")";
                 }
             }
 
-           sql = _provider.FormatSql(sql, args);
+            sql = _provider.FormatSql(sql, args);
             if (_where == null) {
                 _where = sql;
             } else {

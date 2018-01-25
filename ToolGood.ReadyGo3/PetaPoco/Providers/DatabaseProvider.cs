@@ -56,7 +56,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <returns>The escaped identifier</returns>
         public virtual string EscapeSqlIdentifier(string sqlIdentifier)
         {
-            return string.Format("[{0}]", sqlIdentifier);
+            return $"[{sqlIdentifier}]";
         }
 
         /// <summary>

@@ -2,27 +2,51 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ToolGood.ReadyGo3.DataCentxt.Enums;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-
+ 
 namespace ToolGood.ReadyGo3.DataCentxt.Providers
 {
     public class MsAccessDbDatabaseProvider : DatabaseProvider
     {
-        protected static readonly Dictionary<string, string> functionDict = new Dictionary<string, string>();
-
-        static MsAccessDbDatabaseProvider()
+  
+        public override string CreateFunction(SqlFunction function, params object[] args)
         {
-            // 
-            functionDict.Add("LOWER", "LCASE({0})");
-            functionDict.Add("UPPER", "UCASE({0})");
+            switch (function) {
+                case SqlFunction.Fuction: break;
+                case SqlFunction.Len: break;
+                case SqlFunction.Max: break;
+                case SqlFunction.Min: break;
+                case SqlFunction.Avg: break;
+                case SqlFunction.Sum: break;
+                case SqlFunction.Count: break;
+                case SqlFunction.CountDistinct: break;
+                case SqlFunction.DatePart: break;
+                case SqlFunction.DateDiff: break;
+                case SqlFunction.Year: break;
+                case SqlFunction.Month: break;
+                case SqlFunction.Day: break;
+                case SqlFunction.Hour: break;
+                case SqlFunction.Minute: break;
+                case SqlFunction.Second: break;
+                case SqlFunction.DayOfYear: break;
+                case SqlFunction.Week: break;
+                case SqlFunction.WeekDay: break;
+                case SqlFunction.SubString3: return CreateFunction("MID({0}, {1}, {2})", args);
+                case SqlFunction.SubString2: return CreateFunction("MID({0}, {1})", args);
+                case SqlFunction.Left: break;
+                case SqlFunction.Right: break;
+                case SqlFunction.Lower: return CreateFunction("LCASE({0})", args);
+                case SqlFunction.Upper: return CreateFunction("UCASE({0})", args);
+                case SqlFunction.Ascii: return CreateFunction("ASC({0})", args);
+                case SqlFunction.Concat: break;
+                default: break;
+            }
 
-
-            functionDict.Add("SubString3", "MID({0}, {1}, {2})");
-            functionDict.Add("SubString2", "MID({0}, {1})");
-            functionDict.Add("Ascii", "ASC({0})");
+            return base.CreateFunction(function, args);
         }
 
-        public override string Delete(List<QTable> tables, QColumnBase pk, string tableName, string fromtable, string jointables, string where)
+        public override string Delete(List<QTable> tables, QColumn pk, string tableName, string fromtable, string jointables, string where)
         {
             //http://bbs.csdn.net/topics/340167958
             return $"DELETE distinctrow t1.* FROM {fromtable} {jointables} WHERE {where};";
@@ -72,24 +96,6 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
             throw new DatabaseUnsupportException();
         }
 
-        /// <summary>
-        /// 方法是否使用默认格式化
-        /// </summary>
-        /// <param name="funName"></param>
-        /// <returns></returns>
-        public override bool IsFunctionUseDefaultFormat(string funName)
-        {
-            return functionDict.ContainsKey(funName) == false;
-        }
-        /// <summary>
-        /// 获取非默认格式化
-        /// </summary>
-        /// <param name="sqlType"></param>
-        /// <param name="funName"></param>
-        /// <returns></returns>
-        public override string GetFunctionFormat(string funName)
-        {
-            return functionDict[funName];
-        }
+ 
     }
 }

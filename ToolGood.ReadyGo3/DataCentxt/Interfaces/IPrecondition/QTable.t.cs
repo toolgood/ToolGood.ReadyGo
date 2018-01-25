@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+////using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
-   partial class QTable<T> : IPrecondition<QTable<T>>
+   partial class QTable<T> //: IPrecondition<QTable<T>>
    {
        public QTable<T> IfTrue(bool b)
        {

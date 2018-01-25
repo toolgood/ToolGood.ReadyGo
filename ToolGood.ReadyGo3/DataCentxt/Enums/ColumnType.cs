@@ -11,7 +11,6 @@ namespace ToolGood.ReadyGo3.DataCentxt.Enums
         Column = 1,
         Code = 2,
         Function = 4,
-        FunctionFormat = 8,
-        Value = 16
+        Value = 8
     }
 }

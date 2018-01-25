@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Enums;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-    public class QCondition
+    public partial class QCondition
     {
         public static QCodeCondition True = new QCodeCondition("1=1");
         public static QCodeCondition False = new QCodeCondition("1=2");
@@ -111,12 +111,12 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
     public partial class QColumnValueCondition : QCondition
     {
-        private QColumnBase leftColumn;
+        private QColumn leftColumn;
         private string op;
         private object value;
         private bool isSetValaue;
 
-        public QColumnValueCondition(QColumnBase column1, string op, object value)
+        public QColumnValueCondition(QColumn column1, string op, object value)
         {
             leftColumn = column1;
             this.op = op;
@@ -124,7 +124,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             isSetValaue = true;
         }
 
-        public QColumnValueCondition(QColumnBase column1, string op)
+        public QColumnValueCondition(QColumn column1, string op)
         {
             leftColumn = column1;
             this.op = op;
@@ -132,15 +132,15 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
     }
     public partial class QColumnColumnCondition : QCondition
     {
-        internal QColumnBase leftColumn;
+        internal QColumn leftColumn;
         private string Op;
-        internal QColumnBase rightColumn;
+        internal QColumn rightColumn;
 
         public QColumnColumnCondition()
         {
         }
 
-        public QColumnColumnCondition(QColumnBase column1, string op, QColumnBase column2)
+        public QColumnColumnCondition(QColumn column1, string op, QColumn column2)
         {
             leftColumn = column1;
             Op = op;
@@ -153,7 +153,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
     {
         //internal new QColumnBase leftColumn;
         //internal new QColumnBase rightColumn;
-        public QJoinCondition(QColumnBase column1, string op, QColumnBase column2)
+        public QJoinCondition(QColumn column1, string op, QColumn column2)
             : base(column1, op, column2)
         {
             //leftColumn = column1;

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+////using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-    partial class SqlBuilder : IPrecondition
+    partial class SqlBuilder //: IPrecondition
     {
         public void IfTrue(bool b)
         {

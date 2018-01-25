@@ -2,35 +2,51 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ToolGood.ReadyGo3.DataCentxt.Enums;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Providers
 {
     public class SQLiteDatabaseProvider : DatabaseProvider
     {
-        protected static readonly Dictionary<string, string> functionDict = new Dictionary<string, string>();
-
-        static SQLiteDatabaseProvider()
+ 
+        public override string CreateFunction(SqlFunction function, params object[] args)
         {
             // http://www.sqlite.org/lang_corefunc.html
-            functionDict.Add("LEN", "LENGTH({0})");
-            functionDict.Add("DATEDIFF", "FLOOR(STRFTIME('%J',{0}) - STRFTIME('%J',{1}))");
-            functionDict.Add("YEAR", "STRFTIME('%Y',{0})");
-            functionDict.Add("MONTH", "STRFTIME('%m',{0})");
-            functionDict.Add("DAY", "STRFTIME('%d',{0})");
-            functionDict.Add("HOUR", "STRFTIME('%H',{0})");
-            functionDict.Add("MINUTE", "STRFTIME('%M',{0})");
-            functionDict.Add("SECOND", "STRFTIME('%S',{0})");
-            functionDict.Add("DAYOFYEAR", "STRFTIME('%j',{0})");
-            functionDict.Add("WEEK", "STRFTIME('%W',{0})");
-            functionDict.Add("WEEKDAY", "STRFTIME('%w',{0})");
-            functionDict.Add("SubString3", "SUBSTR({0},{1},{2})");
-            functionDict.Add("SubString2", "SUBSTR({0},{1})");
-            functionDict.Add("LEFT", "SUBSTR({0},1,{1})");
-            functionDict.Add("Right", "SUBSTR({0},-{1})");
+            switch (function) {
+                case SqlFunction.Fuction: break;
+                case SqlFunction.Len: return CreateFunction("LENGTH({0})", args);
+                case SqlFunction.Max: break;
+                case SqlFunction.Min: break;
+                case SqlFunction.Avg: break;
+                case SqlFunction.Sum: break;
+                case SqlFunction.Count: break;
+                case SqlFunction.CountDistinct: break;
+                case SqlFunction.DatePart: break;
+                case SqlFunction.DateDiff: return CreateFunction("FLOOR(STRFTIME('%J',{0}) - STRFTIME('%J',{1}))", args);
+                case SqlFunction.Year: return CreateFunction("STRFTIME('%Y',{0})", args);
+                case SqlFunction.Month: return CreateFunction("STRFTIME('%m',{0})", args);
+                case SqlFunction.Day: return CreateFunction("STRFTIME('%d',{0})", args);
+                case SqlFunction.Hour: return CreateFunction("STRFTIME('%H',{0})", args);
+                case SqlFunction.Minute: return CreateFunction("STRFTIME('%M',{0})", args);
+                case SqlFunction.Second: return CreateFunction("STRFTIME('%S',{0})", args);
+                case SqlFunction.DayOfYear: return CreateFunction("STRFTIME('%j',{0})", args);
+                case SqlFunction.Week: return CreateFunction("STRFTIME('%W',{0})", args);
+                case SqlFunction.WeekDay: return CreateFunction("STRFTIME('%w',{0})", args);
+                case SqlFunction.SubString3: return CreateFunction("SUBSTR({0},{1},{2})", args);
+                case SqlFunction.SubString2: return CreateFunction("SUBSTR({0},{1})", args);
+                case SqlFunction.Left: return CreateFunction("SUBSTR({0},1,{1})", args);
+                case SqlFunction.Right: return CreateFunction("SUBSTR({0},-{1})", args);
+                case SqlFunction.Lower: break;
+                case SqlFunction.Upper: break;
+                case SqlFunction.Ascii: break;
+                case SqlFunction.Concat: break;
+                default: break;
+            }
+
+            return base.CreateFunction(function, args);
         }
 
-
-        public override string Delete(List<QTable> tables, QColumnBase pk, string tableName, string fromtable, string jointables, string where)
+        public override string Delete(List<QTable> tables, QColumn pk, string tableName, string fromtable, string jointables, string where)
         {
             return $"DELETE t1 FROM {fromtable} {jointables} WHERE {where};";
         }
@@ -75,24 +91,6 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
         }
 
 
-        /// <summary>
-        /// 方法是否使用默认格式化
-        /// </summary>
-        /// <param name="funName"></param>
-        /// <returns></returns>
-        public override bool IsFunctionUseDefaultFormat(string funName)
-        {
-            return functionDict.ContainsKey(funName) == false;
-        }
-        /// <summary>
-        /// 获取非默认格式化
-        /// </summary>
-        /// <param name="sqlType"></param>
-        /// <param name="funName"></param>
-        /// <returns></returns>
-        public override string GetFunctionFormat(string funName)
-        {
-            return functionDict[funName];
-        }
+     
     }
 }

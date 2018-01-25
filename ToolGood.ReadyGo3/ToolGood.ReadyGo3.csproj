@@ -63,10 +63,10 @@
     <Compile Include="Attributes\TableAttribute.cs" />
     <Compile Include="DataCentxt\Enums\ColumnChangeType.cs" />
     <Compile Include="DataCentxt\Enums\ColumnType.cs" />
+    <Compile Include="DataCentxt\Enums\SqlFunction.cs" />
     <Compile Include="DataCentxt\Enums\WhereType.cs" />
     <Compile Include="DataCentxt\Exceptions\SqlExecuteException.cs" />
     <Compile Include="DataCentxt\Interfaces\IDataGet\QTable.t.cs" />
-    <Compile Include="DataCentxt\Interfaces\IPrecondition.cs" />
     <Compile Include="DataCentxt\Interfaces\IPrecondition\QTable.t.cs" />
     <Compile Include="DataCentxt\Interfaces\IPrecondition\SqlBuilder.cs" />
     <Compile Include="DataCentxt\Interfaces\ISQL\QTable.t.cs" />
@@ -88,13 +88,10 @@
     <Compile Include="DataCentxt\Interfaces\IConvertToSql\QCondition.cs" />
     <Compile Include="DataCentxt\Interfaces\IConvertToSql\QTable.cs" />
     <Compile Include="DataCentxt\Interfaces\IConvertToSql\SqlBuilder.cs" />
-    <Compile Include="DataCentxt\Interfaces\IDataGet.cs" />
     <Compile Include="DataCentxt\Interfaces\IDataGet\QTable.cs" />
     <Compile Include="DataCentxt\Interfaces\IDataGet\SqlBuilder.IDataGet.cs" />
-    <Compile Include="DataCentxt\Interfaces\IDataSet.cs" />
     <Compile Include="DataCentxt\Interfaces\IDataSet\QTable.t.cs" />
     <Compile Include="DataCentxt\Interfaces\IDataSet\SqlBuilder.IDataSet.cs" />
-    <Compile Include="DataCentxt\Interfaces\ISQL.cs" />
     <Compile Include="DataCentxt\Interfaces\ISQL\SqlBuilder.ISQL.cs" />
     <Compile Include="DataCentxt\Internals\OrderItem.cs" />
     <Compile Include="DataCentxt\Internals\QCondition.cs" />
@@ -102,7 +99,6 @@
     <Compile Include="DataCentxt\Providers\DatabaseProvider.cs" />
     <Compile Include="DataCentxt\QColumn.cs" />
     <Compile Include="DataCentxt\QColumn.Function.cs" />
-    <Compile Include="DataCentxt\QColumn.inherit.cs" />
     <Compile Include="DataCentxt\QColumn.operator.cs" />
     <Compile Include="DataCentxt\QColumn.SqlFunction.cs" />
     <Compile Include="DataCentxt\QTable.cs" />
@@ -141,10 +137,9 @@
     <Compile Include="LinQ\Expressions\PartialSqlString.cs" />
     <Compile Include="LinQ\Expressions\SQL.cs" />
     <Compile Include="LinQ\Expressions\SqlExpression.cs" />
-    <Compile Include="LinQ\HelperBase.cs" />
+    <Compile Include="LinQ\SelectHeader.cs" />
     <Compile Include="LinQ\SqlHelper.ext.cs" />
     <Compile Include="LinQ\WhereHelper.1.cs" />
-    <Compile Include="LinQ\WhereHelperBaseExtension.cs" />
     <Compile Include="PetaPoco\Core\ColumnInfo.cs" />
     <Compile Include="PetaPoco\Core\ExpandoColumn.cs" />
     <Compile Include="PetaPoco\Core\Mappers.cs" />
@@ -182,6 +177,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\ToolGood.ReadyGo.snk" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
     <Content Include="T4\ObjectToModel.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ObjectToModel.txt</LastGenOutput>
@@ -196,12 +198,5 @@
       <LastGenOutput>ObjectToQTable.cs</LastGenOutput>
     </Content>
   </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\ToolGood.ReadyGo.snk" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

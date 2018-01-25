@@ -4,11 +4,11 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-    partial class SqlBuilder : IDataGet<SqlBuilder>
+    partial class SqlBuilder //: IDataGet<SqlBuilder>
     {
         /// <summary>
         /// 只能用一次，用过后请重新设置，不包括 SelectCount
@@ -31,9 +31,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getCount(distinctColumn);
         }
 
-        public int SelectCount(QColumnBase distinctColumn)
+        public int SelectCount(QColumn distinctColumn)
         {
-            var column = ((IColumnConvert)distinctColumn).ToSql(Provider, _tables.Count);
+            var column = (distinctColumn).ToSql(Provider, _tables.Count);
             return getCount(column);
         }
         private int getCount(string column)
@@ -47,7 +47,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             } else {
                 columns.Add("COUNT(DISTINCT " + column + ")");
             }
-            var sql = ((ISqlBuilderConvert)this).GetFullSelectSql(Provider, 0, 0, columns);
+            var sql = (this).GetFullSelectSql(Provider, 0, 0, columns);
             var count = GetSqlHelper().ExecuteScalar<int>(sql);
 
             if (t) _useDistinct = true;
@@ -56,11 +56,11 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         #endregion
 
-        private List<string> ToSelectColumns(QColumnBase[] columns)
+        private List<string> ToSelectColumns(QColumn[] columns)
         {
             List<string> selectColumns = new List<string>();
             foreach (var item in columns) {
-                var column = ((IColumnConvert)item).ToSelectColumn(Provider, _tables.Count);
+                var column = (item).ToSelectColumn(Provider, _tables.Count);
                 selectColumns.Add(column);
             }
             return selectColumns;
@@ -75,7 +75,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                     var col = item.Value;
 
                     if (columnNames.Contains(col._asName)) {
-                        var column = ((IColumnConvert)col).ToSelectColumn(Provider, _tables.Count);
+                        var column = (col).ToSelectColumn(Provider, _tables.Count);
                         columnNames.Add(col._asName);
                         selectColumns.Add(column);
                     }
@@ -100,10 +100,10 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                     var col = item.Value;
                     if (columns.Contains(col._columnName)) {
                         columns.Remove(col._columnName);
-                        selectColumns.Add(((IColumnConvert) col).ToSelectColumn(Provider, _tables.Count));
+                        selectColumns.Add(( col).ToSelectColumn(Provider, _tables.Count));
                     } else if (columns.Contains(col._asName)) {
                         columns.Remove(col._asName);
-                        selectColumns.Add(((IColumnConvert)col).ToSelectColumn(Provider, _tables.Count));
+                        selectColumns.Add((col).ToSelectColumn(Provider, _tables.Count));
                     }
                 }
             }
@@ -121,13 +121,13 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             return getSingle<T>(columns.ToList());
         }
-        public T Single<T>(params QColumnBase[] columns)
+        public T Single<T>(params QColumn[] columns)
         {
             return getSingle<T>(ToSelectColumns(columns));
         }
         public T getSingle<T>(List<string> columns)
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullSelectSql(Provider, 2, 0, columns);
+            var sql = (this).GetFullSelectSql(Provider, 2, 0, columns);
             _useDistinct = false;
             return GetSqlHelper().Single<T>(sql);
         }
@@ -142,13 +142,13 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             return getSingleOrDefault<T>(columns.ToList());
         }
-        public T SingleOrDefault<T>(params QColumnBase[] columns)
+        public T SingleOrDefault<T>(params QColumn[] columns)
         {
             return getSingleOrDefault<T>(ToSelectColumns(columns));
         }
         public T getSingleOrDefault<T>(List<string> columns)
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullSelectSql(Provider, 2, 0, columns);
+            var sql = (this).GetFullSelectSql(Provider, 2, 0, columns);
             _useDistinct = false;
             return GetSqlHelper().SingleOrDefault<T>(sql);
         }
@@ -163,13 +163,13 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             return getFirst<T>(columns.ToList());
         }
-        public T First<T>(params QColumnBase[] columns)
+        public T First<T>(params QColumn[] columns)
         {
             return getFirst<T>(ToSelectColumns(columns));
         }
         public T getFirst<T>(List<string> columns)
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullSelectSql(Provider, 1, 0, columns);
+            var sql = (this).GetFullSelectSql(Provider, 1, 0, columns);
             _useDistinct = false;
             return GetSqlHelper().First<T>(sql);
         }
@@ -184,13 +184,13 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             return getFirstOrDefault<T>(columns.ToList());
         }
-        public T FirstOrDefault<T>(params QColumnBase[] columns)
+        public T FirstOrDefault<T>(params QColumn[] columns)
         {
             return getFirstOrDefault<T>(ToSelectColumns(columns));
         }
         public T getFirstOrDefault<T>(List<string> columns)
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullSelectSql(Provider, 1, 0, columns);
+            var sql = (this).GetFullSelectSql(Provider, 1, 0, columns);
             _useDistinct = false;
             return GetSqlHelper().FirstOrDefault<T>(sql);
         }
@@ -209,7 +209,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getList<T>(-1, -1, columns.ToList());
         }
 
-        public List<T> Select<T>(params QColumnBase[] columns)
+        public List<T> Select<T>(params QColumn[] columns)
         {
             return getList<T>(-1, -1, ToSelectColumns(columns));
         }
@@ -225,7 +225,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getList<T>(limit, -1, columns.ToList());
         }
 
-        public List<T> Select<T>(int limit, params QColumnBase[] columns)
+        public List<T> Select<T>(int limit, params QColumn[] columns)
         {
             return getList<T>(limit, -1, ToSelectColumns(columns));
         }
@@ -241,14 +241,14 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getList<T>(limit, offset, columns.ToList());
         }
 
-        public List<T> Select<T>(int limit, int offset, params QColumnBase[] columns)
+        public List<T> Select<T>(int limit, int offset, params QColumn[] columns)
         {
             return getList<T>(limit, offset, ToSelectColumns(columns));
         }
 
         public List<T> getList<T>(int limit, int offset, List<string> columns)
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullSelectSql(Provider, limit, offset, columns);
+            var sql = (this).GetFullSelectSql(Provider, limit, offset, columns);
             _useDistinct = false;
             return GetSqlHelper().Select<T>(sql);
         }
@@ -267,7 +267,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getPage<T>(page, size, columns.ToList());
         }
 
-        public Page<T> Page<T>(int page, int size, params QColumnBase[] columns)
+        public Page<T> Page<T>(int page, int size, params QColumn[] columns)
         {
             return getPage<T>(page, size, ToSelectColumns(columns));
         }
@@ -275,7 +275,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             var offset = (page - 1) * size;
             var limit = size;
-            var sql = ((ISqlBuilderConvert)this).GetFullSelectSql(Provider, limit, offset, columns);
+            var sql = (this).GetFullSelectSql(Provider, limit, offset, columns);
             _useDistinct = false;
 
             var count = getCount(null);
@@ -301,7 +301,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getDataTable(-1, -1, columns.ToList());
         }
 
-        public DataTable ExecuteDataTable(params QColumnBase[] columns)
+        public DataTable ExecuteDataTable(params QColumn[] columns)
         {
             return getDataTable(-1, -1, ToSelectColumns(columns));
         }
@@ -317,7 +317,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getDataTable(limit, -1, columns.ToList());
         }
 
-        public DataTable ExecuteDataTable(int limit, params QColumnBase[] columns)
+        public DataTable ExecuteDataTable(int limit, params QColumn[] columns)
         {
             return getDataTable(limit, -1, ToSelectColumns(columns));
         }
@@ -333,14 +333,14 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getDataTable(limit, offset, columns.ToList());
         }
 
-        public DataTable ExecuteDataTable(int limit, int offset, params QColumnBase[] columns)
+        public DataTable ExecuteDataTable(int limit, int offset, params QColumn[] columns)
         {
             return getDataTable(limit, offset, ToSelectColumns(columns));
         }
 
         private DataTable getDataTable(int limit, int offset, List<string> columns)
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullSelectSql(Provider, limit, offset, columns);
+            var sql = (this).GetFullSelectSql(Provider, limit, offset, columns);
             _useDistinct = false;
             return GetSqlHelper().ExecuteDataTable(sql);
         }
@@ -359,7 +359,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getDataSet(-1, -1, columns.ToList());
         }
 
-        public DataSet ExecuteDataSet(params QColumnBase[] columns)
+        public DataSet ExecuteDataSet(params QColumn[] columns)
         {
             return getDataSet(-1, -1, ToSelectColumns(columns));
         }
@@ -375,7 +375,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getDataSet(limit, -1, columns.ToList());
         }
 
-        public DataSet ExecuteDataSet(int limit, params QColumnBase[] columns)
+        public DataSet ExecuteDataSet(int limit, params QColumn[] columns)
         {
             return getDataSet(limit, -1, ToSelectColumns(columns));
         }
@@ -391,13 +391,13 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getDataSet(limit, offset, columns.ToList());
         }
 
-        public DataSet ExecuteDataSet(int limit, int offset, params QColumnBase[] columns)
+        public DataSet ExecuteDataSet(int limit, int offset, params QColumn[] columns)
         {
             return getDataSet(limit, offset, ToSelectColumns(columns));
         }
         private DataSet getDataSet(int limit, int offset, List<string> columns)
         {
-            var sql = ((ISqlBuilderConvert)this).GetFullSelectSql(Provider, limit, offset, columns);
+            var sql = (this).GetFullSelectSql(Provider, limit, offset, columns);
             _useDistinct = false;
             return GetSqlHelper().ExecuteDataSet(sql);
         }

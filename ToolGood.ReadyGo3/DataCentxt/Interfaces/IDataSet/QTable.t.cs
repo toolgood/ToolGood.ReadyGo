@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+////using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
-    partial class QTable<T> : IDataSet<QTable<T>>
+    partial class QTable<T> //: IDataSet<QTable<T>>
     {
         /// <summary>
         /// 根据字段名（非数据字段）设置更新值
@@ -64,7 +64,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             if (config.Insert_DateTime_Default_Now 
                 || config.Insert_Guid_Default_New
                 || config.Insert_String_Default_NotNull) {
-                ((ITableConvert) this).SetDefaultValue(config.Insert_DateTime_Default_Now,
+                ( this).SetDefaultValue(config.Insert_DateTime_Default_Now,
                     config.Insert_String_Default_NotNull, config.Insert_Guid_Default_New);
             }
             return GetSqlBuilder().Insert(returnInsertId);

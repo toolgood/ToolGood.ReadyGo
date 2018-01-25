@@ -23,7 +23,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         public override object MapParameterValue(object value)
         {
             // Don't map bools to ints in PostgreSQL
-            if (value.GetType() == typeof(bool))
+            if (value is bool)
                 return value;
 
             return base.MapParameterValue(value);

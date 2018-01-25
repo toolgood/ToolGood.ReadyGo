@@ -8,9 +8,9 @@ namespace ToolGood.ReadyGo3.DataCentxt
 {
     partial class QTable<T>
     {
-        private QColumnBase[] getSelectColumn()
+        private QColumn[] getSelectColumn()
         {
-            List<QColumnBase> list = new List<QColumnBase>();
+            List<QColumn> list = new List<QColumn>();
             foreach (var item in _columns) {
                 var col = item.Value;
                 list.Add(col);
@@ -30,7 +30,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return Single<T>(columns);
         }
 
-        public T Single(params QColumnBase[] columns)
+        public T Single(params QColumn[] columns)
         {
             return Single<T>(columns);
         }
@@ -45,7 +45,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return SingleOrDefault<T>(columns);
         }
 
-        public T SingleOrDefault(params QColumnBase[] columns)
+        public T SingleOrDefault(params QColumn[] columns)
         {
             return SingleOrDefault<T>(columns);
         }
@@ -60,7 +60,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return First<T>(columns);
         }
 
-        public T First(params QColumnBase[] columns)
+        public T First(params QColumn[] columns)
         {
             return First<T>(columns);
         }
@@ -75,7 +75,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return FirstOrDefault<T>(columns);
         }
 
-        public T FirstOrDefault(params QColumnBase[] columns)
+        public T FirstOrDefault(params QColumn[] columns)
         {
             return FirstOrDefault<T>(columns);
         }
@@ -93,7 +93,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return Select<T>(columns);
         }
 
-        public List<T> Select(params QColumnBase[] columns)
+        public List<T> Select(params QColumn[] columns)
         {
             return Select<T>(columns);
         }
@@ -108,7 +108,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return Select<T>(limit, columns);
         }
 
-        public List<T> Select(int limit, params QColumnBase[] columns)
+        public List<T> Select(int limit, params QColumn[] columns)
         {
             return Select<T>(limit, columns);
         }
@@ -123,7 +123,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return Select<T>(limit, offset, columns);
         }
 
-        public List<T> Select(int limit, int offset, params QColumnBase[] columns)
+        public List<T> Select(int limit, int offset, params QColumn[] columns)
         {
             return Select<T>(limit, offset, columns);
         }
@@ -138,14 +138,12 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return Page<T>(page, size, columns);
         }
 
-        public Page<T> Page(int page, int size, params QColumnBase[] columns)
+        public Page<T> Page(int page, int size, params QColumn[] columns)
         {
             return Page<T>(page, size, columns);
         }
         #endregion
-
-
-
+ 
         #region ExecuteDataTable
         public DataTable ExecuteDataTable()
         {

@@ -7,14 +7,8 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
 {
     public class SqlServerCEDatabaseProviders : DatabaseProvider
     {
-        protected static readonly Dictionary<string, string> functionDict = new Dictionary<string, string>();
 
-        static SqlServerCEDatabaseProviders()
-        {
-
-        }
-
-        public override string Delete(List<QTable> tables, QColumnBase pk, string tableName, string fromtable, string jointables, string where)
+        public override string Delete(List<QTable> tables, QColumn pk, string tableName, string fromtable, string jointables, string where)
         {
             return $"DELETE t1 FROM {fromtable} {jointables} WHERE {where};";
         }

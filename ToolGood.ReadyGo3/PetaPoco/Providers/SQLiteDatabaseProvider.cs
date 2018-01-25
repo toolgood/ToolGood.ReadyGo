@@ -12,7 +12,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
         public override object MapParameterValue(object value)
         {
-            if (value.GetType() == typeof(uint))
+            if (value is uint)
                 return (long) ((uint) value);
 
             return base.MapParameterValue(value);

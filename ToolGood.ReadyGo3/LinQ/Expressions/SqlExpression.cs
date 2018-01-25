@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
+using ToolGood.ReadyGo3.DataCentxt.Enums;
 
 namespace ToolGood.ReadyGo3.LinQ.Expressions
 {
@@ -18,32 +19,19 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
     public class SqlExpression
     {
         protected const string sep = " ";
+        protected DataCentxt.DatabaseProvider provider;
 
-        #region Resolve
-        public static SqlExpression Resolve(SqlType type)
+        public SqlExpression(SqlType type)
         {
-            switch (type) {
-                case SqlType.SqlServer:
-                case SqlType.MySql:
-                case SqlType.SQLite:
-                case SqlType.MsAccessDb:
-                case SqlType.Oracle:
-                case SqlType.PostgreSQL:
-                case SqlType.FirebirdDb:
-                case SqlType.MariaDb:
-                case SqlType.SqlServerCE:
-                default: break;
-            }
-            return Singleton<SqlExpression>.Instance;
+            this.provider = DataCentxt.DatabaseProvider.Resolve(type);
         }
 
-
-        #endregion
+ 
 
         #region 可重写的方法
         protected virtual string GetQuotedValue(string paramValue)
         {
-            return "'" + paramValue.Replace(@"\",@"\\").Replace("'", @"\'") + "'";
+            return "'" + paramValue.Replace(@"\", @"\\").Replace("'", @"\'") + "'";
         }
         protected virtual string GetQuotedValue(object value, Type fieldType)
         {
@@ -86,7 +74,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 case TypeCode.UInt64:
                     //if (IsNumericType(fieldType))
                     return Convert.ChangeType(value, fieldType).ToString();
-                //break;
+                    //break;
             }
 
             if (fieldType == typeof(TimeSpan))
@@ -109,23 +97,23 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             if (m.Method.DeclaringType == typeof(ObjectExtend))
                 return VisitObjectExtendMethodCall(m, paramDicts);
 
-            if (m.Method.DeclaringType == typeof(SQL))
-                return VisitSqlMethodCall(paramDicts, m);
+            //if (m.Method.DeclaringType == typeof(SQL))
+            //    return VisitSqlMethodCall(paramDicts, m);
 
-            if (IsStaticArrayMethod(m, paramDicts))
+            if (IsStaticArrayMethod(m))
                 return VisitStaticArrayMethodCall(m, paramDicts);
 
-            if (IsEnumerableMethod(m, paramDicts))
+            if (IsEnumerableMethod(m))
                 return VisitEnumerableMethodCall(m, paramDicts);
 
-            if (IsColumnAccess(m, paramDicts))
+            if (IsColumnAccess(m))
                 return VisitColumnAccessMethod(m, paramDicts);
 
             return Expression.Lambda(m).Compile().DynamicInvoke();
         }
         protected virtual string VisitSqlMethodCall(Dictionary<ParameterExpression, string> paramDicts, MethodCallExpression call)
         {
-            if (call.Method.DeclaringType != typeof(SQL)) throw new Exception("无效列！！！");
+            //if (call.Method.DeclaringType != typeof(SQL)) throw new Exception("无效列！！！");
             var callName = call.Method.Name;
             if (callName == "CountAll") return "COUNT(*)";
 
@@ -157,44 +145,34 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             List<Object> _args = this.VisitExpressionList(m.Arguments, paramDicts);
             var quotedColName = Visit(m.Object, paramDicts);
             var statement = "";
-
-            var wildcardArg = _args.Count > 0 ? _args[0] != null ? EscapeWildcards(_args[0].ToString()) : "" : "";
-            var escapeSuffix = wildcardArg.IndexOf('^') >= 0 ? " escape '^'" : "";
+            var wildcardArg = _args.Count > 0 ? _args[0] != null ? _args[0].ToString() : "" : "";
             switch (m.Method.Name) {
-                case "Trim": statement = string.Format("ltrim(rtrim({0}))", quotedColName); break;
-                case "LTrim": statement = string.Format("ltrim({0})", quotedColName); break;
-                case "RTrim": statement = string.Format("rtrim({0})", quotedColName); break;
-                case "ToUpper": statement = string.Format("upper({0})", quotedColName); break;
-                case "ToLower": statement = string.Format("lower({0})", quotedColName); break;
-                case "StartsWith": statement = string.Format("{0} like {1}{2}", quotedColName, GetQuotedValue(wildcardArg + "%"), escapeSuffix); break;
-                case "EndsWith": statement = string.Format("{0} like {1}{2}", quotedColName, GetQuotedValue("%" + wildcardArg), escapeSuffix); break;
-                case "Contains": statement = string.Format("{0} like {1}{2}", quotedColName, GetQuotedValue("%" + wildcardArg + "%"), escapeSuffix); break;
+                case "Trim": statement = provider.CreateFunction(SqlFunction.Trim, quotedColName); break;
+                case "LTrim": statement = provider.CreateFunction(SqlFunction.LTrim, quotedColName); break;
+                case "RTrim": statement = provider.CreateFunction(SqlFunction.RTrim, quotedColName); break;
+                case "ToUpper": statement = provider.CreateFunction(SqlFunction.Upper, quotedColName); break;
+                case "ToLower": statement = provider.CreateFunction(SqlFunction.Lower, quotedColName); break;
+                case "StartsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, provider.EscapeLikeParam(wildcardArg) + "%"); break;
+                case "EndsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + provider.EscapeLikeParam(wildcardArg)); break;
+                case "Contains": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + provider.EscapeLikeParam(wildcardArg) + "%"); break;
                 case "Substring":
                     var startIndex = Int32.Parse(_args[0].ToString()) + 1;
-                    var length = (_args.Count > 1) ? Int32.Parse(_args[1].ToString()) : -1;
-                    statement = SubstringStatement(quotedColName, startIndex, length);
+                    if (_args.Count == 1) {
+                        statement = provider.CreateFunction(SqlFunction.SubString2, quotedColName, startIndex);
+                        break;
+                    }
+                    var length = Int32.Parse(_args[1].ToString());
+                    statement = provider.CreateFunction(SqlFunction.SubString3, quotedColName, startIndex, length);
                     break;
-
                 case "Equals":
-                    statement = string.Format("({0} = {1})", quotedColName, GetQuotedValue(wildcardArg));
-                    break;
-
-                case "ToString":
-                    statement = quotedColName.ToString();
-                    break;
-
-                default:
-                    throw new NotSupportedException();
+                    wildcardArg = GetQuotedValue(wildcardArg);
+                    statement = $"({quotedColName} = {wildcardArg})"; break;
+                case "ToString": statement = quotedColName.ToString(); break;
+                default: throw new NotSupportedException();
             }
             return new PartialSqlString(statement);
         }
-        protected virtual string SubstringStatement(object columnName, int startIndex, int length)
-        {
-            if (length >= 0)
-                return string.Format("substring({0},{1},{2})", columnName, startIndex, length);
-            else
-                return string.Format("substring({0},{1},8000)", columnName, startIndex);
-        }
+
 
         #endregion
 
@@ -260,11 +238,10 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             var tableDef = PocoData.ForType(p.Type);
 
             var col = tableDef.Columns.Where(q => q.Value.PropertyInfo.Name == colName).Select(q => q.Value).FirstOrDefault();
-            //var col = tableDef.Columns.FirstOrDefault(q => q.PropertyInfo.Name == colName);
             if (col != null) {
                 colName = col.ColumnName;
             }
-            return string.Format("{0}.{1}", paramDicts[p], colName);
+            return $"{paramDicts[p]}.{colName}";
         }
 
 
@@ -274,12 +251,12 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
         protected object GetTrueExpression()
         {
-            return new PartialSqlString(string.Format("({0}={1})", GetQuotedTrueValue().ToString(), GetQuotedTrueValue().ToString()));
+            return new PartialSqlString($"({GetQuotedTrueValue().ToString()}={GetQuotedTrueValue().ToString()})");
         }
 
         protected object GetFalseExpression()
         {
-            return new PartialSqlString(string.Format("({0}={1})", GetQuotedTrueValue().ToString(), GetQuotedFalseValue().ToString()));
+            return new PartialSqlString($"({GetQuotedTrueValue().ToString()}={GetQuotedFalseValue().ToString()})");
         }
 
 
@@ -343,7 +320,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             var trueSql = Visit(conditional.IfTrue, paramDicts);
             var falseSql = Visit(conditional.IfFalse, paramDicts);
 
-            return new PartialSqlString(string.Format("(case when {0} then {1} else {2} end)", test, trueSql, falseSql));
+            return new PartialSqlString($"(case when {test} then {trueSql} else {falseSql} end)");
         }
         protected object VisitLambda(LambdaExpression lambda, Dictionary<ParameterExpression, string> paramDicts)
         {
@@ -352,7 +329,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
                 if (m.Expression != null) {
                     string r = VisitMemberAccess(m, paramDicts).ToString();
-                    return string.Format("{0}={1}", r, GetQuotedTrueValue());
+                    return $"{r}={GetQuotedTrueValue()}";
                 }
             }
             return Visit(lambda.Body, paramDicts);
@@ -373,7 +350,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             } else {
                 if (left as PartialSqlString == null) {
                     left = GetQuotedValue(left, left != null ? left.GetType() : null);
-                    return CreatePartialSqlString(left, operand, right, paramDicts);
+                    return CreatePartialSqlString(left, operand, right);
                 } else if (right as PartialSqlString == null) {
                     if (right == null) {
                         right = GetQuotedValue(right, null);
@@ -382,7 +359,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                         return new PartialSqlString(left + sep + operand + sep + right);
                     } else {
                         right = GetQuotedValue(right, right != null ? right.GetType() : null);
-                        return CreatePartialSqlString(left, operand, right, paramDicts);
+                        return CreatePartialSqlString(left, operand, right);
                     }
                 }
             }
@@ -390,13 +367,13 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             if (operand == "=" && right.ToString().Equals("null", StringComparison.OrdinalIgnoreCase)) operand = "IS";
             else if (operand == "<>" && right.ToString().Equals("null", StringComparison.OrdinalIgnoreCase)) operand = "IS NOT";
 
-            return CreatePartialSqlString(left, operand, right, paramDicts);
+            return CreatePartialSqlString(left, operand, right);
         }
 
-        private PartialSqlString CreatePartialSqlString(object left, string operand, object right, Dictionary<ParameterExpression, string> paramDicts)
+        private PartialSqlString CreatePartialSqlString(object left, string operand, object right)
         {
             if (operand == "MOD" || operand == "COALESCE") {
-                return new PartialSqlString(string.Format("{0}({1},{2})", operand, left, right));
+                return new PartialSqlString($"{operand}({left},{right})");
             }
             return new PartialSqlString(left + sep + operand + sep + right);
         }
@@ -446,7 +423,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 var tableDef = PocoData.ForType(p.Type);
                 var colName = m.Member.Name;
 
-                var col = tableDef.Columns.Where(q => q.Value.PropertyInfo.Name == colName).Select(q=>q.Value).FirstOrDefault();
+                var col = tableDef.Columns.Where(q => q.Value.PropertyInfo.Name == colName).Select(q => q.Value).FirstOrDefault();
                 if (col != null) {
                     colName = col.ColumnName;
                 }
@@ -457,12 +434,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             var lambda = Expression.Lambda<Func<object>>(member);
             var getter = lambda.Compile();
             return getter();
-        }
-
-        private static bool IsEnum(PropertyInfo propertyInfo)
-        {
-            var underlyingType = Nullable.GetUnderlyingType(propertyInfo.PropertyType);
-            return propertyInfo.PropertyType.IsEnum || (underlyingType != null && underlyingType.IsEnum);
         }
 
         protected object VisitMemberInit(MemberInitExpression exp, Dictionary<ParameterExpression, string> paramDicts)
@@ -556,17 +527,15 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
         #region IsNumericType IsOrHasGenericInterfaceTypeOf
 
-        private bool IsOrHasGenericInterfaceTypeOf(Type type, Type genericTypeDefinition,
-            Dictionary<ParameterExpression, string> paramDicts)
+        private bool IsOrHasGenericInterfaceTypeOf(Type type, Type genericTypeDefinition)
         {
-            if (GetTypeWithGenericTypeDefinitionOf(type, genericTypeDefinition, paramDicts) == null) {
+            if (GetTypeWithGenericTypeDefinitionOf(type, genericTypeDefinition) == null) {
                 return (type == genericTypeDefinition);
             }
             return true;
         }
 
-        private Type GetTypeWithGenericTypeDefinitionOf(Type type, Type genericTypeDefinition,
-            Dictionary<ParameterExpression, string> paramDicts)
+        private Type GetTypeWithGenericTypeDefinitionOf(Type type, Type genericTypeDefinition)
         {
             foreach (Type t in type.GetInterfaces()) {
                 if (t.IsGenericType && (t.GetGenericTypeDefinition() == genericTypeDefinition)) {
@@ -596,7 +565,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         #region 分析方法调用
 
 
-        private bool IsStaticArrayMethod(MethodCallExpression m, Dictionary<ParameterExpression, string> paramDicts)
+        private bool IsStaticArrayMethod(MethodCallExpression m)
         {
             if (m.Object == null && m.Method.Name == "Contains") {
                 return m.Arguments.Count == 2;
@@ -615,17 +584,17 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                     if (memberExpr.NodeType == ExpressionType.MemberAccess)
                         memberExpr = (m.Arguments[0] as MemberExpression);
 
-                    return ToInPartialString(memberExpr, quotedColName, "IN", paramDicts);
+                    return ToInPartialString(memberExpr, quotedColName, "IN");
 
                 default:
                     throw new NotSupportedException();
             }
         }
 
-        private bool IsEnumerableMethod(MethodCallExpression m, Dictionary<ParameterExpression, string> paramDicts)
+        private bool IsEnumerableMethod(MethodCallExpression m)
         {
             if (m.Object != null
-                && IsOrHasGenericInterfaceTypeOf(m.Object.Type, typeof(IEnumerable<>), paramDicts)
+                && IsOrHasGenericInterfaceTypeOf(m.Object.Type, typeof(IEnumerable<>))
                 && m.Object.Type != typeof(string)
                 && m.Method.Name == "Contains") {
                 return m.Arguments.Count == 1;
@@ -639,15 +608,14 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 case "Contains":
                     List<Object> _args = this.VisitExpressionList(m.Arguments, paramDicts);
                     object quotedColName = _args[0];
-                    return ToInPartialString(m.Object, quotedColName, "IN", paramDicts);
+                    return ToInPartialString(m.Object, quotedColName, "IN");
 
                 default:
                     throw new NotSupportedException();
             }
         }
 
-        private object ToInPartialString(Expression memberExpr, object quotedColName, string option,
-            Dictionary<ParameterExpression, string> paramDicts)
+        private object ToInPartialString(Expression memberExpr, object quotedColName, string option)
         {
             var member = Expression.Convert(memberExpr, typeof(object));
             var lambda = Expression.Lambda<Func<object>>(member);
@@ -665,11 +633,9 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             }
             if (inArgs.Count == 1) {
                 if (option == "IN") {
-                    return new PartialSqlString(string.Format("{0}={1}", quotedColName,
-                        GetQuotedValue(inArgs[0], inArgs[0].GetType()), paramDicts));
+                    return new PartialSqlString(string.Format("{0}={1}", quotedColName, GetQuotedValue(inArgs[0], inArgs[0].GetType())));
                 } else {
-                    return new PartialSqlString(string.Format("{0}<>{1}", quotedColName,
-                        GetQuotedValue(inArgs[0], inArgs[0].GetType()), paramDicts));
+                    return new PartialSqlString(string.Format("{0}<>{1}", quotedColName, GetQuotedValue(inArgs[0], inArgs[0].GetType())));
                 }
             }
 
@@ -682,14 +648,14 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 }
             }
 
-            var statement = string.Format("{0} {1} ({2})", quotedColName, option, sIn);
+            var statement = $"{quotedColName} {option} ({sIn})";
             return new PartialSqlString(statement);
         }
 
-        protected bool IsColumnAccess(MethodCallExpression m, Dictionary<ParameterExpression, string> paramDicts)
+        protected bool IsColumnAccess(MethodCallExpression m)
         {
             if (m.Object != null && m.Object as MethodCallExpression != null)
-                return IsColumnAccess(m.Object as MethodCallExpression, paramDicts);
+                return IsColumnAccess(m.Object as MethodCallExpression);
 
             var exp = m.Object as MemberExpression;
             return exp != null
@@ -705,21 +671,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             }
             var quotedColName = VisitMemberAccess((MemberExpression)m.Arguments[0], paramDicts);
             var option = m.Method.Name == "IsIn" ? "IN" : "NOT IN";
-            return ToInPartialString(m.Arguments[1], quotedColName, option, paramDicts);
-        }
-
-
-
-
-
-        private string EscapeWildcards(string value)
-        {
-            if (value == null)
-                return null;
-            return value
-                .Replace("^", @"^^")
-                .Replace("_", @"^_")
-                .Replace("%", @"^%");
+            return ToInPartialString(m.Arguments[1], quotedColName, option);
         }
 
         #endregion 分析方法调用

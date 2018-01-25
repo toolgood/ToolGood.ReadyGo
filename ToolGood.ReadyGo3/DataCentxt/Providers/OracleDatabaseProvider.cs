@@ -2,28 +2,48 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+using ToolGood.ReadyGo3.DataCentxt.Enums;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Providers
 {
     public class OracleDatabaseProvider : DatabaseProvider
     {
-        protected static readonly Dictionary<string, string> functionDict = new Dictionary<string, string>();
+   
 
-        static OracleDatabaseProvider()
+        public override string CreateFunction(SqlFunction function, params object[] args)
         {
             // http://blog.csdn.net/gccr/article/details/1802740
-            functionDict.Add("LEN", "LENGTH({0})");
-            functionDict.Add("DATEDIFF", "ROUND(TO_NUMBER(TimeStamp {1} - TimeStamp {0}))");
-            functionDict.Add("YEAR", "EXTRACT(YEAR FROM TIMESTAMP {0})");
-            functionDict.Add("MONTH", "EXTRACT(MONTH FROM TIMESTAMP {0})");
-            functionDict.Add("DAY", "EXTRACT(DAY FROM TIMESTAMP {0})");
-            functionDict.Add("HOUR", "EXTRACT(HOUR FROM TIMESTAMP {0})");
-            functionDict.Add("MINUTE", "EXTRACT(MINUTE FROM TIMESTAMP {0})");
-            functionDict.Add("SECOND", "EXTRACT(SECOND FROM TIMESTAMP {0})");
-            functionDict.Add("DAYOFYEAR", "EXTRACT(DAYOFYEAR FROM TIMESTAMP {0})");
-            functionDict.Add("WEEK", "EXTRACT(WEEK FROM TIMESTAMP {0})");
-            functionDict.Add("WEEKDAY", "EXTRACT(WEEKDAY FROM TIMESTAMP {0})");
+            switch (function) {
+                case SqlFunction.Fuction: break;
+                case SqlFunction.Len: return CreateFunction("LENGTH({0})", args);
+                case SqlFunction.Max: break;
+                case SqlFunction.Min: break;
+                case SqlFunction.Avg: break;
+                case SqlFunction.Sum: break;
+                case SqlFunction.Count: break;
+                case SqlFunction.CountDistinct: break;
+                case SqlFunction.DatePart: break;
+                case SqlFunction.DateDiff: return CreateFunction("ROUND(TO_NUMBER(TimeStamp {1} - TimeStamp {0}))", args);
+                case SqlFunction.Year: return CreateFunction("EXTRACT(YEAR FROM TIMESTAMP {0})", args);
+                case SqlFunction.Month: return CreateFunction("EXTRACT(MONTH FROM TIMESTAMP {0})", args);
+                case SqlFunction.Day: return CreateFunction("EXTRACT(DAY FROM TIMESTAMP {0})", args);
+                case SqlFunction.Hour: return CreateFunction("EXTRACT(HOUR FROM TIMESTAMP {0})", args);
+                case SqlFunction.Minute: return CreateFunction("EXTRACT(MINUTE FROM TIMESTAMP {0})", args);
+                case SqlFunction.Second: return CreateFunction("EXTRACT(SECOND FROM TIMESTAMP {0})", args);
+                case SqlFunction.DayOfYear: return CreateFunction("EXTRACT(DAYOFYEAR FROM TIMESTAMP {0})", args);
+                case SqlFunction.Week: return CreateFunction("EXTRACT(WEEK FROM TIMESTAMP {0})", args);
+                case SqlFunction.WeekDay: return CreateFunction("EXTRACT(WEEKDAY FROM TIMESTAMP {0})", args);
+                case SqlFunction.SubString3: break;
+                case SqlFunction.SubString2: break;
+                case SqlFunction.Left: break;
+                case SqlFunction.Right: break;
+                case SqlFunction.Lower: break;
+                case SqlFunction.Upper: break;
+                case SqlFunction.Ascii: break;
+                case SqlFunction.Concat: break;
+                default: break;
+            }
+            return base.CreateFunction(function, args);
         }
 
         public OracleDatabaseProvider()
@@ -32,7 +52,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
             escapeSql = '"';
         }
 
-        public override string Delete(List<QTable> tables, QColumnBase pk, string tableName, string fromtable, string jointables, string where)
+        public override string Delete(List<QTable> tables, QColumn pk, string tableName, string fromtable, string jointables, string where)
         {
             return $"DELETE (SELECT t1.* FROM {fromtable} {jointables} WHERE {where});";
         }
@@ -45,7 +65,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
         //    for (int i = 0; i < cols.Count; i++) {
         //        if (i > 0) stringBuilder.Append(",");
         //        var col = cols[i];
-        //        stringBuilder.Append(((IColumnConvert)col).ToSql(this, tables.Count));
+        //        stringBuilder.Append((col).ToSql(this, tables.Count));
         //        stringBuilder.Append(" ");
         //        stringBuilder.Append(col._table._asName);
         //        stringBuilder.Append("_");
@@ -61,7 +81,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
         //    var cols2 = table.GetUpdateColumns();
         //    for (int i = 0; i < cols2.Count; i++) {
         //        if (i > 0) stringBuilder.Append(",");
-        //        stringBuilder.Append(((IColumnConvert)cols2[i]).ToOracleUpdateSet(provider));
+        //        stringBuilder.Append((cols2[i]).ToOracleUpdateSet(provider));
         //    }
         //    stringBuilder.Append(";");
         //    return stringBuilder.ToString();
@@ -125,24 +145,6 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
             return $"\"{sqlIdentifier}\"";
         }
 
-        /// <summary>
-        /// 方法是否使用默认格式化
-        /// </summary>
-        /// <param name="funName"></param>
-        /// <returns></returns>
-        public override bool IsFunctionUseDefaultFormat(string funName)
-        {
-            return functionDict.ContainsKey(funName) == false;
-        }
-        /// <summary>
-        /// 获取非默认格式化
-        /// </summary>
-        /// <param name="sqlType"></param>
-        /// <param name="funName"></param>
-        /// <returns></returns>
-        public override string GetFunctionFormat(string funName)
-        {
-            return functionDict[funName];
-        }
+ 
     }
 }

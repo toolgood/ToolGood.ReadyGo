@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+using ToolGood.ReadyGo3.DataCentxt.Enums;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.DataCentxt.Providers;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
@@ -20,22 +21,64 @@ namespace ToolGood.ReadyGo3.DataCentxt
         {
             return $"[{sqlIdentifier}]";
         }
-
-        public virtual bool IsFunctionUseDefaultFormat(string funName)
+ 
+        public virtual string CreateFunction(SqlFunction function, params object[] args)
         {
-            return true;
+            switch (function) {
+                case SqlFunction.Len: return CreateFunction("LEN({0})", args);
+                case SqlFunction.Max: return CreateFunction("MAX({0})", args);
+                case SqlFunction.Min: return CreateFunction("MIN({0})", args);
+                case SqlFunction.Avg: return CreateFunction("AVG({0})", args);
+                case SqlFunction.Sum: return CreateFunction("SUM({0})", args);
+                case SqlFunction.Count: return CreateFunction("COUNT({0})", args);
+                case SqlFunction.CountDistinct: return CreateFunction("COUNT(DISTINCT {0})", args);
+                case SqlFunction.DatePart: return CreateFunction("DATEPART({0},{1})", args);
+                case SqlFunction.DateDiff: return CreateFunction("DATEDIFF({0},{1})", args);
+                case SqlFunction.Year: return CreateFunction("YEAR({0})", args);
+                case SqlFunction.Month: return CreateFunction("MONTH({0})", args);
+                case SqlFunction.Day: return CreateFunction("DAY({0})", args);
+                case SqlFunction.Hour: return CreateFunction("HOUR({0})", args);
+                case SqlFunction.Minute: return CreateFunction("MINUTE({0})", args);
+                case SqlFunction.Second: return CreateFunction("SECOND({0})", args);
+                case SqlFunction.DayOfYear: return CreateFunction("DAYOFYEAR({0})", args);
+                case SqlFunction.Week: return CreateFunction("WEEK({0})", args);
+                case SqlFunction.WeekDay: return CreateFunction("WEEKDAY({0})", args);
+                case SqlFunction.SubString3: return CreateFunction("SUBSTRING({0},{1},{2})", args);
+                case SqlFunction.SubString2: return CreateFunction("SUBSTRING({0},{1})", args);
+                case SqlFunction.Left: return CreateFunction("LEFT({0},{1})", args);
+                case SqlFunction.Right: return CreateFunction("RIGHT({0},{1})", args);
+                case SqlFunction.Lower: return CreateFunction("LOWER({0})", args);
+                case SqlFunction.Upper: return CreateFunction("UPPER({0})", args);
+                case SqlFunction.Ascii: return CreateFunction("ASCII({0})", args);
+                case SqlFunction.Concat:
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.Append("CONCAT(");
+                    foreach (var item in args) {
+                        stringBuilder.Append(EscapeParam(item));
+                        stringBuilder.Append(',');
+                    }
+                    stringBuilder[stringBuilder.Length - 1] = ')';
+                    return stringBuilder.ToString();
+                default: break;
+            }
+            return CreateFunction(args[0].ToString(), args, 1);
         }
 
-        public virtual string GetFunctionFormat(string funName)
+        protected string CreateFunction(string sql, object[] args, int index = 0)
         {
-            return null;
+            List<string> list = new List<string>();
+            for (int i = index; i < args.Length; i++) {
+                list.Add(EscapeParam(args[i]));
+            }
+            return string.Format(sql, list);
         }
 
-        public virtual string Delete(List<QTable> tables, QColumnBase pk, string tableName, string fromtable, string jointables, string where)
+
+        public virtual string Delete(List<QTable> tables, QColumn pk, string tableName, string fromtable, string jointables, string where)
         {
-            if (object.Equals(pk, null) ) throw new NoPrimaryKeyException();
-            var pk1 = ((IColumnConvert)pk).ToSql(this, 1);
-            var pk2 = ((IColumnConvert)pk).ToSql(this, tables.Count);
+            if (object.Equals(pk, null)) throw new NoPrimaryKeyException();
+            var pk1 = (pk).ToSql(this, 1);
+            var pk2 = (pk).ToSql(this, tables.Count);
             return $"DELETE {tableName} WHERE {pk1} IN (SELECT {pk2} FROM {fromtable} {jointables} WHERE {where});";
         }
 
@@ -117,12 +160,12 @@ namespace ToolGood.ReadyGo3.DataCentxt
         {
             int p = int.Parse(text.Replace("@", ""));
             var value = args[p];
-            if (value is QColumnBase) {
-                var sb = ((IColumnConvert)value).GetSqlBuilder();
+            if (value is QColumn) {
+                var sb = ((QColumn)value).GetSqlBuilder();
                 if (sb == null) {
                     throw new ArgumentNullException();
                 }
-                where.Append(((IColumnConvert)value).ToSql(this, sb._tables.Count));
+                where.Append(((QColumn)value).ToSql(this, sb._tables.Count));
             } else if (value is ICollection) {
                 var v = (ICollection)value;
                 if (v.Count == 0) {
@@ -131,13 +174,13 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 } else {
                     where.Append("(");
                     foreach (var item in (ICollection)value) {
-                        where.Append(ConvertTo(item));
+                        where.Append(EscapeParam(item));
                         where.Append(",");
                     }
                     where[where.Length - 1] = ')';
                 }
             } else {
-                where.Append(ConvertTo(value));
+                where.Append(EscapeParam(value));
             }
         }
 
@@ -150,9 +193,16 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="sqlType"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public string ConvertTo(object value)
+        public string EscapeParam(object value)
         {
             if (object.Equals(value, null)) return "NULL";
+            if (value is QColumn) {
+                var sb = ((QColumn)value).GetSqlBuilder();
+                if (sb == null) {
+                    throw new ArgumentNullException();
+                }
+                return (((QColumn)value).ToSql(this, sb._tables.Count));
+            }
             var fieldType = value.GetType();
             if (fieldType.IsEnum) {
                 var isEnumFlags = fieldType.IsEnum;
@@ -191,6 +241,32 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 return "'" + txt + "'";
             }
             return "'" + value.ToString() + "'";
+        }
+
+
+        /// <summary>
+        /// 格式化 LIKE 内容，适用于Contains，StartWith，EndWith
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public string EscapeLikeParam(string param)
+        {
+            return param.Replace(@"\", @"\\")
+                .Replace("_", @"\_")
+                .Replace("%", @"\%")
+                .Replace("'", @"\'")
+                .Replace("[", @"\[")
+                .Replace("]", @"\]");
+        }
+        /// <summary>
+        /// 格式化 LIKE 内容2，适用于Default
+        /// </summary>
+        /// <param name="param"></param>
+        /// <returns></returns>
+        public string EscapeLikeParam2(string param)
+        {
+            param = param.Replace(@"\\", @"\").Replace("''", "'").Replace(@"\'", "'");
+            return param.Replace(@"\", @"\\").Replace("'", @"\'");
         }
 
         internal static DatabaseProvider Resolve(SqlType type)

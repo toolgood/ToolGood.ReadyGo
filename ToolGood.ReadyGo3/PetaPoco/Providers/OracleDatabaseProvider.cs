@@ -45,7 +45,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         public override string GetAutoIncrementExpression(TableInfo ti)
         {
             if (!string.IsNullOrEmpty(ti.SequenceName))
-                return string.Format("{0}.nextval", ti.SequenceName);
+                return $"{ti.SequenceName}.nextval";
 
             return null;
         }
@@ -54,7 +54,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             if (primaryKeyName != null)
             {
-                cmd.CommandText += string.Format(" returning {0} into :newid", EscapeSqlIdentifier(primaryKeyName));
+                cmd.CommandText += $" returning {EscapeSqlIdentifier(primaryKeyName)} into :newid";
                 var param = cmd.CreateParameter();
                 param.ParameterName = ":newid";
                 param.Value = DBNull.Value;

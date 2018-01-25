@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
-    partial class QColumnBase
+    partial class QColumn
     {
         public QCondition InSelect(string sql, params object[] args)
         {
@@ -43,7 +43,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
             if (_columnType != Enums.ColumnType.Column) throw new ColumnTypeException();
             return new QColumnValueCondition(this, "IS NOT NULL");
         }
-
 
         public QCondition In(params string[] array)
         {

@@ -24,7 +24,7 @@ namespace ToolGood.ReadyGo3
         //机器ID偏左移12位
         private const int WorkerIdShift = SequenceBits;
         //时间秒左移22位
-        private const int TimestampLeftShift = SequenceBits + WorkerIdBits ;
+        private const int TimestampLeftShift = SequenceBits + WorkerIdBits;
 
         public long Sequence = 0L;
         private long _lastTimestamp = -1L;
@@ -36,13 +36,13 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="workerId">机器标识</param>
         /// <param name="sequence">序列ID</param>
-        public IdWorker(long workerId,  long sequence = 0L)
+        public IdWorker(long workerId = 0, long sequence = 0L)
         {
             // 如果超出范围就抛出异常
             if (workerId > MaxWorkerId || workerId < 0) {
-                throw new ArgumentException(string.Format("worker Id 必须大于0，且不能大于MaxWorkerId： {0}", MaxWorkerId));
+                throw new ArgumentException($"worker Id 必须大于0，且不能大于MaxWorkerId： {MaxWorkerId}");
             }
-        
+
             //先检验再赋值
             WorkerId = workerId;
             Sequence = sequence;
@@ -55,7 +55,7 @@ namespace ToolGood.ReadyGo3
             lock (_lock) {
                 var timestamp = TimeGen();
                 if (timestamp < _lastTimestamp) {
-                    throw new Exception(string.Format("时间戳必须大于上一次生成ID的时间戳.  拒绝为{0}毫秒生成id", _lastTimestamp - timestamp));
+                    throw new Exception($"时间戳必须大于上一次生成ID的时间戳.  拒绝为{_lastTimestamp - timestamp}毫秒生成id");
                 }
 
                 //如果上次生成时间和当前时间相同,在同一毫秒内

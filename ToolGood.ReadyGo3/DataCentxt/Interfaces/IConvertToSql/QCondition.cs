@@ -3,40 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Enums;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
-
-namespace ToolGood.ReadyGo3.DataCentxt.Interfaces
-{
-    interface IConditionConvert
-    {
-        string ToSql(DatabaseProvider provider, int tableCount);
-        void ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount);
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
 
-    }
-}
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-    partial class QWhereCondition : IConditionConvert
+    partial class QCondition
     {
-        string IConditionConvert.ToSql(DatabaseProvider provider, int tableCount)
+        protected internal virtual string ToSql(DatabaseProvider provider, int tableCount) { return null; }
+        protected internal virtual void ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount) { }
+    }
+
+    partial class QWhereCondition
+    {
+        protected internal override string ToSql(DatabaseProvider provider, int tableCount)
         {
             if (whereType == WhereType.None) {
                 return "";
             }
             if (whereType == WhereType.Single) {
-                return ((IConditionConvert)leftCondition).ToSql(provider, tableCount);
+                return (leftCondition).ToSql(provider, tableCount);
             }
             StringBuilder stringBuilder = new StringBuilder();
-            ((IConditionConvert)this).ToSql(stringBuilder, provider, tableCount);
+            (this).ToSql(stringBuilder, provider, tableCount);
             return stringBuilder.ToString();
         }
 
-        void IConditionConvert.ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
+        protected internal override void ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
         {
             if (whereType == WhereType.None) return;
             if (whereType == WhereType.Single) {
-                ((IConditionConvert)leftCondition).ToSql(stringBuilder, provider, tableCount);
+                (leftCondition).ToSql(stringBuilder, provider, tableCount);
                 return;
             }
             // and 连接
@@ -51,79 +48,80 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             if (whereType == WhereType.Or) {
                 bool b = leftCondition is QWhereCondition;
                 if (b) stringBuilder.Append("(");
-                ((IConditionConvert)leftCondition).ToSql(stringBuilder, provider, tableCount);
+                (leftCondition).ToSql(stringBuilder, provider, tableCount);
                 if (b) stringBuilder.Append(")");
                 stringBuilder.Append(" OR ");
 
                 b = rightCondition is QWhereCondition;
                 if (b) stringBuilder.Append("(");
-                ((IConditionConvert)rightCondition).ToSql(stringBuilder, provider, tableCount);
+                (rightCondition).ToSql(stringBuilder, provider, tableCount);
                 if (b) stringBuilder.Append(")");
                 return;
             }
 
             if (leftHasOr) stringBuilder.Append("(");
-            ((IConditionConvert)leftCondition).ToSql(stringBuilder, provider, tableCount);
+            (leftCondition).ToSql(stringBuilder, provider, tableCount);
             if (leftHasOr) stringBuilder.Append(")");
             stringBuilder.Append(" AND ");
             if (rightHasOr) stringBuilder.Append("(");
-            ((IConditionConvert)rightCondition).ToSql(stringBuilder, provider, tableCount);
+            (rightCondition).ToSql(stringBuilder, provider, tableCount);
             if (rightHasOr) stringBuilder.Append(")");
         }
     }
 
-    partial class QCodeCondition : IConditionConvert
+    partial class QCodeCondition
     {
-        string IConditionConvert.ToSql(DatabaseProvider provider, int tableCount)
+        protected internal override string ToSql(DatabaseProvider provider, int tableCount)
         {
             return code;
         }
 
-        void IConditionConvert.ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
+        protected internal override void ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
         {
             stringBuilder.Append(code);
         }
     }
+ 
 
-    partial class QColumnValueCondition : IConditionConvert
+    partial class QColumnValueCondition
     {
-        string IConditionConvert.ToSql(DatabaseProvider provider, int tableCount)
+        protected internal override string ToSql(DatabaseProvider provider, int tableCount)
         {
             if (isSetValaue == false) {
-                return ((IColumnConvert)leftColumn).ToSql(provider, tableCount) + " " + op;
+                return (leftColumn).ToSql(provider, tableCount) + " " + op;
             }
-            return ((IColumnConvert)leftColumn).ToSql(provider, tableCount) + " " + op + " "
-                + provider.ConvertTo(value);
+            return (leftColumn).ToSql(provider, tableCount) + " " + op + " "
+                + provider.EscapeParam(value);
         }
 
-        void IConditionConvert.ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
+        protected internal override void ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
         {
-            stringBuilder.Append(((IColumnConvert)leftColumn).ToSql(provider, tableCount));
+            stringBuilder.Append((leftColumn).ToSql(provider, tableCount));
             stringBuilder.Append(" ");
             stringBuilder.Append(op);
             if (isSetValaue) {
                 stringBuilder.Append(" ");
-                stringBuilder.Append(provider.ConvertTo( value));
+                stringBuilder.Append(provider.EscapeParam(value));
             }
         }
     }
 
-    partial class QColumnColumnCondition : IConditionConvert
+    partial class QColumnColumnCondition
     {
-        string IConditionConvert.ToSql(DatabaseProvider provider, int tableCount)
+        protected internal override string ToSql(DatabaseProvider provider, int tableCount)
         {
-            return ((IColumnConvert)leftColumn).ToSql(provider, tableCount) + " " + Op + " "
-                + ((IColumnConvert)rightColumn).ToSql(provider, tableCount);
+            return (leftColumn).ToSql(provider, tableCount) + " " + Op + " "
+                + (rightColumn).ToSql(provider, tableCount);
         }
 
-        void IConditionConvert.ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
+        protected internal override void ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
         {
-            stringBuilder.Append(((IColumnConvert)leftColumn).ToSql(provider, tableCount));
+            stringBuilder.Append((leftColumn).ToSql(provider, tableCount));
             stringBuilder.Append(" ");
 
             stringBuilder.Append(Op);
             stringBuilder.Append(" ");
-            stringBuilder.Append(((IColumnConvert)rightColumn).ToSql(provider, tableCount));
+            stringBuilder.Append((rightColumn).ToSql(provider, tableCount));
         }
     }
 

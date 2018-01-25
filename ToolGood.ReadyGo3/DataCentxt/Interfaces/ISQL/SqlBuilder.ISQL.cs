@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+////using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-    public partial class SqlBuilder : ISQL
+    public partial class SqlBuilder //: ISQL
     {
         public void WhereExists(string sql, params object[] args)
         {
@@ -240,7 +240,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         }
 
 
-        public void GroupBy(QColumnBase column, params QColumnBase[] columns)
+        public void GroupBy(QColumn column, params QColumn[] columns)
         {
             if (_jump) { _jump = false; return; }
 
@@ -259,7 +259,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         }
 
-        public void OrderBy(QColumnBase column, OrderType orderType = OrderType.Asc)
+        public void OrderBy(QColumn column, OrderType orderType = OrderType.Asc)
         {
             if (_jump) { _jump = false; return; }
 
@@ -267,7 +267,6 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         }
 
-
-
+ 
     }
 }

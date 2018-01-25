@@ -2,32 +2,48 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+using ToolGood.ReadyGo3.DataCentxt.Enums;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Providers
 {
     public class FirebirdDbDatabaseProvider : DatabaseProvider
     {
-        protected static readonly Dictionary<string, string> functionDict = new Dictionary<string, string>();
-
-        static FirebirdDbDatabaseProvider()
+ 
+        public override string CreateFunction(SqlFunction function, params object[] args)
         {
             //  http://www.firebirdsql.org/refdocs/langrefupd21.html
-            functionDict.Add("DATEDIFF", "DATEDIFF(day,{0},{1})");
-            functionDict.Add("YEAR", "EXTRACT(YEAR FROM {0})");
-            functionDict.Add("MONTH", "EXTRACT(MONTH FROM {0})");
-            functionDict.Add("DAY", "EXTRACT(DAY FROM {0})");
-            functionDict.Add("HOUR", "EXTRACT(HOUR FROM {0})");
-            functionDict.Add("MINUTE", "EXTRACT(MINUTE FROM {0})");
-            functionDict.Add("SECOND", "EXTRACT(SECOND FROM {0})");
-            functionDict.Add("DAYOFYEAR", "EXTRACT(DAYOFYEAR FROM {0})");
-            functionDict.Add("WEEK", "EXTRACT(WEEK FROM {0})");
-            functionDict.Add("WEEKDAY", "EXTRACT(WEEKDAY FROM {0})");
-
-            functionDict.Add("SubString3", "SUBSTRING({0} FROM {1} FOR {2})");
-            functionDict.Add("SubString2", "SUBSTRING({0} FROM {1})");
-            functionDict.Add("LEFT", "SLEFT({0},{1})");
-            functionDict.Add("Right", "SRIGHT({0},{1})");
+            switch (function) {
+                case SqlFunction.Fuction: break;
+                case SqlFunction.Len: break;
+                case SqlFunction.Max: break;
+                case SqlFunction.Min: break;
+                case SqlFunction.Avg: break;
+                case SqlFunction.Sum: break;
+                case SqlFunction.Count: break;
+                case SqlFunction.CountDistinct: break;
+                case SqlFunction.DatePart: break;
+                case SqlFunction.DateDiff: return CreateFunction("DATEDIFF(day,{0},{1})", args);
+                case SqlFunction.Year: return CreateFunction("EXTRACT(YEAR FROM {0})", args);
+                case SqlFunction.Month: return CreateFunction("EXTRACT(MONTH FROM {0})", args);
+                case SqlFunction.Day: return CreateFunction("EXTRACT(DAY FROM {0})", args);
+                case SqlFunction.Hour: return CreateFunction("EXTRACT(HOUR FROM {0})", args);
+                case SqlFunction.Minute: return CreateFunction("EXTRACT(MINUTE FROM {0})", args);
+                case SqlFunction.Second: return CreateFunction("EXTRACT(SECOND FROM {0})", args);
+                case SqlFunction.DayOfYear: return CreateFunction("EXTRACT(DAYOFYEAR FROM {0})", args);
+                case SqlFunction.Week: return CreateFunction("EXTRACT(WEEK FROM {0})", args);
+                case SqlFunction.WeekDay: return CreateFunction("EXTRACT(WEEKDAY FROM {0})", args);
+                case SqlFunction.SubString3: return CreateFunction("SUBSTRING({0} FROM {1} FOR {2})", args);
+                case SqlFunction.SubString2: return CreateFunction("SUBSTRING({0} FROM {1})", args);
+                case SqlFunction.Left: return CreateFunction("SLEFT({0},{1})", args);
+                case SqlFunction.Right: return CreateFunction("SRIGHT({0},{1})", args);
+                case SqlFunction.Lower: break;
+                case SqlFunction.Upper: break;
+                case SqlFunction.Ascii: break;
+                case SqlFunction.Concat: break;
+                default: break;
+            }
+            return base.CreateFunction(function, args);
         }
 
         public FirebirdDbDatabaseProvider()
@@ -72,28 +88,10 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
 
         public override string EscapeSqlIdentifier(string sqlIdentifier)
         {
-            return string.Format("\"{0}\"", sqlIdentifier);
+            return $"\"{sqlIdentifier}\"";
         }
 
-        /// <summary>
-        /// 方法是否使用默认格式化
-        /// </summary>
-        /// <param name="funName"></param>
-        /// <returns></returns>
-        public override bool IsFunctionUseDefaultFormat(string funName)
-        {
-            return functionDict.ContainsKey(funName) == false;
-        }
-        /// <summary>
-        /// 获取非默认格式化
-        /// </summary>
-        /// <param name="sqlType"></param>
-        /// <param name="funName"></param>
-        /// <returns></returns>
-        public override string GetFunctionFormat(string funName)
-        {
-            return functionDict[funName];
-        }
+ 
 
     }
 }

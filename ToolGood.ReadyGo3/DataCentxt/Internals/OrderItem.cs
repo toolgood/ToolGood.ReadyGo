@@ -2,17 +2,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
     public partial class OrderItem 
     {
-        private QColumnBase column;
+        private QColumn column;
         private OrderType orderType;
         private string orderString;
 
-        public OrderItem(QColumnBase column, OrderType orderType)
+        public OrderItem(QColumn column, OrderType orderType)
         {
             this.column = column;
             this.orderType = orderType;
@@ -29,9 +29,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                 return orderString;
             }
             if (orderType == OrderType.Asc) {
-                return ((IColumnConvert)column).ToSql(provider, tableCount) + " ASC";
+                return (column).ToSql(provider, tableCount) + " ASC";
             }
-            return ((IColumnConvert)column).ToSql(provider, tableCount) + " DESC";
+            return (column).ToSql(provider, tableCount) + " DESC";
         }
     }
 }

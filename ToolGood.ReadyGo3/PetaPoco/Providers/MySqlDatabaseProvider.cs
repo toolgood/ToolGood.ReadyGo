@@ -20,7 +20,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
         public override string EscapeSqlIdentifier(string sqlIdentifier)
         {
-            return string.Format("`{0}`", sqlIdentifier);
+            return $"`{sqlIdentifier}`";
         }
 
         public override string GetExistsSql()

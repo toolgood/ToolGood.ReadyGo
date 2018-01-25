@@ -7,8 +7,11 @@ using ToolGood.ReadyGo3.Gadget.Caches;
 using ToolGood.ReadyGo3.PetaPoco;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
-namespace ToolGood.ReadyGo3
+namespace ToolGood.ReadyGo3.StoredProcedure
 {
+    /// <summary>
+    /// 存储过程
+    /// </summary>
     public abstract class SqlProcess : IDisposable
     {
         private bool _singleSqlHelper;
