@@ -6,6 +6,9 @@ using System.Text;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
+    /// <summary>
+    /// 
+    /// </summary>
     partial class QColumn
     {
 

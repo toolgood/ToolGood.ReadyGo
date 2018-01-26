@@ -2,6 +2,9 @@
 
 namespace ToolGood.ReadyGo3.PetaPoco.Utilities
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PagingHelper 
     {
         internal Regex RegexColumns = new Regex(@"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b",

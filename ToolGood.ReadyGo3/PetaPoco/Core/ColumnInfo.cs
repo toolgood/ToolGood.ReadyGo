@@ -87,7 +87,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
             return ci;
         }
-        public static bool IsAllowType(Type type)
+        internal static bool IsAllowType(Type type)
         {
             if (type == null) return false;
             if (type.IsEnum) return true;

@@ -10,6 +10,9 @@ namespace ToolGood.ReadyGo3
     /// </summary>
     public enum SqlType
     {
+        /// <summary>
+        /// 未设置
+        /// </summary>
         None = 0,
         /// <summary>
         /// SQLite 数据库

@@ -26,11 +26,13 @@ namespace ToolGood.ReadyGo3
         //时间秒左移22位
         private const int TimestampLeftShift = SequenceBits + WorkerIdBits;
 
-        public long Sequence = 0L;
+        private long Sequence = 0L;
         private long _lastTimestamp = -1L;
-
-        public long WorkerId { get; protected set; }
-
+        /// <summary>
+        /// 机器标识
+        /// </summary>
+        public long WorkerId { get; private set; }
+ 
         /// <summary>
         /// IdWorker
         /// </summary>
@@ -49,7 +51,10 @@ namespace ToolGood.ReadyGo3
         }
 
         readonly object _lock = new Object();
-
+        /// <summary>
+        /// 获取下一个ID
+        /// </summary>
+        /// <returns></returns>
         public virtual long NextId()
         {
             lock (_lock) {
@@ -78,7 +83,7 @@ namespace ToolGood.ReadyGo3
         }
 
         // 防止产生的时间比之前的时间还要小（由于NTP回拨等问题）,保持增量的趋势.
-        protected virtual long TilNextMillis(long lastTimestamp)
+        private long TilNextMillis(long lastTimestamp)
         {
             var timestamp = TimeGen();
             while (timestamp <= lastTimestamp) {
@@ -89,7 +94,7 @@ namespace ToolGood.ReadyGo3
 
         private static readonly long Twepoch = new DateTime(2015, 1, 1, 0, 0, 0, DateTimeKind.Utc).Ticks;
         // 获取当前的时间戳
-        protected virtual long TimeGen()
+        private long TimeGen()
         {
             //近似取秒的时间戳，实际比1秒更短
             //比以下代码效率更高

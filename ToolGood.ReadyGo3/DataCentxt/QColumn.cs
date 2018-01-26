@@ -11,23 +11,52 @@ namespace ToolGood.ReadyGo3.DataCentxt
 {
     public partial class QColumn
     {
+        /// <summary>
+        /// 列类型
+        /// </summary>
         protected internal ColumnType _columnType;
         // Column 信息
+        /// <summary>
+        /// 表
+        /// </summary>
         protected internal QTable _table;
+        /// <summary>
+        /// 列名
+        /// </summary>
         protected internal string _columnName;
+        /// <summary>
+        /// 是否为返回列
+        /// </summary>
         protected internal bool _isResultColumn;
+        /// <summary>
+        /// 返回列SQL语句
+        /// </summary>
         protected internal string _resultSql;
 
+        /// <summary>
+        /// SQL FUNCTION 类型
+        /// </summary>
         protected internal SqlFunction _function;
+        /// <summary>
+        /// SQL FUNCTION 参数
+        /// </summary>
         protected internal object[] _functionArgs;
         // Code 信息
+        /// <summary>
+        /// CODE
+        /// </summary>
         protected internal string _code;
         // As 信息
+        /// <summary>
+        /// 别名
+        /// </summary>
         protected internal string _asName;
 
         internal QColumn() { }
     }
-
+    /// <summary>
+    /// SQL列
+    /// </summary>
     public partial class QSqlColumn : QColumn
     {
         public QSqlColumn As(string name) { _asName = name; return this; }
@@ -40,7 +69,9 @@ namespace ToolGood.ReadyGo3.DataCentxt
         }
     }
 
-
+    /// <summary>
+    /// 表列
+    /// </summary>
     public abstract class QTableColumn : QColumn
     {
         internal bool _isPrimaryKey;
@@ -49,11 +80,21 @@ namespace ToolGood.ReadyGo3.DataCentxt
         internal string _fieldType;
 
         internal abstract object GetValue();
+        /// <summary>
+        /// 赋值
+        /// </summary>
+        /// <param name="value"></param>
         protected internal abstract void SetValue(object value);
         internal abstract QTableColumn GetNewValue();
+        /// <summary>
+        /// 清值 
+        /// </summary>
         protected internal abstract void ClearValue();
     }
-
+    /// <summary>
+    /// 表列T
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class QTableColumn<T> : QTableColumn
     {
         internal T _value;
@@ -61,6 +102,9 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         internal QTableColumn() : base() { _fieldType = typeof(T).Name.ToLower(); }
 
+        /// <summary>
+        /// 新值
+        /// </summary>
         public QTableColumn<T> NewValue
         {
             get { return (QTableColumn<T>)_newValue; }
@@ -90,21 +134,29 @@ namespace ToolGood.ReadyGo3.DataCentxt
         {
             return _newValue;
         }
-
+        /// <summary>
+        /// 清值
+        /// </summary>
         protected internal override void ClearValue()
         {
             _value = default(T);
             _changeType = ColumnChangeType.None;
         }
 
-
+       /// <summary>
+       /// 设置值
+       /// </summary>
+       /// <param name="value"></param>
         protected internal override void SetValue(object value)
         {
             object obj = ChangeType(value, typeof(T));
             _value = (T)obj;
             _changeType = ColumnChangeType.NewValue;
         }
-
+        /// <summary>
+        /// 用于赋值,SQL
+        /// </summary>
+        /// <param name="value"></param>
         public static implicit operator QTableColumn<T>(QSqlColumn value)
         {
             return new QTableColumn<T>() {
@@ -119,13 +171,20 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 _functionArgs = value._functionArgs,
             };
         }
-
+        /// <summary>
+        /// 非
+        /// </summary>
+        /// <param name="col"></param>
+        /// <returns></returns>
         public static QCondition operator !(QTableColumn<T> col)
         {
             if (typeof(T) != typeof(bool)) { throw new ColumnTypeException(); }
             return new QColumnValueCondition(col, "<>", true);
         }
-
+        /// <summary>
+        /// 用于赋值
+        /// </summary>
+        /// <param name="value"></param>
         public static implicit operator QTableColumn<T>(T value)
         {
             return new QTableColumn<T>() { _value = value, _columnType = Enums.ColumnType.Value };

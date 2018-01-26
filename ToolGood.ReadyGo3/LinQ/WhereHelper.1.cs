@@ -10,13 +10,16 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.LinQ
 {
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <typeparam name="T1"></typeparam>
     public partial class WhereHelper<T1>
         where T1 : class, new()
     {
         internal WhereHelper(SqlHelper helper)
         {
             this._sqlhelper = helper;
-            //this._provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
             this._paramPrefix = DatabaseProvider.Resolve(_sqlhelper._sqlType).GetParameterPrefix(_sqlhelper._connectionString);
             SqlExpression = new Expressions.SqlExpression(_sqlhelper._sqlType);
         }
@@ -28,7 +31,7 @@ namespace ToolGood.ReadyGo3.LinQ
         private string _joinOnString = "";
         private List<SelectHeader> _includeColumns = new List<SelectHeader>();
         private List<string> _excludeColumns = new List<string>();
-         private string _paramPrefix;
+        private string _paramPrefix;
 
         private string _order = "";
         private string _groupby = "";
@@ -869,42 +872,104 @@ namespace ToolGood.ReadyGo3.LinQ
         #endregion Select Page SkipTake Single SingleOrDefault First FirstOrDefault
 
         #region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        /// <summary>
+        /// 查询 返回列表
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public List<T> Select<T>(Expression<Func<T1, T>> columns)
         {
             string sql;
             SqlExpression.GetColumns(columns, out sql);
             return _sqlhelper.Select<T>(GetFullSelectSql(sql), _args);
         }
+        /// <summary>
+        /// 查询 返回列表
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="limit"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        public List<T> Select<T>(long limit, Expression<Func<T1, T>> columns)
+        {
+            string sql;
+            SqlExpression.GetColumns(columns, out sql);
+            return _sqlhelper.Select<T>(limit, GetFullSelectSql(sql), _args);
+        }
+        /// <summary>
+        /// 查询 返回列表
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        public List<T> Select<T>(long skip, long take, Expression<Func<T1, T>> columns)
+        {
+            string sql;
+            SqlExpression.GetColumns(columns, out sql);
+            return _sqlhelper.Select<T>(skip, take, GetFullSelectSql(sql), _args);
+        }
+   
+        /// <summary>
+        /// 返回唯一列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public T Single<T>(Expression<Func<T1, T>> columns)
         {
             string sql;
             SqlExpression.GetColumns(columns, out sql);
             return _sqlhelper.Single<T>(GetFullSelectSql(sql), _args);
         }
+        /// <summary>
+        /// 返回唯一列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public T SingleOrDefault<T>(Expression<Func<T1, T>> columns)
         {
             string sql;
             SqlExpression.GetColumns(columns, out sql);
             return _sqlhelper.SingleOrDefault<T>(GetFullSelectSql(sql), _args);
         }
+        /// <summary>
+        /// 返回第一列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public T First<T>(Expression<Func<T1, T>> columns)
         {
             string sql;
             SqlExpression.GetColumns(columns, out sql);
             return _sqlhelper.First<T>(GetFullSelectSql(sql), _args);
         }
+        /// <summary>
+        /// 返回第一列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public T FirstOrDefault<T>(Expression<Func<T1, T>> columns)
         {
             string sql;
             SqlExpression.GetColumns(columns, out sql);
             return _sqlhelper.FirstOrDefault<T>(GetFullSelectSql(sql), _args);
         }
-        public List<T> SkipTake<T>(long skip, long take, Expression<Func<T1, T>> columns)
-        {
-            string sql;
-            SqlExpression.GetColumns(columns, out sql);
-            return _sqlhelper.Select<T>(skip, take, GetFullSelectSql(sql), _args);
-        }
+
+
+        /// <summary>
+        /// 查询 返回Page
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public Page<T> Page<T>(long page, long itemsPerPage, Expression<Func<T1, T>> columns)
         {
             string sql;
@@ -1068,7 +1133,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
         #endregion
- 
+
         #region 04 获取Sql和args方法
         /// <summary>
         ///
@@ -1153,7 +1218,7 @@ namespace ToolGood.ReadyGo3.LinQ
         }
 
 
-        private  string CreateSelectHeader(List<SelectHeader> defineHeader)
+        private string CreateSelectHeader(List<SelectHeader> defineHeader)
         {
             var headers = GetSelectHeader();
             if (defineHeader != null && defineHeader.Count > 0) {
@@ -1187,7 +1252,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return sb.ToString();
         }
 
-        private  string CreateSelectHeader(Type outType, List<SelectHeader> defineHeader)
+        private string CreateSelectHeader(Type outType, List<SelectHeader> defineHeader)
         {
             if (defineHeader == null) defineHeader = new List<SelectHeader>();
             defineHeader.AddRange(GetSelectHeader());
@@ -1227,7 +1292,7 @@ namespace ToolGood.ReadyGo3.LinQ
             }
         }
 
-        private  List<SelectHeader> GetSelectHeader()
+        private List<SelectHeader> GetSelectHeader()
         {
             List<SelectHeader> list = new List<SelectHeader>();
 
@@ -1276,7 +1341,10 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #endregion 04 获取Sql和args方法
 
-        public virtual void Dispose()
+        /// <summary>
+        /// 释放
+        /// </summary>
+        public void Dispose()
         {
             _args = null;
             _where = null;
@@ -1287,7 +1355,7 @@ namespace ToolGood.ReadyGo3.LinQ
             _having = null;
         }
 
-         
+
 
     }
 }

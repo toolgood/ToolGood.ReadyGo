@@ -21,7 +21,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         /// <summary>
         /// 
         /// </summary>
-        public string Text { get; set; }
+        public string Text;
         /// <summary>
         /// 
         /// </summary>

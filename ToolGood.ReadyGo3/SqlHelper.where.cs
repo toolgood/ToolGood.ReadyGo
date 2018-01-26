@@ -50,6 +50,10 @@ namespace ToolGood.ReadyGo3
 
 namespace ToolGood.ReadyGo3.Mosaic
 {
+    /// <summary>
+    /// SqlHelper
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class SqlHelper<T> where T : class
     {
         private SqlHelper _helper;
@@ -87,19 +91,31 @@ namespace ToolGood.ReadyGo3.Mosaic
         }
 
         #region IfTrue IfSet IfNullOrEmpty IfNull
-
+        /// <summary>
+        /// 判断为真 ,否则跳过
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public SqlHelper<T> IfTrue(bool b)
         {
             _jump = !b;
             return this;
         }
-
+        /// <summary>
+        /// 判断为假 ,否则跳过
+        /// </summary>
+        /// <param name="b"></param>
+        /// <returns></returns>
         public SqlHelper<T> IfFalse(bool b)
         {
             _jump = b;
             return this;
         }
-
+        /// <summary>
+        /// 判断为已设置 ,否则跳过
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
         public SqlHelper<T> IfSet(string txt)
         {
             if (string.IsNullOrEmpty(txt)) {
@@ -107,7 +123,11 @@ namespace ToolGood.ReadyGo3.Mosaic
             }
             return this;
         }
-
+        /// <summary>
+        /// 判断为未设置 ,否则跳过
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
         public SqlHelper<T> IfNotSet(string txt)
         {
             if (string.IsNullOrEmpty(txt) == false) {
@@ -115,7 +135,11 @@ namespace ToolGood.ReadyGo3.Mosaic
             }
             return this;
         }
-
+        /// <summary>
+        /// 判断为NULL 或 空 ,否则跳过
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public SqlHelper<T> IfNullOrEmpty(string value)
         {
             if (string.IsNullOrEmpty(value) == false) {
@@ -123,7 +147,11 @@ namespace ToolGood.ReadyGo3.Mosaic
             }
             return this;
         }
-
+        /// <summary>
+        /// 判断为NULL 或 空格,否则跳过
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public SqlHelper<T> IfNullOrWhiteSpace(string value)
         {
             if (string.IsNullOrWhiteSpace(value) == false) {
@@ -131,7 +159,11 @@ namespace ToolGood.ReadyGo3.Mosaic
             }
             return this;
         }
-
+        /// <summary>
+        /// 判断为NULL,否则跳过
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public SqlHelper<T> IfNull(object obj)
         {
             if (Object.Equals(null, obj) == false) {
@@ -139,7 +171,11 @@ namespace ToolGood.ReadyGo3.Mosaic
             }
             return this;
         }
-
+        /// <summary>
+        /// 判断为非NULL,否则跳过
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public SqlHelper<T> IfNotNull(object obj)
         {
             if (Object.Equals(null, obj)) {
@@ -150,6 +186,12 @@ namespace ToolGood.ReadyGo3.Mosaic
         #endregion
 
         #region Where JoinWithOn GroupBy Having OrderBy Distinct
+        /// <summary>
+        /// Where ... Exists  语句
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public SqlHelper<T> WhereExists(string sql, params object[] args)
         {
             if (_jump) { _jump = false; return this; }
@@ -167,7 +209,12 @@ namespace ToolGood.ReadyGo3.Mosaic
             }
             return this;
         }
-
+        /// <summary>
+        /// Where ...NOT Exists  语句
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public SqlHelper<T> WhereNotExists(string sql, params object[] args)
         {
             if (_jump) { _jump = false; return this; }
@@ -185,7 +232,12 @@ namespace ToolGood.ReadyGo3.Mosaic
             }
             return this;
         }
-
+        /// <summary>
+        /// Where语句
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public SqlHelper<T> Where(string sql, params object[] args)
         {
             if (_jump) { _jump = false; return this; }
@@ -209,7 +261,11 @@ namespace ToolGood.ReadyGo3.Mosaic
             }
             return this;
         }
-
+        /// <summary>
+        /// join On 语句
+        /// </summary>
+        /// <param name="joinWithOn"></param>
+        /// <returns></returns>
         public SqlHelper<T> JoinWithOn(string joinWithOn)
         {
             if (_jump) { _jump = false; return this; }
@@ -224,7 +280,11 @@ namespace ToolGood.ReadyGo3.Mosaic
             }
             return this;
         }
-
+        /// <summary>
+        /// Group By 语句
+        /// </summary>
+        /// <param name="groupBy"></param>
+        /// <returns></returns>
         public SqlHelper<T> GroupBy(string groupBy)
         {
             if (_jump) { _jump = false; return this; }
@@ -243,7 +303,11 @@ namespace ToolGood.ReadyGo3.Mosaic
             }
             return this;
         }
-
+        /// <summary>
+        /// Having语句
+        /// </summary>
+        /// <param name="having"></param>
+        /// <returns></returns>
         public SqlHelper<T> Having(string having)
         {
             if (_jump) { _jump = false; return this; }
@@ -263,7 +327,11 @@ namespace ToolGood.ReadyGo3.Mosaic
             return this;
 
         }
-
+        /// <summary>
+        /// 排序
+        /// </summary>
+        /// <param name="orderBy"></param>
+        /// <returns></returns>
         public SqlHelper<T> OrderBy(string orderBy)
         {
             if (_jump) { _jump = false; return this; }

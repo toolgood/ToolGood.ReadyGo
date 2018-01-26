@@ -5,6 +5,9 @@ using System.Text;
 
 namespace ToolGood.ReadyGo3
 {
+    /// <summary>
+    /// Like语句类型
+    /// </summary>
     public enum LikeType
     {
         /// <summary>

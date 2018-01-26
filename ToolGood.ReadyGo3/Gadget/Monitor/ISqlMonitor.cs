@@ -1,5 +1,8 @@
 ﻿namespace ToolGood.ReadyGo3.Gadget.Monitor
 {
+    /// <summary>
+    /// SQL 监控
+    /// </summary>
     public interface ISqlMonitor
     {
         /// <summary>

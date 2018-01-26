@@ -10,8 +10,17 @@ namespace ToolGood.ReadyGo3.DataCentxt
 {
     public abstract partial class QTable : IDisposable
     {
+        /// <summary>
+        /// 表名
+        /// </summary>
         public string __TableName__ { get { return _tableName; } set { _tableName = value.Trim(); } }
+        /// <summary>
+        /// Schema名
+        /// </summary>
         public string __SchemaName__ { get { return _schemaName; } set { _schemaName = value.Trim(); } }
+        /// <summary>
+        /// SQL记录
+        /// </summary>
         public SqlRecord __SQL__ { get { return GetSqlHelper()._Sql; } }
 
         private bool _singleSqlHelper;
@@ -70,6 +79,15 @@ namespace ToolGood.ReadyGo3.DataCentxt
             }
             return column;
         }
+        /// <summary>
+        /// 添加列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columnName"></param>
+        /// <param name="fieldName"></param>
+        /// <param name="isPk"></param>
+        /// <param name="isAutoIncrement"></param>
+        /// <returns></returns>
         protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk, bool? isAutoIncrement = null)
         {
             if (isPk) {
@@ -85,6 +103,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
             }
             return AddColumn<T>(columnName, fieldName, isPk, false, false, null);
         }
+        /// <summary>
+        /// 添加列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columnName"></param>
+        /// <param name="fieldName"></param>
+        /// <param name="resultSql"></param>
+        /// <returns></returns>
         protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, string resultSql)
         {
             if (string.IsNullOrEmpty(resultSql) == false) {
@@ -130,11 +156,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
             }
             return _sqlHelper;
         }
-        protected internal SqlType GetSqlType()
+        internal SqlType GetSqlType()
         {
             return GetSqlHelper()._sqlType;
         }
-         internal SqlBuilder GetSqlBuilder()
+        internal SqlBuilder GetSqlBuilder()
         {
             if (_sqlBuilder == null) {
                 _sqlBuilder = new SqlBuilder(this);

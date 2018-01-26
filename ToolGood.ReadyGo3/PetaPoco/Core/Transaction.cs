@@ -12,7 +12,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// Transaction
         /// </summary>
         /// <param name="db"></param>
-        public Transaction(Database db)
+        internal Transaction(Database db)
         {
             _db = db;
             _db.BeginTransaction();

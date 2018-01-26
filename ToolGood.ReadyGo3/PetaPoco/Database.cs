@@ -17,7 +17,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
     /// <summary>
     /// PetaPoco数据库链接库
     /// </summary>
-    public class Database: IDisposable
+    public class Database : IDisposable
     {
         #region IDisposable
 
@@ -117,7 +117,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     Called when a transaction starts.  Overridden by the T4 template generated database
         ///     classes to ensure the same DB instance is used throughout the transaction.
         /// </summary>
-        public virtual void OnBeginTransaction()
+        internal void OnBeginTransaction()
         {
             _sqlHelper._sqlMonitor.Transactioning();
         }
@@ -125,7 +125,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <summary>
         ///     Called when a transaction ends.
         /// </summary>
-        public virtual void OnEndTransaction()
+        public void OnEndTransaction()
         {
             _sqlHelper._sqlMonitor.Transactioned();
         }
@@ -270,7 +270,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         // Create a command
         private static Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <param name="commandType"></param>
+        /// <returns></returns>
         public IDbCommand CreateCommand(IDbConnection connection, string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             // Perform parameter prefix replacements
@@ -283,7 +290,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             cmd.CommandText = sql;
             cmd.Transaction = _transaction;
             cmd.CommandType = commandType;
-            if (commandType== CommandType.StoredProcedure) {
+            if (commandType == CommandType.StoredProcedure) {
                 foreach (var item in args) {
                     var idbParam = item as IDbDataParameter;
                     cmd.Parameters.Add(idbParam);
@@ -313,11 +320,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         /// <param name="x">The exception instance</param>
         /// <returns>True to re-throw the exception, false to suppress it</returns>
-        public virtual bool OnException(Exception x)
+        public bool OnException(Exception x)
         {
             System.Diagnostics.Debug.WriteLine(x.ToString());
             System.Diagnostics.Debug.WriteLine(_sqlHelper._sql.LastCommand);
- 
+
             _sqlHelper._sqlMonitor.Exception(x.Message);
             _sqlHelper._sql.LastErrorMessage = x.Message;
 
@@ -333,7 +340,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     Override this method to provide custom logging of opening connection, or
         ///     to provide a proxy IDbConnection.
         /// </remarks>
-        public virtual IDbConnection OnConnectionOpened(IDbConnection conn)
+        public IDbConnection OnConnectionOpened(IDbConnection conn)
         {
             _sqlHelper._sqlMonitor.ConnectionOpened();
 
@@ -344,7 +351,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     Called when DB connection closed
         /// </summary>
         /// <param name="conn">The soon to be closed IDBConnection</param>
-        public virtual void OnConnectionClosing(IDbConnection conn)
+        public void OnConnectionClosing(IDbConnection conn)
         {
             _sqlHelper._sqlMonitor.ConnectionClosing();
         }
@@ -357,7 +364,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     Override this method to provide custom logging of commands and/or
         ///     modification of the IDbCommand before it's executed
         /// </remarks>
-        public virtual void OnExecutingCommand(IDbCommand cmd)
+        public void OnExecutingCommand(IDbCommand cmd)
         {
             var objs = (from IDataParameter parameter in cmd.Parameters select parameter.Value).ToArray();
             _sqlHelper._sql.LastSQL = cmd.CommandText;
@@ -372,7 +379,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     Called on completion of command execution
         /// </summary>
         /// <param name="cmd">The IDbCommand that finished executing</param>
-        public virtual void OnExecutedCommand(IDbCommand cmd)
+        public void OnExecutedCommand(IDbCommand cmd)
         {
             var objs = (from IDataParameter parameter in cmd.Parameters select parameter.Value).ToArray();
             _sqlHelper._sqlMonitor.ExecutedCommand(cmd.CommandText, objs);
@@ -391,7 +398,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="args">Arguments to any embedded parameters in the SQL</param>
         /// <param name="commandType"></param>
         /// <returns>The number of rows affected</returns>
-        public int Execute(string sql, object[] args, CommandType commandType= CommandType.Text)
+        public int Execute(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             try {
                 OpenSharedConnection();
@@ -780,7 +787,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
 
         private static Cache<Tuple<Type, SqlType, int>, string> insert = new Cache<Tuple<Type, SqlType, int>, string>();
-
+        /// <summary>
+        /// 插入列表
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
         public void Insert<T>(List<T> list)
         {
             if (list == null) throw new ArgumentNullException("poco");
@@ -1018,7 +1029,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             // Do it
             var sql = string.Format("DELETE FROM {0} WHERE {1}=@0", _provider.EscapeTableName(tableName), _provider.EscapeSqlIdentifier(primaryKeyName));
-            return Execute(sql,new object[]{ primaryKeyValue } );
+            return Execute(sql, new object[] { primaryKeyValue });
         }
 
         /// <summary>
