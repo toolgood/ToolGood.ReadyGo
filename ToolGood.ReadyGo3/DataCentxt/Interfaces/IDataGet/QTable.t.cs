@@ -143,7 +143,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return Page<T>(page, size, columns);
         }
         #endregion
- 
+
         #region ExecuteDataTable
         public DataTable ExecuteDataTable()
         {

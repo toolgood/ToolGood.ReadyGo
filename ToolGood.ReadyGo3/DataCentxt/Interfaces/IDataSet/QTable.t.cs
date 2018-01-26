@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-////using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
@@ -58,13 +58,13 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// </summary>
         /// <param name="returnInsertId">是否返回插入的ID</param>
         /// <returns></returns>
-        public object Insert(bool returnInsertId=false)
+        public object Insert(bool returnInsertId = false)
         {
             var config = GetSqlHelper()._Config;
-            if (config.Insert_DateTime_Default_Now 
+            if (config.Insert_DateTime_Default_Now
                 || config.Insert_Guid_Default_New
                 || config.Insert_String_Default_NotNull) {
-                ( this).SetDefaultValue(config.Insert_DateTime_Default_Now,
+                (this).SetDefaultValue(config.Insert_DateTime_Default_Now,
                     config.Insert_String_Default_NotNull, config.Insert_Guid_Default_New);
             }
             return GetSqlBuilder().Insert(returnInsertId);

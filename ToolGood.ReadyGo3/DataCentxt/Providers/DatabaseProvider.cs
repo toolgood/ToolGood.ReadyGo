@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Enums;
-//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.DataCentxt.Providers;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
@@ -77,8 +77,8 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public virtual string Delete(List<QTable> tables, QColumn pk, string tableName, string fromtable, string jointables, string where)
         {
             if (object.Equals(pk, null)) throw new NoPrimaryKeyException();
-            var pk1 = (pk).ToSql(this, 1);
-            var pk2 = (pk).ToSql(this, tables.Count);
+            var pk1 = pk.ToSql(this, 1);
+            var pk2 = pk.ToSql(this, tables.Count);
             return $"DELETE {tableName} WHERE {pk1} IN (SELECT {pk2} FROM {fromtable} {jointables} WHERE {where});";
         }
 

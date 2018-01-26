@@ -5,7 +5,7 @@ namespace ToolGood.ReadyGo3.Attributes
     /// <summary>
     /// 返回
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property , AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class ResultColumnAttribute : ColumnAttribute
     {
         /// <summary>
@@ -26,9 +26,9 @@ namespace ToolGood.ReadyGo3.Attributes
         /// <param name="definition"></param>
         public ResultColumnAttribute(string name, string definition) : base(name)
         {
-            if (string.IsNullOrEmpty(definition)==false) {
+            if (string.IsNullOrEmpty(definition) == false) {
                 definition = definition.Replace("{0}.", "{0}").Trim();
-                if (definition.StartsWith("(")==false) {
+                if (definition.StartsWith("(") == false) {
                     definition = "(" + definition + ")";
                 }
                 Definition = definition;

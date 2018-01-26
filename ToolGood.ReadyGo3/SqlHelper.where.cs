@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 using ToolGood.ReadyGo3.Mosaic;
 
@@ -339,7 +339,7 @@ namespace ToolGood.ReadyGo3.Mosaic
 
             if (type1 == type2) {
                 var pd = PetaPoco.Core.PocoData.ForType(type1, null);
-                var tableName = _helper._provider.EscapeTableName(pd.TableInfo.TableName);
+                var tableName = _provider.EscapeSqlIdentifier(pd.TableInfo.TableName);
                 StringBuilder stringBuilder = new StringBuilder();
                 foreach (var item in pd.Columns) {
                     var col = item.Value;
@@ -352,7 +352,7 @@ namespace ToolGood.ReadyGo3.Mosaic
                             stringBuilder.Append(col.ColumnName);
                         }
                     } else {
-                        stringBuilder.AppendFormat("{0}.{1}", tableName, _helper._provider.EscapeSqlIdentifier(col.ColumnName));
+                        stringBuilder.AppendFormat("{0}.{1}", tableName, _provider.EscapeSqlIdentifier(col.ColumnName));
                     }
                 }
                 if (stringBuilder.Length == 0) throw new NoColumnException();
@@ -360,7 +360,7 @@ namespace ToolGood.ReadyGo3.Mosaic
                 return new List<string>() { stringBuilder.ToString() };
             } else {
                 var pd = PetaPoco.Core.PocoData.ForType(type1, null);
-                var tableName = _helper._provider.EscapeTableName(pd.TableInfo.TableName);
+                var tableName = _provider.EscapeSqlIdentifier(pd.TableInfo.TableName);
 
                 var cols = PetaPoco.Core.PocoData.ForType(type2, null).Columns.Select(q => q.Key).ToString();
 
@@ -378,7 +378,7 @@ namespace ToolGood.ReadyGo3.Mosaic
                             stringBuilder.Append(col.ColumnName);
                         }
                     } else {
-                        stringBuilder.AppendFormat("{0}.{1}", tableName, _helper._provider.EscapeSqlIdentifier(col.ColumnName));
+                        stringBuilder.AppendFormat("{0}.{1}", tableName, _provider.EscapeSqlIdentifier(col.ColumnName));
                     }
                 }
                 if (stringBuilder.Length == 0) throw new NoColumnException();

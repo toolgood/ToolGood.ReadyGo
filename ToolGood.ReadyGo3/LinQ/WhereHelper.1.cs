@@ -1151,11 +1151,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
         #endregion
-
-
-
-
-
+ 
         #region 04 获取Sql和args方法
         /// <summary>
         ///
@@ -1374,20 +1370,7 @@ namespace ToolGood.ReadyGo3.LinQ
             _having = null;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-   
-
+         
 
     }
 }

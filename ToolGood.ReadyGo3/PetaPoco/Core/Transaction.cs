@@ -23,7 +23,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         public void Dispose()
         {
-            if (_db != null)
+            if (_db != null )
                 _db.AbortTransaction();
         }
     }

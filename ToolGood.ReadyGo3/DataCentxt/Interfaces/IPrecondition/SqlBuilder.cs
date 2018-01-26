@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-////using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
@@ -40,12 +40,12 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         public void IfNull(object obj)
         {
-            IfTrue(object.Equals(null,obj));
+            IfTrue(object.Equals(null, obj));
         }
 
         public void IfNotNull(object obj)
         {
-            IfTrue(object.Equals(null, obj)==false);
+            IfTrue(object.Equals(null, obj) == false);
         }
     }
 }

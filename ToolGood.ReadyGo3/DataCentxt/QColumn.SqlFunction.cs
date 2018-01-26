@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
@@ -11,7 +11,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         #region 常用SQL函数
         /// <summary>
-        /// 返回字符串str的长度
+        /// 字符串str的长度
         /// </summary>
         /// <returns></returns>
         public QSqlColumn Len()
@@ -63,7 +63,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QSqlColumn(Enums.SqlFunction.Count, this);
         }
         /// <summary>
-        /// 返回日期格式，不适应所有数据库，请少用
+        /// 日期格式，不适应所有数据库，请少用
         /// </summary>
         /// <param name="part"></param>
         /// <returns></returns>
@@ -129,7 +129,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QSqlColumn(Enums.SqlFunction.Second, this);
         }
         /// <summary>
-        /// 返回年份为日期的天，范围为1至366。
+        /// 年份为日期的天，范围为1至366。
         /// </summary>
         /// <returns></returns>
         public QSqlColumn DayOfYear()
@@ -137,7 +137,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QSqlColumn(Enums.SqlFunction.DayOfYear, this);
         }
         /// <summary>
-        /// 返回日期的星期数
+        /// 日期的星期数
         /// </summary>
         /// <returns></returns>
         public QSqlColumn Week()
@@ -145,7 +145,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QSqlColumn(Enums.SqlFunction.Week, this);
         }
         /// <summary>
-        /// 返回一个日期的工作日索引值，即星期一为0，星期二为1，星期日为6。
+        /// 一个日期的工作日索引值，即星期一为0，星期二为1，星期日为6。
         /// </summary>
         /// <returns></returns>
         public QSqlColumn WeekDay()
@@ -153,7 +153,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QSqlColumn(Enums.SqlFunction.WeekDay, this);
         }
         /// <summary>
-        /// 返回一个从位置start开始的长度为length子串
+        /// 一个从位置start开始的长度为length子串
         /// </summary>
         /// <param name="start"></param>
         /// <param name="length"></param>
@@ -163,7 +163,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QSqlColumn(Enums.SqlFunction.SubString3, this,start,length);
         }
         /// <summary>
-        /// 返回一个从位置start开始的子串
+        /// 一个从位置start开始的子串
         /// </summary>
         /// <param name="start"></param>
         /// <returns></returns>
@@ -172,7 +172,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QSqlColumn(Enums.SqlFunction.SubString2, this,start);
         }
         /// <summary>
-        /// 返回字符串str最左边的 len 个字符
+        /// 字符串str最左边的 len 个字符
         /// </summary>
         /// <param name="length"></param>
         /// <returns></returns>
@@ -181,7 +181,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QSqlColumn(Enums.SqlFunction.Left, this,length);
         }
         /// <summary>
-        /// 返回字符串str最右边的 len 个字符
+        /// 字符串str最右边的 len 个字符
         /// </summary>
         /// <param name="length"></param>
         /// <returns></returns>
@@ -191,7 +191,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         }
 
         /// <summary>
-        /// 返回根据当前字符集映射转为小写字母。
+        /// 根据当前字符集映射转为小写字母。
         /// </summary>
         /// <returns></returns>
         public QSqlColumn Lower()
@@ -199,7 +199,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QSqlColumn(Enums.SqlFunction.Lower, this);
         }
         /// <summary>
-        /// 返回根据当前字符集映射转为大写字母。
+        /// 根据当前字符集映射转为大写字母。
         /// </summary>
         /// <returns></returns>
         public QSqlColumn Upper()
@@ -207,7 +207,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QSqlColumn(Enums.SqlFunction.Upper, this);
         }
         /// <summary>
-        /// 返回字符串str的最左字符的数值。
+        /// 字符串str的最左字符的数值。
         /// </summary>
         /// <returns></returns>
         public QSqlColumn Ascii()
@@ -216,7 +216,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         }
 
         /// <summary>
-        /// 
+        /// 字符串拼接
         /// </summary>
         /// <returns></returns>
         public QSqlColumn Concat()
@@ -225,7 +225,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         }
 
         /// <summary>
-        /// 
+        /// 去除字符串首尾空格
         /// </summary>
         /// <returns></returns>
         public QSqlColumn Trim()
@@ -234,7 +234,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         }
 
         /// <summary>
-        /// 
+        /// 去除字符串首空格
         /// </summary>
         /// <returns></returns>
         public QSqlColumn LTrim()
@@ -243,7 +243,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         }
 
         /// <summary>
-        /// 
+        /// 去除字符串尾空格
         /// </summary>
         /// <returns></returns>
         public QSqlColumn RTrim()

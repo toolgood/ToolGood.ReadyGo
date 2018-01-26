@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-////using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
@@ -19,8 +19,8 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             var sql = (this).GetFullInsertSql(Provider);
             if (returnInsertId) {
-                var pk = ( _tables[0]).GetPrimaryKey();
-                if (object.Equals(pk,null)) {
+                var pk = (_tables[0]).GetPrimaryKey();
+                if (object.Equals(pk, null)) {
                     throw new NoPrimaryKeyException();
                 }
                 return GetSqlHelper().Insert(sql, pk._columnName);

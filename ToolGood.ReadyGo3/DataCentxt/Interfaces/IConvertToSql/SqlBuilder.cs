@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-////using ToolGood.ReadyGo3.DataCentxt.Interfaces;
 
- 
+
+
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-    partial class SqlBuilder 
+    partial class SqlBuilder
     {
         string GetWhere(DatabaseProvider provider)
         {
@@ -26,12 +26,12 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                 return where;
             }
             var table = _tables[0];
-            if ((table).IsSetPrimaryKey()) {
-                var pk = (table).GetPrimaryKey();
-                if (pk._changeType== Enums.ColumnChangeType.NewValue) {
-                    return (pk).ToSql(provider, _tables.Count) + " = " + provider.EscapeParam(pk.GetValue());
+            if (table.IsSetPrimaryKey()) {
+                var pk = table.GetPrimaryKey();
+                if (pk._changeType == Enums.ColumnChangeType.NewValue) {
+                    return pk.ToSql(provider, _tables.Count) + " = " + provider.EscapeParam(pk.GetValue());
                 }
-                return (pk).ToSql(provider, _tables.Count) + " = " + pk.GetNewValue().ToSql(provider, _tables.Count);
+                return pk.ToSql(provider, _tables.Count) + " = " + pk.GetNewValue().ToSql(provider, _tables.Count);
             }
             throw new ArgumentNullException("where is not set!");
         }
@@ -39,7 +39,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         string GetFromTable(DatabaseProvider provider)
         {
             var table = _tables[0];
-            return (table).ToTableSql(provider, _tables.Count, _usedSchemaName);
+            return table.ToTableSql(provider, _tables.Count, _usedSchemaName);
         }
 
         string GetJoinSql(DatabaseProvider provider)
@@ -49,7 +49,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             for (int i = 1; i < _tables.Count; i++) {
                 var table = _tables[i];
                 stringBuilder.Append(" ");
-                var joinsql = (table).ToJoinSql(provider, _tables.Count, _usedSchemaName);
+                var joinsql = table.ToJoinSql(provider, _tables.Count, _usedSchemaName);
                 stringBuilder.Append(joinsql);
             }
             if (string.IsNullOrWhiteSpace(_joinOnText) == false) {
@@ -103,7 +103,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         string GetUpdateSetSql(DatabaseProvider provider)
         {
             var table = _tables[0];
-            var cols = (table).GetUpdateColumns();
+            var cols = table.GetUpdateColumns();
             if (cols.Count == 0) return null;
 
             StringBuilder stringBuilder = new StringBuilder();

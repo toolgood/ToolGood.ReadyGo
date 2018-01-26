@@ -46,9 +46,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
 
    
                 if (!rxFrom.IsMatch(sql))
-                    sql = string.Format("SELECT {0} FROM {1} {2}", stringBuilder.ToString(), tableName, sql);
+                    sql = $"SELECT {stringBuilder.ToString()} FROM {tableName} {sql}";
                 else
-                    sql = string.Format("SELECT {0} {1}", stringBuilder.ToString(), sql);
+                    sql = $"SELECT {stringBuilder.ToString()} {sql}";
             }
             return sql;
         }

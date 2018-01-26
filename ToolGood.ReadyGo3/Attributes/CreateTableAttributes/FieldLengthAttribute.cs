@@ -5,7 +5,7 @@ namespace ToolGood.ReadyGo3.Attributes
     /// <summary>
     /// 列长度
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property , AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class FieldLengthAttribute : Attribute
     {
         /// <summary>
@@ -47,7 +47,7 @@ namespace ToolGood.ReadyGo3.Attributes
     /// <summary>
     /// 文本
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property , AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class TextAttribute : FieldLengthAttribute
     {
         /// <summary>

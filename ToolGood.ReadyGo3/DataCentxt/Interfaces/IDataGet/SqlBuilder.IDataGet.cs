@@ -4,7 +4,7 @@ using System.Data;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
@@ -100,7 +100,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                     var col = item.Value;
                     if (columns.Contains(col._columnName)) {
                         columns.Remove(col._columnName);
-                        selectColumns.Add(( col).ToSelectColumn(Provider, _tables.Count));
+                        selectColumns.Add((col).ToSelectColumn(Provider, _tables.Count));
                     } else if (columns.Contains(col._asName)) {
                         columns.Remove(col._asName);
                         selectColumns.Add((col).ToSelectColumn(Provider, _tables.Count));

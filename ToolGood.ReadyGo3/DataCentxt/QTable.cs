@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 using ToolGood.ReadyGo3.Gadget.Internals;
 
@@ -24,6 +24,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         internal JoinType _joinType;
         internal QJoinCondition _joinCondition;
         internal Dictionary<string, QTableColumn> _columns = new Dictionary<string, QTableColumn>();
+        internal QTableColumn _primaryKey;
 
         protected QTable()
         {
@@ -52,7 +53,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
 
         #region AddColumn
-        private QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk,bool isAutoIncrement, bool resultColumn, string resultSql)
+        private QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk, bool isAutoIncrement, bool resultColumn, string resultSql)
         {
             QTableColumn<T> column = new QTableColumn<T>();
             column._columnType = Enums.ColumnType.Column;
@@ -63,9 +64,12 @@ namespace ToolGood.ReadyGo3.DataCentxt
             column._table = this;
             column._isAutoIncrement = isAutoIncrement;
             _columns.Add(fieldName.ToLower(), column);
+            if (isPk) {
+                _primaryKey = column;
+            }
             return column;
         }
-        protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk,bool? isAutoIncrement=null)
+        protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk, bool? isAutoIncrement = null)
         {
             if (isPk) {
                 if (isAutoIncrement == null) {
@@ -96,6 +100,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         {
             if (_sqlBuilder != null) {
                 _sqlBuilder.Dispose();
+                _sqlBuilder = null;
             }
         }
 
@@ -139,7 +144,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         protected QTable(SqlHelper sqlHelper) : base(sqlHelper)
         {
-            
+
         }
 
     }

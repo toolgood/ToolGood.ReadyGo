@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.Common;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
@@ -810,32 +808,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             } catch (Exception x) {
                 OnException(x);
             }
-        }
-        private bool IsNumericType(Type type)
-        {
-            if (type != null) {
-                if (type.IsEnum) {
-                    return true;
-                }
-                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
-                    type = type.GetGenericArguments()[0];
-
-                switch (Type.GetTypeCode(type)) {
-                    case TypeCode.SByte:
-                    case TypeCode.Byte:
-                    case TypeCode.Int16:
-                    case TypeCode.UInt16:
-                    case TypeCode.Int32:
-                    case TypeCode.UInt32:
-                    case TypeCode.Int64:
-                    case TypeCode.UInt64:
-                    case TypeCode.Single:
-                    case TypeCode.Double:
-                    case TypeCode.Decimal:
-                        return true;
-                }
-            }
-            return false;
         }
 
         private string CteateInsertSql(PocoData pd, int size, string tableName, string primaryKeyName, bool autoIncrement)

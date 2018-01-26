@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 
 namespace ToolGood.ReadyGo3.DataCentxt
@@ -74,22 +74,13 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         internal QTableColumn GetPrimaryKey()
         {
-            foreach (var item in _columns) {
-                var col = item.Value;
-                if (col._isPrimaryKey) {
-                    return col;
-                }
-            }
-            return null;
+            return _primaryKey;
         }
 
         internal bool IsSetPrimaryKey()
         {
-            foreach (var item in _columns) {
-                var col = item.Value;
-                if (col._isPrimaryKey) {
-                    return col._changeType == Enums.ColumnChangeType.NewValue;
-                }
+            if (object.Equals(null, _primaryKey) == false) {
+                return _primaryKey._changeType == Enums.ColumnChangeType.NewValue;
             }
             throw new NoPrimaryKeyException();
         }

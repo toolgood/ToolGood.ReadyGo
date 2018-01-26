@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
@@ -12,9 +12,8 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         internal DatabaseProvider _provider;
         internal DatabaseProvider Provider
         {
-            get
-            {
-                if (_provider==null) {
+            get {
+                if (_provider == null) {
                     _provider = DatabaseProvider.Resolve(_tables[0].GetSqlType());
                 }
                 return _provider;
@@ -39,30 +38,30 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             _tables.Add(table);
             table._asName = "t" + _tables.Count;
-            if (string.IsNullOrEmpty(table._schemaName)==false ) {
+            if (string.IsNullOrEmpty(table._schemaName) == false) {
                 SetUsedSchemaName();
             }
         }
 
         private SqlHelper GetSqlHelper()
         {
-           return _tables[0].GetSqlHelper();
+            return _tables[0].GetSqlHelper();
         }
 
         private void SetUsedSchemaName()
         {
-            if (_usedSchemaName==false) {
+            if (_usedSchemaName == false) {
                 bool hasSchemaName = false;
                 string schemaName = "";
 
-                if (string.IsNullOrEmpty(GetSqlHelper()._schemaName)==false) {
+                if (string.IsNullOrEmpty(GetSqlHelper()._schemaName) == false) {
                     hasSchemaName = true;
                     schemaName = GetSqlHelper()._schemaName;
                 }
                 foreach (var item in _tables) {
                     if (string.IsNullOrEmpty(item._schemaName) == false) {
                         if (hasSchemaName) {
-                            if (schemaName!= item._schemaName) {
+                            if (schemaName != item._schemaName) {
                                 _usedSchemaName = true;
                                 return;
                             }

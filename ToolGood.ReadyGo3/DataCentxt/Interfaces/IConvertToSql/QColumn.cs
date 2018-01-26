@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 
 
@@ -44,25 +44,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             if (_columnType == Enums.ColumnType.Code) {
                 return _code;
             }
-
-            //string function = _functionFormat;
-            //if (_columnType == Enums.ColumnType.Function) {
-                return provider.CreateFunction(_function, _functionArgs);
-
-            //    if (provider.IsFunctionUseDefaultFormat(_functionName) == false) {
-            //        function = provider.GetFunctionFormat(_functionName);
-            //    }
-            //}
-            //var args = new string[_functionArgs.Length];
-            //for (int i = 0; i < _functionArgs.Length; i++) {
-            //    var item = _functionArgs[i];
-            //    if (item is QColumnBase) {
-            //        args[i] = ((QColumnBase)item).ToSql(provider, tableCount);
-            //    } else {
-            //        args[i] = provider.EscapeParam(item);
-            //    }
-            //}
-            //return string.Format(function, args);
+            return provider.CreateFunction(_function, _functionArgs);
         }
 
         internal string ToUpdateSet(DatabaseProvider provider, int tableCount)

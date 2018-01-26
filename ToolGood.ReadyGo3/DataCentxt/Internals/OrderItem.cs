@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-//using ToolGood.ReadyGo3.DataCentxt.Interfaces;
+
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-    public partial class OrderItem 
+    public partial class OrderItem
     {
         private QColumn column;
         private OrderType orderType;
@@ -23,7 +23,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             this.orderString = order;
         }
 
-      public  string ToSql(DatabaseProvider provider, int tableCount)
+        public string ToSql(DatabaseProvider provider, int tableCount)
         {
             if (orderString != null) {
                 return orderString;

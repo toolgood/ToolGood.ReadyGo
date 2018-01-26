@@ -5,7 +5,7 @@ namespace ToolGood.ReadyGo3.Attributes
     /// <summary>
     /// 列标签
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property , AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class ColumnAttribute : Attribute
     {
         /// <summary>
@@ -37,7 +37,7 @@ namespace ToolGood.ReadyGo3.Attributes
         {
             this.Name = name.Trim();
             ForceToUtc = false;
-            if (comment!=null) {
+            if (comment != null) {
                 this.Comment = comment.Trim();
             }
         }
