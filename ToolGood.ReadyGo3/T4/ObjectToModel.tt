@@ -44,18 +44,15 @@ using ToolGood.ReadyGo3.DataCentxt;
 namespace <#=        nameSpace #>
 {
 <#    foreach(EnvDTE.CodeClass codeClass in allClasses){ #>
-    public class <#=            GetClass(codeClass,oldClassPrefix,newClassPrefix) #>Model
+    public class <#=            GetClass(codeClass,oldClassPrefix,newClassPrefix) #>Model : QTableModel
     {
-		#region Model Base
-        private Dictionary<string, object> _dictionary = new Dictionary<string, object>();
-        private void SetValue(string txt, object value){_dictionary[txt] = value;}
-		private T GetValue<T>(string txt) { return _dictionary.ContainsKey(txt) ? (T) _dictionary[txt] : default(T); } 
-		public Dictionary<string, object> GetChange() { return _dictionary; }
-		#endregion
- 
-<#      var allProperty = VisualStudioHelper.GetAllCodeElementsOfType(codeClass.Members, EnvDTE.vsCMElement.vsCMElementProperty, false); 
+<#      var hasLastUpdateTime=false;
+		var allProperty = VisualStudioHelper.GetAllCodeElementsOfType(codeClass.Members, EnvDTE.vsCMElement.vsCMElementProperty, false); 
         var pis =new List<EnvDTE80.CodeProperty2>();
         foreach  (EnvDTE80.CodeProperty2 pi in allProperty) {
+			if(pi.Name=="IsDelete") continue;
+			if(pi.Name=="AddingTime") continue;
+			if(pi.Name=="LastUpdateTime") {hasLastUpdateTime=true; continue;}
             if(pi.ReadWrite==EnvDTE80.vsCMPropertyKind.vsCMPropertyKindReadWrite){
             if (pi.Access== EnvDTE.vsCMAccess.vsCMAccessPublic) {
                     pis.Add(pi);
@@ -63,11 +60,14 @@ namespace <#=        nameSpace #>
             }
         }  #>
 <#        foreach  (EnvDTE.CodeProperty pi in pis) { #>
-        <#=                GetSummary(pi.DocComment) #>
 <#            if(IsResultColumn(pi)==false){ #>
-		public <#= pi.Type.AsString #> <#= pi.Name #> { get { return GetValue<<#= pi.Type.AsString #>>("<#= pi.Name #>"); } set { SetValue("<#= pi.Name #>",value); } }
+        <#=                GetSummary(pi.DocComment) #>
+<#            if(pi.Type.AsString=="string"){ #>
+		public <#= pi.Type.AsString #> <#= pi.Name #> { get { return GetValue<<#= pi.Type.AsString #>>("<#= pi.Name #>"); } set { SetString("<#= pi.Name #>",value); } }
+ <#            } else { #>
+ 		public <#= pi.Type.AsString #> <#= pi.Name #> { get { return GetValue<<#= pi.Type.AsString #>>("<#= pi.Name #>"); } set { SetValue("<#= pi.Name #>",value); } }
  <#            } #>
-
+ <#            } #>
 <#        } #>
     }
 

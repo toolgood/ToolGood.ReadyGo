@@ -72,6 +72,7 @@
     <Compile Include="DataCentxt\Interfaces\IPrecondition\QTable.t.cs" />
     <Compile Include="DataCentxt\Interfaces\IPrecondition\SqlBuilder.cs" />
     <Compile Include="DataCentxt\Interfaces\ISQL\QTable.t.cs" />
+    <Compile Include="DataCentxt\QTableModel.cs" />
     <Compile Include="DataCentxt\Providers\FirebirdDbDatabaseProvider.cs" />
     <Compile Include="DataCentxt\Providers\MsAccessDbDatabaseProvider.cs" />
     <Compile Include="DataCentxt\Providers\MySqlDatabaseProvider.cs" />
