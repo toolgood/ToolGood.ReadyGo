@@ -12,6 +12,7 @@
 <#@ output extension=".txt" #>
 
 <#
+	// 从Github下载，此模板可能出错，请将\n转\r\n
     //------------------------- 以下为 设置信息 --------------------------------------
     // 输出命名空间
     string nameSpace="ToolGood.Speedy.Datas";
