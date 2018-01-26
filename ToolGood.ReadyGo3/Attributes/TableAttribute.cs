@@ -22,7 +22,6 @@ namespace ToolGood.ReadyGo3.Attributes
         /// 数据表
         /// </summary>
         /// <param name="tableName"></param>
-        /// <param name="fixTag"></param>
         public TableAttribute(string tableName)
         {
             TableName = tableName.Trim();
@@ -32,7 +31,6 @@ namespace ToolGood.ReadyGo3.Attributes
         /// </summary>
         /// <param name="schemaName"></param>
         /// <param name="tableName"></param>
-        /// <param name="fixTag"></param>
         public TableAttribute(string tableName, string schemaName)
         {
             SchemaName = schemaName.Trim();

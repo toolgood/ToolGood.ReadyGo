@@ -7,7 +7,7 @@ using ToolGood.ReadyGo3.DataCentxt.Exceptions;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-    public partial class SqlBuilder //: ISQL
+    partial class SqlBuilder //: ISQL
     {
         public void WhereExists(string sql, params object[] args)
         {

@@ -34,8 +34,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <summary>
         /// 累加到【Where】语句，连接使用【AND】
         /// </summary>
-        /// <param name="where">不用写【where】，sql语句，列标识使用 [ ] ，参数使用 @数字</param>
-        /// <param name="args">参数组</param>
+        /// <param name="column"></param>
         /// <returns></returns>
         public QTable<T> Where(QTableColumn<bool> column)
         {

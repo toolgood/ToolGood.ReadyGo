@@ -318,8 +318,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfTrue 如果为假会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="ifTrue"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfTrue(bool ifTrue)
@@ -331,8 +329,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfFalse 如果为真会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="ifTrue"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfFalse(bool ifTrue)
@@ -344,8 +340,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfSet  如果字符串未设置，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfSet(string txt)
@@ -357,8 +351,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotSet  如果字符串已设置，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotSet(string txt)
@@ -370,8 +362,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNull(string txt)
@@ -383,8 +373,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotNull(string txt)
@@ -396,8 +384,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNull(short? txt)
@@ -409,8 +395,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotNull(short? txt)
@@ -422,8 +406,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNull(int? txt)
@@ -435,8 +417,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotNull(int? txt)
@@ -448,8 +428,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNull(long? txt)
@@ -461,8 +439,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotNull(long? txt)
@@ -474,8 +450,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNull(ushort? txt)
@@ -487,8 +461,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotNull(ushort? txt)
@@ -500,8 +472,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNull(uint? txt)
@@ -513,8 +483,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotNull(uint? txt)
@@ -526,8 +494,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNull(ulong? txt)
@@ -539,8 +505,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotNull(ulong? txt)
@@ -552,8 +516,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNull(float? txt)
@@ -565,8 +527,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotNull(float? txt)
@@ -578,8 +538,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNull(double? txt)
@@ -591,8 +549,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotNull(double? txt)
@@ -604,8 +560,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNull(decimal? txt)
@@ -617,8 +571,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotNull(decimal? txt)
@@ -630,8 +582,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNull  如果字符串不为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNull(DateTime? txt)
@@ -643,8 +593,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// IfNotNull  如果字符串为空，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="txt"></param>
         /// <returns></returns>
         public WhereHelper<T1> IfNotNull(DateTime? txt)
@@ -659,8 +607,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 自动添加 “NOT EXISTS ” 也会自动添加 “SELECT * ”
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="where"></param>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -680,8 +626,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 自动添加 “EXISTS ” 也会自动添加 “SELECT * ”
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="where"></param>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -701,8 +645,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 添加 Where
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="where"></param>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -714,8 +656,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 添加 Order By SQL语句
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="order"></param>
         /// <returns></returns>
         public WhereHelper<T1> AddOrderBySql(string order)
@@ -726,8 +666,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 添加 Group By SQL语句
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="groupby"></param>
         /// <returns></returns>
         public WhereHelper<T1> AddGroupBySql(string groupby)
@@ -738,8 +676,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 添加 Having SQL语句
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
         /// <param name="having"></param>
         /// <returns></returns>
         public WhereHelper<T1> AddHavingSql(string having)
@@ -750,9 +686,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 添加 Join On SQL语句
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="t"></param>
-        /// <param name="having"></param>
+        /// <param name="joinWithOn"></param>
         /// <returns></returns>
         public WhereHelper<T1> AddJoinSql(string joinWithOn)
         {
@@ -766,7 +700,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="field"></param>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -778,7 +711,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="field"></param>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -789,7 +721,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="field"></param>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -801,7 +732,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="field"></param>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -822,7 +752,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="order"></param>
         /// <param name="type"></param>
         /// <returns></returns>
@@ -834,7 +763,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="group"></param>
         /// <returns></returns>
         public WhereHelper<T1> GroupBy<T>(Expression<Func<T1, T>> group)
@@ -852,15 +780,6 @@ namespace ToolGood.ReadyGo3.LinQ
             this.having(having);
             return this;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="column"></param>
-        /// <param name="asName"></param>
-        /// <returns></returns>
-
-
 
 
         #endregion WhereIn Where OrderBy Having
@@ -892,8 +811,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="skip"></param>
-        /// <param name="take"></param>
+        /// <param name="top"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
         public List<T1> Select(long top, string selectSql = null)
@@ -1118,7 +1036,6 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="column"></param>
-        /// <param name="asName"></param>
         /// <returns></returns>
         public WhereHelper<T1> ExcludeColumn<T>(Expression<Func<T1, T>> column)
         {

@@ -9,7 +9,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
 {
     partial class QColumn
     {
-
         #region operator +
         public static QSqlColumn operator +(QColumn col, QColumn value)
         {

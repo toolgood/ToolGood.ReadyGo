@@ -7,11 +7,27 @@ using ToolGood.ReadyGo3.DataCentxt.Enums;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
+    /// <summary>
+    /// SQL条件
+    /// </summary>
     public partial class QCondition
     {
+        /// <summary>
+        /// True
+        /// </summary>
         public static QCodeCondition True = new QCodeCondition("1=1");
+
+        /// <summary>
+        /// False
+        /// </summary>
         public static QCodeCondition False = new QCodeCondition("1=2");
 
+        /// <summary>
+        /// 并且 
+        /// </summary>
+        /// <param name="c1"></param>
+        /// <param name="c2"></param>
+        /// <returns></returns>
         public static QWhereCondition operator &(QCondition c1, QCondition c2)
         {
             if (c1 is QWhereCondition) {
@@ -22,6 +38,12 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             }
             return new QWhereCondition(c1, WhereType.And, c2);
         }
+        /// <summary>
+        /// 或
+        /// </summary>
+        /// <param name="c1"></param>
+        /// <param name="c2"></param>
+        /// <returns></returns>
         public static QWhereCondition operator |(QCondition c1, QCondition c2)
         {
             if (c1 is QWhereCondition) {
@@ -34,6 +56,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         }
     }
 
+    /// <summary>
+    /// SQL条件 Where
+    /// </summary>
     public partial class QWhereCondition : QCondition
     {
         private WhereType whereType;
@@ -41,14 +66,24 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         private QCondition rightCondition;
         private bool leftHasOr;
         private bool rightHasOr;
-
-        public WhereType WhereType { get { return whereType; } }
-
-        public QWhereCondition()
+        /// <summary>
+        /// Where类型
+        /// </summary>
+        internal WhereType WhereType { get { return whereType; } }
+        /// <summary>
+        /// 
+        /// </summary>
+        internal QWhereCondition()
         {
             whereType = WhereType.None;
         }
-        public QWhereCondition(QCondition c1, WhereType whereType, QCondition c2)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="c1"></param>
+        /// <param name="whereType"></param>
+        /// <param name="c2"></param>
+        internal QWhereCondition(QCondition c1, WhereType whereType, QCondition c2)
         {
             leftCondition = c1;
             this.whereType = whereType;
@@ -56,12 +91,12 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         }
 
 
-        public QWhereCondition And(QCondition condition)
+        internal QWhereCondition And(QCondition condition)
         {
             return AddCondition(condition, WhereType.And);
         }
 
-        public QWhereCondition Or(QCondition condition)
+        internal QWhereCondition Or(QCondition condition)
         {
             return AddCondition(condition, WhereType.Or);
         }
@@ -84,7 +119,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                 }
                 return this;
             }
-            QWhereCondition where = new QWhereCondition();
+            var where = new QWhereCondition();
             where.whereType = type;
             where.leftCondition = this;
             where.rightCondition = condition;
@@ -96,19 +131,23 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         }
 
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class QCodeCondition : QCondition
     {
         private string code;
 
-        public QCodeCondition() { }
+        internal QCodeCondition() { }
 
-        public QCodeCondition(string code)
+        internal QCodeCondition(string code)
         {
             this.code = code;
         }
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class QColumnValueCondition : QCondition
     {
         private QColumn leftColumn;
@@ -116,7 +155,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         private object value;
         private bool isSetValaue;
 
-        public QColumnValueCondition(QColumn column1, string op, object value)
+        internal QColumnValueCondition(QColumn column1, string op, object value)
         {
             leftColumn = column1;
             this.op = op;
@@ -124,23 +163,26 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             isSetValaue = true;
         }
 
-        public QColumnValueCondition(QColumn column1, string op)
+        internal QColumnValueCondition(QColumn column1, string op)
         {
             leftColumn = column1;
             this.op = op;
         }
     }
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class QColumnColumnCondition : QCondition
     {
         internal QColumn leftColumn;
         private string Op;
         internal QColumn rightColumn;
 
-        public QColumnColumnCondition()
+        internal QColumnColumnCondition()
         {
         }
 
-        public QColumnColumnCondition(QColumn column1, string op, QColumn column2)
+        internal QColumnColumnCondition(QColumn column1, string op, QColumn column2)
         {
             leftColumn = column1;
             Op = op;
@@ -148,12 +190,14 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         }
 
     }
-
+    /// <summary>
+    /// 
+    /// </summary>
     public partial class QJoinCondition : QColumnColumnCondition
     {
         //internal new QColumnBase leftColumn;
         //internal new QColumnBase rightColumn;
-        public QJoinCondition(QColumn column1, string op, QColumn column2)
+        internal QJoinCondition(QColumn column1, string op, QColumn column2)
             : base(column1, op, column2)
         {
             //leftColumn = column1;

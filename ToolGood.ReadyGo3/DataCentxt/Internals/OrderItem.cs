@@ -6,7 +6,8 @@ using System.Text;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-    public partial class OrderItem
+
+     partial class OrderItem
     {
         private QColumn column;
         private OrderType orderType;

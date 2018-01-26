@@ -14,6 +14,9 @@ using ToolGood.ReadyGo3.PetaPoco.Utilities;
 
 namespace ToolGood.ReadyGo3.PetaPoco
 {
+    /// <summary>
+    /// PetaPoco数据库链接库
+    /// </summary>
     public class Database: IDisposable
     {
         #region IDisposable
@@ -31,7 +34,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         #endregion
 
         #region Constructors
-
+        /// <summary>
+        /// PetaPoco数据库链接库
+        /// </summary>
+        /// <param name="sqlHelper"></param>
         public Database(SqlHelper sqlHelper)
         {
             _sqlHelper = sqlHelper;
@@ -383,6 +389,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         /// <param name="sql">The SQL statement to execute</param>
         /// <param name="args">Arguments to any embedded parameters in the SQL</param>
+        /// <param name="commandType"></param>
         /// <returns>The number of rows affected</returns>
         public int Execute(string sql, object[] args, CommandType commandType= CommandType.Text)
         {
@@ -410,6 +417,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <typeparam name="T">The type that the result value should be cast to</typeparam>
         /// <param name="sql">The SQL query to execute</param>
         /// <param name="args">Arguments to any embedded parameters in the SQL</param>
+        /// <param name="commandType"></param>
         /// <returns>The scalar value cast to T</returns>
         public T ExecuteScalar<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
@@ -425,7 +433,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         if (u != null && (val == null || val == DBNull.Value))
                             return default(T);
 
-                        return (T)Convert.ChangeType(val, u == null ? typeof(T) : u);
+                        return (T)Convert.ChangeType(val, u ?? typeof(T));
                     }
                 } finally {
                     CloseSharedConnection();
@@ -436,7 +444,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return default(T);
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <param name="commandType"></param>
+        /// <returns></returns>
         public DataTable ExecuteDataTable(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             OpenSharedConnection();
@@ -468,7 +482,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 CloseSharedConnection();
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <param name="commandType"></param>
+        /// <returns></returns>
         public DataSet ExecuteDataSet(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             OpenSharedConnection();
@@ -533,8 +553,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </remarks>
         public Page<T> Page<T>(long page, long itemsPerPage, string sql, params object[] args)
         {
-            string sqlCount, sqlPage;
-            BuildPageQueries<T>((page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out sqlCount, out sqlPage);
+            BuildPageQueries<T>((page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
 
 
             // Save the one-time command time out and use it for both queries
@@ -561,7 +580,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
         #endregion
 
         #region operation: Query
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public IEnumerable<T> Query<T>(long skip, long take, string sql, params object[] args)
         {
             string sqlCount, sqlPage;
@@ -575,6 +602,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <typeparam name="T">The Type representing a row in the result set</typeparam>
         /// <param name="sql">The SQL query</param>
         /// <param name="args">Arguments to any embedded parameters in the SQL statement</param>
+        /// <param name="commandType"></param>
         /// <returns>An enumerable collection of result records</returns>
         /// <remarks>
         ///     For some DB providers, care should be taken to not start a new Query before finishing with

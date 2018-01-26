@@ -24,6 +24,7 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         /// <param name="obj"></param>
         /// <param name="setString"></param>
         /// <param name="setDateTime"></param>
+        /// <param name="setGuid"></param>
         public static void SetDefaultValue<T>(T obj, bool setString, bool setDateTime, bool setGuid)
         {
             var action = _setDefault.Get(typeof(T), () => CreateDefaultFunction<T>());

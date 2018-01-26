@@ -2,6 +2,9 @@
 
 namespace ToolGood.ReadyGo3.Gadget.Events
 {
+    /// <summary>
+    /// SQL事件
+    /// </summary>
     public class SqlEvents
     {
         /// <summary>

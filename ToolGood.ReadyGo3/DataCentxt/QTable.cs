@@ -55,14 +55,15 @@ namespace ToolGood.ReadyGo3.DataCentxt
         #region AddColumn
         private QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk, bool isAutoIncrement, bool resultColumn, string resultSql)
         {
-            QTableColumn<T> column = new QTableColumn<T>();
-            column._columnType = Enums.ColumnType.Column;
-            column._columnName = columnName;
-            column._isPrimaryKey = isPk;
-            column._isResultColumn = resultColumn;
-            column._resultSql = resultSql;
-            column._table = this;
-            column._isAutoIncrement = isAutoIncrement;
+            QTableColumn<T> column = new QTableColumn<T> {
+                _columnType = Enums.ColumnType.Column,
+                _columnName = columnName,
+                _isPrimaryKey = isPk,
+                _isResultColumn = resultColumn,
+                _resultSql = resultSql,
+                _table = this,
+                _isAutoIncrement = isAutoIncrement
+            };
             _columns.Add(fieldName.ToLower(), column);
             if (isPk) {
                 _primaryKey = column;
@@ -96,6 +97,9 @@ namespace ToolGood.ReadyGo3.DataCentxt
         }
         #endregion
 
+        /// <summary>
+        /// 清空，进行下一次
+        /// </summary>
         public void Clear()
         {
             if (_sqlBuilder != null) {
@@ -105,8 +109,12 @@ namespace ToolGood.ReadyGo3.DataCentxt
         }
 
 
+        /// <summary>
+        /// 
+        /// </summary>
         protected abstract void Init();
-        protected internal SqlHelper GetSqlHelper()
+
+        internal SqlHelper GetSqlHelper()
         {
             if (_sqlHelper == null || _sqlHelper._isDisposable) {
                 if (string.IsNullOrEmpty(_connStringName) == false) {
@@ -126,7 +134,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         {
             return GetSqlHelper()._sqlType;
         }
-        protected internal SqlBuilder GetSqlBuilder()
+         internal SqlBuilder GetSqlBuilder()
         {
             if (_sqlBuilder == null) {
                 _sqlBuilder = new SqlBuilder(this);
@@ -138,10 +146,19 @@ namespace ToolGood.ReadyGo3.DataCentxt
     public abstract partial class QTable<T> : QTable
         where T : class
     {
+        /// <summary>
+        /// 
+        /// </summary>
         protected QTable() : base() { }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connStringName"></param>
         protected QTable(string connStringName) : base(connStringName) { }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sqlHelper"></param>
         protected QTable(SqlHelper sqlHelper) : base(sqlHelper)
         {
 

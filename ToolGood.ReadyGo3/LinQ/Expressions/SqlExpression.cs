@@ -349,7 +349,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 return result;
             } else {
                 if (left as PartialSqlString == null) {
-                    left = GetQuotedValue(left, left != null ? left.GetType() : null);
+                    left = GetQuotedValue(left, left?.GetType());
                     return CreatePartialSqlString(left, operand, right);
                 } else if (right as PartialSqlString == null) {
                     if (right == null) {
@@ -358,7 +358,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                         else if (operand == "<>") operand = "IS NOT";
                         return new PartialSqlString(left + sep + operand + sep + right);
                     } else {
-                        right = GetQuotedValue(right, right != null ? right.GetType() : null);
+                        right = GetQuotedValue(right, right?.GetType());
                         return CreatePartialSqlString(left, operand, right);
                     }
                 }

@@ -426,10 +426,21 @@ namespace ToolGood.ReadyGo3.Mosaic
         #endregion
 
         #region Single SingleOrDefault First FirstOrDefault
+        /// <summary>
+        /// 获取唯一一个类型，若数量不为1，则抛出异常
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <returns></returns>
         public Table Single<Table>()
         {
             return getSingle<Table>(GetSelectColumns<Table>());
         }
+        /// <summary>
+        /// 获取唯一一个类型，若数量不为1，则抛出异常
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public Table Single<Table>(params string[] columns)
         {
             return getSingle<Table>(columns.ToList());
@@ -440,19 +451,38 @@ namespace ToolGood.ReadyGo3.Mosaic
             _useDistinct = false;
             return _helper._Single<Table>(sql);
         }
+        /// <summary>
+        /// 获取唯一一个类型，若数量不为1，则抛出异常
+        /// </summary>
+        /// <returns></returns>
         public T Single()
         {
             return getSingle<T>(GetSelectColumns<T>());
         }
+        /// <summary>
+        /// 获取唯一一个类型，若数量不为1，则抛出异常
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public T Single(params string[] columns)
         {
             return getSingle<T>(columns.ToList());
         }
-
+        /// <summary>
+        /// 获取唯一一个类型，可以为空，若数量不为1，则抛出异常
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <returns></returns>
         public Table SingleOrDefault<Table>()
         {
             return getSingleOrDefault<Table>(GetSelectColumns<Table>());
         }
+        /// <summary>
+        /// 获取唯一一个类型，可以为空，若数量不为1，则抛出异常
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public Table SingleOrDefault<Table>(params string[] columns)
         {
             return getSingleOrDefault<Table>(columns.ToList());
@@ -463,20 +493,39 @@ namespace ToolGood.ReadyGo3.Mosaic
             _useDistinct = false;
             return _helper._SingleOrDefault<Table>(sql);
         }
+        /// <summary>
+        /// 获取唯一一个类型，可以为空，若数量不为1，则抛出异常
+        /// </summary>
+        /// <returns></returns>
         public T SingleOrDefault()
         {
             return getSingleOrDefault<T>(GetSelectColumns<T>());
         }
+        /// <summary>
+        /// 获取唯一一个类型，可以为空，若数量不为1，则抛出异常
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public T SingleOrDefault(params string[] columns)
         {
             return getSingleOrDefault<T>(columns.ToList());
         }
 
-
+        /// <summary>
+        /// 获取第一个类型，若数量为0，则抛出异常
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <returns></returns>
         public Table First<Table>()
         {
             return getFirst<Table>(GetSelectColumns<Table>());
         }
+        /// <summary>
+        /// 获取第一个类型，若数量为0，则抛出异常
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public Table First<Table>(params string[] columns)
         {
             return getFirst<Table>(columns.ToList());
@@ -487,20 +536,39 @@ namespace ToolGood.ReadyGo3.Mosaic
             _useDistinct = false;
             return _helper._First<Table>(sql);
         }
+        /// <summary>
+        /// 获取第一个类型，若数量为0，则抛出异常
+        /// </summary>
+        /// <returns></returns>
         public T First()
         {
             return getFirst<T>(GetSelectColumns<T>());
         }
+        /// <summary>
+        /// 获取第一个类型，若数量为0，则抛出异常
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public T First(params string[] columns)
         {
             return getFirst<T>(columns.ToList());
         }
 
-
+        /// <summary>
+        /// 获取第一个类型，可为空，若数量为0，则抛出异常
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <returns></returns>
         public Table FirstOrDefault<Table>()
         {
             return getFirstOrDefault<Table>(GetSelectColumns<Table>());
         }
+        /// <summary>
+        /// 获取第一个类型，可为空，若数量为0，则抛出异常
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public Table FirstOrDefault<Table>(params string[] columns)
         {
             return getFirstOrDefault<Table>(columns.ToList());
@@ -511,10 +579,19 @@ namespace ToolGood.ReadyGo3.Mosaic
             _useDistinct = false;
             return _helper._FirstOrDefault<Table>(sql);
         }
+        /// <summary>
+        /// 获取第一个类型，可为空，若数量为0，则抛出异常
+        /// </summary>
+        /// <returns></returns>
         public T FirstOrDefault()
         {
             return getFirstOrDefault<T>(GetSelectColumns<T>());
         }
+        /// <summary>
+        /// 获取第一个类型，可为空，若数量为0，则抛出异常
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public T FirstOrDefault(params string[] columns)
         {
             return getFirstOrDefault<T>(columns.ToList());
@@ -522,34 +599,68 @@ namespace ToolGood.ReadyGo3.Mosaic
         #endregion
 
         #region Select
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <returns></returns>
         public List<Table> Select<Table>()
         {
             var columns = GetSelectColumns<Table>();
             return getList<Table>(-1, -1, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public List<Table> Select<Table>(params string[] columns)
         {
             return getList<Table>(-1, -1, columns.ToList());
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         public List<Table> Select<Table>(int limit)
         {
             var columns = GetSelectColumns<Table>();
             return getList<Table>(limit, -1, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <param name="limit"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public List<Table> Select<Table>(int limit, params string[] columns)
         {
             return getList<Table>(limit, -1, columns.ToList());
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         public List<Table> Select<Table>(int limit, int offset)
         {
             var columns = GetSelectColumns<Table>();
             return getList<Table>(limit, offset, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public List<Table> Select<Table>(int limit, int offset, params string[] columns)
         {
             return getList<Table>(limit, offset, columns.ToList());
@@ -561,35 +672,62 @@ namespace ToolGood.ReadyGo3.Mosaic
             _useDistinct = false;
             return _helper.Select<Table>(sql);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <returns></returns>
         public List<T> Select()
         {
             var columns = GetSelectColumns<T>();
             return getList<T>(-1, -1, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public List<T> Select(params string[] columns)
         {
             return getList<T>(-1, -1, columns.ToList());
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         public List<T> Select(int limit)
         {
             var columns = GetSelectColumns<T>();
             return getList<T>(limit, -1, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public List<T> Select(int limit, params string[] columns)
         {
             return getList<T>(limit, -1, columns.ToList());
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         public List<T> Select(int limit, int offset)
         {
             var columns = GetSelectColumns<T>();
             return getList<T>(limit, offset, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public List<T> Select(int limit, int offset, params string[] columns)
         {
             return getList<T>(limit, offset, columns.ToList());
@@ -598,11 +736,26 @@ namespace ToolGood.ReadyGo3.Mosaic
         #endregion
 
         #region Page
+        /// <summary>
+        /// 执行SQL 查询,返回Page类型
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <param name="page"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
         public Page<Table> Page<Table>(int page, int size)
         {
             var columns = GetSelectColumns<Table>();
             return getPage<Table>(page, size, columns);
         }
+        /// <summary>
+        /// 执行SQL 查询,返回Page类型
+        /// </summary>
+        /// <typeparam name="Table"></typeparam>
+        /// <param name="page"></param>
+        /// <param name="size"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public Page<Table> Page<Table>(int page, int size, params string[] columns)
         {
             return getPage<Table>(page, size, columns.ToList());
@@ -615,20 +768,33 @@ namespace ToolGood.ReadyGo3.Mosaic
             _useDistinct = false;
 
             var count = getCount(null);
-            Page<Table> pt = new Page<Table>();
-            pt.TotalItems = count;
-            pt.CurrentPage = page;
-            pt.PageSize = size;
-            pt.Items = _helper.Select<Table>(sql);
+            Page<Table> pt = new Page<Table> {
+                TotalItems = count,
+                CurrentPage = page,
+                PageSize = size,
+                Items = _helper.Select<Table>(sql)
+            };
             return pt;
         }
 
-
+        /// <summary>
+        /// 执行SQL 查询,返回Page类型
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
         public Page<T> Page(int page, int size)
         {
             var columns = GetSelectColumns<T>();
             return getPage<T>(page, size, columns);
         }
+        /// <summary>
+        /// 执行SQL 查询,返回Page类型
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="size"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public Page<T> Page(int page, int size, params string[] columns)
         {
             return getPage<T>(page, size, columns.ToList());
@@ -636,36 +802,64 @@ namespace ToolGood.ReadyGo3.Mosaic
         #endregion
 
         #region ExecuteDataTable
+        /// <summary>
+        /// 执行SQL 查询,返回 DataTable
+        /// </summary>
+        /// <returns></returns>
         public DataTable ExecuteDataTable()
         {
             var columns = GetSelectColumns<T>();
             return getDataTable(-1, -1, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回 DataTable
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public DataTable ExecuteDataTable(params string[] columns)
         {
             return getDataTable(-1, -1, columns.ToList());
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回 DataTable
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         public DataTable ExecuteDataTable(int limit)
         {
             var columns = GetSelectColumns<T>();
             return getDataTable(limit, -1, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回 DataTable
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public DataTable ExecuteDataTable(int limit, params string[] columns)
         {
             return getDataTable(limit, -1, columns.ToList());
         }
 
 
-
+        /// <summary>
+        /// 执行SQL 查询,返回 DataTable
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         public DataTable ExecuteDataTable(int limit, int offset)
         {
             var columns = GetSelectColumns<T>();
             return getDataTable(limit, offset, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回 DataTable
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public DataTable ExecuteDataTable(int limit, int offset, params string[] columns)
         {
             return getDataTable(limit, offset, columns.ToList());
@@ -683,42 +877,70 @@ namespace ToolGood.ReadyGo3.Mosaic
         #endregion
 
         #region ExecuteDataSet
+        /// <summary>
+        /// 执行SQL 查询,返回 DataSet
+        /// </summary>
+        /// <returns></returns>
         public DataSet ExecuteDataSet()
         {
             var columns = GetSelectColumns<T>();
             return getDataSet(-1, -1, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回 DataSet
+        /// </summary>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public DataSet ExecuteDataSet(params string[] columns)
         {
             return getDataSet(-1, -1, columns.ToList());
         }
 
-
+        /// <summary>
+        /// 执行SQL 查询,返回 DataSet
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <returns></returns>
         public DataSet ExecuteDataSet(int limit)
         {
             var columns = GetSelectColumns<T>();
             return getDataSet(limit, -1, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回 DataSet
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public DataSet ExecuteDataSet(int limit, params string[] columns)
         {
             return getDataSet(limit, -1, columns.ToList());
         }
 
-
+        /// <summary>
+        /// 执行SQL 查询,返回 DataSet
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <returns></returns>
         public DataSet ExecuteDataSet(int limit, int offset)
         {
             var columns = GetSelectColumns<T>();
             return getDataSet(limit, offset, columns);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回 DataSet
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
         public DataSet ExecuteDataSet(int limit, int offset, params string[] columns)
         {
             return getDataSet(limit, offset, columns.ToList());
         }
 
-
+ 
         private DataSet getDataSet(int limit, int offset, List<string> columns)
         {
             var sql = GetFullSelectSql(limit, offset, columns);

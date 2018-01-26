@@ -45,7 +45,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <summary>
         ///     Creates and populates a ColumnInfo from the attributes of a POCO property.
         /// </summary>
-        /// <param name="propertyInfo">The property whose column info is required</param>
+        /// <param name="pi">The property whose column info is required</param>
         /// <returns>A ColumnInfo instance</returns>
         public static ColumnInfo FromProperty(PropertyInfo pi)
         {

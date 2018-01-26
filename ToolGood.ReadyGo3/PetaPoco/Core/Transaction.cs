@@ -8,19 +8,26 @@ namespace ToolGood.ReadyGo3.PetaPoco
     public class Transaction : IDisposable
     {
         private Database _db;
-
+        /// <summary>
+        /// Transaction
+        /// </summary>
+        /// <param name="db"></param>
         public Transaction(Database db)
         {
             _db = db;
             _db.BeginTransaction();
         }
-
+        /// <summary>
+        /// 提交
+        /// </summary>
         public void Complete()
         {
             _db.CompleteTransaction();
             _db = null;
         }
-
+        /// <summary>
+        /// 释放
+        /// </summary>
         public void Dispose()
         {
             if (_db != null )

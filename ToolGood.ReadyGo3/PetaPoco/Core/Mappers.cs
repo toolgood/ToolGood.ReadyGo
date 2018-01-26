@@ -8,6 +8,9 @@ using ToolGood.ReadyGo3.PetaPoco.Internal;
 
 namespace ToolGood.ReadyGo3.PetaPoco
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public static class Mappers
     {
         private static Dictionary<object, StandardMapper> _mappers = new Dictionary<object, StandardMapper>();

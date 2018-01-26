@@ -1,7 +1,14 @@
 ﻿namespace ToolGood.ReadyGo3.Gadget.Events
 {
+    /// <summary>
+    /// 数据事件参数
+    /// </summary>
     public class DataEventArgs : System.EventArgs
     {
+        /// <summary>
+        /// 数据事件参数
+        /// </summary>
+        /// <param name="obj"></param>
         public DataEventArgs(object obj)
         {
             Obj = obj;
@@ -18,15 +25,33 @@
         /// </summary>
         public object Obj;
     }
-
+    /// <summary>
+    /// 插入之前
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
     public delegate void BeforeInsertEventHandler(object sender, DataEventArgs args);
-
+    /// <summary>
+    /// 更新之前
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
     public delegate void BeforeUpdateEventHandler(object sender, DataEventArgs args);
-
+    /// <summary>
+    /// 删除之前
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
     public delegate void BeforeDeleteEventHandler(object sender, DataEventArgs args);
-
+    /// <summary>
+    /// 数据事件参数
+    /// </summary>
     public class Data2EventArgs : System.EventArgs
     {
+        /// <summary>
+        /// 数据事件参数
+        /// </summary>
+        /// <param name="obj"></param>
         public Data2EventArgs(object obj)
         {
             Obj = obj;
@@ -37,10 +62,22 @@
         /// </summary>
         public object Obj;
     }
-
+    /// <summary>
+    /// 插入之后
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
     public delegate void AfterInsertEventHandler(object sender, Data2EventArgs args);
-
+    /// <summary>
+    /// 更新之后
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
     public delegate void AfterUpdateEventHandler(object sender, Data2EventArgs args);
-
+    /// <summary>
+    /// 删除之后
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
     public delegate void AfterDeleteEventHandler(object sender, Data2EventArgs args);
 }

@@ -5,6 +5,9 @@ using System.Text;
 
 namespace ToolGood.ReadyGo3.Gadget.Monitor
 {
+    /// <summary>
+    /// 监控类型
+    /// </summary>
     [Flags]
     public enum SqlMonitorType
     {

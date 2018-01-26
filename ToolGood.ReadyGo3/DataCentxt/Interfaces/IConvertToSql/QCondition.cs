@@ -10,12 +10,31 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
     partial class QCondition
     {
+        /// <summary>
+        /// 转SQL语句
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="tableCount"></param>
+        /// <returns></returns>
         protected internal virtual string ToSql(DatabaseProvider provider, int tableCount) { return null; }
+
+        /// <summary>
+        /// 转SQL语句
+        /// </summary>
+        /// <param name="stringBuilder"></param>
+        /// <param name="provider"></param>
+        /// <param name="tableCount"></param>
         protected internal virtual void ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount) { }
     }
 
     partial class QWhereCondition
     {
+        /// <summary>
+        /// 转SQL语句
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="tableCount"></param>
+        /// <returns></returns>
         protected internal override string ToSql(DatabaseProvider provider, int tableCount)
         {
             if (whereType == WhereType.None) {
@@ -28,7 +47,12 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             (this).ToSql(stringBuilder, provider, tableCount);
             return stringBuilder.ToString();
         }
-
+        /// <summary>
+        /// 转SQL语句
+        /// </summary>
+        /// <param name="stringBuilder"></param>
+        /// <param name="provider"></param>
+        /// <param name="tableCount"></param>
         protected internal override void ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
         {
             if (whereType == WhereType.None) return;
@@ -71,11 +95,22 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
     partial class QCodeCondition
     {
+        /// <summary>
+        /// 转SQL语句
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="tableCount"></param>
+        /// <returns></returns>
         protected internal override string ToSql(DatabaseProvider provider, int tableCount)
         {
             return code;
         }
-
+        /// <summary>
+        /// 转SQL语句
+        /// </summary>
+        /// <param name="stringBuilder"></param>
+        /// <param name="provider"></param>
+        /// <param name="tableCount"></param>
         protected internal override void ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
         {
             stringBuilder.Append(code);
@@ -85,6 +120,12 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
     partial class QColumnValueCondition
     {
+        /// <summary>
+        /// 转SQL语句
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="tableCount"></param>
+        /// <returns></returns>
         protected internal override string ToSql(DatabaseProvider provider, int tableCount)
         {
             if (isSetValaue == false) {
@@ -93,7 +134,12 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return (leftColumn).ToSql(provider, tableCount) + " " + op + " "
                 + provider.EscapeParam(value);
         }
-
+        /// <summary>
+        /// 转SQL语句
+        /// </summary>
+        /// <param name="stringBuilder"></param>
+        /// <param name="provider"></param>
+        /// <param name="tableCount"></param>
         protected internal override void ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
         {
             stringBuilder.Append((leftColumn).ToSql(provider, tableCount));
@@ -108,12 +154,23 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
     partial class QColumnColumnCondition
     {
+        /// <summary>
+        /// 转SQL语句
+        /// </summary>
+        /// <param name="provider"></param>
+        /// <param name="tableCount"></param>
+        /// <returns></returns>
         protected internal override string ToSql(DatabaseProvider provider, int tableCount)
         {
             return (leftColumn).ToSql(provider, tableCount) + " " + Op + " "
                 + (rightColumn).ToSql(provider, tableCount);
         }
-
+        /// <summary>
+        /// 转SQL语句
+        /// </summary>
+        /// <param name="stringBuilder"></param>
+        /// <param name="provider"></param>
+        /// <param name="tableCount"></param>
         protected internal override void ToSql(StringBuilder stringBuilder, DatabaseProvider provider, int tableCount)
         {
             stringBuilder.Append((leftColumn).ToSql(provider, tableCount));

@@ -3,6 +3,9 @@ using System.Reflection;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Core
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PocoColumn
     {
         /// <summary>
@@ -36,17 +39,29 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// </summary>
         public PropertyInfo PropertyInfo;
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="target"></param>
+        /// <param name="val"></param>
         public virtual void SetValue(object target, object val)
         {
             PropertyInfo.SetValue(target, val, null);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="target"></param>
+        /// <returns></returns>
         public virtual object GetValue(object target)
         {
             return PropertyInfo.GetValue(target, null);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="val"></param>
+        /// <returns></returns>
         public virtual object ChangeType(object val)
         {
             var t = PropertyInfo.PropertyType;

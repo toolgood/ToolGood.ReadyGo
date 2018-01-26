@@ -18,33 +18,50 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         internal SqlHelper _sqlhelper;
         private Dictionary<string, IDbDataParameter> _parameters = new Dictionary<string, IDbDataParameter>();
         private List<IDbDataParameter> _Outs = new List<IDbDataParameter>();
+        /// <summary>
+        /// 存储过程名称
+        /// </summary>
         protected abstract string ProcessName { get; }
 
         #region 构造函数
-
+        /// <summary>
+        /// SqlProcess构造函数
+        /// </summary>
+        /// <param name="connectionStringName"></param>
         protected SqlProcess(string connectionStringName)
         {
             _singleSqlHelper = true;
             _sqlhelper = new SqlHelper(connectionStringName);
             Init();
         }
-
+        /// <summary>
+        /// SqlProcess构造函数
+        /// </summary>
+        /// <param name="connectionString"></param>
+        /// <param name="providerName"></param>
         protected SqlProcess(string connectionString, string providerName)
         {
             _singleSqlHelper = true;
             _sqlhelper = new SqlHelper(connectionString, providerName);
             Init();
         }
-
+        /// <summary>
+        /// SqlProcess构造函数
+        /// </summary>
+        /// <param name="helper"></param>
         protected SqlProcess(SqlHelper helper)
         {
             _singleSqlHelper = false;
             _sqlhelper = helper;
             Init();
         }
-
+        /// <summary>
+        /// 初始化
+        /// </summary>
         protected abstract void Init();
-
+        /// <summary>
+        /// 释放内存
+        /// </summary>
         public void Dispose()
         {
             if (_singleSqlHelper) {
@@ -141,7 +158,12 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         private bool _usedCacheService;
         private int _cacheTime;
         private string _cacheTag;
-
+        /// <summary>
+        /// 使用缓存
+        /// </summary>
+        /// <param name="second"></param>
+        /// <param name="cacheTag"></param>
+        /// <param name="cacheService"></param>
         public void UseCache(int second, string cacheTag = null, ICacheService cacheService = null)
         {
             _usedCacheService = true;
@@ -151,7 +173,16 @@ namespace ToolGood.ReadyGo3.StoredProcedure
                 _cacheService = cacheService;
             }
         }
-        protected internal T SetCache<T>(string type, Type t, object[] args, Func<T> func)
+        /// <summary>
+        /// 使用缓存
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="type"></param>
+        /// <param name="t"></param>
+        /// <param name="args"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        private T SetCache<T>(string type, Type t, object[] args, Func<T> func)
         {
             if (_usedCacheService == false) {
                 return func();
@@ -175,8 +206,15 @@ namespace ToolGood.ReadyGo3.StoredProcedure
             }
             return run.Item1;
         }
-
-        protected internal T SetCache<T>(string type, object[] args, Func<T> func)
+        /// <summary>
+        /// 设置缓存
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="type"></param>
+        /// <param name="args"></param>
+        /// <param name="func"></param>
+        /// <returns></returns>
+        private T SetCache<T>(string type, object[] args, Func<T> func)
         {
             var name = _cacheTag + ".SqlProcess." + ProcessName + "." + type + "|";
             foreach (var item in args) {
@@ -202,9 +240,9 @@ namespace ToolGood.ReadyGo3.StoredProcedure
 
         #region 执行
         /// <summary>
-        /// 
+        /// 执行
         /// </summary>
-        /// <returns></returns>
+        /// <returns>返回执行的行数</returns>
         public int Execute()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
@@ -214,7 +252,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
             });
         }
         /// <summary>
-        /// 
+        /// 执行
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -227,7 +265,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
             });
         }
         /// <summary>
-        /// 
+        /// 执行
         /// </summary>
         /// <returns></returns>
         public DataTable ExecuteDataTable()
@@ -239,7 +277,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
             });
         }
         /// <summary>
-        /// 
+        /// 执行
         /// </summary>
         /// <returns></returns>
         public DataSet ExecuteDataSet()

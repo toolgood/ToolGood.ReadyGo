@@ -4,18 +4,25 @@ using System.Text;
 
 namespace ToolGood.ReadyGo3.Gadget.Monitor
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class SqlMonitor : ISqlMonitor
     {
         private List<SqlMonitorItem> Items = new List<SqlMonitorItem>();
         private SqlMonitorItem root = new SqlMonitorItem();
         private SqlMonitorItem cur;
-
+        /// <summary>
+        /// 
+        /// </summary>
         public SqlMonitor()
         {
             cur = root;
             cur.Parent = root;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void ConnectionOpened()
         {
             SqlMonitorItem item = new SqlMonitorItem();
@@ -26,7 +33,9 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             Items.Add(item);
             cur = item;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void ConnectionClosing()
         {
             SqlMonitorItem item = new SqlMonitorItem();
@@ -40,7 +49,9 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             cur.EndTime = DateTime.Now;
             cur = cur.Parent;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void Transactioning( )
         {
             SqlMonitorItem item = new SqlMonitorItem();
@@ -51,7 +62,9 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             Items.Add(item);
             cur = item;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void Transactioned( )
         {
             SqlMonitorItem item = new SqlMonitorItem();
@@ -65,7 +78,11 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             cur.EndTime = DateTime.Now;
             cur = cur.Parent;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
         public void ExecutingCommand(  string sql, object[] args)
         {
             SqlMonitorItem item = new SqlMonitorItem();
@@ -77,20 +94,30 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             Items.Add(item);
             cur = item;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
         public void ExecutedCommand(  string sql, object[] args)
         {
             cur.EndTime = DateTime.Now;
             cur = cur.Parent;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
         public void Exception( string message)
         {
             cur.EndTime = DateTime.Now;
             cur.Exception = message;
             cur = cur.Parent;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string ToHtml()
         {
             StringBuilder sb = new StringBuilder();
@@ -99,7 +126,10 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             sb.Append("</pre>");
             return sb.ToString();
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string ToText()
         {
             StringBuilder sb = new StringBuilder();

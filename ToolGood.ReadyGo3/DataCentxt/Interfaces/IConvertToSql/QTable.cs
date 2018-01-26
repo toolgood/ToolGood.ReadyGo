@@ -8,6 +8,9 @@ using ToolGood.ReadyGo3.DataCentxt.Internals;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
+    /// <summary>
+    /// 
+    /// </summary>
     partial class QTable
     {
         internal string ToSql(DatabaseProvider provider, bool schemaName)

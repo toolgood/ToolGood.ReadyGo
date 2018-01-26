@@ -21,16 +21,28 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         }
 
         #region SelectCount
+        /// <summary>
+        /// 执行SQL 查询，返回个数
+        /// </summary>
+        /// <returns></returns>
         public int SelectCount()
         {
             return getCount(null);
         }
-
+        /// <summary>
+        /// 执行SQL 查询，返回个数
+        /// </summary>
+        /// <param name="distinctColumn"></param>
+        /// <returns></returns>
         public int SelectCount(string distinctColumn)
         {
             return getCount(distinctColumn);
         }
-
+        /// <summary>
+        /// 执行SQL 查询，返回个数
+        /// </summary>
+        /// <param name="distinctColumn"></param>
+        /// <returns></returns>
         public int SelectCount(QColumn distinctColumn)
         {
             var column = (distinctColumn).ToSql(Provider, _tables.Count);

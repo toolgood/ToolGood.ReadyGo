@@ -5,11 +5,14 @@ using System.Text;
 
 namespace ToolGood.ReadyGo3.Gadget.Monitor
 {
+    /// <summary>
+    /// SQL监控输出文本
+    /// </summary>
     public class OutTextSqlMonitor : ISqlMonitor
     {
         Dictionary<SqlMonitorType, Action<string>> dict = new Dictionary<SqlMonitorType, Action<string>>();
 
-        public void SetOutAction(SqlMonitorType type, Action<string> action)
+        private void SetOutAction(SqlMonitorType type, Action<string> action)
         {
             if (type.HasFlag(SqlMonitorType.ConnectionOpened)) {
                 dict[SqlMonitorType.ConnectionOpened] = action;
@@ -28,7 +31,9 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             }
         }
 
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void ConnectionClosing( )
         {
             Action<string> action;
@@ -37,7 +42,9 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
                 action(str);
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void ConnectionOpened( )
         {
             Action<string> action;
@@ -46,7 +53,10 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
                 action(str);
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="message"></param>
         public void Exception( string message)
         {
             Action<string> action;
@@ -56,7 +66,11 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             }
         }
         private DateTime StartTime;
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
         public void ExecutedCommand( string sql, object[] args)
         {
             Action<string> action;
@@ -67,22 +81,34 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
                 action(str);
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
         public void ExecutingCommand(  string sql, object[] args)
         {
             StartTime = DateTime.Now;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string ToHtml()
         {
             return null;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public string ToText()
         {
             return null;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void Transactioned()
         {
             Action<string> action;
@@ -91,7 +117,9 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
                 action(str);
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public void Transactioning( )
         {
             Action<string> action;

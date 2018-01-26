@@ -43,10 +43,10 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
     public abstract class QTableColumn : QColumn
     {
-        protected internal bool _isPrimaryKey;
-        protected internal bool _isAutoIncrement;
-        protected internal ColumnChangeType _changeType;
-        protected internal string _fieldType;
+        internal bool _isPrimaryKey;
+        internal bool _isAutoIncrement;
+        internal ColumnChangeType _changeType;
+        internal string _fieldType;
 
         internal abstract object GetValue();
         protected internal abstract void SetValue(object value);
@@ -56,8 +56,8 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
     public class QTableColumn<T> : QTableColumn
     {
-        protected internal T _value;
-        protected internal QTableColumn<T> _newValue;
+        internal T _value;
+        internal QTableColumn<T> _newValue;
 
         internal QTableColumn() : base() { _fieldType = typeof(T).Name.ToLower(); }
 
@@ -74,6 +74,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 _changeType = ColumnChangeType.NewSql;
             }
         }
+        /// <summary>
+        /// 别名
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public QTableColumn<T> As(string name) { _asName = name; return this; }
 
         internal override object GetValue()

@@ -12,19 +12,38 @@
         /// </summary>
         /// <returns></returns>
         string ToText();
-
+        /// <summary>
+        /// 链接关闭
+        /// </summary>
         void ConnectionClosing();
-
-        void ConnectionOpened( );
-
-        void Exception(  string message);
-
-        void ExecutedCommand( string sql, object[] args);
-
-        void ExecutingCommand( string sql, object[] args);
-
+        /// <summary>
+        /// 链接开启
+        /// </summary>
+        void ConnectionOpened();
+        /// <summary>
+        /// 异常
+        /// </summary>
+        /// <param name="message"></param>
+        void Exception(string message);
+        /// <summary>
+        /// 执行完Sql
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        void ExecutedCommand(string sql, object[] args);
+        /// <summary>
+        /// 开始执行Sql
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        void ExecutingCommand(string sql, object[] args);
+        /// <summary>
+        /// 事务结束
+        /// </summary>
         void Transactioned();
-
+        /// <summary>
+        /// 开始事务
+        /// </summary>
         void Transactioning();
     }
 

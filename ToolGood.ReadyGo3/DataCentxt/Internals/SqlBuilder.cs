@@ -7,7 +7,7 @@ using ToolGood.ReadyGo3.DataCentxt.Internals;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-    public partial class SqlBuilder : IDisposable
+     partial class SqlBuilder : IDisposable
     {
         internal DatabaseProvider _provider;
         internal DatabaseProvider Provider

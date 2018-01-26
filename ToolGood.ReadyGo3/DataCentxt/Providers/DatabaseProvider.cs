@@ -166,8 +166,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
                     throw new ArgumentNullException();
                 }
                 where.Append(((QColumn)value).ToSql(this, sb._tables.Count));
-            } else if (value is ICollection) {
-                var v = (ICollection)value;
+            } else if (value is ICollection v) {
                 if (v.Count == 0) {
                     where.Append("(Null)");
                     where.Append(" AND 1=2 ");

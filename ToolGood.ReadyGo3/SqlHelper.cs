@@ -75,12 +75,14 @@ namespace ToolGood.ReadyGo3
         public SqlRecord _Sql { get { return _sql; } }
 
 
-        public bool _IsDisposed { get { return _isDisposable; } }
+        internal bool _IsDisposed { get { return _isDisposable; } }
 
         #endregion 共公属性
 
         #region 构造方法 释放方法
-
+        /// <summary>
+        /// SqlHelper 构造方法
+        /// </summary>
         public SqlHelper()
         {
             if (_lastProviderName != null) {
@@ -100,6 +102,7 @@ namespace ToolGood.ReadyGo3
         /// SqlHelper 构造方法
         /// </summary>
         /// <param name="connectionStringName">xml配置名</param>
+        /// <param name="type"></param>
         public SqlHelper(string connectionStringName, SqlType type = SqlType.None)
         {
             _sqlType = type;
@@ -115,6 +118,7 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="connectionString">数据库链接字符串</param>
         /// <param name="providerName">provider名</param>
+        /// <param name="type"></param>
         public SqlHelper(string connectionString, string providerName, SqlType type = SqlType.None)
         {
             _sqlType = type;
@@ -126,6 +130,7 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="connectionString">数据库链接字符串</param>
         /// <param name="factory">provider工厂</param>
+        /// <param name="type"></param>
         public SqlHelper(string connectionString, DbProviderFactory factory, SqlType type = SqlType.None)
         {
             _sqlType = type;
@@ -281,6 +286,13 @@ namespace ToolGood.ReadyGo3
         {
             return new Transaction(getDatabase());
         }
+        /// <summary>
+        /// 使用缓存
+        /// </summary>
+        /// <param name="second"></param>
+        /// <param name="cacheTag"></param>
+        /// <param name="cacheService"></param>
+        /// <returns></returns>
         public SqlHelper UseChache(int second, string cacheTag = null, ICacheService cacheService = null)
         {
             _usedCacheServiceOnce = true;
@@ -425,7 +437,6 @@ namespace ToolGood.ReadyGo3
         /// 执行SQL 查询,返回集合
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="offset">跳过</param>
         /// <param name="limit">获取个数</param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
