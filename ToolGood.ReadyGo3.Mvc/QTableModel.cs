@@ -1,9 +1,9 @@
-﻿using Ganss.XSS;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using ToolGood.ReadyGo3.Mvc.AntiXSS;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
@@ -13,7 +13,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
     /// </summary>
     public abstract class QTableModel
     {
-        private static HtmlSanitizer htmlSanitizer;
         private Dictionary<string, object> _dictionary = new Dictionary<string, object>();
 
         protected void SetValue(string txt, object value) { _dictionary[txt] = value; }
@@ -21,8 +20,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         protected void SetString(string txt, string html)
         {
             if (string.IsNullOrEmpty(html)) return;
-            var sanitizer = GetHtmlSanitizer();
-            html = sanitizer.Sanitize(html);
+            html = HtmlSanitizer.Sanitize(html);
             html = Regex.Replace(html, "<[^>]+>", "");
             html = Regex.Replace(html, @"\s+", " ");
             _dictionary[txt] = html;
@@ -30,21 +28,9 @@ namespace ToolGood.ReadyGo3.DataCentxt
         protected void SetHtml(string txt, string html)
         {
             if (string.IsNullOrEmpty(html)) return;
-            var sanitizer = GetHtmlSanitizer();
-            _dictionary[txt] = sanitizer.Sanitize(html);
+            _dictionary[txt] = HtmlSanitizer.Sanitize(html);
         }
         public Dictionary<string, object> GetChange() { return _dictionary; }
-
-
-        private HtmlSanitizer GetHtmlSanitizer()
-        {
-            if (htmlSanitizer==null) {
-                var sanitizer = new HtmlSanitizer();
-                sanitizer.AllowedAttributes.Add("class");
-                sanitizer.AllowedSchemes.Add("mailto");
-                htmlSanitizer = sanitizer;
-            }
-            return htmlSanitizer;
-        }
+ 
     }
 }
