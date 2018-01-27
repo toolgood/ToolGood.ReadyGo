@@ -193,8 +193,8 @@ namespace ToolGood.ReadyGo3
             }
             Database db = _database;
 
-            getDatabase().CommandTimeout = _commandTimeout;
-            getDatabase().OneTimeCommandTimeout = _oneTimeCommandTimeout;
+            db.CommandTimeout = _commandTimeout;
+            db.OneTimeCommandTimeout = _oneTimeCommandTimeout;
 
             _oneTimeCommandTimeout = 0;
             return db;

@@ -72,7 +72,6 @@
     <Compile Include="DataCentxt\Interfaces\IPrecondition\QTable.t.cs" />
     <Compile Include="DataCentxt\Interfaces\IPrecondition\SqlBuilder.cs" />
     <Compile Include="DataCentxt\Interfaces\ISQL\QTable.t.cs" />
-    <Compile Include="DataCentxt\QTableModel.cs" />
     <Compile Include="DataCentxt\Providers\FirebirdDbDatabaseProvider.cs" />
     <Compile Include="DataCentxt\Providers\MsAccessDbDatabaseProvider.cs" />
     <Compile Include="DataCentxt\Providers\MySqlDatabaseProvider.cs" />
@@ -187,15 +186,6 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Content Include="T4\ObjectToModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ObjectToModel.txt</LastGenOutput>
-    </Content>
-    <Content Include="T4\ObjectToModel.txt">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ObjectToModel.tt</DependentUpon>
-    </Content>
     <Content Include="T4\ObjectToQTable.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ObjectToQTable.cs</LastGenOutput>

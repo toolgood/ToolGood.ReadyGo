@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ganss.XSS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,22 +13,38 @@ namespace ToolGood.ReadyGo3.DataCentxt
     /// </summary>
     public abstract class QTableModel
     {
+        private static HtmlSanitizer htmlSanitizer;
         private Dictionary<string, object> _dictionary = new Dictionary<string, object>();
+
         protected void SetValue(string txt, object value) { _dictionary[txt] = value; }
         protected T GetValue<T>(string txt) { return _dictionary.ContainsKey(txt) ? (T)_dictionary[txt] : default(T); }
-
-
         protected void SetString(string txt, string html)
         {
             if (string.IsNullOrEmpty(html)) return;
-            html = Regex.Replace(html, @"(<!--.*?-->)", "", RegexOptions.IgnoreCase);
-            html = Regex.Replace(html, @"<style[^>]*?>[\s\S]*?</style>", "", RegexOptions.IgnoreCase);
-            html = Regex.Replace(html, @"<script([^>])*>(\w|\W)*?</script([^>])*>", "", RegexOptions.IgnoreCase);
+            var sanitizer = GetHtmlSanitizer();
+            html = sanitizer.Sanitize(html);
             html = Regex.Replace(html, "<[^>]+>", "");
             html = Regex.Replace(html, @"\s+", " ");
-            html = html.Replace("<", "&lt;").Replace(">", "&gt;");
             _dictionary[txt] = html;
         }
+        protected void SetHtml(string txt, string html)
+        {
+            if (string.IsNullOrEmpty(html)) return;
+            var sanitizer = GetHtmlSanitizer();
+            _dictionary[txt] = sanitizer.Sanitize(html);
+        }
         public Dictionary<string, object> GetChange() { return _dictionary; }
+
+
+        private HtmlSanitizer GetHtmlSanitizer()
+        {
+            if (htmlSanitizer==null) {
+                var sanitizer = new HtmlSanitizer();
+                sanitizer.AllowedAttributes.Add("class");
+                sanitizer.AllowedSchemes.Add("mailto");
+                htmlSanitizer = sanitizer;
+            }
+            return htmlSanitizer;
+        }
     }
 }
