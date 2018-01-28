@@ -137,6 +137,9 @@ namespace ToolGood.ReadyGo3.Mvc.AntiXSS
         public static string Sanitize(string html)
         {
             HtmlDocument document = new HtmlDocument();
+            document.OptionFixNestedTags = true;
+            document.OptionUseIdAttribute = false;
+
             document.LoadHtml(html);
             TryRemoveTag(document.DocumentNode);
             html = GetBody(document.DocumentNode);

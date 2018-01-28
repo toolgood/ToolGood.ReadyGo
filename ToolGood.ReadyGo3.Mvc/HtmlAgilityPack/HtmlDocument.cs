@@ -20,10 +20,7 @@ namespace ToolGood.ReadyGo3.Mvc.HtmlAgilityPack
     public partial class HtmlDocument
     {
         #region Manager
-
-        /// <summary>True to disable, false to enable the behavaior tag p.</summary>
-        public static bool DisableBehavaiorTagP;
-
+ 
         /// <summary>Default builder to use in the HtmlDocument constructor</summary>
         public static Action<HtmlDocument> DefaultBuilder { get; set; }
 
@@ -78,16 +75,6 @@ namespace ToolGood.ReadyGo3.Mvc.HtmlAgilityPack
         /// </summary>
         public bool OptionCheckSyntax = true;
 
-        /// <summary>
-        /// Defines if a checksum must be computed for the document while parsing. Default is false.
-        /// </summary>
-        public bool OptionComputeChecksum;
-
-        /// <summary>
-        /// Defines if SelectNodes method will return null or empty collection when no node matched the XPath expression.
-        /// Setting this to true will return empty collection and false will return null. Default is false.
-        /// </summary>
-        public bool OptionEmptyCollection = false;
 
         /// <summary>True to disable, false to enable the server side code.</summary>
         public bool DisableServerSideCode = false;
