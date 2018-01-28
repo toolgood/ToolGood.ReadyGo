@@ -10,12 +10,6 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
     {
         internal SqlRecord() { }
 
-        ///// <summary>
-        ///// SQL执行监控
-        ///// </summary>
-        //public ISqlMonitor SqlMonitor { get; internal set; }
-
-
 
         /// <summary>
         /// 上次Sql语句

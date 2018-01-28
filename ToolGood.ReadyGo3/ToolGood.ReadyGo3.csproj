@@ -55,6 +55,7 @@
     <Compile Include="Attributes\ColumnAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\DefaultValueAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\FieldLengthAttribute.cs" />
+    <Compile Include="Attributes\CreateTableAttributes\HtmlAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\IndexAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\RequiredAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\UniqueAttribute.cs" />

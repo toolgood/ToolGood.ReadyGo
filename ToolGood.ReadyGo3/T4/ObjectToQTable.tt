@@ -1,4 +1,4 @@
-﻿<#@ template debug="false" hostspecific="true" language="C#" #>
+﻿<#@ template debug="true" hostspecific="true" language="C#" #>
 <#@ assembly name="System.Core" #>
 <#@ assembly name="EnvDTE"#>
 <#@ assembly name="EnvDTE80" #>
@@ -8,6 +8,7 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="EnvDTE" #>
+<#@ import namespace="EnvDTE80" #>
 <#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
 <#@ output extension=".cs" #>
 <#
@@ -42,15 +43,16 @@ using ToolGood.ReadyGo3.DataCentxt;
 
 namespace <#=        nameSpace #>
 {
-<#    foreach(EnvDTE.CodeClass codeClass in allClasses){ #>
+<#    foreach(EnvDTE80.CodeClass2 codeClass in allClasses){ #>
 	<#= GetSummary(codeClass.DocComment) #>
     public class <#=            GetClass(codeClass,oldClassPrefix,newClassPrefix) #> : QTable<<#=codeClass.FullName #>>
     {
-<#      var allProperty = VisualStudioHelper.GetAllCodeElementsOfType(codeClass.Members, EnvDTE.vsCMElement.vsCMElementProperty, false); 
-        var pis =new List<EnvDTE80.CodeProperty2>();
-        foreach  (EnvDTE80.CodeProperty2 pi in allProperty) {
-            if(pi.ReadWrite==EnvDTE80.vsCMPropertyKind.vsCMPropertyKindReadWrite){
-            if (pi.Access== EnvDTE.vsCMAccess.vsCMAccessPublic) {
+<#       
+		var allProperty = VisualStudioHelper.GetAllCodeElementsOfType(codeClass.Parts, EnvDTE.vsCMElement.vsCMElementProperty, false); 
+        var pis = new List<EnvDTE80.CodeProperty2>();
+        foreach (EnvDTE80.CodeProperty2 pi in allProperty) {
+            if (pi.ReadWrite == EnvDTE80.vsCMPropertyKind.vsCMPropertyKindReadWrite){
+            if (pi.Access == EnvDTE.vsCMAccess.vsCMAccessPublic) {
                     pis.Add(pi);
                 }
             }
@@ -73,33 +75,22 @@ namespace <#=        nameSpace #>
             _<#=                    pi.Name #> = AddColumn<<#= pi.Type.AsString #>>("<#= GetColumnName(pi) #>", "<#= pi.Name #>", "<#=                    GetResultSql(pi) #>");
 <#            } else { #>
             _<#=                    pi.Name #> = AddColumn<<#= pi.Type.AsString #>>("<#= GetColumnName(pi) #>", "<#= pi.Name #>", <#= GetPkFlag(pi,codeClass) #>);
+<#					if(pi.Name=="LastUpdateTime"){#>
+			<#=                    pi.Name #>=System.DateTime.Now;
+<# 			}#>
 <#            } #>
 <#        } #>
         }
 
 <#        foreach  (EnvDTE.CodeProperty pi in pis) { #>
-        <#=                GetSummary(pi.DocComment) #>
 <#            if(IsResultColumn(pi)){ #>
+        <#=                GetSummary(pi.DocComment) #>
         public QTableColumn<<#= pi.Type.AsString #>> <#= pi.Name #> { get { return _<#= pi.Name #>; } }
 <#            } else { #>
+        <#=                GetSummary(pi.DocComment) #>
         public QTableColumn<<#= pi.Type.AsString #>> <#= pi.Name #> { get { return _<#= pi.Name #>; } set { _<#= pi.Name #>.NewValue = value; } }
 <#            } #>
-
 <#        } #>
-
-        public void SetValues(IEnumerable<string> newKeys, <#=codeClass.FullName #> value)
-        {
-            foreach (var key in newKeys) {
-                switch (key.ToLower()) {
-<#      foreach  (EnvDTE.CodeProperty pi in pis) { #>
-<#            if(IsResultColumn(pi)==false){ #>
-					case "<#= pi.Name.ToLower() #>": SetValue("<#= pi.Name.ToLower() #>", value.<#= pi.Name #>); break;
-<#            } #>
-<#		} #>
-                    default: break;
-                }
-            }
-        }
 
     }
 
@@ -163,6 +154,17 @@ namespace <#=        nameSpace #>
             }
         }
         return false;
+    }
+    public bool IsHtmlColumn(EnvDTE.CodeProperty pi){
+        foreach(EnvDTE80.CodeAttribute2 code in pi.Attributes){
+            if(code.FullName=="ToolGood.ReadyGo3.Attributes.HtmlAttribute"){
+                return true;
+            }
+        }
+        return false;
+    }
+	public bool IsStringColumn(EnvDTE.CodeProperty pi){
+		return pi.Type.AsString=="string";
     }
     public string GetColumnName(EnvDTE.CodeProperty pi){
         foreach(EnvDTE80.CodeAttribute2 code in pi.Attributes){

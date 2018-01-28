@@ -59,6 +59,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
     /// </summary>
     public partial class QSqlColumn : QColumn
     {
+        /// <summary>
+        /// 别名
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public QSqlColumn As(string name) { _asName = name; return this; }
         internal QSqlColumn() { }
         internal QSqlColumn(SqlFunction function, params object[] args)

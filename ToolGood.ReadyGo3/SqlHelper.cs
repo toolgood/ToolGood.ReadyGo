@@ -74,8 +74,10 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         public SqlRecord _Sql { get { return _sql; } }
 
-
-        internal bool _IsDisposed { get { return _isDisposable; } }
+        /// <summary>
+        /// 是否释放
+        /// </summary>
+        public bool _IsDisposed { get { return _isDisposable; } }
 
         #endregion 共公属性
 
@@ -173,12 +175,15 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
-        /// 
+        /// 释放
         /// </summary>
         public void Dispose()
         {
             _isDisposable = true;
-            _database?.Dispose();
+            if (_database != null) {
+                _database.Dispose();
+                _database = null;
+            }
         }
 
 

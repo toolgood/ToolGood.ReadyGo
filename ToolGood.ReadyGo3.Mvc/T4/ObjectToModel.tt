@@ -8,6 +8,7 @@
 <#@ import namespace="System.Collections.Generic" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="EnvDTE" #>
+<#@ import namespace="EnvDTE80" #>
 <#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
 <#@ output extension=".txt" #>
 
@@ -43,11 +44,11 @@ using ToolGood.ReadyGo3.DataCentxt;
 
 namespace <#=        nameSpace #>
 {
-<#    foreach(EnvDTE.CodeClass codeClass in allClasses){ #>
-    public class <#=            GetClass(codeClass,oldClassPrefix,newClassPrefix) #>Model : QTableModel
+<#    foreach(EnvDTE80.CodeClass2 codeClass in allClasses){ #>
+    public class <#=            GetClass(codeClass,oldClassPrefix,newClassPrefix) #>Model : ToolGood.ReadyGo3.DataCentxt.ModelBase
     {
 <#      var hasLastUpdateTime=false;
-		var allProperty = VisualStudioHelper.GetAllCodeElementsOfType(codeClass.Members, EnvDTE.vsCMElement.vsCMElementProperty, false); 
+		var allProperty = VisualStudioHelper.GetAllCodeElementsOfType(codeClass.Parts, EnvDTE.vsCMElement.vsCMElementProperty, false); 
         var pis =new List<EnvDTE80.CodeProperty2>();
         foreach  (EnvDTE80.CodeProperty2 pi in allProperty) {
 			if(pi.Name=="IsDelete") continue;
@@ -62,7 +63,9 @@ namespace <#=        nameSpace #>
 <#        foreach  (EnvDTE.CodeProperty pi in pis) { #>
 <#            if(IsResultColumn(pi)==false){ #>
         <#=                GetSummary(pi.DocComment) #>
-<#            if(pi.Type.AsString=="string"){ #>
+<#             if(IsHtmlColumn(pi)) { #>
+		public <#= pi.Type.AsString #> <#= pi.Name #> { get { return GetValue<<#= pi.Type.AsString #>>("<#= pi.Name #>"); } set { SetHtml("<#= pi.Name #>",value); } }
+<#             } else if(pi.Type.AsString=="string") { #>
 		public <#= pi.Type.AsString #> <#= pi.Name #> { get { return GetValue<<#= pi.Type.AsString #>>("<#= pi.Name #>"); } set { SetString("<#= pi.Name #>",value); } }
  <#            } else { #>
  		public <#= pi.Type.AsString #> <#= pi.Name #> { get { return GetValue<<#= pi.Type.AsString #>>("<#= pi.Name #>"); } set { SetValue("<#= pi.Name #>",value); } }
@@ -131,6 +134,19 @@ namespace <#=        nameSpace #>
             }
         }
         return false;
+    }
+	public bool IsHtmlColumn(EnvDTE.CodeProperty pi){
+		if(pi.Type.AsString=="string"){
+			foreach(EnvDTE80.CodeAttribute2 code in pi.Attributes){
+				if(code.FullName=="ToolGood.ReadyGo3.Attributes.HtmlAttribute"){
+					return true;
+				}
+			}
+		}
+        return false;
+    }
+	public bool IsStringColumn(EnvDTE.CodeProperty pi){
+		return pi.Type.AsString=="string";
     }
     public string GetColumnName(EnvDTE.CodeProperty pi){
         foreach(EnvDTE80.CodeAttribute2 code in pi.Attributes){
