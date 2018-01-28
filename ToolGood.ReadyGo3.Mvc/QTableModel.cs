@@ -20,9 +20,12 @@ namespace ToolGood.ReadyGo3.DataCentxt
         protected void SetString(string txt, string html)
         {
             if (string.IsNullOrEmpty(html)) return;
-            html = HtmlSanitizer.Sanitize(html);
-            html = Regex.Replace(html, "<[^>]+>", "");
+            html = Regex.Replace(html, @"(<![^>]*>)", "", RegexOptions.IgnoreCase);
+            html = Regex.Replace(html, @"<style[^>]*?>[\s\S]*?</style>", "", RegexOptions.IgnoreCase);
+            html = Regex.Replace(html, @"<script([^>])*>(\w|\W)*?</script([^>])*>", "", RegexOptions.IgnoreCase);
+            html = Regex.Replace(html, "</?[a-zA-Z][^>]*>", "");
             html = Regex.Replace(html, @"\s+", " ");
+
             _dictionary[txt] = html;
         }
         protected void SetHtml(string txt, string html)

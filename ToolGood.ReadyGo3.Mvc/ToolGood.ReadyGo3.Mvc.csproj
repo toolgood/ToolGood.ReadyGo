@@ -60,6 +60,7 @@
     <Compile Include="HtmlAgilityPack\HtmlTextNode.cs" />
     <Compile Include="HtmlAgilityPack\NameValuePairList.cs" />
     <Compile Include="HtmlAgilityPack\Utilities.cs" />
+    <Compile Include="HtmlAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QTableModel.cs" />
   </ItemGroup>
