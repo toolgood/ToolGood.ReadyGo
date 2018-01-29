@@ -9,110 +9,115 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
     /// </summary>
     public class SqlMonitor : ISqlMonitor
     {
-        private List<SqlMonitorItem> Items = new List<SqlMonitorItem>();
-        private SqlMonitorItem root = new SqlMonitorItem();
-        private SqlMonitorItem cur;
+        private readonly List<SqlMonitorItem> _items = new List<SqlMonitorItem>();
+        private readonly SqlMonitorItem _root = new SqlMonitorItem();
+        private SqlMonitorItem _cur;
         /// <summary>
         /// 
         /// </summary>
         public SqlMonitor()
         {
-            cur = root;
-            cur.Parent = root;
+            _cur = _root;
+            _cur.Parent = _root;
         }
         /// <summary>
         /// 
         /// </summary>
         public void ConnectionOpened()
         {
-            SqlMonitorItem item = new SqlMonitorItem();
-            item.Layer = cur.Layer + 1;
-            item.Parent = cur;
-            item.StartTime = DateTime.Now;
+            SqlMonitorItem item = new SqlMonitorItem {
+                Layer = _cur.Layer + 1,
+                Parent = _cur,
+                StartTime = DateTime.Now
+            };
             item.Sql += "开始连接...";
-            Items.Add(item);
-            cur = item;
+            _items.Add(item);
+            _cur = item;
         }
         /// <summary>
         /// 
         /// </summary>
         public void ConnectionClosing()
         {
-            SqlMonitorItem item = new SqlMonitorItem();
-            item.Layer = cur.Layer + 1;
-            item.Parent = cur;
-            item.StartTime = DateTime.Now;
-            item.EndTime = DateTime.Now;
+            SqlMonitorItem item = new SqlMonitorItem {
+                Layer = _cur.Layer + 1,
+                Parent = _cur,
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now
+            };
             item.Sql += "结束连接...";
-            Items.Add(item);
+            _items.Add(item);
 
-            cur.EndTime = DateTime.Now;
-            cur = cur.Parent;
+            _cur.EndTime = DateTime.Now;
+            _cur = _cur.Parent;
         }
         /// <summary>
         /// 
         /// </summary>
-        public void Transactioning( )
+        public void Transactioning()
         {
-            SqlMonitorItem item = new SqlMonitorItem();
-            item.Layer = cur.Layer + 1;
-            item.Parent = cur;
-            item.StartTime = DateTime.Now;
+            SqlMonitorItem item = new SqlMonitorItem {
+                Layer = _cur.Layer + 1,
+                Parent = _cur,
+                StartTime = DateTime.Now
+            };
             item.Sql += "开始事务...";
-            Items.Add(item);
-            cur = item;
+            _items.Add(item);
+            _cur = item;
         }
         /// <summary>
         /// 
         /// </summary>
-        public void Transactioned( )
+        public void Transactioned()
         {
-            SqlMonitorItem item = new SqlMonitorItem();
-            item.Layer = cur.Layer + 1;
-            item.Parent = cur;
-            item.StartTime = DateTime.Now;
-            item.EndTime = DateTime.Now;
+            SqlMonitorItem item = new SqlMonitorItem {
+                Layer = _cur.Layer + 1,
+                Parent = _cur,
+                StartTime = DateTime.Now,
+                EndTime = DateTime.Now
+            };
             item.Sql += "结束事务...";
-            Items.Add(item);
+            _items.Add(item);
 
-            cur.EndTime = DateTime.Now;
-            cur = cur.Parent;
+            _cur.EndTime = DateTime.Now;
+            _cur = _cur.Parent;
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        public void ExecutingCommand(  string sql, object[] args)
+        public void ExecutingCommand(string sql, object[] args)
         {
-            SqlMonitorItem item = new SqlMonitorItem();
-            item.Layer = cur.Layer + 1;
-            item.Parent = cur;
-            item.StartTime = DateTime.Now;
-            item.Sql = sql;
+            SqlMonitorItem item = new SqlMonitorItem {
+                Layer = _cur.Layer + 1,
+                Parent = _cur,
+                StartTime = DateTime.Now,
+                Sql = sql
+            };
 
-            Items.Add(item);
-            cur = item;
+            _items.Add(item);
+            _cur = item;
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        public void ExecutedCommand(  string sql, object[] args)
+        public void ExecutedCommand(string sql, object[] args)
         {
-            cur.EndTime = DateTime.Now;
-            cur = cur.Parent;
+            _cur.EndTime = DateTime.Now;
+            _cur = _cur.Parent;
         }
         /// <summary>
         /// 
         /// </summary>
         /// <param name="message"></param>
-        public void Exception( string message)
+        public void Exception(string message)
         {
-            cur.EndTime = DateTime.Now;
-            cur.Exception = message;
-            cur = cur.Parent;
+            _cur.EndTime = DateTime.Now;
+            _cur.Exception = message;
+            _cur = _cur.Parent;
         }
         /// <summary>
         /// 
@@ -133,7 +138,7 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         public string ToText()
         {
             StringBuilder sb = new StringBuilder();
-            foreach (var item in Items) {
+            foreach (var item in _items) {
                 if (sb.Length > 0) {
                     sb.Append("\r\n");
                 }
@@ -155,7 +160,7 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             {
                 sb.Append(new string(' ', Layer * 2));
 
-                sb.AppendFormat("{0}[{1}ms]：", StartTime.ToString("HH:mm:ss"), (int)(EndTime - StartTime).TotalMilliseconds);
+                sb.AppendFormat("{0:HH:mm:ss}[{1}ms]：", StartTime, (int)(EndTime - StartTime).TotalMilliseconds);
                 sb.Append(Sql);
                 if (string.IsNullOrEmpty(Exception) == false) {
                     sb.Append("\r\n");

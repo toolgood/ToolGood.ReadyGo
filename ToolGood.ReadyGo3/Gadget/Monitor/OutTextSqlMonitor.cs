@@ -10,46 +10,44 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
     /// </summary>
     public class OutTextSqlMonitor : ISqlMonitor
     {
-        Dictionary<SqlMonitorType, Action<string>> dict = new Dictionary<SqlMonitorType, Action<string>>();
+        private readonly Dictionary<SqlMonitorType, Action<string>> _dict = new Dictionary<SqlMonitorType, Action<string>>();
 
         private void SetOutAction(SqlMonitorType type, Action<string> action)
         {
             if (type.HasFlag(SqlMonitorType.ConnectionOpened)) {
-                dict[SqlMonitorType.ConnectionOpened] = action;
+                _dict[SqlMonitorType.ConnectionOpened] = action;
             } else if (type.HasFlag(SqlMonitorType.ConnectionClosing)) {
-                dict[SqlMonitorType.ConnectionClosing] = action;
+                _dict[SqlMonitorType.ConnectionClosing] = action;
             } else if (type.HasFlag(SqlMonitorType.Transactioning)) {
-                dict[SqlMonitorType.Transactioning] = action;
+                _dict[SqlMonitorType.Transactioning] = action;
             } else if (type.HasFlag(SqlMonitorType.Transactioned)) {
-                dict[SqlMonitorType.Transactioned] = action;
-            //} else if (type.HasFlag(SqlMonitorType.ExecutingCommand)) {
-            //    dict[SqlMonitorType.ExecutingCommand] = action;
+                _dict[SqlMonitorType.Transactioned] = action;
+                //} else if (type.HasFlag(SqlMonitorType.ExecutingCommand)) {
+                //    dict[SqlMonitorType.ExecutingCommand] = action;
             } else if (type.HasFlag(SqlMonitorType.ExecutedCommand)) {
-                dict[SqlMonitorType.ExecutedCommand] = action;
+                _dict[SqlMonitorType.ExecutedCommand] = action;
             } else if (type.HasFlag(SqlMonitorType.Exception)) {
-                dict[SqlMonitorType.Exception] = action;
+                _dict[SqlMonitorType.Exception] = action;
             }
         }
 
         /// <summary>
         /// 
         /// </summary>
-        public void ConnectionClosing( )
+        public void ConnectionClosing()
         {
-            Action<string> action;
-            if (dict.TryGetValue(SqlMonitorType.ConnectionClosing, out action)) {
-                var str = string.Format("{0} 关闭连接\r\n",DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            if (_dict.TryGetValue(SqlMonitorType.ConnectionClosing, out Action<string> action)) {
+                var str = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 关闭连接\r\n";
                 action(str);
             }
         }
         /// <summary>
         /// 
         /// </summary>
-        public void ConnectionOpened( )
+        public void ConnectionOpened()
         {
-            Action<string> action;
-            if (dict.TryGetValue(SqlMonitorType.ConnectionOpened, out action)) {
-                var str = string.Format("{0} 开始连接\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            if (_dict.TryGetValue(SqlMonitorType.ConnectionOpened, out Action<string> action)) {
+                var str = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 开始连接\r\n";
                 action(str);
             }
         }
@@ -57,27 +55,23 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         /// 
         /// </summary>
         /// <param name="message"></param>
-        public void Exception( string message)
+        public void Exception(string message)
         {
-            Action<string> action;
-            if (dict.TryGetValue(SqlMonitorType.Exception, out action)) {
-                var str = string.Format("{0} 错误：{1}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),message);
+            if (_dict.TryGetValue(SqlMonitorType.Exception, out Action<string> action)) {
+                var str = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 错误：{message}\r\n";
                 action(str);
             }
         }
-        private DateTime StartTime;
+        private DateTime _startTime;
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        public void ExecutedCommand( string sql, object[] args)
+        public void ExecutedCommand(string sql, object[] args)
         {
-            Action<string> action;
-            if (dict.TryGetValue(SqlMonitorType.ExecutedCommand, out action)) {
-                var str = string.Format("{0}[{1}ms] {1}\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
-                    ,(DateTime.Now- StartTime).TotalMilliseconds, sql
-                    );
+            if (_dict.TryGetValue(SqlMonitorType.ExecutedCommand, out Action<string> action)) {
+                var str = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss}[{(DateTime.Now - _startTime).TotalMilliseconds}ms] {(DateTime.Now - _startTime).TotalMilliseconds}\r\n";
                 action(str);
             }
         }
@@ -86,9 +80,9 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        public void ExecutingCommand(  string sql, object[] args)
+        public void ExecutingCommand(string sql, object[] args)
         {
-            StartTime = DateTime.Now;
+            _startTime = DateTime.Now;
         }
         /// <summary>
         /// 
@@ -111,20 +105,18 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         /// </summary>
         public void Transactioned()
         {
-            Action<string> action;
-            if (dict.TryGetValue(SqlMonitorType.Transactioned, out action)) {
-                var str = string.Format("{0} 开启事务\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            if (_dict.TryGetValue(SqlMonitorType.Transactioned, out Action<string> action)) {
+                var str = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 开启事务\r\n";
                 action(str);
             }
         }
         /// <summary>
         /// 
         /// </summary>
-        public void Transactioning( )
+        public void Transactioning()
         {
-            Action<string> action;
-            if (dict.TryGetValue(SqlMonitorType.Transactioning, out action)) {
-                var str = string.Format("{0} 开启事务\r\n", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
+            if (_dict.TryGetValue(SqlMonitorType.Transactioning, out Action<string> action)) {
+                var str = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} 开启事务\r\n";
                 action(str);
             }
         }

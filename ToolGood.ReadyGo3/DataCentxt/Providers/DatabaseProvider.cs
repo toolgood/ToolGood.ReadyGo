@@ -17,11 +17,21 @@ namespace ToolGood.ReadyGo3.DataCentxt
         protected bool usedEscapeSql = false;
         protected char escapeSql = '`';
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sqlIdentifier"></param>
+        /// <returns></returns>
         public virtual string EscapeSqlIdentifier(string sqlIdentifier)
         {
             return $"[{sqlIdentifier}]";
         }
- 
+        /// <summary>
+        /// 创建生成SQL Function
+        /// </summary>
+        /// <param name="function"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public virtual string CreateFunction(SqlFunction function, params object[] args)
         {
             switch (function) {
@@ -63,7 +73,13 @@ namespace ToolGood.ReadyGo3.DataCentxt
             }
             return CreateFunction(args[0].ToString(), args, 1);
         }
-
+        /// <summary>
+        /// 创建生成SQL Function
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <param name="index"></param>
+        /// <returns></returns>
         protected string CreateFunction(string sql, object[] args, int index = 0)
         {
             List<string> list = new List<string>();
@@ -73,7 +89,16 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return string.Format(sql, list);
         }
 
-
+        /// <summary>
+        /// 生成多表格Delete SQL语句
+        /// </summary>
+        /// <param name="tables"></param>
+        /// <param name="pk"></param>
+        /// <param name="tableName"></param>
+        /// <param name="fromtable"></param>
+        /// <param name="jointables"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public virtual string Delete(List<QTable> tables, QColumn pk, string tableName, string fromtable, string jointables, string where)
         {
             if (object.Equals(pk, null)) throw new NoPrimaryKeyException();
@@ -81,12 +106,34 @@ namespace ToolGood.ReadyGo3.DataCentxt
             var pk2 = pk.ToSql(this, tables.Count);
             return $"DELETE {tableName} WHERE {pk1} IN (SELECT {pk2} FROM {fromtable} {jointables} WHERE {where});";
         }
-
+        /// <summary>
+        /// 生成多表格Update SQL语句
+        /// </summary>
+        /// <param name="tables"></param>
+        /// <param name="setValues"></param>
+        /// <param name="fromtable"></param>
+        /// <param name="jointables"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public virtual string Update(List<QTable> tables, string setValues, string fromtable, string jointables, string where)
         {
             throw new DatabaseUnsupportException();
         }
-
+        /// <summary>
+        /// 生成多表格Select SQL语句
+        /// </summary>
+        /// <param name="tables"></param>
+        /// <param name="useDistinct"></param>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <param name="selectColumns"></param>
+        /// <param name="fromtable"></param>
+        /// <param name="jointables"></param>
+        /// <param name="where"></param>
+        /// <param name="order"></param>
+        /// <param name="group"></param>
+        /// <param name="having"></param>
+        /// <returns></returns>
         public virtual string Select(List<QTable> tables, bool useDistinct, int limit, int offset, List<string> selectColumns, string fromtable,
             string jointables, string where, string order, string group, string having)
         {
@@ -189,7 +236,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// 转化成SQL语言的片段，value不能为Null.
         /// 
         /// </summary>
-        /// <param name="sqlType"></param>
         /// <param name="value"></param>
         /// <returns></returns>
         public string EscapeParam(object value)
@@ -205,8 +251,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             var fieldType = value.GetType();
             if (fieldType.IsEnum) {
                 var isEnumFlags = fieldType.IsEnum;
-                long enumValue;
-                if (!isEnumFlags && Int64.TryParse(value.ToString(), out enumValue)) {
+                if (!isEnumFlags && Int64.TryParse(value.ToString(), out long enumValue)) {
                     value = Enum.ToObject(fieldType, enumValue).ToString();
                 }
                 var enumString = value.ToString();

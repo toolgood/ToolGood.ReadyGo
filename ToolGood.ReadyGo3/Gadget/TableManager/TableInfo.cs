@@ -26,9 +26,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
         public List<List<string>> Uniques;
         public List<ColumnInfo> Columns;
 
-        public bool UsedPrefix;
-        public bool UsedSuffix;
-        public string FixTag;
+ 
 
         internal static TableInfo FromType(Type t)
         {

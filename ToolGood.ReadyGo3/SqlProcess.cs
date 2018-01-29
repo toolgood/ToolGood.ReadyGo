@@ -14,14 +14,14 @@ namespace ToolGood.ReadyGo3.StoredProcedure
     /// </summary>
     public abstract class SqlProcess : IDisposable
     {
-        private bool _singleSqlHelper;
-        internal SqlHelper _sqlhelper;
-        private Dictionary<string, IDbDataParameter> _parameters = new Dictionary<string, IDbDataParameter>();
-        private List<IDbDataParameter> _Outs = new List<IDbDataParameter>();
+        private readonly bool _singleSqlHelper;
+        private readonly SqlHelper _sqlhelper;
+        private readonly Dictionary<string, IDbDataParameter> _parameters = new Dictionary<string, IDbDataParameter>();
+        private readonly List<IDbDataParameter> _outs = new List<IDbDataParameter>();
         /// <summary>
         /// 存储过程名称
         /// </summary>
-        protected abstract string ProcessName { get; }
+        protected abstract string ProcessName { get; set; }
 
         #region 构造函数
         /// <summary>
@@ -84,7 +84,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
             _p.ParameterName = name;
             if (isOutput) {
                 _p.Direction = ParameterDirection.InputOutput;
-                _Outs.Add(_p);
+                _outs.Add(_p);
             }
             _parameters[name] = _p;
         }
@@ -136,12 +136,10 @@ namespace ToolGood.ReadyGo3.StoredProcedure
                 p.Size = Math.Max((value as AnsiString).Value.Length + 1, 4000);
                 p.Value = (value as AnsiString).Value;
                 p.DbType = DbType.AnsiString;
-            } else if (value.GetType().Name == "SqlGeography") //SqlGeography is a CLR Type
-            {
+            } else if (value.GetType().Name == "SqlGeography") {
                 p.GetType().GetProperty("UdtTypeName").SetValue(p, "geography", null); //geography is the equivalent SQL Server Type
                 p.Value = value;
-            } else if (value.GetType().Name == "SqlGeometry") //SqlGeometry is a CLR Type
-            {
+            } else if (value.GetType().Name == "SqlGeometry") {
                 p.GetType().GetProperty("UdtTypeName").SetValue(p, "geometry", null); //geography is the equivalent SQL Server Type
                 p.Value = value;
             } else if (t == typeof(DateTimeOffset)) {
@@ -192,17 +190,14 @@ namespace ToolGood.ReadyGo3.StoredProcedure
             foreach (var item in args) {
                 name += ((IDbDataParameter)item).Value.ToString() + "|";
             }
-            var cacheService = _cacheService;
-            if (cacheService == null) {
-                cacheService = _sqlhelper._cacheService;
-            }
+            var cacheService = _cacheService ?? _sqlhelper._cacheService;
             var run = cacheService.Get<Tuple<T, object[]>>(name, () => {
                 var dt = func();
-                var objs = _Outs.Select(q => q.Value).ToArray();
+                var objs = _outs.Select(q => q.Value).ToArray();
                 return Tuple.Create(dt, objs);
             }, _cacheTime, "");
-            for (int i = 0; i < _Outs.Count; i++) {
-                _Outs[i].Value = run.Item2[i];
+            for (int i = 0; i < _outs.Count; i++) {
+                _outs[i].Value = run.Item2[i];
             }
             return run.Item1;
         }
@@ -220,17 +215,14 @@ namespace ToolGood.ReadyGo3.StoredProcedure
             foreach (var item in args) {
                 name += ((IDbDataParameter)item).Value.ToString() + "|";
             }
-            var cacheService = _cacheService;
-            if (cacheService == null) {
-                cacheService = _sqlhelper._cacheService;
-            }
+            var cacheService = _cacheService ?? _sqlhelper._cacheService;
             var run = cacheService.Get<Tuple<T, object[]>>(name, () => {
                 var dt = func();
-                var objs = _Outs.Select(q => q.Value).ToArray();
+                var objs = _outs.Select(q => q.Value).ToArray();
                 return Tuple.Create(dt, objs);
             }, _cacheTime, "");
-            for (int i = 0; i < _Outs.Count; i++) {
-                _Outs[i].Value = run.Item2[i];
+            for (var i = 0; i < _outs.Count; i++) {
+                _outs[i].Value = run.Item2[i];
             }
             return run.Item1;
         }

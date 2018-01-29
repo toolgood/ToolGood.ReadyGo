@@ -7,9 +7,17 @@ using ToolGood.ReadyGo3.DataCentxt.Enums;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Providers
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class PostgreSQLDatabaseProvider : DatabaseProvider
     {
- 
+ /// <summary>
+ /// 
+ /// </summary>
+ /// <param name="function"></param>
+ /// <param name="args"></param>
+ /// <returns></returns>
         public override string CreateFunction(SqlFunction function, params object[] args)
         {
             //  https://www.postgresql.org/docs/9.1/static/functions-math.html
@@ -47,7 +55,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
             }
             return base.CreateFunction(function, args);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
         public PostgreSQLDatabaseProvider()
         {
             usedEscapeSql = true;
@@ -55,7 +65,21 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
         }
 
 
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tables"></param>
+        /// <param name="useDistinct"></param>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <param name="selectColumns"></param>
+        /// <param name="fromtable"></param>
+        /// <param name="jointables"></param>
+        /// <param name="where"></param>
+        /// <param name="order"></param>
+        /// <param name="group"></param>
+        /// <param name="having"></param>
+        /// <returns></returns>
         public override string Select(List<QTable> tables, bool useDistinct, int limit, int offset, List<string> selectColumns, string fromtable, string jointables, string where, string order, string group, string having)
         {
             StringBuilder sb = new StringBuilder();

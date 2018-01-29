@@ -30,8 +30,9 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             a = pi.GetCustomAttributes(typeof(ResultColumnAttribute), true);
             if (a.Length > 0) return null;
 
-            ColumnInfo ci = new ColumnInfo();
-            ci.PropertyType = pi.PropertyType;
+            ColumnInfo ci = new ColumnInfo {
+                PropertyType = pi.PropertyType
+            };
 
             a = pi.GetCustomAttributes(typeof(ColumnAttribute), true);
             ci.ColumnName = a.Length == 0 ? pi.Name : (a[0] as ColumnAttribute).Name;

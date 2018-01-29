@@ -21,17 +21,17 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             this._sqlhelper = helper;
             this._paramPrefix = DatabaseProvider.Resolve(_sqlhelper._sqlType).GetParameterPrefix(_sqlhelper._connectionString);
-            SqlExpression = new Expressions.SqlExpression(_sqlhelper._sqlType);
+            _sqlExpression = new Expressions.SqlExpression(_sqlhelper._sqlType);
         }
         #region  01 私有变量
-        private SqlExpression SqlExpression;
-        private SqlHelper _sqlhelper;
+        private SqlExpression _sqlExpression;
+        private readonly SqlHelper _sqlhelper;
         private List<object> _args = new List<object>();
         private StringBuilder _where = new StringBuilder();
         private string _joinOnString = "";
         private List<SelectHeader> _includeColumns = new List<SelectHeader>();
         private List<string> _excludeColumns = new List<string>();
-        private string _paramPrefix;
+        private readonly string _paramPrefix;
 
         private string _order = "";
         private string _groupby = "";
@@ -60,7 +60,13 @@ namespace ToolGood.ReadyGo3.LinQ
         private void whereNotIn(LambdaExpression field, ICollection args)
         {
             if (jump()) return;
-            var column = SqlExpression.GetColumnName(field);
+            var column = _sqlExpression.GetColumnName(field);
+            whereNotIn(column, args);
+        }
+
+        private void whereNotIn(string column, ICollection args)
+        {
+            if (jump()) return;
 
             if (_where.Length > 0) {
                 _where.Append(" AND ");
@@ -94,7 +100,13 @@ namespace ToolGood.ReadyGo3.LinQ
         private void whereIn(LambdaExpression field, ICollection args)
         {
             if (jump()) return;
-            var column = SqlExpression.GetColumnName(field);
+            var column = _sqlExpression.GetColumnName(field);
+            whereIn(column, args);
+        }
+
+        private void whereIn(string column, ICollection args)
+        {
+            if (jump()) return;
 
             if (_where.Length > 0) {
                 _where.Append(" AND ");
@@ -124,6 +136,7 @@ namespace ToolGood.ReadyGo3.LinQ
                 _args.Add(item);
             }
         }
+
 
         private void where(string where, ICollection args)
         {
@@ -191,8 +204,7 @@ namespace ToolGood.ReadyGo3.LinQ
         private void where(LambdaExpression where)
         {
             if (jump()) return;
-            string sql;
-            SqlExpression.Analysis(where, out sql);
+            _sqlExpression.Analysis(where, out string sql);
             if (_where.Length > 0) {
                 _where.Append(" AND ");
             }
@@ -208,7 +220,7 @@ namespace ToolGood.ReadyGo3.LinQ
         private void includeColumn(LambdaExpression column, string asName)
         {
             if (jump()) return;
-            var col = SqlExpression.GetColumnName(column);
+            var col = _sqlExpression.GetColumnName(column);
             includeColumn(col, asName);
         }
         private void includeColumn(string col, string asName)
@@ -239,16 +251,14 @@ namespace ToolGood.ReadyGo3.LinQ
         private void excludeColumn(LambdaExpression column)
         {
             if (jump()) return;
-            var col = SqlExpression.GetColumnName(column);
+            var col = _sqlExpression.GetColumnName(column);
             excludeColumn(col);
         }
         private void excludeColumn(string col)
         {
             if (jump()) return;
             var index = col.IndexOf('.');
-            //string table = null;
             if (index > -1) {
-                //table = col.Substring(0, index);
                 col = col.Substring(index + 1);
             }
             _excludeColumns.Add(col);
@@ -258,7 +268,7 @@ namespace ToolGood.ReadyGo3.LinQ
         private void orderBy(LambdaExpression order, OrderType type)
         {
             if (jump()) return;
-            var column = SqlExpression.GetColumnName(order);
+            var column = _sqlExpression.GetColumnName(order);
             if (type == OrderType.Asc) {
                 orderBySql(column + " ASC");
             } else {
@@ -278,7 +288,7 @@ namespace ToolGood.ReadyGo3.LinQ
         private void groupBy(LambdaExpression group)
         {
             if (jump()) return;
-            var column = SqlExpression.GetColumnName(group);
+            var column = _sqlExpression.GetColumnName(group);
             this.groupBy(column);
         }
 
@@ -297,8 +307,7 @@ namespace ToolGood.ReadyGo3.LinQ
         private void having(LambdaExpression having)
         {
             if (jump()) return;
-            string sql;
-            SqlExpression.Analysis(having, out sql);
+            _sqlExpression.Analysis(having, out string sql);
             this.having(sql);
         }
         private void having(string having)
@@ -613,14 +622,15 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="where"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public WhereHelper<T1> AddNotExistsSql(string where, params object[] args)
+        public WhereHelper<T1> WhereNotExists(string where, params object[] args)
         {
+            if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
             where = where.TrimStart();
             if (where.StartsWith("NOT EXISTS ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 if (where.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
-                    where = string.Format("NOT EXISTS(SELECT * {0})", where);
+                    where = $"NOT EXISTS(SELECT * {@where})";
                 } else {
-                    where = string.Format("NOT EXISTS({0})", where);
+                    where = $"NOT EXISTS({@where})";
                 }
             }
             this.where(where, args);
@@ -632,14 +642,15 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="where"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public WhereHelper<T1> AddExistsSql(string where, params object[] args)
+        public WhereHelper<T1> WhereExists(string where, params object[] args)
         {
+            if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
             where = where.TrimStart();
             if (where.StartsWith("EXISTS ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 if (where.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
-                    where = string.Format("EXISTS(SELECT * {0})", where);
+                    where = $"EXISTS(SELECT * {@where})";
                 } else {
-                    where = string.Format("EXISTS({0})", where);
+                    where = $"EXISTS({@where})";
                 }
             }
             this.where(where, args);
@@ -651,8 +662,9 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="where"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public WhereHelper<T1> AddWhereSql(string where, params object[] args)
+        public WhereHelper<T1> Where(string where, params object[] args)
         {
+            if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
             this.where(where, args);
             return this;
         }
@@ -661,8 +673,9 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="order"></param>
         /// <returns></returns>
-        public WhereHelper<T1> AddOrderBySql(string order)
+        public WhereHelper<T1> OrderBy(string order)
         {
+            if (string.IsNullOrEmpty(order)) throw new ArgumentNullException("order");
             this.orderBySql(order);
             return this;
         }
@@ -671,8 +684,9 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="groupby"></param>
         /// <returns></returns>
-        public WhereHelper<T1> AddGroupBySql(string groupby)
+        public WhereHelper<T1> GroupBy(string groupby)
         {
+            if (string.IsNullOrEmpty(groupby)) throw new ArgumentNullException("groupby");
             this.groupBy(groupby);
             return this;
         }
@@ -681,8 +695,9 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="having"></param>
         /// <returns></returns>
-        public WhereHelper<T1> AddHavingSql(string having)
+        public WhereHelper<T1> Having(string having)
         {
+            if (string.IsNullOrEmpty(having)) throw new ArgumentNullException("having");
             this.having(having);
             return this;
         }
@@ -691,9 +706,62 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="joinWithOn"></param>
         /// <returns></returns>
-        public WhereHelper<T1> AddJoinSql(string joinWithOn)
+        public WhereHelper<T1> JoinOn(string joinWithOn)
         {
+            if (string.IsNullOrEmpty(joinWithOn)) throw new ArgumentNullException("joinWithOn");
             this.join(joinWithOn);
+            return this;
+        }
+
+        /// <summary>
+        /// 添加 Where
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> WhereNotIn(string field, ICollection args)
+        {
+            if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
+            this.whereNotIn(field, args);
+            return this;
+        }
+
+        /// <summary>
+        /// Where not In
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> WhereNotIn<T>(string field, params T[] args)
+        {
+            if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
+            this.whereNotIn(field, args);
+            return this;
+        }
+
+        /// <summary>
+        /// 添加 Where
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> WhereIn(string field, ICollection args)
+        {
+            if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
+            this.whereIn(field, args);
+            return this;
+        }
+
+        /// <summary>
+        /// Where not In
+        /// </summary>
+        /// <param name="field"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> WhereIn<T>(string field, params T[] args)
+        {
+            if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
+            this.whereIn(field, args);
             return this;
         }
 
@@ -701,7 +769,7 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #region 05 Sql拼接 LINQ WhereIn Where OrderBy Having
         /// <summary>
-        /// 
+        /// Where not In
         /// </summary>
         /// <param name="field"></param>
         /// <param name="args"></param>
@@ -712,7 +780,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
         /// <summary>
-        /// 
+        /// Where not In
         /// </summary>
         /// <param name="field"></param>
         /// <param name="args"></param>
@@ -722,7 +790,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return WhereNotIn(field, (ICollection)args);
         }
         /// <summary>
-        /// 
+        /// Where  In
         /// </summary>
         /// <param name="field"></param>
         /// <param name="args"></param>
@@ -733,7 +801,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
         /// <summary>
-        /// 
+        /// Where  In
         /// </summary>
         /// <param name="field"></param>
         /// <param name="args"></param>
@@ -743,7 +811,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return WhereIn(field, (ICollection)args);
         }
         /// <summary>
-        /// 
+        /// Where
         /// </summary>
         /// <param name="where"></param>
         /// <returns></returns>
@@ -753,7 +821,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
         /// <summary>
-        /// 
+        /// OrderBy
         /// </summary>
         /// <param name="order"></param>
         /// <param name="type"></param>
@@ -764,7 +832,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
         /// <summary>
-        /// 
+        /// GroupBy
         /// </summary>
         /// <param name="group"></param>
         /// <returns></returns>
@@ -774,7 +842,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
         /// <summary>
-        /// 
+        /// Having
         /// </summary>
         /// <param name="having"></param>
         /// <returns></returns>
@@ -792,7 +860,7 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
         /// <summary>
-        /// 
+        /// 查询 返回列表
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
@@ -801,28 +869,17 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.Select<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
-        /// 
+        /// 查询 返回列表
         /// </summary>
-        /// <param name="page"></param>
-        /// <param name="itemsPerPage"></param>
+        /// <param name="limit"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Page<T1> Page(long page, long itemsPerPage, string selectSql = null)
+        public List<T1> Select(long limit, string selectSql = null)
         {
-            return _sqlhelper.Page<T1>(page, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.Select<T1>(limit, 0, GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="top"></param>
-        /// <param name="selectSql"></param>
-        /// <returns></returns>
-        public List<T1> Select(long top, string selectSql = null)
-        {
-            return _sqlhelper.Select<T1>(top, 0, GetFullSelectSql(selectSql), _args.ToArray());
-        }
-        /// <summary>
-        /// 
+        /// 查询 返回列表
         /// </summary>
         /// <param name="skip"></param>
         /// <param name="take"></param>
@@ -833,7 +890,19 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.Select<T1>(skip, take, GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
-        /// 
+        /// 查询 返回Page
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public Page<T1> Page(long page, long itemsPerPage, string selectSql = null)
+        {
+            return _sqlhelper.Page<T1>(page, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
+        }
+
+        /// <summary>
+        /// 返回唯一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
@@ -842,7 +911,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.Single<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
-        /// 
+        /// 返回唯一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
@@ -851,7 +920,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.SingleOrDefault<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
-        /// 
+        /// 返回第一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
@@ -860,7 +929,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.First<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
-        /// 
+        /// 返回第一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
@@ -880,8 +949,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public List<T> Select<T>(Expression<Func<T1, T>> columns)
         {
-            string sql;
-            SqlExpression.GetColumns(columns, out sql);
+            _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>(GetFullSelectSql(sql), _args);
         }
         /// <summary>
@@ -893,8 +961,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public List<T> Select<T>(long limit, Expression<Func<T1, T>> columns)
         {
-            string sql;
-            SqlExpression.GetColumns(columns, out sql);
+            _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>(limit, GetFullSelectSql(sql), _args);
         }
         /// <summary>
@@ -907,11 +974,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public List<T> Select<T>(long skip, long take, Expression<Func<T1, T>> columns)
         {
-            string sql;
-            SqlExpression.GetColumns(columns, out sql);
+            _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>(skip, take, GetFullSelectSql(sql), _args);
         }
-   
+
         /// <summary>
         /// 返回唯一列
         /// </summary>
@@ -920,8 +986,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public T Single<T>(Expression<Func<T1, T>> columns)
         {
-            string sql;
-            SqlExpression.GetColumns(columns, out sql);
+            _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Single<T>(GetFullSelectSql(sql), _args);
         }
         /// <summary>
@@ -932,8 +997,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public T SingleOrDefault<T>(Expression<Func<T1, T>> columns)
         {
-            string sql;
-            SqlExpression.GetColumns(columns, out sql);
+            _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.SingleOrDefault<T>(GetFullSelectSql(sql), _args);
         }
         /// <summary>
@@ -944,8 +1008,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public T First<T>(Expression<Func<T1, T>> columns)
         {
-            string sql;
-            SqlExpression.GetColumns(columns, out sql);
+            _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.First<T>(GetFullSelectSql(sql), _args);
         }
         /// <summary>
@@ -956,11 +1019,9 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public T FirstOrDefault<T>(Expression<Func<T1, T>> columns)
         {
-            string sql;
-            SqlExpression.GetColumns(columns, out sql);
+            _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.FirstOrDefault<T>(GetFullSelectSql(sql), _args);
         }
-
 
         /// <summary>
         /// 查询 返回Page
@@ -972,23 +1033,23 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public Page<T> Page<T>(long page, long itemsPerPage, Expression<Func<T1, T>> columns)
         {
-            string sql;
-            SqlExpression.GetColumns(columns, out sql);
+            _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Page<T>(page, itemsPerPage, GetFullSelectSql(sql), _args);
         }
 
         #endregion
         #endregion
 
-        #region 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        #region 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page Single SingleOrDefault First FirstOrDefault
         /// <summary>
         /// 获取数量
         /// </summary>
         /// <param name="selectSql"></param>
+        /// <param name="distinct"></param>
         /// <returns></returns>
-        public int Count(string selectSql = null)
+        public int SelectCount(string selectSql = null, bool distinct = false)
         {
-            return this._sqlhelper.getDatabase().Execute(this.GetCountSql(selectSql), this._args.ToArray());
+            return this._sqlhelper.getDatabase().Execute(this.GetCountSql(selectSql, distinct), this._args.ToArray());
         }
         /// <summary>
         /// 执行返回DataTable
@@ -1019,7 +1080,32 @@ namespace ToolGood.ReadyGo3.LinQ
             return this._sqlhelper.Select<T>(this.GetFullSelectSql(sql), this._args.ToArray());
         }
         /// <summary>
-        /// 执行
+        /// 执行返回集合
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public List<T> Select<T>(long limit, string selectSql = null)
+        {
+            var sql = getSelect<T>(selectSql);
+            return this._sqlhelper.Select<T>(limit, 0, this.GetFullSelectSql(sql), this._args.ToArray());
+        }
+
+        /// <summary>
+        /// 执行返回集合
+        /// </summary>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public List<T> Select<T>(long skip, long take, string selectSql = null)
+        {
+            var sql = getSelect<T>(selectSql);
+            return this._sqlhelper.Select<T>(skip, take, this.GetFullSelectSql(sql), this._args.ToArray());
+        }
+
+        /// <summary>
+        /// 返回唯一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
@@ -1029,7 +1115,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this._sqlhelper.Single<T>(this.GetFullSelectSql(sql), this._args.ToArray());
         }
         /// <summary>
-        /// 
+        /// 返回唯一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
@@ -1038,8 +1124,9 @@ namespace ToolGood.ReadyGo3.LinQ
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.SingleOrDefault<T>(this.GetFullSelectSql(sql), this._args.ToArray());
         }
+
         /// <summary>
-        /// 
+        /// 返回第一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
@@ -1049,7 +1136,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this._sqlhelper.First<T>(this.GetFullSelectSql(sql), this._args.ToArray());
         }
         /// <summary>
-        /// 
+        /// 返回第一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
@@ -1059,7 +1146,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this._sqlhelper.FirstOrDefault<T>(this.GetFullSelectSql(sql), this._args.ToArray());
         }
         /// <summary>
-        /// 
+        /// 返回页，page类
         /// </summary>
         /// <param name="page"></param>
         /// <param name="itemsPerPage"></param>
@@ -1069,18 +1156,6 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Page<T>(page, itemsPerPage, this.GetFullSelectSql(sql), this._args.ToArray());
-        }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="skip"></param>
-        /// <param name="take"></param>
-        /// <param name="selectSql"></param>
-        /// <returns></returns>
-        public List<T> SkipTake<T>(long skip, long take, string selectSql = null)
-        {
-            var sql = getSelect<T>(selectSql);
-            return this._sqlhelper.Select<T>(skip, take, this.GetFullSelectSql(sql), this._args.ToArray());
         }
 
         private string getSelect<T>(string selectSql)
@@ -1102,7 +1177,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <typeparam name="T"></typeparam>
         /// <param name="column"></param>
         /// <returns></returns>
-        public WhereHelper<T1> ExcludeColumn<T>(Expression<Func<T1, T>> column)
+        public WhereHelper<T1> RemoveColumn<T>(Expression<Func<T1, T>> column)
         {
             excludeColumn(column);
             return this;
@@ -1112,7 +1187,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public WhereHelper<T1> ExcludeColumn(string columns)
+        public WhereHelper<T1> RemoveColumn(string columns)
         {
             var cols = columns.Split(',');
             foreach (var col in cols) {
@@ -1127,16 +1202,16 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="column"></param>
         /// <param name="asName"></param>
         /// <returns></returns>
-        public WhereHelper<T1> IncludeColumn<T>(Expression<Func<T1, T>> column, string asName = null)
+        public WhereHelper<T1> AddColumn<T>(Expression<Func<T1, T>> column, string asName = null)
         {
             includeColumn(column, asName);
             return this;
         }
         #endregion
 
-        #region 04 获取Sql和args方法
+        #region 09 获取Sql和args方法
         /// <summary>
-        ///
+        /// 获取 参数 数据
         /// </summary>
         /// <returns></returns>
         public object[] GetArgs()
@@ -1145,7 +1220,7 @@ namespace ToolGood.ReadyGo3.LinQ
         }
 
         /// <summary>
-        ///
+        /// 获取 Select SQL语句
         /// </summary>
         /// <param name="select"></param>
         /// <returns></returns>
@@ -1186,17 +1261,18 @@ namespace ToolGood.ReadyGo3.LinQ
         }
 
         /// <summary>
-        ///
+        /// 获取 Select Count SQL语句
         /// </summary>
         /// <param name="select"></param>
+        /// <param name="distinct"></param>
         /// <returns></returns>
-        public string GetCountSql(string select = null)
+        public string GetCountSql(string select = null, bool distinct = false)
         {
             if (select == null) {
                 select = "SELECT Count(1) ";
             }
             if (select.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase) == false) {
-                select = "SELECT " + select;
+                select = distinct ? "SELECT DISTINCT " + select : "SELECT " + select;
             }
             StringBuilder sb = new StringBuilder();
             sb.Append(select);
@@ -1300,9 +1376,10 @@ namespace ToolGood.ReadyGo3.LinQ
             foreach (var col in pd.Columns) {
                 if (_excludeColumns.Contains(col.Value.ColumnName)) continue;
 
-                SelectHeader header = new SelectHeader();
-                header.Table = "t1";// + (i + 1).ToString();
-                header.AsName = col.Value.ColumnName;
+                SelectHeader header = new SelectHeader {
+                    Table = "t1",
+                    AsName = col.Value.ColumnName
+                };
 
                 if (col.Value.ResultColumn) {
                     if (string.IsNullOrEmpty(col.Value.ResultSql)) {
@@ -1316,10 +1393,11 @@ namespace ToolGood.ReadyGo3.LinQ
                 list.Add(header);
             }
             foreach (var item in _includeColumns) {
-                SelectHeader header = new SelectHeader();
-                header.AsName = item.AsName;
-                header.Table = item.Table;
-                header.QuerySql = item.QuerySql;
+                SelectHeader header = new SelectHeader {
+                    AsName = item.AsName,
+                    Table = item.Table,
+                    QuerySql = item.QuerySql
+                };
                 list.Add(header);
             }
             return list;
@@ -1339,13 +1417,14 @@ namespace ToolGood.ReadyGo3.LinQ
             return sb.ToString();
         }
 
-        #endregion 04 获取Sql和args方法
+        #endregion  
 
         /// <summary>
         /// 释放
         /// </summary>
         public void Dispose()
         {
+            _sqlExpression = null;
             _args = null;
             _where = null;
             _joinOnString = null;
@@ -1353,6 +1432,9 @@ namespace ToolGood.ReadyGo3.LinQ
             _order = null;
             _groupby = null;
             _having = null;
+
+            _includeColumns = null;
+            _excludeColumns = null;
         }
 
 

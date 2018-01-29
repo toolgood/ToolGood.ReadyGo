@@ -7,9 +7,17 @@ using ToolGood.ReadyGo3.DataCentxt.Exceptions;
  
 namespace ToolGood.ReadyGo3.DataCentxt.Providers
 {
+    /// <summary>
+    /// Ms Access 
+    /// </summary>
     public class MsAccessDbDatabaseProvider : DatabaseProvider
     {
-  
+  /// <summary>
+  /// 
+  /// </summary>
+  /// <param name="function"></param>
+  /// <param name="args"></param>
+  /// <returns></returns>
         public override string CreateFunction(SqlFunction function, params object[] args)
         {
             switch (function) {
@@ -45,19 +53,50 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
 
             return base.CreateFunction(function, args);
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tables"></param>
+        /// <param name="pk"></param>
+        /// <param name="tableName"></param>
+        /// <param name="fromtable"></param>
+        /// <param name="jointables"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public override string Delete(List<QTable> tables, QColumn pk, string tableName, string fromtable, string jointables, string where)
         {
             //http://bbs.csdn.net/topics/340167958
             return $"DELETE distinctrow t1.* FROM {fromtable} {jointables} WHERE {where};";
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tables"></param>
+        /// <param name="setValues"></param>
+        /// <param name="fromtable"></param>
+        /// <param name="jointables"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
         public override string Update(List<QTable> tables, string setValues, string fromtable, string jointables, string where)
         {
             // http://blog.csdn.net/hsg77/article/details/6128253
             return $"UPDATE {fromtable} {jointables} SET {setValues} WHERE {where}; " ;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tables"></param>
+        /// <param name="useDistinct"></param>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <param name="selectColumns"></param>
+        /// <param name="fromtable"></param>
+        /// <param name="jointables"></param>
+        /// <param name="where"></param>
+        /// <param name="order"></param>
+        /// <param name="group"></param>
+        /// <param name="having"></param>
+        /// <returns></returns>
         public override string Select(List<QTable> tables, bool useDistinct, int limit, int offset, List<string> selectColumns, string fromtable, string jointables, string where, string order, string group, string having)
         {
             if (offset <= 0) {

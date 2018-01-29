@@ -55,7 +55,6 @@
     <Compile Include="Attributes\ColumnAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\DefaultValueAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\FieldLengthAttribute.cs" />
-    <Compile Include="Attributes\CreateTableAttributes\HtmlAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\IndexAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\RequiredAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\UniqueAttribute.cs" />
@@ -170,7 +169,6 @@
     <Compile Include="PetaPoco\Utilities\SQLParts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlHelper.cs" />
-    <Compile Include="SqlHelper.where.cs" />
     <Compile Include="SqlHelperFactory.cs" />
     <Compile Include="SqlProcess.cs" />
     <Compile Include="T4\ObjectToQTable.cs">

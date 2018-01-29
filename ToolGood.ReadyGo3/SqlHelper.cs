@@ -140,8 +140,6 @@ namespace ToolGood.ReadyGo3
             initSqlHelper(connectionString, null);
         }
 
-
-
         private void initSqlHelper(string connectionString, string providerName)
         {
             _lastConnectionString = connectionString;

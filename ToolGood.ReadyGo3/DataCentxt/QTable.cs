@@ -34,22 +34,35 @@ namespace ToolGood.ReadyGo3.DataCentxt
         internal QJoinCondition _joinCondition;
         internal Dictionary<string, QTableColumn> _columns = new Dictionary<string, QTableColumn>();
         internal QTableColumn _primaryKey;
-
+        /// <summary>
+        /// 
+        /// </summary>
         protected QTable()
         {
             Init();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="connStringName"></param>
         protected QTable(string connStringName)
         {
             _connStringName = connStringName;
             Init();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sqlHelper"></param>
         protected QTable(SqlHelper sqlHelper)
         {
             _singleSqlHelper = false;
             _sqlHelper = sqlHelper;
             Init();
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public void Dispose()
         {
             if (_singleSqlHelper) {
