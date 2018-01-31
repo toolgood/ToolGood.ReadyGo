@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo3
         //时间秒左移22位
         private const int TimestampLeftShift = SequenceBits + WorkerIdBits;
 
-        private long Sequence = 0L;
+        private long _sequence = 0L;
         private long _lastTimestamp = -1L;
         /// <summary>
         /// 机器标识
@@ -47,7 +47,7 @@ namespace ToolGood.ReadyGo3
 
             //先检验再赋值
             WorkerId = workerId;
-            Sequence = sequence;
+            _sequence = sequence;
         }
 
         readonly object _lock = new Object();
@@ -66,19 +66,19 @@ namespace ToolGood.ReadyGo3
                 //如果上次生成时间和当前时间相同,在同一毫秒内
                 if (_lastTimestamp == timestamp) {
                     //sequence自增，和sequenceMask相与一下，去掉高位
-                    Sequence = (Sequence + 1) & SequenceMask;
+                    _sequence = (_sequence + 1) & SequenceMask;
                     //判断是否溢出,也就是每毫秒内超过1024，当为1024时，与sequenceMask相与，sequence就等于0
-                    if (Sequence == 0) {
+                    if (_sequence == 0) {
                         //等待到下一毫秒
                         timestamp = TilNextMillis(_lastTimestamp);
                     }
                 } else {
                     //如果和上次生成时间不同,重置sequence，就是下一毫秒开始，sequence计数重新从0开始累加,
-                    Sequence = 0;
+                    _sequence = 0;
                 }
 
                 _lastTimestamp = timestamp;
-                return (timestamp << TimestampLeftShift) | (WorkerId << WorkerIdShift) | Sequence;
+                return (timestamp << TimestampLeftShift) | (WorkerId << WorkerIdShift) | _sequence;
             }
         }
 

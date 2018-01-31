@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ToolGood.com")]
 [assembly: AssemblyProduct("ToolGood.ReadyGo3")]
-[assembly: AssemblyCopyright("Copyright © ToolGood.com 2017")]
+[assembly: AssemblyCopyright("Copyright © ToolGood.com 2016-2018")]
 [assembly: AssemblyTrademark("ToolGood.com")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // 可以指定所有值，也可以使用以下所示的 "*" 预置版本号和修订号
 //通过使用 "*"，如下所示:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.0.32.0")]
-[assembly: AssemblyFileVersion("3.0.32.0")]
+[assembly: AssemblyVersion("3.0.33.0")]
+[assembly: AssemblyFileVersion("3.0.33.0")]

@@ -137,7 +137,6 @@
     <Compile Include="Gadget\TableManager\TableInfo.cs" />
     <Compile Include="LinQ\Expressions\ObjectExtend.cs" />
     <Compile Include="LinQ\Expressions\PartialSqlString.cs" />
-    <Compile Include="LinQ\Expressions\SQL.cs" />
     <Compile Include="LinQ\Expressions\SqlExpression.cs" />
     <Compile Include="LinQ\SelectHeader.cs" />
     <Compile Include="LinQ\SqlHelper.ext.cs" />
