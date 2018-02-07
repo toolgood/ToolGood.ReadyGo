@@ -460,33 +460,39 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns></returns>
         public DataTable ExecuteDataTable(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
-            OpenSharedConnection();
             try {
-                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
-                    var reader = cmd.ExecuteReader();
-                    DataTable dt = new DataTable();
-                    bool init = false;
-                    dt.BeginLoadData();
-                    object[] vals = new object[0];
-                    while (reader.Read()) {
-                        if (!init) {
-                            init = true;
-                            int fieldCount = reader.FieldCount;
-                            for (int i = 0; i < fieldCount; i++) {
-                                dt.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
+                OpenSharedConnection();
+                try {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                        var reader = cmd.ExecuteReader();
+                        DataTable dt = new DataTable();
+                        bool init = false;
+                        dt.BeginLoadData();
+                        object[] vals = new object[0];
+                        while (reader.Read()) {
+                            if (!init) {
+                                init = true;
+                                int fieldCount = reader.FieldCount;
+                                for (int i = 0; i < fieldCount; i++) {
+                                    dt.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
+                                }
+                                vals = new object[fieldCount];
                             }
-                            vals = new object[fieldCount];
+                            reader.GetValues(vals);
+                            dt.LoadDataRow(vals, true);
                         }
-                        reader.GetValues(vals);
-                        dt.LoadDataRow(vals, true);
+                        reader.Close();
+                        dt.EndLoadData();
+                        OnExecutedCommand(cmd);
+                        return dt;
                     }
-                    reader.Close();
-                    dt.EndLoadData();
-                    OnExecutedCommand(cmd);
-                    return dt;
+                } finally {
+                    CloseSharedConnection();
                 }
-            } finally {
-                CloseSharedConnection();
+            } catch (Exception x) {
+                if (OnException(x))
+                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
+                return default(DataTable);
             }
         }
         /// <summary>
@@ -498,19 +504,25 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns></returns>
         public DataSet ExecuteDataSet(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
-            OpenSharedConnection();
             try {
-                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
-                    using (var adapter = _factory.CreateDataAdapter()) {
-                        adapter.SelectCommand = (DbCommand)cmd;
-                        DataSet ds = new DataSet();
-                        adapter.Fill(ds);
-                        OnExecutedCommand(cmd);
-                        return ds;
+                OpenSharedConnection();
+                try {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                        using (var adapter = _factory.CreateDataAdapter()) {
+                            adapter.SelectCommand = (DbCommand)cmd;
+                            DataSet ds = new DataSet();
+                            adapter.Fill(ds);
+                            OnExecutedCommand(cmd);
+                            return ds;
+                        }
                     }
+                } finally {
+                    CloseSharedConnection();
                 }
-            } finally {
-                CloseSharedConnection();
+            } catch (Exception x) {
+                if (OnException(x))
+                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
+                return default(DataSet);
             }
         }
 

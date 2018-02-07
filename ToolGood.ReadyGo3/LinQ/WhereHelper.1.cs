@@ -1297,6 +1297,8 @@ namespace ToolGood.ReadyGo3.LinQ
         private string CreateSelectHeader(List<SelectHeader> defineHeader)
         {
             var headers = GetSelectHeader();
+
+
             if (defineHeader != null && defineHeader.Count > 0) {
                 foreach (var header in defineHeader) {
                     SelectHeader h;
@@ -1317,12 +1319,15 @@ namespace ToolGood.ReadyGo3.LinQ
             foreach (var h in headers) {
                 if (sb.Length > 0) sb.Append(",");
                 sb.Append(h.QuerySql);
-                sb.Append(" As ");
-                if (h.Table != "t1") {
-                    sb.Append(h.Table);
-                    sb.Append("_");
+                if (h.UseAsName) {
+                    sb.Append(" As '");
+                    if (h.Table != "t1") {
+                        sb.Append(h.Table);
+                        sb.Append("_");
+                    }
+                    sb.Append(h.AsName);
+                    sb.Append("'");
                 }
-                sb.Append(h.AsName);
             }
             sb.Insert(0, "SELECT ");
             return sb.ToString();
@@ -1339,13 +1344,15 @@ namespace ToolGood.ReadyGo3.LinQ
                 foreach (var h in defineHeader) {
                     if (sb.Length > 0) { sb.Append(","); }
                     sb.Append(h.QuerySql);
-                    sb.Append(" As '");
-                    sb.Append(h.AsName.Replace(@"\", @"\\").Replace("'", @"\'"));
-                    if (asNames.Contains(h.AsName)) {
-                        sb.Append("_");
-                        sb.Append(asNames.Count(q => q == h.AsName).ToString());
+                    if (h.UseAsName || asNames.Contains(h.AsName)) {
+                        sb.Append(" As '");
+                        sb.Append(h.AsName.Replace(@"\", @"\\").Replace("'", @"\'"));
+                        if (asNames.Contains(h.AsName)) {
+                            sb.Append("_");
+                            sb.Append(asNames.Count(q => q == h.AsName).ToString());
+                        }
+                        sb.Append("'");
                     }
-                    sb.Append("'");
                     asNames.Add(h.AsName);
                 }
                 sb.Insert(0, "SELECT ");
@@ -1358,9 +1365,11 @@ namespace ToolGood.ReadyGo3.LinQ
                     if (h != null) {
                         if (sb.Length > 0) { sb.Append(","); }
                         sb.Append(h.QuerySql);
-                        sb.Append(" As '");
-                        sb.Append(h.AsName.Replace(@"\", @"\\").Replace("'", @"\'"));
-                        sb.Append("'");
+                        if (h.UseAsName) {
+                            sb.Append(" As '");
+                            sb.Append(h.AsName.Replace(@"\", @"\\").Replace("'", @"\'"));
+                            sb.Append("'");
+                        }
                     }
                 }
                 sb.Insert(0, "SELECT ");
@@ -1371,6 +1380,8 @@ namespace ToolGood.ReadyGo3.LinQ
         private List<SelectHeader> GetSelectHeader()
         {
             List<SelectHeader> list = new List<SelectHeader>();
+            var provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
+
 
             var pd = PocoData.ForType(typeof(T1));
             foreach (var col in pd.Columns) {
@@ -1383,12 +1394,13 @@ namespace ToolGood.ReadyGo3.LinQ
 
                 if (col.Value.ResultColumn) {
                     if (string.IsNullOrEmpty(col.Value.ResultSql)) {
-                        header.QuerySql = header.Table + "." + col.Value.ColumnName;
+                        header.QuerySql = header.Table + "." + provider.EscapeSqlIdentifier(col.Value.ColumnName);
                     } else {
                         header.QuerySql = string.Format(col.Value.ResultSql, header.Table + ".");
+                        header.UseAsName = true;
                     }
                 } else {
-                    header.QuerySql = header.Table + "." + col.Value.ColumnName;
+                    header.QuerySql = header.Table + "." + provider.EscapeSqlIdentifier(col.Value.ColumnName);
                 }
                 list.Add(header);
             }
@@ -1412,7 +1424,6 @@ namespace ToolGood.ReadyGo3.LinQ
             sb.Append(dp.EscapeSqlIdentifier(pd1.TableInfo.TableName));
 
             sb.Append(" AS t1 ");
-            sb.Append(" ");
             sb.Append(_joinOnString);
             return sb.ToString();
         }

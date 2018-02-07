@@ -34,8 +34,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
                     if (col.ResultColumn) {
                         if (string.IsNullOrEmpty(col.ResultSql)==false) {
                             stringBuilder.AppendFormat(col.ResultSql, tableName + ".");
-                            stringBuilder.Append(" AS ");
+                            stringBuilder.Append(" AS '");
                             stringBuilder.Append(col.ColumnName);
+                            stringBuilder.Append("'");
                         }
                     } else {
                         stringBuilder.AppendFormat("{0}.{1}", tableName, provider.EscapeSqlIdentifier(col.ColumnName));

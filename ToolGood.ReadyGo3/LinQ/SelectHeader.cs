@@ -18,6 +18,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// AS 信息
         /// </summary>
         public string AsName;
+ 
         /// <summary>
         /// 查询SQL
         /// </summary>
@@ -26,6 +27,8 @@ namespace ToolGood.ReadyGo3.LinQ
         /// 表
         /// </summary>
         public string Table;
+
+        public bool UseAsName;
     }
 
  
