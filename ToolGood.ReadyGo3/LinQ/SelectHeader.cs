@@ -28,6 +28,9 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         public string Table;
 
+        /// <summary>
+        /// 是否使用AsName
+        /// </summary>
         public bool UseAsName;
     }
 

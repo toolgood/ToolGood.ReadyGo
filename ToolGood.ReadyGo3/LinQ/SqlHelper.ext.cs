@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using ToolGood.ReadyGo3.LinQ;
 
@@ -44,6 +45,18 @@ namespace ToolGood.ReadyGo3
         {
             var whereHelper = new WhereHelper<T>(this);
             whereHelper.Where(where, args);
+            return whereHelper;
+        }
+
+        /// <summary>
+        /// 动态Sql拼接
+        /// </summary>
+        /// <param name="where"></param>
+        /// <returns></returns>
+        public WhereHelper<T> Where<T>(Expression<Func<T, bool>> where) where T : class, new()
+        {
+            var whereHelper = new WhereHelper<T>(this);
+            whereHelper.Where(where);
             return whereHelper;
         }
 
