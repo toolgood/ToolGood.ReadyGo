@@ -666,7 +666,7 @@ namespace ToolGood.ReadyGo3
         #region Object  Insert Update Delete DeleteById Save
 
         /// <summary>
-        /// 插入集合，支持主键(整数型)自动获取。不返回主键
+        /// 插入集合，不返回主键
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="list"></param>

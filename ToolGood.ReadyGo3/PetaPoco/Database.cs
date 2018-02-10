@@ -857,7 +857,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     CloseSharedConnection();
                 }
             } catch (Exception x) {
-                OnException(x);
+                if (OnException(x))
+                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
             }
         }
 
