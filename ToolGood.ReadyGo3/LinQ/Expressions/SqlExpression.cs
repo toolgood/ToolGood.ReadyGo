@@ -256,7 +256,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             if (col != null) {
                 colName = col.ColumnName;
             }
-            return $"{paramDicts[p]}.{colName}";
+            return $"{paramDicts[p]}."+ provider.EscapeSqlIdentifier(colName);
         }
 
 
