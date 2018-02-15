@@ -27,8 +27,8 @@ namespace ToolGood.ReadyGo3.Test.Datas
 
         protected override void Init()
         {
-            _SchemaName = "";
-            _TableName = "Admin";
+            __SchemaName__ = "";
+            __TableName__ = "Admin";
 
             _ID = AddColumn<int>("ID", "ID", true);
             _Name = AddColumn<string>("Name", "Name", false);
@@ -109,8 +109,8 @@ namespace ToolGood.ReadyGo3.Test.Datas
 
         protected override void Init()
         {
-            _SchemaName = "";
-            _TableName = "AdminGroup";
+            __SchemaName__ = "";
+            __TableName__ = "AdminGroup";
 
             _ID = AddColumn<int>("ID", "ID", true);
             _Name = AddColumn<string>("Name", "Name", false);
@@ -167,8 +167,8 @@ namespace ToolGood.ReadyGo3.Test.Datas
 
         protected override void Init()
         {
-            _SchemaName = "";
-            _TableName = "AdminLoginLog";
+            __SchemaName__ = "";
+            __TableName__ = "AdminLoginLog";
 
             _ID = AddColumn<int>("ID", "ID", true);
             _Name = AddColumn<string>("Name", "Name", false);
@@ -229,8 +229,8 @@ namespace ToolGood.ReadyGo3.Test.Datas
 
         protected override void Init()
         {
-            _SchemaName = "";
-            _TableName = "AdminMenu";
+            __SchemaName__ = "";
+            __TableName__ = "AdminMenu";
 
             _ID = AddColumn<int>("ID", "ID", true);
             _ParentID = AddColumn<int>("ParentID", "ParentID", false);
@@ -309,8 +309,8 @@ namespace ToolGood.ReadyGo3.Test.Datas
 
         protected override void Init()
         {
-            _SchemaName = "";
-            _TableName = "AdminMenuPass";
+            __SchemaName__ = "";
+            __TableName__ = "AdminMenuPass";
 
             _AdminGroupID = AddColumn<int>("AdminGroupID", "AdminGroupID", false);
             _MenuID = AddColumn<int>("MenuID", "MenuID", false);

@@ -14,12 +14,12 @@ namespace ToolGood.ReadyGo3.Test.Tests
         [Test]
         public void Select()
         {
-            TbAdminMenu tb = new TbAdminMenu();
-            var list = tb.GetList();
+            //TbAdminMenu tb = new TbAdminMenu();
+            //var list = tb.GetList();
             
-            var list2 = tb.Where(tb.ParentID == 0).GetList();
+            //var list2 = tb.Where(tb.ParentID == 0).GetList();
 
-            var menu = tb.Where(tb.Name == "管理面板").GetFirst();
+            //var menu = tb.Where(tb.Name == "管理面板").GetFirst();
 
         }
 

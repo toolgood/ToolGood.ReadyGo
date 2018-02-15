@@ -23,7 +23,7 @@ namespace ToolGood.ReadyGo3.Test
 
         private static void InitTable(SqlHelper helper)
         {
-            var table = helper.TableHelper;
+            var table = helper._TableHelper;
             table.CreateTable(typeof(DbAdmin));
             table.CreateTable(typeof(DbAdminGroup));
             table.CreateTable(typeof(DbAdminLoginLog));
