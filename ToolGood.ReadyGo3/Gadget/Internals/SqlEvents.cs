@@ -7,6 +7,16 @@ namespace ToolGood.ReadyGo3.Gadget.Events
     /// </summary>
     public class SqlEvents
     {
+        private SqlHelper _sqlHelper;
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sqlHelper"></param>
+        public SqlEvents(SqlHelper sqlHelper)
+        {
+            _sqlHelper = sqlHelper;
+        }
+
         /// <summary>
         /// 事件：插入对象前
         /// </summary>
@@ -55,7 +65,7 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         internal bool OnBeforeInsert(object obj)
         {
             if (BeforeInsert != null) {
-                DataEventArgs e = new DataEventArgs(obj);
+                DataEventArgs e = new DataEventArgs(obj, _sqlHelper);
                 BeforeInsert(this, e);
                 return e.Cancel;
             }
@@ -65,7 +75,7 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         internal bool OnBeforeUpdate(object obj)
         {
             if (BeforeUpdate != null) {
-                DataEventArgs e = new DataEventArgs(obj);
+                DataEventArgs e = new DataEventArgs(obj, _sqlHelper);
                 BeforeUpdate(this, e);
                 return e.Cancel;
             }
@@ -75,7 +85,7 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         internal bool OnBeforeDelete(object obj)
         {
             if (BeforeDelete != null) {
-                DataEventArgs e = new DataEventArgs(obj);
+                DataEventArgs e = new DataEventArgs(obj, _sqlHelper);
                 BeforeDelete(this, e);
                 return e.Cancel;
             }
@@ -85,7 +95,7 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         internal void OnAfterInsert(object obj)
         {
             if (AfterInsert != null) {
-                Data2EventArgs e = new Data2EventArgs(obj);
+                Data2EventArgs e = new Data2EventArgs(obj, _sqlHelper);
                 AfterInsert(this, e);
             }
         }
@@ -93,7 +103,7 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         internal void OnAfterUpdate(object obj)
         {
             if (AfterUpdate != null) {
-                Data2EventArgs e = new Data2EventArgs(obj);
+                Data2EventArgs e = new Data2EventArgs(obj, _sqlHelper);
                 AfterUpdate(this, e);
             }
         }
@@ -101,7 +111,7 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         internal void OnAfterDelete(object obj)
         {
             if (AfterDelete != null) {
-                Data2EventArgs e = new Data2EventArgs(obj);
+                Data2EventArgs e = new Data2EventArgs(obj, _sqlHelper);
                 AfterDelete(this, e);
             }
         }
@@ -109,7 +119,7 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         internal void OnExecutingCommand(string sql, object[] args)
         {
             if (BeforeExecuteCommand != null) {
-                SqlOperationEventArgs e = new SqlOperationEventArgs(sql, args, FormatCommand(sql, args));
+                SqlOperationEventArgs e = new SqlOperationEventArgs(sql, args, FormatCommand(sql, args), _sqlHelper);
                 BeforeExecuteCommand(this, e);
             }
         }
@@ -117,7 +127,7 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         internal void OnExecutedCommand(string sql, object[] args)
         {
             if (AfterExecuteCommand != null) {
-                SqlOperationEventArgs e = new SqlOperationEventArgs(sql, args, FormatCommand(sql, args));
+                SqlOperationEventArgs e = new SqlOperationEventArgs(sql, args, FormatCommand(sql, args), _sqlHelper);
                 AfterExecuteCommand(this, e);
             }
         }

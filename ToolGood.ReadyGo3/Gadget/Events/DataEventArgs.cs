@@ -9,11 +9,17 @@
         /// 数据事件参数
         /// </summary>
         /// <param name="obj"></param>
-        public DataEventArgs(object obj)
+        /// <param name="sqlHelper"></param>
+        public DataEventArgs(object obj, SqlHelper sqlHelper)
         {
             Obj = obj;
             Cancel = false;
+            SqlHelper = sqlHelper;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        public SqlHelper SqlHelper;
 
         /// <summary>
         /// 是否取消操作
@@ -52,11 +58,16 @@
         /// 数据事件参数
         /// </summary>
         /// <param name="obj"></param>
-        public Data2EventArgs(object obj)
+        /// <param name="sqlHelper"></param>
+        public Data2EventArgs(object obj, SqlHelper sqlHelper)
         {
             Obj = obj;
+            SqlHelper = sqlHelper;
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        public SqlHelper SqlHelper;
         /// <summary>
         /// 操作对象
         /// </summary>

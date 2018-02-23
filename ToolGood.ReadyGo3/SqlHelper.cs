@@ -48,7 +48,7 @@ namespace ToolGood.ReadyGo3
         internal int _oneTimeCommandTimeout;
         internal IsolationLevel? _isolationLevel;
 
-        internal SqlEvents _events = new SqlEvents();
+        internal SqlEvents _events;
         private SqlConfig _sqlConfig;
         internal SqlType _sqlType;
         internal SqlRecord _sql = new SqlRecord();
@@ -145,6 +145,7 @@ namespace ToolGood.ReadyGo3
             _lastConnectionString = connectionString;
             _lastProviderName = providerName;
 
+            _events = new SqlEvents(this);
             _connectionString = connectionString;
             var txts = connectionString.Split(';');
             foreach (var txt in txts) {
@@ -393,7 +394,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public bool Exists<T>(string sql, params object[] args)
         {
-             sql = formatSql(sql);
+            sql = formatSql(sql);
             return Count<T>(sql, args) > 0;
         }
 
@@ -413,10 +414,10 @@ namespace ToolGood.ReadyGo3
             var args = new object[] { primaryKey };
             if (_usedCacheServiceOnce) {
                 return Run(sql, args, () => {
-                    return getDatabase().ExecuteScalar<int>(sql, args)>0;
+                    return getDatabase().ExecuteScalar<int>(sql, args) > 0;
                 }, "Count");
             }
-            return getDatabase().ExecuteScalar<int>(sql, args) >0;
+            return getDatabase().ExecuteScalar<int>(sql, args) > 0;
         }
 
         /// <summary>
