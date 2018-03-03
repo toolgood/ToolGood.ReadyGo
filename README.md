@@ -17,25 +17,22 @@ ToolGood.ReadyGo
 
 * 表操作：
   * 支持表创建及删除
-  * 支持索引创建
+  * 支持索引创建。
   * 支持唯一索引创建。
-  * 定制Attribute
+  * 定制Attribute。
 * 支持Object快速插入、修改、删除
-  * 支持修改前事件。
+  * 增删改操作事件。
 * 支持原生SQL语言
-  * 支持SQL简化
+  * 支持SQL简化。
   * 支持分页查询。
-  * 查询后执行OnLoaded 方法
+  * 查询后执行OnLoaded 方法。
 * 支持动态SELECT
   * 支持返回dynamic。
-  * 语法类似LINQ
-* 支持动态UPDATE
   * 语法类似LINQ。
-  * 采用AOP思路，不破坏原有类。
+* 动态SQL类：QTable
 * 支持存储过程。
 * 支持缓存。
 * 支持SQL执行监控。
-* 带Sql Parser。
 
 
 #### 1、数据表生成与删除
@@ -44,7 +41,7 @@ ToolGood.ReadyGo
 目前支持【表操作】的数据库有Sql Server、MySql、SQLite。
 
 ```` csharp
-using ToolGood.ReadyGo.Attributes;
+using ToolGood.ReadyGo3.Attributes;
 
 public class User
 {
@@ -56,28 +53,28 @@ public class User
 }
 
 
-using ToolGood.ReadyGo;
+using ToolGood.ReadyGo3;
 
 var helper = SqlHelperFactory.OpenSqliteFile(dbFile);
-var table = helper.TableHelper;
-table.CreateTable<User>();
-table.CreateIndex<User>();
-table.CreateUnique<User>();
-table.DeleteTable<User>();
+var table = helper._TableHelper;
+table.CreateTable(typeof(User));
+table.DropTable(typeof(User))
 ````
 
-##### 1.2、ToolGood.ReadyGo.Attributes 介绍
-在`ToolGood.ReadyGo.Attributes`命名空间内提供以下几种Attribute
-* TableAttribute   用于Class，定义表名、schema名、表名修饰TAG名。
-* PrimaryKeyAttribute 用于Class，定义主键名、自动增加、Sequence名。
-* IndexAttribute 用于Class，定义索引。
-* UniqueAttribute 用于Class，定义唯一索引。
-* ColumnAttribute 用于Property，定义列。
-* TextAttribute 用于Property，定义TEXT类型列。
-* ResultColumnAttribute 用于Property，定义返回列。
-* IgnoreAttribute 用于Property，忽略该属性。
-* FieldLengthAttribute 用于Property，定义列长度。
-* DefaultValueAttribute 用于Property，定义默认值。
+##### 1.2、ToolGood.ReadyGo3.Attributes 介绍
+在`ToolGood.ReadyGo3.Attributes`命名空间内提供以下几种Attribute
+* ExplicitColumns 用于Class，所有列（Property）必须显式映射。
+* Table   用于Class，定义表名、schema名、表名修饰TAG名。
+* PrimaryKey 用于Class，定义主键名、自动增加、Sequence名。
+* Column 用于Property，定义列。
+* ResultColumn 用于Property，定义返回列。
+* Ignore 用于Property，忽略该属性。
+* Index 用于Class，定义索引。
+* Unique 用于Class，定义唯一索引。
+* Required 用于Property，定义非空列。
+* FieldLength 用于Property，定义列长度。
+* Text 用于Property，定义TEXT类型列。
+* DefaultValue 用于Property，定义默认值。
 
 #### 2、数据表操作
 ##### 2.1、增删改操作
@@ -100,15 +97,15 @@ helper.DeleteById<User>(1);
 ##### 2.2、增删改操作事件
 
 ```` csharp
-helper.Events.BeforeInsert += Events_BeforeInsert;
-helper.Events.AfterInsert += Events_AfterInsert;
-helper.Events.BeforeUpdate += Events_BeforeUpdate;
-helper.Events.AfterUpdate += Events_AfterUpdate;
-helper.Events.BeforeDelete += Events_BeforeDelete;
-helper.Events.AfterDelete += Events_AfterDelete;
-helper.Events.BeforeExecuteCommand += Events_BeforeExecuteCommand;
-helper.Events.AfterExecuteCommand += Events_AfterExecuteCommand;
-helper.Events.ExecuteException += Events_ExecuteException;
+helper._Events.BeforeInsert += Events_BeforeInsert;
+helper._Events.AfterInsert += Events_AfterInsert;
+helper._Events.BeforeUpdate += Events_BeforeUpdate;
+helper._Events.AfterUpdate += Events_AfterUpdate;
+helper._Events.BeforeDelete += Events_BeforeDelete;
+helper._Events.AfterDelete += Events_AfterDelete;
+helper._Events.BeforeExecuteCommand += Events_BeforeExecuteCommand;
+helper._Events.AfterExecuteCommand += Events_AfterExecuteCommand;
+helper._Events.ExecuteException += Events_ExecuteException;
 ````
 
 ##### 2.3、使用事务
@@ -144,8 +141,9 @@ var userCount2 = helper.ExecuteScalar<int>("SELECT COUNT(*) FROM Users Where [Us
 ```` csharp
 var helper = SqlHelperFactory.OpenSqliteFile(dbFile);
 var users = helper.Select<User>("SELECT * FROM Users Where [UserType]=@0", 1);
-var usersPage = helper.Page <User>(1,20,"SELECT * FROM Users Where [UserType]=@0", 1);
-var users2=helper.SkipTake<User>(0,20,"SELECT * FROM Users Where [UserType]=@0", 1);
+var users2 = helper.Select<User>(20,"SELECT * FROM Users Where [UserType]=@0", 1);
+var users2 = helper.Select<User>(0,20,"SELECT * FROM Users Where [UserType]=@0", 1);
+var usersPage = helper.Page<User>(1,20,"SELECT * FROM Users Where [UserType]=@0", 1);
 ````
 
 ##### 3.3、简化SQL
@@ -165,13 +163,13 @@ helper.Update<User>("Set [Name]=@0 WHERE [Id]=@1", "Test", 1);
 
 
 #### 4、动态查询
-##### 4.1、单表查询
+##### 4.1、查询
 
 ```` csharp
 public User FindUser(int userId,string userName,string nickName)
 {
     var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "web", "root", "123456");
-    return helper.CreateWhere<User>()
+    return helper.Where<User>()
         .IfTrue(userId > 0).Where((u) => u.Id == userId)
         .IfSet(userName).Where((u) => u.UserName == userName)
         .IfSet(nickName).Where((u) => u.NickName == nickName)
@@ -181,13 +179,49 @@ public User FindUser(int userId,string userName,string nickName)
 方法有：
 * `IfTrue`、`IfFalse`、`IfSet`、`IfNotSet`、`IfNull`、`IfNotNull`
 * `WhereNotIn`、`WhereIn`、`Where`、`OrderBy`、`GroupBy`、`Having`、`SelectColumn`
-* `AddNotExistsSql`、`AddExistsSql`、`AddWhereSql`、`AddOrderBySql`、`AddGroupBySql`、`AddHavingSql`、`AddJoinSql`
-* `Select`、`Page`、`SkipTake`、`Single`、`SingleOrDefault`、`First`、`FirstOrDefault`、`Count`、`ExecuteDataTable`、`ExecuteDataSet`
+* `Select`、`Page`、`Single`、`SingleOrDefault`、`First`、`FirstOrDefault`、`Count`、`ExecuteDataTable`、`ExecuteDataSet`
 * `Select<T>`、`Page<T>`、`SkipTake<T>`、`Single<T>`、`SingleOrDefault<T>`、`First<T>`、`FirstOrDefault<T>`
 
+#### 5、QTable使用
+##### 5.1、定义类
 
-#### 5、动态UPDATE
+````
+    public class TbUser : QTable<User>
+    {
+        private QTableColumn<int> _Id;
+        private QTableColumn<int> _UserType;
+        private QTableColumn<string> _UserName;
+        private QTableColumn<string> _Password;
+        private QTableColumn<string> _NickName;
 
+        public TbUser() : base() { }
+		public TbUser(SqlHelper sqlHelper) : base(sqlHelper) { }
+		public TbUser(string connStringName) : base(connStringName) { }
+
+        protected override void Init()
+        {
+            __SchemaName__ = "";
+            __TableName__ = "";
+
+            _Id = AddColumn<int>("Id", "Id", true);
+            _UserType = AddColumn<int>("UserType", "UserType", false);
+            _UserName = AddColumn<string>("UserName", "UserName", false);
+            _Password = AddColumn<string>("Password", "Password", false);
+            _NickName = AddColumn<string>("NickName", "NickName", false);
+        }
+        public QTableColumn<int> Id { get { return _Id; } set { _Id.NewValue = value; } }
+        public QTableColumn<int> UserType { get { return _UserType; } set { _UserType.NewValue = value; } }
+        public QTableColumn<string> UserName { get { return _UserName; } set { _UserName.NewValue = value; } }
+        public QTableColumn<string> Password { get { return _Password; } set { _Password.NewValue = value; } }
+        public QTableColumn<string> NickName { get { return _NickName; } set { _NickName.NewValue = value; } }
+    }
+````
+注：可以使用*ObjectToQTable.tt*，自动批量生成。
+##### 5.2、使用代码
+```` csharp
+        var t = new TbUser();
+        var users = t.Where(t.NickName == "aadd").Select();
+````
 
 
 #### 6、存储过程
@@ -196,8 +230,7 @@ public User FindUser(int userId,string userName,string nickName)
     public class Chart_GetDeviceCount : SqlProcess
     {
         public Chart_GetDeviceCount(ToolGood.ReadyGo.SqlHelper helper) : base(helper)
-        {
-        }
+        {        }
         protected override void OnInit()
         {
             _ProcessName = "Chart_GetDeviceCount";
@@ -207,7 +240,6 @@ public User FindUser(int userId,string userName,string nickName)
             Add<int>("_Type", false);
             Add<DateTime>("_StartDate", false);
             Add<DateTime>("_EndDate", false);
-
         }
         public int AgentId { get { return _G<int>("_AgentId"); } set { _S("_AgentId", value); } }
         public int IsAll { get { return _G<int>("_IsAll"); } set { _S("_IsAll", value); } }
@@ -246,8 +278,8 @@ using ToolGood.ReadyGo.Caches
         ...
     }
     var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "wifi86", "root", "123456");
-    helper.Config.CacheService = new NullCacheService();
-    helper.Config.CacheTime = 20;
+    helper._Config.CacheService = new NullCacheService();
+    helper._Config.CacheTime = 20;
 ````
 
 #### 8、SQL执行监控
@@ -255,10 +287,10 @@ using ToolGood.ReadyGo.Caches
 #### 8.1、上一次SQL执行语句
 
 ```` csharp
-    var sql = helper.Sql.LastSQL;
-    var args = helper.Sql.LastArgs;
-    var cmd = helper.Sql.LastCommand;
-    var err = helper.Sql.LastErrorMessage;
+    var sql = helper._Sql.LastSQL;
+    var args = helper._SqlSql.LastArgs;
+    var cmd = helper._Sql.LastCommand;
+    var err = helper._Sql.LastErrorMessage;
 
 ````
 
@@ -284,34 +316,9 @@ public class NullSqlMonitor : ISqlMonitor
 {
     ...
 }
-helper.Config.SqlMonitor = new NullSqlMonitor();
+helper._Config.SqlMonitor = new NullSqlMonitor();
 ````
 
 
 
-
-#### 9、速度对比
-
-<table>
-	<tr>
-		<th>类型</th>
-		<th>持续时间</th>		
-		<th>备注</th>
-	</tr>
-	<tr>
-		<td>Linq 2 SQL </td>
-		<td>81ms</td>
-		<td>Not super typical involves complex code</td>
-	</tr>
-	
-</table>
-
-手写
-
-PetaPoco
-
-ToolGood.ReadyGo
-
-ToolGood.ReadyGo 动态语言
-
-
+ 
