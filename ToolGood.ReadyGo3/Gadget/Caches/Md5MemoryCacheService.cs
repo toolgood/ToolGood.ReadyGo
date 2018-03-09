@@ -8,7 +8,7 @@ namespace ToolGood.ReadyGo3.Gadget.Caches
     /// <summary>
     /// 
     /// </summary>
-    public class Md5MemoryCacheService : MemoryCacheService
+    public partial class Md5MemoryCacheService : MemoryCacheService
     {
         /// <summary>
         /// 

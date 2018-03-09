@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
     <AssemblyName>ToolGood.ReadyGo3</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\ToolGood.ReadyGo3.xml</DocumentationFile>
     <NoWarn>CS1591;CS1572;CS1573</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +34,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\ToolGood.ReadyGo3.xml</DocumentationFile>
     <NoWarn>IDE1006</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -52,6 +55,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Asyncs\Caches\Md5MemoryCacheService.cs" />
+    <Compile Include="Asyncs\Caches\MemoryCacheService.cs" />
+    <Compile Include="Asyncs\Caches\NullCacheService.cs" />
+    <Compile Include="Asyncs\Database.cs" />
+    <Compile Include="Asyncs\DatabaseProvider.cs" />
+    <Compile Include="Asyncs\Caches\ICacheService.cs" />
+    <Compile Include="Asyncs\DataCentxt\QTable.cs" />
+    <Compile Include="Asyncs\DataCentxt\SqlBuilder.cs" />
+    <Compile Include="Asyncs\SqlHelper.cs" />
+    <Compile Include="Asyncs\WhereHelper.1.cs" />
     <Compile Include="Attributes\ColumnAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\DefaultValueAttribute.cs" />
     <Compile Include="Attributes\CreateTableAttributes\FieldLengthAttribute.cs" />

@@ -5,7 +5,7 @@ namespace ToolGood.ReadyGo3.Gadget.Caches
     /// <summary>
     ///
     /// </summary>
-    public interface ICacheService
+    public partial interface ICacheService
     {
         /// <summary>
         /// 是否设置

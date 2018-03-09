@@ -17,7 +17,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
     /// <summary>
     /// PetaPoco数据库链接库
     /// </summary>
-    public class Database : IDisposable
+    public partial class Database : IDisposable
     {
         #region IDisposable
 

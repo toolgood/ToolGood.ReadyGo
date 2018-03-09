@@ -8,7 +8,7 @@ namespace ToolGood.ReadyGo3.Gadget.Caches
     /// <summary>
     /// 
     /// </summary>
-    public class NullCacheService : ICacheService
+    public partial class NullCacheService : ICacheService
     {
         /// <summary>
         /// 

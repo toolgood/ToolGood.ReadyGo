@@ -11,7 +11,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
     /// <summary>
     ///     Base class for DatabaseType handlers - provides default/common handling for different database engines
     /// </summary>
-    public abstract class DatabaseProvider
+    public  abstract partial class DatabaseProvider
     {
         /// <summary>
         ///     Gets the DbProviderFactory for this database provider.

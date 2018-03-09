@@ -7,7 +7,7 @@ namespace ToolGood.ReadyGo3.Gadget.Caches
     /// <summary>
     /// 
     /// </summary>
-    public class MemoryCacheService : ICacheService
+    public partial class MemoryCacheService : ICacheService
     {
         private static MemoryCache _cacheObject;
         private static MemoryCache _TagObject;
