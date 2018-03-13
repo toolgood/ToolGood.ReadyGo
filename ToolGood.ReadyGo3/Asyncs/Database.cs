@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -15,6 +13,9 @@ using ToolGood.ReadyGo3.PetaPoco.Internal;
 using SqlCommand = System.Data.Common.DbCommand;
 using SqlDataReader = System.Data.Common.DbDataReader;
 using SqlConnection = System.Data.Common.DbConnection;
+#else
+using System.Data.Common;
+using System.Data.SqlClient;
 #endif
 
 #if !NET40
@@ -210,12 +211,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var resultList = new List<T>();
             await OpenSharedConnectionAsync();
             try {
-                using (var icmd = CreateCommand(_sharedConnection, sql, args)) {
-                    var cmd = icmd as SqlCommand;
+                using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                     SqlDataReader r = null;
                     var pd = PocoData.ForType(typeof(T));
                     try {
-                        r = await cmd.ExecuteReaderAsync();
+                        r = await ((SqlCommand)cmd).ExecuteReaderAsync();
                         OnExecutedCommand(cmd);
                     } catch (Exception x) {
                         if (OnException(x))
