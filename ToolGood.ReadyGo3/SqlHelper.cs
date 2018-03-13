@@ -139,7 +139,6 @@ namespace ToolGood.ReadyGo3
 
         internal T Run<T>(string sql, object[] args, Func<T> func, params string[] methodtags)
         {
-            //if (_usedCacheServiceOnce == false) return func();
             _usedCacheServiceOnce = false;//记录一次
 
             StringBuilder sb = new StringBuilder();
@@ -272,6 +271,7 @@ namespace ToolGood.ReadyGo3
         /// <returns>返回查询所返回的结果集中第一行的第一列。忽略额外的列或行</returns>
         public T ExecuteScalar<T>(string sql = "", params object[] args)
         {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return Run<T>(sql, args, () => {
@@ -505,6 +505,7 @@ namespace ToolGood.ReadyGo3
         }
         internal T _Single<T>(string sql = "", params object[] args)
         {
+            sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return Run<T>(sql, args, () => {
                     return getDatabase().Query<T>(sql, args).Single();
@@ -532,6 +533,7 @@ namespace ToolGood.ReadyGo3
         }
         internal T _SingleOrDefault<T>(string sql = "", params object[] args)
         {
+            sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return Run<T>(sql, args, () => {
                     return getDatabase().Query<T>(sql, args).SingleOrDefault();
@@ -559,6 +561,7 @@ namespace ToolGood.ReadyGo3
         }
         internal T _First<T>(string sql = "", params object[] args)
         {
+            sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return Run<T>(sql, args, () => {
                     return getDatabase().Query<T>(sql, args).First();
@@ -588,6 +591,7 @@ namespace ToolGood.ReadyGo3
 
         internal T _FirstOrDefault<T>(string sql = "", params object[] args)
         {
+            sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return Run<T>(sql, args, () => {
                     return getDatabase().Query<T>(sql, args).FirstOrDefault();

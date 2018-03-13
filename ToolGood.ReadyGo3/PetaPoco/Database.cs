@@ -382,6 +382,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public void OnExecutedCommand(IDbCommand cmd)
         {
             var objs = (from IDataParameter parameter in cmd.Parameters select parameter.Value).ToArray();
+            _sqlHelper._sql.LastSQL = cmd.CommandText;
+            _sqlHelper._sql.LastArgs = objs;
             _sqlHelper._sqlMonitor.ExecutedCommand(cmd.CommandText, objs);
 
             _sqlHelper._events.OnExecutedCommand(cmd.CommandText, objs);

@@ -67,6 +67,7 @@ namespace ToolGood.ReadyGo3
         /// <returns>返回查询所返回的结果集中第一行的第一列。忽略额外的列或行</returns>
         public Task<T> ExecuteScalarAsync<T>(string sql = "", params object[] args)
         {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return RunAsync(sql, args, () => {
@@ -284,6 +285,7 @@ namespace ToolGood.ReadyGo3
         }
         internal async Task<T> _SingleAsync<T>(string sql = "", params object[] args)
         {
+            sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return await RunAsync<T>(sql, args, async () => {
                     return (await getDatabase().QueryAsync<T>(sql, args)).Single();
@@ -311,6 +313,7 @@ namespace ToolGood.ReadyGo3
         }
         internal async Task<T> _SingleOrDefaultAsync<T>(string sql = "", params object[] args)
         {
+            sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return await RunAsync<T>(sql, args, async () => {
                     return (await getDatabase().QueryAsync<T>(sql, args)).SingleOrDefault();
@@ -338,6 +341,7 @@ namespace ToolGood.ReadyGo3
         }
         internal async Task<T> _FirstAsync<T>(string sql = "", params object[] args)
         {
+            sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return await RunAsync<T>(sql, args, async () => {
                     return (await getDatabase().QueryAsync<T>(sql, args)).First();
@@ -367,6 +371,7 @@ namespace ToolGood.ReadyGo3
 
         internal async Task<T> _FirstOrDefaultAsync<T>(string sql = "", params object[] args)
         {
+            sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return await RunAsync<T>(sql, args, async () => {
                     return (await getDatabase().QueryAsync<T>(sql, args)).FirstOrDefault();
