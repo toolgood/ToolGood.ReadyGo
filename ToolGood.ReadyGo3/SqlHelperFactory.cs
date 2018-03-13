@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -27,10 +28,6 @@ namespace ToolGood.ReadyGo3
             return OpenDatabase(c.ConnectionString, c.ProviderName, type);
         }
 #endif
-
-
-
-
         /// <summary>
         /// 打开数据据库
         /// </summary>
@@ -47,6 +44,17 @@ namespace ToolGood.ReadyGo3
             return new SqlHelper(connectionString, factory, type);
         }
 
+        /// <summary>
+        /// 打开数据据库
+        /// </summary>
+        /// <param name="connectionString">链接字符串</param>
+        /// <param name="factory">适配器工厂</param>
+        /// <param name="type">SqlType类型</param>
+        /// <returns></returns>
+        public static SqlHelper OpenDatabase(string connectionString, DbProviderFactory factory, SqlType type = SqlType.None)
+        {
+            return new SqlHelper(connectionString, factory, type);
+        }
 
         /// <summary>
         /// 打开Sql Server本地数据库
@@ -150,6 +158,7 @@ namespace ToolGood.ReadyGo3
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
 
+#if NETSTANDARD2_0
         /// <summary>
         /// 打开Sqlite数据库
         /// </summary>
@@ -165,8 +174,8 @@ namespace ToolGood.ReadyGo3
             }
             return OpenDatabase(sb.ToString(), "System.Data.SQLite", SqlType.SQLite);
         }
-
-#if !NETSTANDARD2_0
+#else
+ 
         /// <summary>
         /// 打开Sqlite数据库
         /// </summary>

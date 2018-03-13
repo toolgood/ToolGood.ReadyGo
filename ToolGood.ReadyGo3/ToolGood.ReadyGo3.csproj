@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Description>ORM</Description>
+        <Description>A high performance Micro-ORM supporting SQL Server, MySQL, Sqlite, SqlCE, PostgreSQL, Firebird etc..</Description>
         <Copyright>Copyright 2016-2018 ToolGood</Copyright>
         <AssemblyTitle>ToolGood.ReadyGo</AssemblyTitle>
         <VersionPrefix>2.0.0</VersionPrefix>
@@ -10,7 +10,7 @@
         <AssemblyName>ToolGood.ReadyGo3</AssemblyName>
         <SignAssembly>true</SignAssembly>
         <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
-        <PackageId>ToolGood.ReadyGo</PackageId>
+        <PackageId>ToolGood.ReadyGo3</PackageId>
         <PackageTags></PackageTags>
         <PackageProjectUrl>https://github.com/toolgood/ToolGood.ReadyGo</PackageProjectUrl>
         <PackageLicenseUrl>https://github.com/toolgood/ToolGood.ReadyGo/blob/master/LICENSE</PackageLicenseUrl>
@@ -22,10 +22,10 @@
         <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <FileVersion>3.1.0.1</FileVersion>
-        <Version>3.1.0.1</Version>
+        <FileVersion>3.1.0.2</FileVersion>
+        <Version>3.1.0.2</Version>
         <PackageReleaseNotes></PackageReleaseNotes>
-        <Product>ToolGood.ReadyGo</Product>
+        <Product>ToolGood.ReadyGo3</Product>
         <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
     </PropertyGroup>
