@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+
+#if !NETSTANDARD2_0
 using System.Runtime.Caching;
 
 namespace ToolGood.ReadyGo3.Gadget.Caches
@@ -96,3 +98,4 @@ namespace ToolGood.ReadyGo3.Gadget.Caches
         }
     }
 }
+#endif

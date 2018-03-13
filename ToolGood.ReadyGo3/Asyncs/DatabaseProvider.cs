@@ -5,16 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#if NETSTANDARD2_0
+using SqlCommand = System.Data.Common.DbCommand;
+#endif
+
+#if !NET40
+
 namespace ToolGood.ReadyGo3.PetaPoco.Core
 {
     partial class DatabaseProvider
     {
-        public virtual async Task<object> ExecuteInsertAsync(Database db, SqlCommand cmd, string PrimaryKeyName)
+        public virtual Task<object> ExecuteInsertAsync(Database db, SqlCommand cmd, string PrimaryKeyName)
         {
             cmd.CommandText += ";\nSELECT @@IDENTITY AS NewID;";
-            var result = await db.ExecuteScalarHelperAsync(cmd);
-            return result;
+            return db.ExecuteScalarHelperAsync(cmd);
         }
 
     }
 }
+#endif

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+#if !NETSTANDARD2_0
 namespace ToolGood.ReadyGo3.Gadget.Caches
 {
     /// <summary>
@@ -45,3 +46,4 @@ namespace ToolGood.ReadyGo3.Gadget.Caches
 
     }
 }
+#endif

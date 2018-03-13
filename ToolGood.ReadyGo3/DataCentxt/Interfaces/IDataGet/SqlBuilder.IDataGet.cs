@@ -59,7 +59,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             } else {
                 columns.Add("COUNT(DISTINCT " + column + ")");
             }
-            var sql = (this).GetFullSelectSql(Provider, 0, 0, columns);
+            var sql = GetFullSelectSql(Provider, 0, 0, columns);
             var count = GetSqlHelper().ExecuteScalar<int>(sql);
 
             if (t) _useDistinct = true;
@@ -139,7 +139,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         }
         public T getSingle<T>(List<string> columns)
         {
-            var sql = (this).GetFullSelectSql(Provider, 2, 0, columns);
+            var sql = GetFullSelectSql(Provider, 2, 0, columns);
             _useDistinct = false;
             return GetSqlHelper().Single<T>(sql);
         }
@@ -158,9 +158,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             return getSingleOrDefault<T>(ToSelectColumns(columns));
         }
-        public T getSingleOrDefault<T>(List<string> columns)
+        private T getSingleOrDefault<T>(List<string> columns)
         {
-            var sql = (this).GetFullSelectSql(Provider, 2, 0, columns);
+            var sql = GetFullSelectSql(Provider, 2, 0, columns);
             _useDistinct = false;
             return GetSqlHelper().SingleOrDefault<T>(sql);
         }
@@ -179,9 +179,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             return getFirst<T>(ToSelectColumns(columns));
         }
-        public T getFirst<T>(List<string> columns)
+        private T getFirst<T>(List<string> columns)
         {
-            var sql = (this).GetFullSelectSql(Provider, 1, 0, columns);
+            var sql = GetFullSelectSql(Provider, 1, 0, columns);
             _useDistinct = false;
             return GetSqlHelper().First<T>(sql);
         }
@@ -200,9 +200,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             return getFirstOrDefault<T>(ToSelectColumns(columns));
         }
-        public T getFirstOrDefault<T>(List<string> columns)
+        private T getFirstOrDefault<T>(List<string> columns)
         {
-            var sql = (this).GetFullSelectSql(Provider, 1, 0, columns);
+            var sql = GetFullSelectSql(Provider, 1, 0, columns);
             _useDistinct = false;
             return GetSqlHelper().FirstOrDefault<T>(sql);
         }
@@ -258,9 +258,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return getList<T>(limit, offset, ToSelectColumns(columns));
         }
 
-        public List<T> getList<T>(int limit, int offset, List<string> columns)
+        private List<T> getList<T>(int limit, int offset, List<string> columns)
         {
-            var sql = (this).GetFullSelectSql(Provider, limit, offset, columns);
+            var sql = GetFullSelectSql(Provider, limit, offset, columns);
             _useDistinct = false;
             return GetSqlHelper().Select<T>(sql);
         }
@@ -287,7 +287,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             var offset = (page - 1) * size;
             var limit = size;
-            var sql = (this).GetFullSelectSql(Provider, limit, offset, columns);
+            var sql = GetFullSelectSql(Provider, limit, offset, columns);
             _useDistinct = false;
 
             var count = getCount(null);
@@ -352,7 +352,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         private DataTable getDataTable(int limit, int offset, List<string> columns)
         {
-            var sql = (this).GetFullSelectSql(Provider, limit, offset, columns);
+            var sql = GetFullSelectSql(Provider, limit, offset, columns);
             _useDistinct = false;
             return GetSqlHelper().ExecuteDataTable(sql);
         }
@@ -409,7 +409,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         }
         private DataSet getDataSet(int limit, int offset, List<string> columns)
         {
-            var sql = (this).GetFullSelectSql(Provider, limit, offset, columns);
+            var sql = GetFullSelectSql(Provider, limit, offset, columns);
             _useDistinct = false;
             return GetSqlHelper().ExecuteDataSet(sql);
         }

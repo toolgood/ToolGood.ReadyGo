@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#if !NETSTANDARD2_0 && !NET40
 namespace ToolGood.ReadyGo3.Gadget.Caches
 {
     /// <summary>
@@ -20,3 +21,4 @@ namespace ToolGood.ReadyGo3.Gadget.Caches
         
     }
 }
+#endif

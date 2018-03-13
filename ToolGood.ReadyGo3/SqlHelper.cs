@@ -18,13 +18,6 @@ namespace ToolGood.ReadyGo3
     public partial class SqlHelper : IDisposable
     {
         #region 私有变量
-        private static string _lastConnectionString;
-        private static DbProviderFactory _lastFactory;
-        private static string _lastProviderName;
-        [ThreadStatic]
-        internal static SqlHelper _lastSqlHelper;
-
-
         //是否设置默认值
         internal bool _setDateTimeDefaultNow;
         internal bool _setStringDefaultNotNull;
@@ -38,7 +31,12 @@ namespace ToolGood.ReadyGo3
         internal string _schemaName;
 
         // 缓存设置
+#if NETSTANDARD2_0
+        internal ICacheService _cacheService = new NullCacheService();
+#else
         internal ICacheService _cacheService = new MemoryCacheService();
+#endif
+
         private bool _usedCacheServiceOnce;
         private int _cacheTimeOnce;
         private string _cacheTag;
@@ -85,65 +83,13 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// SqlHelper 构造方法
         /// </summary>
-        public SqlHelper()
-        {
-            if (_lastProviderName != null) {
-                initSqlHelper(_lastConnectionString, _lastProviderName);
-            } else if (_lastFactory != null) {
-                _factory = _lastFactory;
-                initSqlHelper(_lastConnectionString, null);
-            }
-            var conns = ConfigurationManager.ConnectionStrings;
-            if (conns.Count == 0)
-                throw new InvalidOperationException("Can't find a connection string.");
-            initSqlHelper(conns[0].ConnectionString, conns[0].ProviderName);
-        }
-
-
-        /// <summary>
-        /// SqlHelper 构造方法
-        /// </summary>
-        /// <param name="connectionStringName">xml配置名</param>
-        /// <param name="type"></param>
-        public SqlHelper(string connectionStringName, SqlType type = SqlType.None)
-        {
-            _sqlType = type;
-
-            var entry = ConfigurationManager.ConnectionStrings[connectionStringName];
-            if (entry == null)
-                throw new InvalidOperationException($"Can't find a connection string with the name '{connectionStringName}'");
-            initSqlHelper(entry.ConnectionString, entry.ProviderName);
-        }
-
-        /// <summary>
-        /// SqlHelper 构造方法
-        /// </summary>
-        /// <param name="connectionString">数据库链接字符串</param>
-        /// <param name="providerName">provider名</param>
-        /// <param name="type"></param>
-        public SqlHelper(string connectionString, string providerName, SqlType type = SqlType.None)
-        {
-            _sqlType = type;
-
-            initSqlHelper(connectionString, providerName);
-        }
-        /// <summary>
-        /// SqlHelper 构造方法
-        /// </summary>
         /// <param name="connectionString">数据库链接字符串</param>
         /// <param name="factory">provider工厂</param>
         /// <param name="type"></param>
-        public SqlHelper(string connectionString, DbProviderFactory factory, SqlType type = SqlType.None)
+        public SqlHelper(string connectionString, DbProviderFactory factory, SqlType type)
         {
             _sqlType = type;
             _factory = factory;
-            initSqlHelper(connectionString, null);
-        }
-
-        private void initSqlHelper(string connectionString, string providerName)
-        {
-            _lastConnectionString = connectionString;
-            _lastProviderName = providerName;
 
             _events = new SqlEvents(this);
             _connectionString = connectionString;
@@ -156,21 +102,8 @@ namespace ToolGood.ReadyGo3
                     break;
                 }
             }
-
             _sqlConfig = new SqlConfig(this);
-
-            if (_sqlType == SqlType.None) {
-                _sqlType = DatabaseProvider.GetSqlType(providerName ?? _factory.GetType().FullName, _connectionString);
-            }
             _provider = DatabaseProvider.Resolve(_sqlType);
-            if (_factory == null) {
-                _factory = _provider.GetFactory();
-                _lastFactory = _factory;
-
-            }
-            if (_lastSqlHelper == null || _lastSqlHelper._isDisposable) {
-                _lastSqlHelper = this;
-            }
         }
 
         /// <summary>
@@ -180,6 +113,7 @@ namespace ToolGood.ReadyGo3
         {
             _isDisposable = true;
             if (_database != null) {
+                
                 _database.Dispose();
                 _database = null;
             }

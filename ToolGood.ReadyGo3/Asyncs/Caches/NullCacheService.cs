@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#if !NET40
+
 namespace ToolGood.ReadyGo3.Gadget.Caches
 {
     /// <summary>
@@ -11,10 +13,11 @@ namespace ToolGood.ReadyGo3.Gadget.Caches
     /// </summary>
     partial class NullCacheService : ICacheService
     {
-        public async Task<T> GetAsync<T>(string name, Func<Task<T>> func, int expiredSecond, string regionName)
+        public Task<T> GetAsync<T>(string name, Func<Task<T>> func, int expiredSecond, string regionName)
         {
-            return await func();
+            return func();
         }
 
     }
 }
+#endif

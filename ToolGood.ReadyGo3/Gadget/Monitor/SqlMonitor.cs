@@ -127,7 +127,11 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("<pre>");
+#if NETSTANDARD2_0
+            System.Net.WebUtility.HtmlEncode(ToText());
+#else 
             sb.Append(System.Web.HttpUtility.HtmlEncode(ToText()));
+#endif
             sb.Append("</pre>");
             return sb.ToString();
         }

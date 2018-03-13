@@ -5,21 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
+#if !NET40
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
     partial class SqlBuilder
     {
         #region UpdateAsync DeleteAsync InsertAsync
-        public async Task<int> DeleteAsync()
+        public Task<int> DeleteAsync()
         {
-            var sql = (this).GetFullDeleteSql(Provider);
-            return await GetSqlHelper().ExecuteAsync(sql);
+            var sql = GetFullDeleteSql(Provider);
+            return GetSqlHelper().ExecuteAsync(sql);
         }
 
         public async Task<object> InsertAsync(bool returnInsertId = false)
         {
-            var sql = (this).GetFullInsertSql(Provider);
+            var sql = GetFullInsertSql(Provider);
             if (returnInsertId) {
                 var pk = (_tables[0]).GetPrimaryKey();
                 if (object.Equals(pk, null)) {
@@ -30,29 +31,29 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return await GetSqlHelper().ExecuteAsync(sql);
         }
 
-        public async Task<int> UpdateAsync()
+        public Task<int> UpdateAsync()
         {
-            var sql = (this).GetFullUpdateSql(Provider);
-            return await GetSqlHelper().ExecuteAsync(sql);
+            var sql = GetFullUpdateSql(Provider);
+            return GetSqlHelper().ExecuteAsync(sql);
         }
         #endregion
 
         #region SelectCount
 
-        public async Task<int> SelectCountAsync()
+        public Task<int> SelectCountAsync()
         {
-            return await getCountAsync(null);
+            return getCountAsync(null);
         }
 
-        public async Task<int> SelectCountAsync(string distinctColumn)
+        public Task<int> SelectCountAsync(string distinctColumn)
         {
-            return await getCountAsync(distinctColumn);
+            return getCountAsync(distinctColumn);
         }
 
-        public async Task<int> SelectCountAsync(QColumn distinctColumn)
+        public Task<int> SelectCountAsync(QColumn distinctColumn)
         {
             var column = (distinctColumn).ToSql(Provider, _tables.Count);
-            return await getCountAsync(column);
+            return getCountAsync(column);
         }
         private async Task<int> getCountAsync(string column)
         {
@@ -65,7 +66,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             } else {
                 columns.Add("COUNT(DISTINCT " + column + ")");
             }
-            var sql = (this).GetFullSelectSql(Provider, 0, 0, columns);
+            var sql = GetFullSelectSql(Provider, 0, 0, columns);
             var count = await GetSqlHelper().ExecuteScalarAsync<int>(sql);
 
             if (t) _useDistinct = true;
@@ -74,172 +75,170 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         #endregion
 
-
-
         #region Single SingleOrDefault First FirstOrDefault
-        public async Task<T> SingleAsync<T>()
+        public Task<T> SingleAsync<T>()
         {
-            return await getSingleAsync<T>(GetSelectColumns<T>());
+            return getSingleAsync<T>(GetSelectColumns<T>());
         }
-        public async Task<T> SingleAsync<T>(params string[] columns)
+        public Task<T> SingleAsync<T>(params string[] columns)
         {
-            return await getSingleAsync<T>(columns.ToList());
+            return getSingleAsync<T>(columns.ToList());
         }
-        public async Task<T> SingleAsync<T>(params QColumn[] columns)
+        public Task<T> SingleAsync<T>(params QColumn[] columns)
         {
-            return await getSingleAsync<T>(ToSelectColumns(columns));
+            return getSingleAsync<T>(ToSelectColumns(columns));
         }
-        public async Task<T> getSingleAsync<T>(List<string> columns)
+        private Task<T> getSingleAsync<T>(List<string> columns)
         {
-            var sql = (this).GetFullSelectSql(Provider, 2, 0, columns);
+            var sql = GetFullSelectSql(Provider, 2, 0, columns);
             _useDistinct = false;
-            return await GetSqlHelper().SingleAsync<T>(sql);
+            return GetSqlHelper().SingleAsync<T>(sql);
         }
 
 
 
-        public async Task<T> SingleOrDefaultAsync<T>()
+        public Task<T> SingleOrDefaultAsync<T>()
         {
-            return await getSingleOrDefaultAsync<T>(GetSelectColumns<T>());
+            return getSingleOrDefaultAsync<T>(GetSelectColumns<T>());
         }
-        public async Task<T> SingleOrDefaultAsync<T>(params string[] columns)
+        public Task<T> SingleOrDefaultAsync<T>(params string[] columns)
         {
-            return await getSingleOrDefaultAsync<T>(columns.ToList());
+            return getSingleOrDefaultAsync<T>(columns.ToList());
         }
-        public async Task<T> SingleOrDefaultAsync<T>(params QColumn[] columns)
+        public Task<T> SingleOrDefaultAsync<T>(params QColumn[] columns)
         {
-            return await getSingleOrDefaultAsync<T>(ToSelectColumns(columns));
+            return getSingleOrDefaultAsync<T>(ToSelectColumns(columns));
         }
-        public async Task<T> getSingleOrDefaultAsync<T>(List<string> columns)
+        private Task<T> getSingleOrDefaultAsync<T>(List<string> columns)
         {
-            var sql = (this).GetFullSelectSql(Provider, 2, 0, columns);
+            var sql = GetFullSelectSql(Provider, 2, 0, columns);
             _useDistinct = false;
-            return await GetSqlHelper().SingleOrDefaultAsync<T>(sql);
+            return GetSqlHelper().SingleOrDefaultAsync<T>(sql);
         }
 
 
 
-        public async Task<T> FirstAsync<T>()
+        public Task<T> FirstAsync<T>()
         {
-            return await getFirstAsync<T>(GetSelectColumns<T>());
+            return getFirstAsync<T>(GetSelectColumns<T>());
         }
-        public async Task<T> FirstAsync<T>(params string[] columns)
+        public Task<T> FirstAsync<T>(params string[] columns)
         {
-            return await getFirstAsync<T>(columns.ToList());
+            return getFirstAsync<T>(columns.ToList());
         }
-        public async Task<T> FirstAsync<T>(params QColumn[] columns)
+        public Task<T> FirstAsync<T>(params QColumn[] columns)
         {
-            return await getFirstAsync<T>(ToSelectColumns(columns));
+            return getFirstAsync<T>(ToSelectColumns(columns));
         }
-        public async Task<T> getFirstAsync<T>(List<string> columns)
+        private Task<T> getFirstAsync<T>(List<string> columns)
         {
-            var sql = (this).GetFullSelectSql(Provider, 1, 0, columns);
+            var sql = GetFullSelectSql(Provider, 1, 0, columns);
             _useDistinct = false;
-            return await GetSqlHelper().FirstAsync<T>(sql);
+            return GetSqlHelper().FirstAsync<T>(sql);
         }
 
 
 
-        public async Task<T> FirstOrDefaultAsync<T>()
+        public Task<T> FirstOrDefaultAsync<T>()
         {
-            return await getFirstOrDefaultAsync<T>(GetSelectColumns<T>());
+            return getFirstOrDefaultAsync<T>(GetSelectColumns<T>());
         }
-        public async Task<T> FirstOrDefaultAsync<T>(params string[] columns)
+        public Task<T> FirstOrDefaultAsync<T>(params string[] columns)
         {
-            return await getFirstOrDefaultAsync<T>(columns.ToList());
+            return getFirstOrDefaultAsync<T>(columns.ToList());
         }
-        public async Task<T> FirstOrDefaultAsync<T>(params QColumn[] columns)
+        public Task<T> FirstOrDefaultAsync<T>(params QColumn[] columns)
         {
-            return await getFirstOrDefaultAsync<T>(ToSelectColumns(columns));
+            return getFirstOrDefaultAsync<T>(ToSelectColumns(columns));
         }
-        public async Task<T> getFirstOrDefaultAsync<T>(List<string> columns)
+        private Task<T> getFirstOrDefaultAsync<T>(List<string> columns)
         {
-            var sql = (this).GetFullSelectSql(Provider, 1, 0, columns);
+            var sql = GetFullSelectSql(Provider, 1, 0, columns);
             _useDistinct = false;
-            return await GetSqlHelper().FirstOrDefaultAsync<T>(sql);
+            return GetSqlHelper().FirstOrDefaultAsync<T>(sql);
         }
 
         #endregion
 
         #region Select
-        public async Task<List<T>> SelectAsync<T>()
+        public Task<List<T>> SelectAsync<T>()
         {
             var columns = GetSelectColumns<T>();
-            return await getListAsync<T>(-1, -1, columns);
+            return getListAsync<T>(-1, -1, columns);
         }
 
-        public async Task<List<T>> SelectAsync<T>(params string[] columns)
+        public Task<List<T>> SelectAsync<T>(params string[] columns)
         {
-            return await getListAsync<T>(-1, -1, columns.ToList());
+            return getListAsync<T>(-1, -1, columns.ToList());
         }
 
-        public async Task<List<T>> SelectAsync<T>(params QColumn[] columns)
+        public Task<List<T>> SelectAsync<T>(params QColumn[] columns)
         {
-            return await getListAsync<T>(-1, -1, ToSelectColumns(columns));
+            return getListAsync<T>(-1, -1, ToSelectColumns(columns));
         }
 
-        public async Task<List<T>> SelectAsync<T>(int limit)
-        {
-            var columns = GetSelectColumns<T>();
-            return await getListAsync<T>(limit, -1, columns);
-        }
-
-        public async Task<List<T>> SelectAsync<T>(int limit, params string[] columns)
-        {
-            return await getListAsync<T>(limit, -1, columns.ToList());
-        }
-
-        public async Task<List<T>> SelectAsync<T>(int limit, params QColumn[] columns)
-        {
-            return await getListAsync<T>(limit, -1, ToSelectColumns(columns));
-        }
-
-        public async Task<List<T>> SelectAsync<T>(int limit, int offset)
+        public Task<List<T>> SelectAsync<T>(int limit)
         {
             var columns = GetSelectColumns<T>();
-            return await getListAsync<T>(limit, offset, columns);
+            return getListAsync<T>(limit, -1, columns);
         }
 
-        public async Task<List<T>> SelectAsync<T>(int limit, int offset, params string[] columns)
+        public Task<List<T>> SelectAsync<T>(int limit, params string[] columns)
         {
-            return await getListAsync<T>(limit, offset, columns.ToList());
+            return getListAsync<T>(limit, -1, columns.ToList());
         }
 
-        public async Task<List<T>> SelectAsync<T>(int limit, int offset, params QColumn[] columns)
+        public Task<List<T>> SelectAsync<T>(int limit, params QColumn[] columns)
         {
-            return await getListAsync<T>(limit, offset, ToSelectColumns(columns));
+            return getListAsync<T>(limit, -1, ToSelectColumns(columns));
         }
 
-        public async Task<List<T>> getListAsync<T>(int limit, int offset, List<string> columns)
+        public Task<List<T>> SelectAsync<T>(int limit, int offset)
         {
-            var sql = (this).GetFullSelectSql(Provider, limit, offset, columns);
+            var columns = GetSelectColumns<T>();
+            return getListAsync<T>(limit, offset, columns);
+        }
+
+        public Task<List<T>> SelectAsync<T>(int limit, int offset, params string[] columns)
+        {
+            return getListAsync<T>(limit, offset, columns.ToList());
+        }
+
+        public Task<List<T>> SelectAsync<T>(int limit, int offset, params QColumn[] columns)
+        {
+            return getListAsync<T>(limit, offset, ToSelectColumns(columns));
+        }
+
+        private Task<List<T>> getListAsync<T>(int limit, int offset, List<string> columns)
+        {
+            var sql = GetFullSelectSql(Provider, limit, offset, columns);
             _useDistinct = false;
-            return await GetSqlHelper().SelectAsync<T>(sql);
+            return GetSqlHelper().SelectAsync<T>(sql);
         }
 
         #endregion
 
         #region Page
-        public async Task<Page<T>> PageAsync<T>(int page, int size)
+        public Task<Page<T>> PageAsync<T>(int page, int size)
         {
             var columns = GetSelectColumns<T>();
-            return await getPageAsync<T>(page, size, columns);
+            return getPageAsync<T>(page, size, columns);
         }
 
-        public async Task<Page<T>> PageAsync<T>(int page, int size, params string[] columns)
+        public Task<Page<T>> PageAsync<T>(int page, int size, params string[] columns)
         {
-            return await getPageAsync<T>(page, size, columns.ToList());
+            return getPageAsync<T>(page, size, columns.ToList());
         }
 
-        public async Task<Page<T>> PageAsync<T>(int page, int size, params QColumn[] columns)
+        public Task<Page<T>> PageAsync<T>(int page, int size, params QColumn[] columns)
         {
-            return await getPageAsync<T>(page, size, ToSelectColumns(columns));
+            return getPageAsync<T>(page, size, ToSelectColumns(columns));
         }
         private async Task<Page<T>> getPageAsync<T>(int page, int size, List<string> columns)
         {
             var offset = (page - 1) * size;
             var limit = size;
-            var sql = (this).GetFullSelectSql(Provider, limit, offset, columns);
+            var sql = GetFullSelectSql(Provider, limit, offset, columns);
             _useDistinct = false;
 
             var count = await getCountAsync(null);
@@ -247,66 +246,66 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             pt.TotalItems = count;
             pt.CurrentPage = page;
             pt.PageSize = size;
-            pt.Items =await GetSqlHelper().SelectAsync<T>(sql);
-            return  pt;
+            pt.Items = await GetSqlHelper().SelectAsync<T>(sql);
+            return pt;
         }
 
         #endregion
 
         #region ExecuteDataTable
-        public async Task<DataTable> ExecuteDataTableAsync()
+        public Task<DataTable> ExecuteDataTableAsync()
         {
             var columns = GetSelectColumns();
-            return await getDataTableAsync(-1, -1, columns);
+            return getDataTableAsync(-1, -1, columns);
         }
 
-        public async Task<DataTable> ExecuteDataTableAsync(params string[] columns)
+        public Task<DataTable> ExecuteDataTableAsync(params string[] columns)
         {
-            return await getDataTableAsync(-1, -1, columns.ToList());
+            return getDataTableAsync(-1, -1, columns.ToList());
         }
 
-        public async Task<DataTable> ExecuteDataTableAsync(params QColumn[] columns)
+        public Task<DataTable> ExecuteDataTableAsync(params QColumn[] columns)
         {
-            return await getDataTableAsync(-1, -1, ToSelectColumns(columns));
+            return getDataTableAsync(-1, -1, ToSelectColumns(columns));
         }
 
-        public async Task<DataTable> ExecuteDataTableAsync(int limit)
-        {
-            var columns = GetSelectColumns();
-            return await getDataTableAsync(limit, -1, columns);
-        }
-
-        public async Task<DataTable> ExecuteDataTableAsync(int limit, params string[] columns)
-        {
-            return await getDataTableAsync(limit, -1, columns.ToList());
-        }
-
-        public async Task<DataTable> ExecuteDataTableAsync(int limit, params QColumn[] columns)
-        {
-            return await getDataTableAsync(limit, -1, ToSelectColumns(columns));
-        }
-
-        public async Task<DataTable> ExecuteDataTableAsync(int limit, int offset)
+        public Task<DataTable> ExecuteDataTableAsync(int limit)
         {
             var columns = GetSelectColumns();
-            return await getDataTableAsync(limit, offset, columns);
+            return getDataTableAsync(limit, -1, columns);
         }
 
-        public async Task<DataTable> ExecuteDataTableAsync(int limit, int offset, params string[] columns)
+        public Task<DataTable> ExecuteDataTableAsync(int limit, params string[] columns)
         {
-            return await getDataTableAsync(limit, offset, columns.ToList());
+            return getDataTableAsync(limit, -1, columns.ToList());
         }
 
-        public async Task<DataTable> ExecuteDataTableAsync(int limit, int offset, params QColumn[] columns)
+        public Task<DataTable> ExecuteDataTableAsync(int limit, params QColumn[] columns)
         {
-            return await getDataTableAsync(limit, offset, ToSelectColumns(columns));
+            return getDataTableAsync(limit, -1, ToSelectColumns(columns));
         }
 
-        private async Task<DataTable> getDataTableAsync(int limit, int offset, List<string> columns)
+        public Task<DataTable> ExecuteDataTableAsync(int limit, int offset)
         {
-            var sql = (this).GetFullSelectSql(Provider, limit, offset, columns);
+            var columns = GetSelectColumns();
+            return getDataTableAsync(limit, offset, columns);
+        }
+
+        public Task<DataTable> ExecuteDataTableAsync(int limit, int offset, params string[] columns)
+        {
+            return getDataTableAsync(limit, offset, columns.ToList());
+        }
+
+        public Task<DataTable> ExecuteDataTableAsync(int limit, int offset, params QColumn[] columns)
+        {
+            return getDataTableAsync(limit, offset, ToSelectColumns(columns));
+        }
+
+        private Task<DataTable> getDataTableAsync(int limit, int offset, List<string> columns)
+        {
+            var sql = GetFullSelectSql(Provider, limit, offset, columns);
             _useDistinct = false;
-            return await GetSqlHelper().ExecuteDataTableAsync(sql);
+            return GetSqlHelper().ExecuteDataTableAsync(sql);
         }
 
         #endregion
@@ -314,3 +313,4 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
     }
 }
+#endif

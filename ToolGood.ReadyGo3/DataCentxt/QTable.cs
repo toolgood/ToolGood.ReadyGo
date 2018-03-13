@@ -41,6 +41,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         {
             Init();
         }
+#if !NETSTANDARD2_0
         /// <summary>
         /// 
         /// </summary>
@@ -50,6 +51,8 @@ namespace ToolGood.ReadyGo3.DataCentxt
             _connStringName = connStringName;
             Init();
         }
+#endif
+
         /// <summary>
         /// 
         /// </summary>
@@ -155,20 +158,30 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         internal SqlHelper GetSqlHelper()
         {
-            if (_sqlHelper == null || _sqlHelper._isDisposable) {
-                if (string.IsNullOrEmpty(_connStringName) == false) {
-                    _singleSqlHelper = true;
-                    _sqlHelper = new SqlHelper(_connStringName);
-                } else if (SqlHelper._lastSqlHelper != null && SqlHelper._lastSqlHelper._isDisposable == false) {
-                    _singleSqlHelper = false;
-                    _sqlHelper = SqlHelper._lastSqlHelper;
-                } else {
-                    _singleSqlHelper = true;
-                    _sqlHelper = new SqlHelper();
-                }
-            }
+//            if (_sqlHelper == null || _sqlHelper._isDisposable) {
+//#if !NETSTANDARD2_0
+
+//                if (string.IsNullOrEmpty(_connStringName) == false) {
+//                    _singleSqlHelper = true;
+//                    _sqlHelper = new SqlHelper(_connStringName);
+//                } else if (SqlHelper._lastSqlHelper != null && SqlHelper._lastSqlHelper._isDisposable == false) {
+//                    _singleSqlHelper = false;
+//                    _sqlHelper = SqlHelper._lastSqlHelper;
+//                } else {
+//                    _singleSqlHelper = true;
+//                    _sqlHelper = new SqlHelper();
+//                }
+//#else
+//                if (SqlHelper._lastSqlHelper != null && SqlHelper._lastSqlHelper._isDisposable == false) {
+//                    _singleSqlHelper = false;
+//                    _sqlHelper = SqlHelper._lastSqlHelper;
+//                }
+//                throw new InvalidProgramException();
+//#endif
+//            }
             return _sqlHelper;
         }
+
         internal SqlType GetSqlType()
         {
             return GetSqlHelper()._sqlType;
@@ -189,11 +202,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// 
         /// </summary>
         protected QTable() : base() { }
+#if !NETSTANDARD2_0
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="connStringName"></param>
         protected QTable(string connStringName) : base(connStringName) { }
+#endif
         /// <summary>
         /// 
         /// </summary>

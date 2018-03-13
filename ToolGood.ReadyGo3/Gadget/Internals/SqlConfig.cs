@@ -40,14 +40,13 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         public ISqlMonitor SqlMonitor
         {
             get { return _sqlHelper._sqlMonitor; }
-            set
-            {
+            set {
                 if (_sqlHelper._sqlMonitor != value) {
                     if (_sqlHelper._database != null) {
                         _sqlHelper._database.Dispose();
                         _sqlHelper._database = null;
                     }
-  
+
                     _sqlHelper._sqlMonitor = value;
                 }
             }
@@ -57,7 +56,7 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         /// SQL语言类型
         /// </summary>
         public SqlType SqlType { get { return _sqlHelper._sqlType; } }
- 
+
         /// <summary>
         /// 数据库链接字符串【写】
         /// </summary>
@@ -108,6 +107,8 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
             this.CacheService = new NullCacheService();
             return this;
         }
+
+#if !NETSTANDARD2_0
         /// <summary>
         /// 设置空SQL缓存--名称Md5化
         /// </summary>
@@ -117,6 +118,8 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
             this.CacheService = new Md5MemoryCacheService ();
             return this;
         }
+#endif
+
         /// <summary>
         /// 清空缓存
         /// </summary>

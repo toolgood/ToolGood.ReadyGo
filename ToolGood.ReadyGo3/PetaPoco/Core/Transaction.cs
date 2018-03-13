@@ -22,16 +22,20 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         public void Complete()
         {
-            _db.CompleteTransaction();
-            _db = null;
+            if (_db != null) {
+                _db.CompleteTransaction();
+                _db = null;
+            }
         }
         /// <summary>
         /// 释放
         /// </summary>
         public void Dispose()
         {
-            if (_db != null )
+            if (_db != null) {
                 _db.AbortTransaction();
+                _db = null;
+            }
         }
     }
 }

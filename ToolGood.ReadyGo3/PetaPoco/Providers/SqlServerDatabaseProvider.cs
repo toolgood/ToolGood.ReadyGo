@@ -11,7 +11,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
     {
         public override DbProviderFactory GetFactory()
         {
-            return GetFactory("System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+            return GetFactory("System.Data.SqlClient.SqlClientFactory, System.Data, Culture=neutral, PublicKeyToken=b77a5c561934e089");
         }
 
         public override string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)

@@ -1,206 +1,79 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{33EEBB86-5A6D-40E8-AE75-83F008C158DC}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
-    <AssemblyName>ToolGood.ReadyGo3</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\ToolGood.ReadyGo3.xml</DocumentationFile>
-    <NoWarn>CS1591;CS1572;CS1573</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\ToolGood.ReadyGo3.xml</DocumentationFile>
-    <NoWarn>IDE1006</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Properties\ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Caching" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Asyncs\Caches\Md5MemoryCacheService.cs" />
-    <Compile Include="Asyncs\Caches\MemoryCacheService.cs" />
-    <Compile Include="Asyncs\Caches\NullCacheService.cs" />
-    <Compile Include="Asyncs\Database.cs" />
-    <Compile Include="Asyncs\DatabaseProvider.cs" />
-    <Compile Include="Asyncs\Caches\ICacheService.cs" />
-    <Compile Include="Asyncs\DataCentxt\QTable.cs" />
-    <Compile Include="Asyncs\DataCentxt\SqlBuilder.cs" />
-    <Compile Include="Asyncs\SqlHelper.cs" />
-    <Compile Include="Asyncs\WhereHelper.1.cs" />
-    <Compile Include="Attributes\ColumnAttribute.cs" />
-    <Compile Include="Attributes\CreateTableAttributes\DefaultValueAttribute.cs" />
-    <Compile Include="Attributes\CreateTableAttributes\FieldLengthAttribute.cs" />
-    <Compile Include="Attributes\CreateTableAttributes\IndexAttribute.cs" />
-    <Compile Include="Attributes\CreateTableAttributes\RequiredAttribute.cs" />
-    <Compile Include="Attributes\CreateTableAttributes\UniqueAttribute.cs" />
-    <Compile Include="Attributes\ExplicitColumnsAttribute.cs" />
-    <Compile Include="Attributes\IgnoreAttribute.cs" />
-    <Compile Include="Attributes\PrimaryKeyAttribute.cs" />
-    <Compile Include="Attributes\ResultColumnAttribute.cs" />
-    <Compile Include="Attributes\TableAttribute.cs" />
-    <Compile Include="DataCentxt\Enums\ColumnChangeType.cs" />
-    <Compile Include="DataCentxt\Enums\ColumnType.cs" />
-    <Compile Include="DataCentxt\Enums\SqlFunction.cs" />
-    <Compile Include="DataCentxt\Enums\WhereType.cs" />
-    <Compile Include="DataCentxt\Exceptions\SqlExecuteException.cs" />
-    <Compile Include="DataCentxt\Interfaces\IDataGet\QTable.t.cs" />
-    <Compile Include="DataCentxt\Interfaces\IPrecondition\QTable.t.cs" />
-    <Compile Include="DataCentxt\Interfaces\IPrecondition\SqlBuilder.cs" />
-    <Compile Include="DataCentxt\Interfaces\ISQL\QTable.t.cs" />
-    <Compile Include="DataCentxt\Providers\FirebirdDbDatabaseProvider.cs" />
-    <Compile Include="DataCentxt\Providers\MsAccessDbDatabaseProvider.cs" />
-    <Compile Include="DataCentxt\Providers\MySqlDatabaseProvider.cs" />
-    <Compile Include="DataCentxt\Providers\OracleDatabaseProvider.cs" />
-    <Compile Include="DataCentxt\Providers\PostgreSQLDatabaseProvider.cs" />
-    <Compile Include="DataCentxt\Providers\SQLiteDatabaseProvider.cs" />
-    <Compile Include="DataCentxt\Providers\SqlServerCEDatabaseProviders.cs" />
-    <Compile Include="DataCentxt\Providers\SqlServerDatabaseProvider.cs" />
-    <Compile Include="DataCentxt\Exceptions\ColumnTypeException.cs" />
-    <Compile Include="DataCentxt\Exceptions\NoColumnException.cs" />
-    <Compile Include="DataCentxt\Exceptions\NoJoinOnException.cs" />
-    <Compile Include="DataCentxt\Exceptions\NoPrimaryKeyException.cs" />
-    <Compile Include="DataCentxt\Exceptions\NoWhereException.cs" />
-    <Compile Include="DataCentxt\Exceptions\DatabaseUnsupportException.cs" />
-    <Compile Include="DataCentxt\Interfaces\IConvertToSql\QColumn.cs" />
-    <Compile Include="DataCentxt\Interfaces\IConvertToSql\QCondition.cs" />
-    <Compile Include="DataCentxt\Interfaces\IConvertToSql\QTable.cs" />
-    <Compile Include="DataCentxt\Interfaces\IConvertToSql\SqlBuilder.cs" />
-    <Compile Include="DataCentxt\Interfaces\IDataGet\QTable.cs" />
-    <Compile Include="DataCentxt\Interfaces\IDataGet\SqlBuilder.IDataGet.cs" />
-    <Compile Include="DataCentxt\Interfaces\IDataSet\QTable.t.cs" />
-    <Compile Include="DataCentxt\Interfaces\IDataSet\SqlBuilder.IDataSet.cs" />
-    <Compile Include="DataCentxt\Interfaces\ISQL\SqlBuilder.ISQL.cs" />
-    <Compile Include="DataCentxt\Internals\OrderItem.cs" />
-    <Compile Include="DataCentxt\Internals\QCondition.cs" />
-    <Compile Include="DataCentxt\Internals\SqlBuilder.cs" />
-    <Compile Include="DataCentxt\Providers\DatabaseProvider.cs" />
-    <Compile Include="DataCentxt\QColumn.cs" />
-    <Compile Include="DataCentxt\QColumn.Function.cs" />
-    <Compile Include="DataCentxt\QColumn.operator.cs" />
-    <Compile Include="DataCentxt\QColumn.SqlFunction.cs" />
-    <Compile Include="DataCentxt\QTable.cs" />
-    <Compile Include="Enums\JoinType.cs" />
-    <Compile Include="Enums\LikeType.cs" />
-    <Compile Include="Enums\OrderType.cs" />
-    <Compile Include="Enums\SqlType.cs" />
-    <Compile Include="Gadget\AnsiString.cs" />
-    <Compile Include="Gadget\Caches\ICacheService.cs" />
-    <Compile Include="Gadget\Caches\Md5MemoryCacheService.cs" />
-    <Compile Include="Gadget\Caches\MemoryCacheService.cs" />
-    <Compile Include="Gadget\Caches\NullCacheService.cs" />
-    <Compile Include="Gadget\Events\DataEventArgs.cs" />
-    <Compile Include="Gadget\Events\SqlErrorEventArgs.cs" />
-    <Compile Include="Gadget\Internals\SqlEvents.cs" />
-    <Compile Include="Gadget\Events\SqlOperationEventArgs.cs" />
-    <Compile Include="Gadget\IdWorker.cs" />
-    <Compile Include="Gadget\Internals\DefaultValue.cs" />
-    <Compile Include="Gadget\Internals\SqlConfig.cs" />
-    <Compile Include="Gadget\Internals\SqlRecord.cs" />
-    <Compile Include="Gadget\Monitor\ISqlMonitor.cs" />
-    <Compile Include="Gadget\Monitor\NullSqlMonitor.cs" />
-    <Compile Include="Gadget\Monitor\OutTextSqlMonitor.cs" />
-    <Compile Include="Gadget\Monitor\SqlMonitor.cs" />
-    <Compile Include="Gadget\Monitor\SqlMonitorType.cs" />
-    <Compile Include="Gadget\Page.cs" />
-    <Compile Include="Gadget\TableManager\ColumnInfo.cs" />
-    <Compile Include="Gadget\TableManager\Providers\DatabaseProvider.cs" />
-    <Compile Include="Gadget\TableManager\Providers\MySqlDatabaseProvider.cs" />
-    <Compile Include="Gadget\TableManager\Providers\SQLiteDatabaseProvider.cs" />
-    <Compile Include="Gadget\TableManager\Providers\SqlServerDatabaseProvider.cs" />
-    <Compile Include="Gadget\TableManager\SqlHelper.ext.cs" />
-    <Compile Include="Gadget\TableManager\SqlTableHelper.cs" />
-    <Compile Include="Gadget\TableManager\TableInfo.cs" />
-    <Compile Include="LinQ\Expressions\ObjectExtend.cs" />
-    <Compile Include="LinQ\Expressions\PartialSqlString.cs" />
-    <Compile Include="LinQ\Expressions\SqlExpression.cs" />
-    <Compile Include="LinQ\SelectHeader.cs" />
-    <Compile Include="LinQ\SqlHelper.ext.cs" />
-    <Compile Include="LinQ\WhereHelper.1.cs" />
-    <Compile Include="PetaPoco\Core\ColumnInfo.cs" />
-    <Compile Include="PetaPoco\Core\ExpandoColumn.cs" />
-    <Compile Include="PetaPoco\Core\Mappers.cs" />
-    <Compile Include="PetaPoco\Core\PocoColumn.cs" />
-    <Compile Include="PetaPoco\Core\PocoData.cs" />
-    <Compile Include="PetaPoco\Core\StandardMapper.cs" />
-    <Compile Include="PetaPoco\Core\TableInfo.cs" />
-    <Compile Include="PetaPoco\Core\Transaction.cs" />
-    <Compile Include="PetaPoco\Database.cs" />
-    <Compile Include="PetaPoco\Providers\DatabaseProvider.cs" />
-    <Compile Include="PetaPoco\Providers\FirebirdDbDatabaseProvider.cs" />
-    <Compile Include="PetaPoco\Providers\MsAccessDbDatabaseProvider.cs" />
-    <Compile Include="PetaPoco\Providers\MySqlDatabaseProvider.cs" />
-    <Compile Include="PetaPoco\Providers\OracleDatabaseProvider.cs" />
-    <Compile Include="PetaPoco\Providers\PostgreSQLDatabaseProvider.cs" />
-    <Compile Include="PetaPoco\Providers\SQLiteDatabaseProvider.cs" />
-    <Compile Include="PetaPoco\Providers\SqlServer2012DatabaseProvider.cs" />
-    <Compile Include="PetaPoco\Providers\SqlServerCEDatabaseProviders.cs" />
-    <Compile Include="PetaPoco\Providers\SqlServerDatabaseProvider.cs" />
-    <Compile Include="PetaPoco\Utilities\AutoSelectHelper.cs" />
-    <Compile Include="PetaPoco\Utilities\Cache.cs" />
-    <Compile Include="PetaPoco\Utilities\EnumMapper.cs" />
-    <Compile Include="PetaPoco\Utilities\PagingHelper.cs" />
-    <Compile Include="PetaPoco\Utilities\Singleton.cs" />
-    <Compile Include="PetaPoco\Utilities\SQLParts.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SqlHelper.cs" />
-    <Compile Include="SqlHelperFactory.cs" />
-    <Compile Include="SqlProcess.cs" />
-    <Compile Include="T4\ObjectToQTable.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ObjectToQTable.tt</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Properties\ToolGood.ReadyGo.snk" />
-  </ItemGroup>
-  <ItemGroup />
-  <ItemGroup>
-    <Content Include="T4\ObjectToQTable.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ObjectToQTable.cs</LastGenOutput>
-    </Content>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Description>ORM</Description>
+        <Copyright>Copyright 2016-2018 ToolGood</Copyright>
+        <AssemblyTitle>ToolGood.ReadyGo</AssemblyTitle>
+        <VersionPrefix>2.0.0</VersionPrefix>
+        <Authors>ToolGood</Authors>
+        <TargetFrameworks>net40;net45;netstandard2.0;</TargetFrameworks>
+        <AssemblyName>ToolGood.ReadyGo3</AssemblyName>
+        <SignAssembly>true</SignAssembly>
+        <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+        <PackageId>ToolGood.ReadyGo</PackageId>
+        <PackageTags></PackageTags>
+        <PackageProjectUrl>https://github.com/toolgood/ToolGood.ReadyGo</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/toolgood/ToolGood.ReadyGo/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/toolgood/ToolGood.ReadyGo.git</RepositoryUrl>
+        <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard2.0' ">$(PackageTargetFallback);dotnet</PackageTargetFallback>
+        <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+        <AutoUnifyAssemblyReferences Condition="'$(TargetFramework)' == 'net40'">false</AutoUnifyAssemblyReferences>
+        <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <FileVersion>3.1.0.1</FileVersion>
+        <Version>3.1.0.1</Version>
+        <PackageReleaseNotes></PackageReleaseNotes>
+        <Product>ToolGood.ReadyGo</Product>
+        <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
+        <DelaySign>false</DelaySign>
+    </PropertyGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+        <Reference Include="System" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="System.Runtime.Caching" />
+        <Reference Include="System.Web" />
+        <Reference Include="System.Configuration" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+        <Reference Include="System" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="System.Runtime.Caching" />
+        <Reference Include="System.Web" />
+        <Reference Include="System.Configuration" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+        <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
+        <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+        <PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
+    </ItemGroup>
+    
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+        <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
+        <DocumentationFile>bin\Release\net40\ToolGood.ReadyGo3.xml</DocumentationFile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
+        <DocumentationFile>bin\Release\net45\ToolGood.ReadyGo3.xml</DocumentationFile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+        <DocumentationFile>bin\Release\netstandard2.0\ToolGood.ReadyGo3.xml</DocumentationFile>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net40|AnyCPU'">
+        <DocumentationFile>bin\Debug\net40\ToolGood.ReadyGo3.xml</DocumentationFile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|AnyCPU'">
+        <DocumentationFile>bin\Debug\net45\ToolGood.ReadyGo3.xml</DocumentationFile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+        <DocumentationFile>bin\Debug\netstandard2.0\ToolGood.ReadyGo3.xml</DocumentationFile>
+    </PropertyGroup>
+
+
 </Project>

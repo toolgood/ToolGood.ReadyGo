@@ -1,82 +1,88 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{3E2933D7-8F6B-4754-9792-65C3DBFBF19B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ToolGood.ReadyGo3.Mvc</RootNamespace>
-    <AssemblyName>ToolGood.ReadyGo3.Mvc</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Net" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AntiXSS\HtmlNode.cs" />
-    <Compile Include="AntiXSS\HtmlSanitizer.cs" />
-    <Compile Include="AntiXSS\Iri.cs" />
-    <Compile Include="HtmlAgilityPack\EncodingFoundException.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlAttribute.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlAttributeCollection.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlCommentNode.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlDocument.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlElementFlag.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlEntity.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlNameTable.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlNode.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlNodeCollection.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlNodeType.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlParseError.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlParseErrorCode.cs" />
-    <Compile Include="HtmlAgilityPack\HtmlTextNode.cs" />
-    <Compile Include="HtmlAgilityPack\NameValuePairList.cs" />
-    <Compile Include="HtmlAgilityPack\Utilities.cs" />
-    <Compile Include="HtmlAttribute.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="QTableModel.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="T4\ObjectToModel.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ObjectToModel.txt</LastGenOutput>
-    </Content>
-    <Content Include="T4\ObjectToModel.txt">
-      <DependentUpon>ObjectToModel.tt</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <Description></Description>
+        <Copyright>Copyright 2016-2018 ToolGood</Copyright>
+        <AssemblyTitle>ToolGood.ReadyGo3.Mvc</AssemblyTitle>
+        <VersionPrefix>2.0.0</VersionPrefix>
+        <Authors>ToolGood</Authors>
+        <TargetFrameworks>net40;net45;netstandard2.0;</TargetFrameworks>
+        <AssemblyName>ToolGood.ReadyGo3.Mvc</AssemblyName>
+        <SignAssembly>true</SignAssembly>
+        <PublicSign Condition=" '$(OS)' != 'Windows_NT' ">true</PublicSign>
+        <PackageId>ToolGood.ReadyGo3.Mvc</PackageId>
+        <PackageTags></PackageTags>
+        <PackageProjectUrl>https://github.com/toolgood/ToolGood.ReadyGo</PackageProjectUrl>
+        <PackageLicenseUrl>https://github.com/toolgood/ToolGood.ReadyGo/blob/master/LICENSE</PackageLicenseUrl>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/toolgood/ToolGood.ReadyGo.git</RepositoryUrl>
+        <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard2.0' ">$(PackageTargetFallback);dotnet</PackageTargetFallback>
+        <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+        <AutoUnifyAssemblyReferences Condition="'$(TargetFramework)' == 'net40'">false</AutoUnifyAssemblyReferences>
+        <RootNamespace>ToolGood.ReadyGo3.Mvc</RootNamespace>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <FileVersion>3.0.0.0</FileVersion>
+        <Version>3.0.0.0</Version>
+        <PackageReleaseNotes></PackageReleaseNotes>
+        <Product>ToolGood.ReadyGo3.Mvc</Product>
+        <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
+        <DelaySign>false</DelaySign>
+    </PropertyGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+        <Reference Include="System" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="System.Web" />
+    </ItemGroup>
+
+    <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+        <Reference Include="System" />
+        <Reference Include="Microsoft.CSharp" />
+        <Reference Include="System.Web" />
+    </ItemGroup>
+    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    </ItemGroup>
+    
+    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
+        <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
+        <DocumentationFile>bin\Release\net40\ToolGood.ReadyGo3.Mvc.xml</DocumentationFile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
+        <DocumentationFile>bin\Release\net45\ToolGood.ReadyGo3.Mvc.xml</DocumentationFile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
+        <DocumentationFile>bin\Release\netstandard2.0\ToolGood.ReadyGo3.Mvc.xml</DocumentationFile>
+    </PropertyGroup>
+    
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net40|AnyCPU'">
+        <DocumentationFile>bin\Debug\net40\ToolGood.ReadyGo3.Mvc.xml</DocumentationFile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|AnyCPU'">
+        <DocumentationFile>bin\Debug\net45\ToolGood.ReadyGo3.Mvc.xml</DocumentationFile>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+        <DocumentationFile>bin\Debug\netstandard2.0\ToolGood.ReadyGo3.Mvc.xml</DocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+      <None Update="T4\ObjectToQTable.tt">
+        <Generator>TextTemplatingFileGenerator</Generator>
+        <LastGenOutput>ObjectToQTable.cs</LastGenOutput>
+      </None>
+    </ItemGroup>
+    <ItemGroup>
+      <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+    </ItemGroup>
+    <ItemGroup>
+      <Compile Update="T4\ObjectToQTable.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>ObjectToQTable.tt</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+
 </Project>

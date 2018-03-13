@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+
+#if !NETSTANDARD2_0 && !NET40
 using System.Runtime.Caching;
 using System.Threading.Tasks;
 
@@ -40,3 +42,4 @@ namespace ToolGood.ReadyGo3.Gadget.Caches
         
     }
 }
+#endif

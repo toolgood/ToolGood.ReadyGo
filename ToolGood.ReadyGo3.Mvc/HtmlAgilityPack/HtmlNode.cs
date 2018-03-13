@@ -127,8 +127,12 @@ namespace ToolGood.ReadyGo3.Mvc.HtmlAgilityPack
         //    //<br> see above
         //    ElementsFlags.Add("br", HtmlElementFlag.Empty | HtmlElementFlag.Closed);
 
+
+
         //    //if (!HtmlDocument.DisableBehavaiorTagP) {
+
         //    ElementsFlags.Add("p",  HtmlElementFlag.CanOverlap);
+
         //    ElementsFlags.Add("div",  HtmlElementFlag.CanOverlap);
         //    //}
         //}
@@ -323,6 +327,7 @@ namespace ToolGood.ReadyGo3.Mvc.HtmlAgilityPack
             get {
                 if (_changed) {
                     UpdateHtml();
+
                     return _innerhtml;
                 }
 
@@ -1442,9 +1447,13 @@ namespace ToolGood.ReadyGo3.Mvc.HtmlAgilityPack
             foreach (HtmlNode node in _childnodes) {
                 node.WriteTo(outText, level + 1);
                 //if (node.NodeType== HtmlNodeType.Element) {
+
                 //    if (node.Closed==false) {
+
                 //        outText.Write("</" + node.Name + ">");
+
                 //    }
+
                 //}
             }
         }
@@ -1593,6 +1602,9 @@ namespace ToolGood.ReadyGo3.Mvc.HtmlAgilityPack
                             }
                         }
                     }
+
+
+
 
 
                     break;

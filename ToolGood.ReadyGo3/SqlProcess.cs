@@ -27,27 +27,6 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         /// <summary>
         /// SqlProcess构造函数
         /// </summary>
-        /// <param name="connectionStringName"></param>
-        protected SqlProcess(string connectionStringName)
-        {
-            _singleSqlHelper = true;
-            _sqlhelper = new SqlHelper(connectionStringName);
-            Init();
-        }
-        /// <summary>
-        /// SqlProcess构造函数
-        /// </summary>
-        /// <param name="connectionString"></param>
-        /// <param name="providerName"></param>
-        protected SqlProcess(string connectionString, string providerName)
-        {
-            _singleSqlHelper = true;
-            _sqlhelper = new SqlHelper(connectionString, providerName);
-            Init();
-        }
-        /// <summary>
-        /// SqlProcess构造函数
-        /// </summary>
         /// <param name="helper"></param>
         protected SqlProcess(SqlHelper helper)
         {

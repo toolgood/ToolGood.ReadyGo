@@ -11,6 +11,14 @@ using ToolGood.ReadyGo3.DataCentxt.Exceptions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 
+#if NETSTANDARD2_0
+using SqlCommand = System.Data.Common.DbCommand;
+using SqlDataReader = System.Data.Common.DbDataReader;
+using SqlConnection = System.Data.Common.DbConnection;
+#endif
+
+#if !NET40
+
 namespace ToolGood.ReadyGo3.PetaPoco
 {
     partial class Database
@@ -64,7 +72,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
 
         #region ExecuteAsync ExecuteScalarAsync
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <param name="commandType"></param>
+        /// <returns></returns>
         public async Task<int> ExecuteAsync(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             try {
@@ -84,7 +98,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return -1;
             }
         }
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <param name="commandType"></param>
+        /// <returns></returns>
         public async Task<T> ExecuteScalarAsync<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             try {
@@ -110,8 +131,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return default(T);
             }
         }
-
-
         /// <summary>
         /// 
         /// </summary>
@@ -169,11 +188,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public async Task<IEnumerable<T>> QueryAsync<T>(long skip, long take, string sql, params object[] args)
+        public Task<IEnumerable<T>> QueryAsync<T>(long skip, long take, string sql, params object[] args)
         {
             string sqlCount, sqlPage;
             BuildPageQueries<T>(0, take, sql, ref args, out sqlCount, out sqlPage);
-            return await QueryAsync<T>(sqlPage, args);
+            return QueryAsync<T>(sqlPage, args);
         }
         /// <summary>
         /// 
@@ -203,7 +222,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             throw;
                     }
                     var factory = pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, r.FieldCount, r, _defaultMapper) as Func<IDataReader, T>;
-                    //var factory = pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, r.FieldCount, r) as Func<IDataReader, T>;
                     using (r) {
                         while (true) {
                             try {
@@ -428,13 +446,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         /// <param name="poco">The POCO object that specifies the column values to be updated</param>
         /// <returns>The number of affected rows</returns>
-        public async Task<int> UpdateAsync(object poco)
+        public Task<int> UpdateAsync(object poco)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
 
             var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
-            return await ExecuteUpdateAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null, null);
+            return ExecuteUpdateAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null, null);
         }
 
         /// <summary>
@@ -444,13 +462,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql">The SQL update and condition clause (ie: everything after "UPDATE tablename"</param>
         /// <param name="args">Arguments to any embedded parameters in the SQL</param>
         /// <returns>The number of affected rows</returns>
-        public async Task<int> UpdateAsync<T>(string sql, params object[] args)
+        public Task<int> UpdateAsync<T>(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql))
                 throw new ArgumentNullException("sql");
 
             var pd = PocoData.ForType(typeof(T), _defaultMapper);
-            return await ExecuteAsync(string.Format("UPDATE {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
+            return ExecuteAsync(string.Format("UPDATE {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
         private async Task<int> ExecuteUpdateAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue, IEnumerable<string> columns)
@@ -535,7 +553,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     value from the POCO instance)
         /// </param>
         /// <returns>The number of rows affected</returns>
-        public async Task<int> DeleteAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
+        public Task<int> DeleteAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
         {
             // If primary key value not specified, pick it up from the object
             if (primaryKeyValue == null) {
@@ -548,7 +566,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             // Do it
             var sql = string.Format("DELETE FROM {0} WHERE {1}=@0", _provider.EscapeTableName(tableName), _provider.EscapeSqlIdentifier(primaryKeyName));
-            return await ExecuteAsync(sql, new object[] { primaryKeyValue });
+            return ExecuteAsync(sql, new object[] { primaryKeyValue });
         }
 
         /// <summary>
@@ -556,10 +574,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         /// <param name="poco">The POCO object specifying the table name and primary key value of the row to be deleted</param>
         /// <returns>The number of rows affected</returns>
-        public async Task<int> DeleteAsync(object poco)
+        public Task<int> DeleteAsync(object poco)
         {
             var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
-            return await DeleteAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
+            return DeleteAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
 
         /// <summary>
@@ -568,10 +586,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <typeparam name="T">The POCO class whose attributes identify the table and primary key to be used in the delete</typeparam>
         /// <param name="pocoOrPrimaryKey">The value of the primary key of the row to delete</param>
         /// <returns></returns>
-        public async Task<int> DeleteAsync<T>(object pocoOrPrimaryKey)
+        public Task<int> DeleteAsync<T>(object pocoOrPrimaryKey)
         {
             if (pocoOrPrimaryKey.GetType() == typeof(T))
-                return Delete(pocoOrPrimaryKey);
+                return DeleteAsync(pocoOrPrimaryKey);
 
             var pd = PocoData.ForType(typeof(T), _defaultMapper);
 
@@ -584,7 +602,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 pocoOrPrimaryKey = pi.GetValue(pocoOrPrimaryKey, new object[0]);
             }
 
-            return await DeleteAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
+            return DeleteAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
         }
 
         /// <summary>
@@ -594,17 +612,22 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql">The SQL condition clause identifying the row to delete (ie: everything after "DELETE FROM tablename"</param>
         /// <param name="args">Arguments to any embedded parameters in the SQL</param>
         /// <returns>The number of affected rows</returns>
-        public async Task<int> DeleteAsync<T>(string sql, params object[] args)
+        public Task<int> DeleteAsync<T>(string sql, params object[] args)
         {
 
             var pd = PocoData.ForType(typeof(T), _defaultMapper);
-            return await ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
+            return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
         #endregion
 
         #region SaveAsync
-        public async Task SaveAsync(object poco)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="poco"></param>
+        /// <returns></returns>
+        public Task SaveAsync(object poco)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
@@ -617,9 +640,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 throw new ArgumentException("primaryKeyName");
 
             if (IsNew(primaryKeyName, pd, poco)) {
-                await ExecuteInsertAsync(tableName, primaryKeyName, true, poco);
+                return ExecuteInsertAsync(tableName, primaryKeyName, true, poco);
             } else {
-                await ExecuteUpdateAsync(tableName, primaryKeyName, poco, null, null);
+                return ExecuteUpdateAsync(tableName, primaryKeyName, poco, null, null);
             }
         }
 
@@ -627,3 +650,4 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
     }
 }
+#endif
