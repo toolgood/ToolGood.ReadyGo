@@ -9,7 +9,7 @@ using ToolGood.ReadyGo3.DataCentxt.Exceptions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 
-#if NETSTANDARD2_0
+#if !NET40
 using SqlCommand = System.Data.Common.DbCommand;
 using SqlDataReader = System.Data.Common.DbDataReader;
 using SqlConnection = System.Data.Common.DbConnection;

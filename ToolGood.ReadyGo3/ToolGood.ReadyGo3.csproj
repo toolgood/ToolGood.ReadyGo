@@ -22,8 +22,8 @@
         <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <FileVersion>3.1.0.2</FileVersion>
-        <Version>3.1.0.2</Version>
+        <FileVersion>3.1.0.3</FileVersion>
+        <Version>3.1.0.3</Version>
         <PackageReleaseNotes></PackageReleaseNotes>
         <Product>ToolGood.ReadyGo3</Product>
         <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
@@ -57,7 +57,7 @@
 
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
         <DocumentationFile>bin\Release\net40\ToolGood.ReadyGo3.xml</DocumentationFile>
-        <NoWarn>1701;1702;1705:CS1591</NoWarn>
+        <NoWarn>1701;1702;1705:1591</NoWarn>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
         <DocumentationFile>bin\Release\net45\ToolGood.ReadyGo3.xml</DocumentationFile>

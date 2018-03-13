@@ -5,11 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-#if NETSTANDARD2_0
-using SqlCommand = System.Data.Common.DbCommand;
-#endif
-
 #if !NET40
+using SqlCommand = System.Data.Common.DbCommand;
+
 
 namespace ToolGood.ReadyGo3.PetaPoco.Core
 {
