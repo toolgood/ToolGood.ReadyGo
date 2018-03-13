@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+#if !NETSTANDARD2_0
+using System.Data.SqlClient;
+#endif
+
 #if !NET40
+
 using SqlCommand = System.Data.Common.DbCommand;
 
 

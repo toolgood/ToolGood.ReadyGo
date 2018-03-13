@@ -22,8 +22,8 @@
         <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <FileVersion>3.1.0.3</FileVersion>
-        <Version>3.1.0.3</Version>
+        <FileVersion>3.1.0.4</FileVersion>
+        <Version>3.1.0.4</Version>
         <PackageReleaseNotes></PackageReleaseNotes>
         <Product>ToolGood.ReadyGo3</Product>
         <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
@@ -46,7 +46,6 @@
         <Reference Include="System.Configuration" />
     </ItemGroup>
     <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-        <PackageReference Include="System.Data.SqlClient" Version="4.4.0" />
         <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
         <PackageReference Include="System.Reflection.TypeExtensions" Version="4.4.0" />
     </ItemGroup>

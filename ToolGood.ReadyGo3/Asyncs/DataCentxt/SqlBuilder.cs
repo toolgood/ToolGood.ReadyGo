@@ -92,7 +92,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             var sql = GetFullSelectSql(Provider, 2, 0, columns);
             _useDistinct = false;
-            return GetSqlHelper().SingleAsync<T>(sql);
+            return GetSqlHelper()._SingleAsync<T>(sql);
         }
 
 
@@ -113,7 +113,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             var sql = GetFullSelectSql(Provider, 2, 0, columns);
             _useDistinct = false;
-            return GetSqlHelper().SingleOrDefaultAsync<T>(sql);
+            return GetSqlHelper()._SingleOrDefaultAsync<T>(sql);
         }
 
 
@@ -134,7 +134,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             var sql = GetFullSelectSql(Provider, 1, 0, columns);
             _useDistinct = false;
-            return GetSqlHelper().FirstAsync<T>(sql);
+            return GetSqlHelper()._FirstAsync<T>(sql);
         }
 
 
@@ -155,7 +155,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             var sql = GetFullSelectSql(Provider, 1, 0, columns);
             _useDistinct = false;
-            return GetSqlHelper().FirstOrDefaultAsync<T>(sql);
+            return GetSqlHelper()._FirstOrDefaultAsync<T>(sql);
         }
 
         #endregion
