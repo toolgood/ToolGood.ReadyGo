@@ -22,6 +22,9 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             helper.Where<DbArea>(q => q.Level == 2).Select(10);
             helper.Where<DbArea>(q => q.Level == 2).Select(2, 10);
             helper.Where<DbArea>(q => q.Level == 2).Page(2, 10);
+
+            helper.Where<DbArea>(q => q.Level == 2).ExecuteDataTable();
+
         }
 
 
@@ -40,6 +43,8 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             helper.Where<DbArea>(q => q.Level == 2).SelectAsync(2, 10);
 
             helper.Where<DbArea>(q => q.Level == 2).PageAsync(2, 10);
+            helper.Where<DbArea>(q => q.Level == 2).ExecuteDataTableAsync();
+
         }
 
     }
