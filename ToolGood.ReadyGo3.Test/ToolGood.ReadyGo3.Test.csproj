@@ -51,6 +51,7 @@
     <Compile Include="Datas\DbAdminLoginLog.cs" />
     <Compile Include="Datas\DbAdminMenu.cs" />
     <Compile Include="Datas\DbAdminMenuPass.cs" />
+    <Compile Include="Datas\DbArea.cs" />
     <Compile Include="Datas\ObjectToQTable1.cs">
       <DependentUpon>ObjectToQTable.tt</DependentUpon>
       <AutoGen>True</AutoGen>

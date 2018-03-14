@@ -5,10 +5,11 @@ using System.Text;
 using ToolGood.ReadyGo3;
 using ToolGood.ReadyGo3.Attributes;
 using ToolGood.ReadyGo3.DataCentxt;
+using ToolGood.ReadyGo3.Test;
 
-namespace ToolGood.ReadyGo3.Test.Datas
+namespace ToolGood.ReadyGo3.CoreTest.Datas
 {
-    public class TbAdmin : QTable<ToolGood.ReadyGo3.Test.Datas.DbAdmin>
+    public class TbAdmin : QTable<ToolGood.ReadyGo3.CoreTest.Datas.DbAdmin>
     {
         private QTableColumn<int> _ID;
         private QTableColumn<string> _Name;
@@ -22,8 +23,8 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<string> _AdminGroupName;
 
         public TbAdmin() : base(Config.DbHelper) { }
-		public TbAdmin(SqlHelper sqlHelper) : base(sqlHelper) { }
- 
+        public TbAdmin(SqlHelper sqlHelper) : base(sqlHelper) { }
+
         protected override void Init()
         {
             __SchemaName__ = "";
@@ -93,7 +94,7 @@ namespace ToolGood.ReadyGo3.Test.Datas
 
     }
 
-    public class TbAdminGroup : QTable<ToolGood.ReadyGo3.Test.Datas.DbAdminGroup>
+    public class TbAdminGroup : QTable<ToolGood.ReadyGo3.CoreTest.Datas.DbAdminGroup>
     {
         private QTableColumn<int> _ID;
         private QTableColumn<string> _Name;
@@ -103,8 +104,8 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<System.DateTime> _AddingTime;
 
         public TbAdminGroup() : base(Config.DbHelper) { }
-		public TbAdminGroup(SqlHelper sqlHelper) : base(sqlHelper) { }
- 
+        public TbAdminGroup(SqlHelper sqlHelper) : base(sqlHelper) { }
+
         protected override void Init()
         {
             __SchemaName__ = "";
@@ -150,7 +151,7 @@ namespace ToolGood.ReadyGo3.Test.Datas
 
     }
 
-    public class TbAdminLoginLog : QTable<ToolGood.ReadyGo3.Test.Datas.DbAdminLoginLog>
+    public class TbAdminLoginLog : QTable<ToolGood.ReadyGo3.CoreTest.Datas.DbAdminLoginLog>
     {
         private QTableColumn<int> _ID;
         private QTableColumn<string> _Name;
@@ -160,8 +161,8 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<System.DateTime> _AddingTime;
 
         public TbAdminLoginLog() : base(Config.DbHelper) { }
-		public TbAdminLoginLog(SqlHelper sqlHelper) : base(sqlHelper) { }
- 
+        public TbAdminLoginLog(SqlHelper sqlHelper) : base(sqlHelper) { }
+
         protected override void Init()
         {
             __SchemaName__ = "";
@@ -207,7 +208,7 @@ namespace ToolGood.ReadyGo3.Test.Datas
 
     }
 
-    public class TbAdminMenu : QTable<ToolGood.ReadyGo3.Test.Datas.DbAdminMenu>
+    public class TbAdminMenu : QTable<ToolGood.ReadyGo3.CoreTest.Datas.DbAdminMenu>
     {
         private QTableColumn<int> _ID;
         private QTableColumn<int> _ParentID;
@@ -221,8 +222,8 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<System.DateTime> _AddingTime;
 
         public TbAdminMenu() : base(Config.DbHelper) { }
-		public TbAdminMenu(SqlHelper sqlHelper) : base(sqlHelper) { }
- 
+        public TbAdminMenu(SqlHelper sqlHelper) : base(sqlHelper) { }
+
         protected override void Init()
         {
             __SchemaName__ = "";
@@ -292,7 +293,7 @@ namespace ToolGood.ReadyGo3.Test.Datas
 
     }
 
-    public class TbAdminMenuPass : QTable<ToolGood.ReadyGo3.Test.Datas.DbAdminMenuPass>
+    public class TbAdminMenuPass : QTable<ToolGood.ReadyGo3.CoreTest.Datas.DbAdminMenuPass>
     {
         private QTableColumn<int> _AdminGroupID;
         private QTableColumn<int> _MenuID;
@@ -300,8 +301,8 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<string> _ActionName;
 
         public TbAdminMenuPass() : base(Config.DbHelper) { }
-		public TbAdminMenuPass(SqlHelper sqlHelper) : base(sqlHelper) { }
- 
+        public TbAdminMenuPass(SqlHelper sqlHelper) : base(sqlHelper) { }
+
         protected override void Init()
         {
             __SchemaName__ = "";
@@ -335,7 +336,7 @@ namespace ToolGood.ReadyGo3.Test.Datas
 
     }
 
-    public class TbArea : QTable<ToolGood.ReadyGo3.Test.Datas.DbArea>
+    public class TbArea : QTable<ToolGood.ReadyGo3.CoreTest.Datas.DbArea>
     {
         private QTableColumn<int> _Id;
         private QTableColumn<int> _ParentId;
@@ -347,8 +348,8 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<string> _Code;
 
         public TbArea() : base(Config.DbHelper) { }
-		public TbArea(SqlHelper sqlHelper) : base(sqlHelper) { }
- 
+        public TbArea(SqlHelper sqlHelper) : base(sqlHelper) { }
+
         protected override void Init()
         {
             __SchemaName__ = "";
@@ -364,28 +365,28 @@ namespace ToolGood.ReadyGo3.Test.Datas
             _Code = AddColumn<string>("Code", "Code", false);
         }
 
-        
+
         public QTableColumn<int> Id { get { return _Id; } set { _Id.NewValue = value; } }
 
-        
+
         public QTableColumn<int> ParentId { get { return _ParentId; } set { _ParentId.NewValue = value; } }
 
-        
+
         public QTableColumn<string> Path { get { return _Path; } set { _Path.NewValue = value; } }
 
-        
+
         public QTableColumn<int> Level { get { return _Level; } set { _Level.NewValue = value; } }
 
-        
+
         public QTableColumn<string> Name { get { return _Name; } set { _Name.NewValue = value; } }
 
-        
+
         public QTableColumn<string> NameEn { get { return _NameEn; } set { _NameEn.NewValue = value; } }
 
-        
+
         public QTableColumn<string> NamePinyin { get { return _NamePinyin; } set { _NamePinyin.NewValue = value; } }
 
-        
+
         public QTableColumn<string> Code { get { return _Code; } set { _Code.NewValue = value; } }
 
     }

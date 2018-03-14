@@ -112,7 +112,7 @@ namespace ToolGood.ReadyGo3
         {
             _isDisposable = true;
             if (_database != null) {
-                
+
                 _database.Dispose();
                 _database = null;
             }
@@ -300,6 +300,7 @@ namespace ToolGood.ReadyGo3
 
         }
 
+#if NETSTANDARD2_0
         /// <summary>
         /// 执行SQL 查询,返回 DataSet
         /// </summary>
@@ -317,6 +318,7 @@ namespace ToolGood.ReadyGo3
             }
             return getDatabase().ExecuteDataSet(sql, args);
         }
+#endif
 
         /// <summary>
         /// 执行SQL 查询,判断是否存在，返回bool类型

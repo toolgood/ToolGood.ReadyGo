@@ -359,7 +359,8 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         #endregion
 
-        #region ExecuteDataSet
+#region ExecuteDataSet
+#if NETSTANDARD2_0
         public DataSet ExecuteDataSet()
         {
             var columns = GetSelectColumns();
@@ -413,6 +414,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             _useDistinct = false;
             return GetSqlHelper().ExecuteDataSet(sql);
         }
-        #endregion
+#endif
+#endregion
     }
 }

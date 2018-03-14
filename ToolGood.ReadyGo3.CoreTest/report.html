@@ -1,0 +1,166 @@
+<html>
+<head>
+<style>
+body { font-family:Arial; margin:20px; font-size:10pt}
+div.assembly>div.title { font-size:20pt; margin-bottom:20px; border-bottom:1px solid silver; padding-bottom:20px; }
+div.testfixture>div.title { font-size:16pt; }
+div.testfixture { margin-bottom:20px; }
+div.test { margin-left:20px; }
+div.test div.title { font-size:12pt; }
+div.errormessage { color:Red; padding-top:10px; }
+div.pass>div.title { color:#808080; }
+span.highlighted { color:Red; }
+pre.code { background-color:#f0f0f0; }
+div.summary { border:1px solid silver; padding:10px; margin-bottom:20px; text-align:center; }
+div.fail div.summary { background-color:Red; color:White; }
+div.pass div.summary { background-color:Lime; }
+div.collapsed div.content { display:none; }
+div.test div.content { border-left:2px solid #d0d0d0; padding-left:10px; margin-left:10px; }
+a { text-decoration:none; color:#606060; }
+a:hover { color:orange; }
+div>div.title>span.indicator { display:inline-block; width:10px; height:10px; background-color:lime; border-radius:7px}
+div.fail>div.title>span.indicator { display:inline-block; width:10px; height:10px; background-color:red; }
+div.assembly>div.title>span.indicator { display:none; }
+div.misc_info { color:#808080; }
+</style>
+<script>
+window.addEventListener("load", setup, false);
+function setup() {
+    var divs = document.getElementsByClassName("toggle");
+    for (var i = 0; i < divs.length; i++) {
+        divs[i].onclick = function () {
+            var top = this.parentNode.parentNode;
+            if (top.className.indexOf(" collapsed") < 0)
+                top.className += " collapsed";
+            else
+                top.className = top.className.replace(" collapsed", "");
+            return false;
+        }
+    }
+}
+</script>
+</head>
+<body>
+<div class="assembly pass">
+<div class="title">
+<span class="indicator">
+
+</span>
+<a class="toggle" href="#">
+Test Results for ToolGood.ReadyGo3.CoreTest.dll
+</a>
+
+</div>
+<div class="summary">
+Passed: 4 Failed: 0 Warnings: 0 Time in Test Cases: 187ms
+</div>
+<div class="content">
+<div class="testfixture pass">
+<div class="title">
+<span class="indicator">
+
+</span>
+<a class="toggle" href="#">
+Test Fixture ToolGood.ReadyGo3.CoreTest.Tests.LinQSelectTest()
+</a>
+
+</div>
+<div class="content">
+<div class="test pass collapsed">
+<div class="title">
+<span class="indicator">
+
+</span>
+<a class="toggle" href="#">
+LinQTest()
+</a>
+ <small>46ms</small>
+</div>
+<div class="content">
+<pre>Test passed!
+</pre>
+
+</div>
+
+</div>
+<div class="test pass collapsed">
+<div class="title">
+<span class="indicator">
+
+</span>
+<a class="toggle" href="#">
+LinQAsyncTest()
+</a>
+ <small>55ms</small>
+</div>
+<div class="content">
+<pre>Test passed!
+</pre>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="testfixture pass">
+<div class="title">
+<span class="indicator">
+
+</span>
+<a class="toggle" href="#">
+Test Fixture ToolGood.ReadyGo3.CoreTest.Tests.SqlSelectTest()
+</a>
+
+</div>
+<div class="content">
+<div class="test pass collapsed">
+<div class="title">
+<span class="indicator">
+
+</span>
+<a class="toggle" href="#">
+SelectTest()
+</a>
+ <small>62ms</small>
+</div>
+<div class="content">
+<pre>Test passed!
+</pre>
+
+</div>
+
+</div>
+<div class="test pass collapsed">
+<div class="title">
+<span class="indicator">
+
+</span>
+<a class="toggle" href="#">
+SelectAsyncTest()
+</a>
+ <small>24ms</small>
+</div>
+<div class="content">
+<pre>Test passed!
+</pre>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="misc_info">
+Time in test cases 187ms, setup/teardown 0ms, test framework 81ms<br/>Tests run at 2018/3/14 10:58:56 by lin on LIN-PC under Microsoft Windows NT 6.1.7601 Service Pack 1<br/>Command line: D:\工作文件夹\code\ToolGood.ReadyGo-master\ToolGood.ReadyGo3.CoreTest\bin\Release\netcoreapp2.0\ToolGood.ReadyGo3.CoreTest.dll
+</div>
+
+</body>
+
+</html>

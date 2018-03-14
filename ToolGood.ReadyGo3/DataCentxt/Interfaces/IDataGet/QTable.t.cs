@@ -286,6 +286,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         #endregion
 
         #region ExecuteDataSet
+#if NETSTANDARD2_0
         /// <summary>
         /// 执行SQL 查询,返回 DataSet
         /// </summary>
@@ -316,7 +317,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             var columns = getSelectColumn();
             return ExecuteDataSet(limit, offset, columns);
         }
-
+#endif
         #endregion
     }
 }

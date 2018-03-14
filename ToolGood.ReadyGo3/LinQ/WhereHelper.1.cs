@@ -1060,6 +1060,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return this._sqlhelper.ExecuteDataTable(this.GetFullSelectSql(selectSql), this._args.ToArray());
         }
+#if NETSTANDARD2_0
         /// <summary>
         /// 执行返回DataSet
         /// </summary>
@@ -1069,6 +1070,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return this._sqlhelper.ExecuteDataSet(this.GetFullSelectSql(selectSql), this._args.ToArray());
         }
+#endif
         /// <summary>
         /// 执行返回集合
         /// </summary>
@@ -1428,7 +1430,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return sb.ToString();
         }
 
-        #endregion  
+        #endregion
 
         /// <summary>
         /// 释放
