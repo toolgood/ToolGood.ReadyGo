@@ -26,7 +26,6 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         public void ConnectionOpened()
         {
             SqlMonitorItem item = new SqlMonitorItem {
-                Layer = _cur.Layer + 1,
                 Parent = _cur,
                 StartTime = DateTime.Now
             };
@@ -40,7 +39,6 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         public void ConnectionClosing()
         {
             SqlMonitorItem item = new SqlMonitorItem {
-                Layer = _cur.Layer + 1,
                 Parent = _cur,
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now
@@ -57,7 +55,6 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         public void Transactioning()
         {
             SqlMonitorItem item = new SqlMonitorItem {
-                Layer = _cur.Layer + 1,
                 Parent = _cur,
                 StartTime = DateTime.Now
             };
@@ -71,7 +68,6 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         public void Transactioned()
         {
             SqlMonitorItem item = new SqlMonitorItem {
-                Layer = _cur.Layer + 1,
                 Parent = _cur,
                 StartTime = DateTime.Now,
                 EndTime = DateTime.Now
@@ -90,7 +86,6 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         public void ExecutingCommand(string sql, object[] args)
         {
             SqlMonitorItem item = new SqlMonitorItem {
-                Layer = _cur.Layer + 1,
                 Parent = _cur,
                 StartTime = DateTime.Now,
                 Sql = sql
@@ -119,22 +114,7 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             _cur.Exception = message;
             _cur = _cur.Parent;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public string ToHtml()
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Append("<pre>");
-#if NETSTANDARD2_0
-            System.Net.WebUtility.HtmlEncode(ToText());
-#else 
-            sb.Append(System.Web.HttpUtility.HtmlEncode(ToText()));
-#endif
-            sb.Append("</pre>");
-            return sb.ToString();
-        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -154,7 +134,6 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         private class SqlMonitorItem
         {
             public SqlMonitorItem Parent;
-            public int Layer;
             public string Sql;
             public string Exception;
             public DateTime StartTime;
@@ -162,14 +141,16 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
 
             public void ToString(StringBuilder sb)
             {
-                sb.Append(new string(' ', Layer * 2));
+                var ts = (int)(EndTime - StartTime).TotalMilliseconds;
+                if (ts < 0) { ts = 0; }
 
-                sb.AppendFormat("{0:HH:mm:ss}[{1}ms]：", StartTime, (int)(EndTime - StartTime).TotalMilliseconds);
+                sb.AppendFormat("{0:yyyy-MM-dd HH:mm:ss}[{1}ms]：", StartTime, ts);
                 sb.Append(Sql);
                 if (string.IsNullOrEmpty(Exception) == false) {
                     sb.Append("\r\n");
-                    sb.Append(new string(' ', Layer * 2 + 2));
-                    sb.Append(Exception);
+                    sb.Append("\t" + Exception.Replace("\r\n", "\n").Replace("\n", "\r\n\t"));
+                    sb.Append("\r\n");
+                    sb.Append("\r\n");
                 }
             }
         }

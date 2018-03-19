@@ -45,14 +45,14 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         public void ExecutingCommand( string sql, object[] args)
         {
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public string ToHtml()
-        {
-            return null;
-        }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <returns></returns>
+        //public string ToHtml()
+        //{
+        //    return null;
+        //}
         /// <summary>
         /// 
         /// </summary>
