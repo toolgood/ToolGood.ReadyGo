@@ -183,17 +183,14 @@ namespace ToolGood.ReadyGo3.LinQ
         }
         private void whereTranslate(StringBuilder where, string text)
         {
-            if (text == "@@") {
-                where.Append(_paramPrefix);
-                where.Append(this._args.Count.ToString());
-            } else if (text == "@@@") {
+           if (text == "@@") {
                 where.Append("@@");
-            } else if (text.StartsWith("@@")) {
+            } else if (text.Length == 1) {
+                where.Append(text);
+            } else if (text.StartsWith("@")) {
                 int p = this._args.Count + int.Parse(text.Replace("@", ""));
                 where.Append(_paramPrefix);
                 where.Append(p.ToString());
-            } else if (text.Length == 1) {
-                where.Append(text);
             } else {
                 int p = int.Parse(text.Replace("@", ""));
                 where.Append(_paramPrefix);
