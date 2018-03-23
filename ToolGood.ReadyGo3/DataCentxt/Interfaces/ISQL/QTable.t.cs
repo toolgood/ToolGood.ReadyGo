@@ -259,54 +259,5 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return this;
         }
 
-
-        /// <summary>
-        /// 累加到【Join】语句
-        /// </summary>
-        /// <typeparam name="NewT">表名</typeparam>
-        /// <param name="joinType">Join 类型</param>
-        /// <returns></returns>
-        public NewT Join<NewT>(JoinType joinType = JoinType.Inner) where NewT : QTable
-        {
-            return GetSqlBuilder().Join<NewT>(joinType);
-        }
-
-        /// <summary>
-        /// 累加到【Join】语句 Left Join 类型
-        /// </summary>
-        /// <typeparam name="NewT">表名</typeparam>
-        /// <returns></returns>
-        public NewT LeftJoin<NewT>() where NewT : QTable
-        {
-            return GetSqlBuilder().LeftJoin<NewT>();
-        }
-        /// <summary>
-        /// 累加到【Join】语句 Right Join 类型
-        /// </summary>
-        /// <typeparam name="NewT">表名</typeparam>
-        /// <returns></returns>
-        public NewT RightJoin<NewT>() where NewT : QTable
-        {
-            return GetSqlBuilder().RightJoin<NewT>();
-        }
-        /// <summary>
-        /// 累加到【Join】语句 Inner Join 类型
-        /// </summary>
-        /// <typeparam name="NewT">表名</typeparam>
-        /// <returns></returns>
-        public NewT InnerJoin<NewT>() where NewT : QTable
-        {
-            return GetSqlBuilder().InnerJoin<NewT>();
-        }
-        /// <summary>
-        /// 累加到【Join】语句 Full Join 类型
-        /// </summary>
-        /// <typeparam name="NewT">表名</typeparam>
-        /// <returns></returns>
-        public NewT FullJoin<NewT>() where NewT : QTable
-        {
-            return GetSqlBuilder().FullJoin<NewT>();
-        }
-
     }
 }

@@ -189,57 +189,6 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         }
 
-        public NewT Join<NewT>(JoinType joinType = JoinType.Inner) where NewT : QTable
-        {
-            var table = Activator.CreateInstance<NewT>();
-            if (_jump) { _jump = false; return table; }
-
-            this.AddTable(table);
-            table._joinType = joinType;
-            return table;
-        }
-
-        public NewT LeftJoin<NewT>() where NewT : QTable
-        {
-            var table = Activator.CreateInstance<NewT>();
-            if (_jump) { _jump = false; return table; }
-
-            this.AddTable(table);
-            table._joinType = JoinType.Left;
-            return table;
-        }
-
-        public NewT RightJoin<NewT>() where NewT : QTable
-        {
-            var table = Activator.CreateInstance<NewT>();
-            if (_jump) { _jump = false; return table; }
-
-            this.AddTable(table);
-            table._joinType = JoinType.Right;
-            return table;
-        }
-
-        public NewT InnerJoin<NewT>() where NewT : QTable
-        {
-            var table = Activator.CreateInstance<NewT>();
-            if (_jump) { _jump = false; return table; }
-
-            this.AddTable(table);
-            table._joinType = JoinType.Inner;
-            return table;
-        }
-
-        public NewT FullJoin<NewT>() where NewT : QTable
-        {
-            var table = Activator.CreateInstance<NewT>();
-            if (_jump) { _jump = false; return table; }
-
-            this.AddTable(table);
-            table._joinType = JoinType.Full;
-            return table;
-        }
-
-
         public void GroupBy(QColumn column, params QColumn[] columns)
         {
             if (_jump) { _jump = false; return; }

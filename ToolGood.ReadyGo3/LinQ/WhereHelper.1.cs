@@ -729,7 +729,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="field"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public WhereHelper<T1> WhereNotIn<T>(string field, params T[] args)
+        public WhereHelper<T1> WhereNotIn(string field, params object[] args)
         {
             if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
             this.whereNotIn(field, args);
@@ -755,7 +755,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="field"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public WhereHelper<T1> WhereIn<T>(string field, params T[] args)
+        public WhereHelper<T1> WhereIn(string field, params object[] args)
         {
             if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
             this.whereIn(field, args);
@@ -782,7 +782,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="field"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public WhereHelper<T1> WhereNotIn<T>(Expression<Func<T1, T>> field, params T[] args)
+        public WhereHelper<T1> WhereNotIn<T>(Expression<Func<T1, T>> field, params object[] args)
         {
             return WhereNotIn(field, (ICollection)args);
         }
@@ -803,7 +803,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="field"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public WhereHelper<T1> WhereIn<T>(Expression<Func<T1, T>> field, params T[] args)
+        public WhereHelper<T1> WhereIn<T>(Expression<Func<T1, T>> field, params object[] args)
         {
             return WhereIn(field, (ICollection)args);
         }

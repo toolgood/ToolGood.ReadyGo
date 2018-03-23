@@ -52,5 +52,31 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
 
         }
 
+        [Test]
+        public void LinQWhere()
+        {
+            var helper = Config.DbHelper;
+
+            var db = helper.Where<DbArea>()
+                .Where("Id=@0", 8)
+                .Where("ParentId=@0", 1)
+                .First();
+
+            var dbs = helper.Where<DbArea>()
+                 .Where("ParentId=@0", 1)
+                 .WhereIn("Name", new List<string>() { "中国", "英国" })
+                 .Select();
+
+            dbs = helper.Where<DbArea>()
+                  .Where("ParentId=@0", 1)
+                  .WhereNotIn("Name", new List<string>() { "中国", "英国" })
+                  .Select();
+
+            dbs = helper.Where<DbArea>()
+                .IfSet("1") .Where("ParentId=@0", 1)
+                 .WhereIn("Name", new List<string>() { "中国", "英国" })
+                 .Select();
+        }
+
     }
 }
