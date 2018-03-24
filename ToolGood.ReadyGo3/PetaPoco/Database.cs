@@ -497,7 +497,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return default(DataTable);
             }
         }
-        #if NETSTANDARD2_0
+#if NETSTANDARD2_0
         /// <summary>
         /// 
         /// </summary>
@@ -530,9 +530,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 #endif
 
-#endregion
+        #endregion
 
-#region operation: Page
+        #region operation: Page
 
         /// <summary>
         ///     Starting with a regular SELECT statement, derives the SQL statements required to query a
@@ -600,9 +600,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 
 
-#endregion
+        #endregion
 
-#region operation: Query
+        #region operation: Query
         /// <summary>
         /// 
         /// </summary>
@@ -673,9 +673,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-#endregion
+        #endregion
 
-#region operation: Exists
+        #region operation: Exists
 
         /// <summary>
         ///     Checks for the existence of a row matching the specified condition
@@ -705,9 +705,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return Exists<T>(string.Format("{0}=@0", _provider.EscapeSqlIdentifier(PocoData.ForType(typeof(T), _defaultMapper).TableInfo.PrimaryKey)), primaryKey);
         }
 
-#endregion
+        #endregion
 
-#region operation: Insert
+        #region operation: Insert
 
         /// <summary>
         ///     Performs an SQL Insert
@@ -917,9 +917,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return sb.ToString();
         }
 
-#endregion
+        #endregion
 
-#region operation: Update
+        #region operation: Update
 
         /// <summary>
         ///     Performs an SQL update
@@ -1015,9 +1015,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-#endregion
+        #endregion
 
-#region operation: Delete
+        #region operation: Delete
 
         /// <summary>
         ///     Performs and SQL Delete
@@ -1100,9 +1100,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return Execute(string.Format("DELETE FROM {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
-#endregion
+        #endregion
 
-#region operation: Save
+        #region operation: Save
         /// <summary>
         ///     Saves a POCO by either performing either an SQL Insert or SQL Update
         /// </summary>
@@ -1173,9 +1173,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 
 
-#endregion
+        #endregion
 
-#region FormatCommand
+        #region FormatCommand
 
         /// <summary>
         ///     Formats the contents of a DB command for display
@@ -1209,9 +1209,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return sb.ToString();
         }
 
-#endregion
+        #endregion
 
-#region Public Properties
+        #region Public Properties
 
         /// <summary>
         ///     When set to true, ToolGood.ReadyGo3.PetaPoco will automatically create the "SELECT columns" part of any query that looks like it
@@ -1229,9 +1229,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         public int OneTimeCommandTimeout;
 
-#endregion
+        #endregion
 
-#region Member Fields
+        #region Member Fields
 
         // Member variables
         private SqlHelper _sqlHelper;
@@ -1245,9 +1245,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private string _paramPrefix;
         private DbProviderFactory _factory;
 
-#endregion
+        #endregion
 
-#region Internal operations
+        #region Internal operations
 
         internal void ExecuteNonQueryHelper(IDbCommand cmd)
         {
@@ -1278,6 +1278,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             OnExecutingCommand(cmd);
         }
 
-#endregion
+        #endregion
     }
 }

@@ -86,7 +86,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             for (int i = index; i < args.Length; i++) {
                 list.Add(EscapeParam(args[i]));
             }
-            return string.Format(sql, list);
+            return string.Format(sql, list.ToArray());
         }
 
         /// <summary>
