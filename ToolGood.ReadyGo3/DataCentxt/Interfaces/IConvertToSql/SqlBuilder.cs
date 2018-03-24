@@ -165,7 +165,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             var header = (this).GetInsertHeaderSql(provider);
             if (header == null) throw new NoColumnException();
             var value = (this).GetInsertValueSql(provider);
-            return header + " VALUES " + value + ";";
+            return header + " VALUES " + value ;
         }
 
         string GetFullUpdateSql(DatabaseProvider provider)
