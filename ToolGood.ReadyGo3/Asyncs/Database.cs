@@ -55,6 +55,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
             _sharedConnectionDepth++;
         }
+ 
 
         internal async Task ExecuteNonQueryHelperAsync(SqlCommand cmd)
         {
@@ -83,7 +84,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public async Task<int> ExecuteAsync(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             try {
-                OpenSharedConnection();
+                await OpenSharedConnectionAsync();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                         var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync();
@@ -142,7 +143,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public async Task<DataTable> ExecuteDataTableAsync(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             try {
-                OpenSharedConnection();
+                await OpenSharedConnectionAsync();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                         var reader = await ((SqlCommand)cmd).ExecuteReaderAsync();
@@ -302,7 +303,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private async Task<object> ExecuteInsertAsync(string tableName, string primaryKeyName, bool autoIncrement, object poco)
         {
             try {
-                OpenSharedConnection();
+                await OpenSharedConnectionAsync();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var pd = PocoData.ForObject(poco, primaryKeyName, _defaultMapper);
@@ -357,7 +358,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         internal async Task<object> ExecuteInsertAsync(string sql, string primaryKeyName)
         {
             try {
-                OpenSharedConnection();
+                await OpenSharedConnectionAsync();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         cmd.CommandText = sql;
@@ -402,7 +403,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private async Task ExecuteInsertAsync<T>(string tableName, string primaryKeyName, bool autoIncrement, List<T> list, int index2, int size)
         {
             try {
-                OpenSharedConnection();
+                await OpenSharedConnectionAsync();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0], CommandType.Text)) {
                         var type = typeof(T);
@@ -474,7 +475,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private async Task<int> ExecuteUpdateAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue, IEnumerable<string> columns)
         {
             try {
-                OpenSharedConnection();
+                await OpenSharedConnectionAsync();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = poco.GetType();
