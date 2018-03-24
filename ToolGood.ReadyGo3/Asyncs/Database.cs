@@ -332,7 +332,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                                 return null;
                         }
 
-                        object id = _provider.ExecuteInsertAsync(this, (SqlCommand)cmd, primaryKeyName);
+                        object id = await _provider.ExecuteInsertAsync(this, (SqlCommand)cmd, primaryKeyName);
 
                         // Assign the ID back to the primary key property
                         if (primaryKeyName != null && !poco.GetType().Name.Contains("AnonymousType")) {
