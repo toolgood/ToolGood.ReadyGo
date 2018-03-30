@@ -22,8 +22,8 @@
         <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <FileVersion>3.1.0.12</FileVersion>
-        <Version>3.1.0.12</Version>
+        <FileVersion>3.1.0.13</FileVersion>
+        <Version>3.1.0.13</Version>
         <PackageReleaseNotes></PackageReleaseNotes>
         <Product>ToolGood.ReadyGo3</Product>
         <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>

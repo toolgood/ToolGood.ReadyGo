@@ -80,7 +80,6 @@ namespace ToolGood.ReadyGo3.LinQ
                 _where.Append(" <> ");
                 _where.Append(_paramPrefix);
                 _where.Append(_args.Count.ToString());
-                return;
             } else {
                 _where.Append(" NOT IN (");
                 for (int i = 0; i < args.Count; i++) {
@@ -120,7 +119,6 @@ namespace ToolGood.ReadyGo3.LinQ
                 _where.Append(" = ");
                 _where.Append(_paramPrefix);
                 _where.Append(_args.Count.ToString());
-                return;
             } else {
                 _where.Append(" IN (");
                 for (int i = 0; i < args.Count; i++) {
@@ -183,7 +181,7 @@ namespace ToolGood.ReadyGo3.LinQ
         }
         private void whereTranslate(StringBuilder where, string text)
         {
-           if (text == "@@") {
+            if (text == "@@") {
                 where.Append("@@");
             } else if (text.Length == 1) {
                 where.Append(text);
