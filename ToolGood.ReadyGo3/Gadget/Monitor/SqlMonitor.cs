@@ -130,6 +130,14 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             }
             return sb.ToString();
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return ToText();
+        }
 
         private class SqlMonitorItem
         {

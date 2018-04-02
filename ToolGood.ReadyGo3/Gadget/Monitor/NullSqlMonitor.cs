@@ -45,14 +45,6 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         public void ExecutingCommand( string sql, object[] args)
         {
         }
-        ///// <summary>
-        ///// 
-        ///// </summary>
-        ///// <returns></returns>
-        //public string ToHtml()
-        //{
-        //    return null;
-        //}
         /// <summary>
         /// 
         /// </summary>
@@ -73,6 +65,14 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         /// </summary>
         public void Transactioning( )
         {
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return ToText();
         }
     }
 }

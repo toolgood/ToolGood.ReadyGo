@@ -5,11 +5,6 @@
     /// </summary>
     public interface ISqlMonitor
     {
-        ///// <summary>
-        ///// 输出 为HTML格式
-        ///// </summary>
-        ///// <returns></returns>
-        //string ToHtml();
         /// <summary>
         /// 输出 为文本格式
         /// </summary>
