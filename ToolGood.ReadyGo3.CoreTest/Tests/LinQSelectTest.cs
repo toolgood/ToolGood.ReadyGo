@@ -29,7 +29,9 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
                       .Where("Id=@0", 8)
                       .Where("ParentId=@0", 1)
                       .First();
-
+            db = helper.Where<DbArea>()
+                       .Where(q=>q.NamePinyin.ToLower()== "yazhou")
+                      .First();
         }
 
 

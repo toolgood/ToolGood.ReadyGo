@@ -29,6 +29,11 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             tb.Select(10);
             tb.Select(2, 10);
             tb.Page(2, 10);
+
+            tb.Clear();
+            tb.Where(tb.NamePinyin.Lower() == "yazhou");
+            var db = tb.First();
+
         }
 
         [Test]
