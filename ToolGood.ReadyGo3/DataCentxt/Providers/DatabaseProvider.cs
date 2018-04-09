@@ -71,7 +71,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
                     return stringBuilder.ToString();
                 default: break;
             }
-            return CreateFunction(args[0].ToString(), args, 1);
+            var objs = new object[args.Length-1];
+            for (int i = 0; i < objs.Length; i++) {
+                objs[i] = args[i + 1];
+            }
+            return CreateFunction(args[0].ToString(), objs, 0);
         }
         /// <summary>
         /// 创建生成SQL Function
@@ -84,7 +88,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
         {
             List<string> list = new List<string>();
             for (int i = index; i < args.Length; i++) {
-                list.Add(EscapeParam(args[i]));
+                if (i == 0) {
+                    list.Add(args[i].ToString());
+                } else {
+                    list.Add(EscapeParam(args[i]));
+                }
             }
             return string.Format(sql, list.ToArray());
         }
