@@ -62,7 +62,12 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             db = helper.Where<DbArea>()
                  .Where(q => q.NamePinyin.ToString() == ("yazhou"))
                 .First();
-
+            db = helper.Where<DbArea>()
+                   .Where(q => q.AddingTime.Year < 2019)
+                  .First();
+            db = helper.Where<DbArea>()
+               .Where(q => q.AddingTime.Year <= DateTime.Now.Year)
+              .First();
         }
 
 

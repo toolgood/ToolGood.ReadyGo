@@ -256,7 +256,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             if (col != null) {
                 colName = col.ColumnName;
             }
-            return $"{paramDicts[p]}."+ provider.EscapeSqlIdentifier(colName);
+            return $"{paramDicts[p]}." + provider.EscapeSqlIdentifier(colName);
         }
 
 
@@ -427,6 +427,11 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
         private object VisitMemberAccess(MemberExpression m, Dictionary<ParameterExpression, string> paramDicts)
         {
+            //未测试，，，
+            //if (IsNullableMember(m)) {
+            //    m = m.Expression as MemberExpression;
+            //}
+
             if (m.Expression != null
                 && (m.Expression.NodeType == ExpressionType.Parameter || m.Expression.NodeType == ExpressionType.Convert)) {
                 var me = m;
@@ -444,11 +449,37 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 }
                 return new PartialSqlString(string.Format("{0}.{1}", paramDicts[p], colName));
             }
+            if (m.Member.ReflectedType == typeof(DateTime)) {
+                var p = Expression.Convert(m.Expression, typeof(object));
+                if (p.NodeType == ExpressionType.Convert) {
+                    var pp = (m.Expression as MemberExpression).Expression as ParameterExpression;
+                    if (pp != null) {
+                        string sql = null;
+                        switch (m.Member.Name) {
+                            case "Year": sql = provider.CreateFunction(SqlFunction.Year, Visit(m.Expression, paramDicts)); break;
+                            case "Month": sql = provider.CreateFunction(SqlFunction.Month, Visit(m.Expression, paramDicts)); break;
+                            case "Day": sql = provider.CreateFunction(SqlFunction.Day, Visit(m.Expression, paramDicts)); break;
+                            case "Hour": sql = provider.CreateFunction(SqlFunction.Hour, Visit(m.Expression, paramDicts)); break;
+                            case "Minute": sql = provider.CreateFunction(SqlFunction.Minute, Visit(m.Expression, paramDicts)); break;
+                            case "Second": sql = provider.CreateFunction(SqlFunction.Second, Visit(m.Expression, paramDicts)); break;
+                            default: throw new NotSupportedException("Not Supported " + m.Member.Name);
+                        }
+                        return new PartialSqlString(sql);
+                    }
+                }
+            }
 
             var member = Expression.Convert(m, typeof(object));
             var lambda = Expression.Lambda<Func<object>>(member);
             var getter = lambda.Compile();
             return getter();
+        }
+
+        private bool IsNullableMember(MemberExpression m)
+        {
+            var member = m.Expression as MemberExpression;
+            return member != null
+                && member.Type.GetType().IsGenericType && member.Type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
         private object VisitMemberInit(MemberInitExpression exp, Dictionary<ParameterExpression, string> paramDicts)
