@@ -22,6 +22,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Datas
             NameEn = en;
             NamePinyin = pinyin;
             Code = code;
+            AddingTime = DateTime.Now;
         }
 
         public int Id { get; set; }
@@ -32,6 +33,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Datas
         public string NameEn { get; set; }
         public string NamePinyin { get; set; }
         public string Code { get; set; }
+        public DateTime AddingTime { get; set; }
 
     }
 }

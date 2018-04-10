@@ -360,7 +360,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         #endregion
 
 #region ExecuteDataSet
-#if NETSTANDARD2_0
+#if !NETSTANDARD2_0
         public DataSet ExecuteDataSet()
         {
             var columns = GetSelectColumns();

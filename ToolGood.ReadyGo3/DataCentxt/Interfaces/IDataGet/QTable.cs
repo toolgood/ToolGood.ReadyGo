@@ -355,7 +355,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return GetSqlBuilder().ExecuteDataTable(limit, offset, columns);
         }
 
-        #if NETSTANDARD2_0
+        #if !NETSTANDARD2_0
         /// <summary>
         /// 获取DataSet对象
         /// </summary>

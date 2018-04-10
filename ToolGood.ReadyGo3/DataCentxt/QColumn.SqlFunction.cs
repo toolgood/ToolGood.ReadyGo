@@ -156,23 +156,23 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QSqlColumn(Enums.SqlFunction.WeekDay, this);
         }
         /// <summary>
-        /// 一个从位置start开始的长度为length子串
+        /// 一个从位置start开始的长度为length子串,从0开始
         /// </summary>
         /// <param name="start"></param>
         /// <param name="length"></param>
         /// <returns></returns>
         public QSqlColumn SubString(int start, int length)
         {
-            return new QSqlColumn(Enums.SqlFunction.SubString3, this,start,length);
+            return new QSqlColumn(Enums.SqlFunction.SubString3, this, start + 1, length);
         }
         /// <summary>
-        /// 一个从位置start开始的子串
+        /// 一个从位置start开始的子串,从0开始
         /// </summary>
         /// <param name="start"></param>
         /// <returns></returns>
         public QSqlColumn SubString(int start)
         {
-            return new QSqlColumn(Enums.SqlFunction.SubString2, this,start);
+            return new QSqlColumn(Enums.SqlFunction.SubString2, this, start + 1);
         }
         /// <summary>
         /// 字符串str最左边的 len 个字符
@@ -181,7 +181,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public QSqlColumn Left(int length)
         {
-            return new QSqlColumn(Enums.SqlFunction.Left, this,length);
+            return new QSqlColumn(Enums.SqlFunction.Left, this, length);
         }
         /// <summary>
         /// 字符串str最右边的 len 个字符
@@ -190,7 +190,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         public QSqlColumn Right(int length)
         {
-            return new QSqlColumn(Enums.SqlFunction.Right, this,length);
+            return new QSqlColumn(Enums.SqlFunction.Right, this, length);
         }
 
         /// <summary>

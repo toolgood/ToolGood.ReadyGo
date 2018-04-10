@@ -247,7 +247,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
                 return db.ExecuteDataTable(ProcessName, args, CommandType.StoredProcedure);
             });
         }
-#if NETSTANDARD2_0
+#if !NETSTANDARD2_0
         /// <summary>
         /// 执行
         /// </summary>

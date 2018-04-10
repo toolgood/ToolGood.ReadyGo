@@ -346,6 +346,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Datas
         private QTableColumn<string> _NameEn;
         private QTableColumn<string> _NamePinyin;
         private QTableColumn<string> _Code;
+        private QTableColumn<DateTime> _AddingTime;
 
         public TbArea() : base(Config.DbHelper) { }
         public TbArea(SqlHelper sqlHelper) : base(sqlHelper) { }
@@ -363,6 +364,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Datas
             _NameEn = AddColumn<string>("NameEn", "NameEn", false);
             _NamePinyin = AddColumn<string>("NamePinyin", "NamePinyin", false);
             _Code = AddColumn<string>("Code", "Code", false);
+            _AddingTime = AddColumn<DateTime>("AddingTime", "AddingTime", false);
         }
 
 
@@ -388,6 +390,8 @@ namespace ToolGood.ReadyGo3.CoreTest.Datas
 
 
         public QTableColumn<string> Code { get { return _Code; } set { _Code.NewValue = value; } }
+
+        public QTableColumn<DateTime> AddingTime { get { return _AddingTime; } set { _AddingTime.NewValue = value; } }
 
     }
 

@@ -1055,7 +1055,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return this._sqlhelper.ExecuteDataTable(this.GetFullSelectSql(selectSql), this._args.ToArray());
         }
-#if NETSTANDARD2_0
+#if !NETSTANDARD2_0
         /// <summary>
         /// 执行返回DataSet
         /// </summary>

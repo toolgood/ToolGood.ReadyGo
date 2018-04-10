@@ -60,6 +60,9 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 case SqlFunction.Lower: return CreateFunction("LOWER({0})", args);
                 case SqlFunction.Upper: return CreateFunction("UPPER({0})", args);
                 case SqlFunction.Ascii: return CreateFunction("ASCII({0})", args);
+                case SqlFunction.Trim: return CreateFunction("LTRIM(RTRIM({0}))", args);
+                case SqlFunction.LTrim: return CreateFunction("LTRIM({0})", args);
+                case SqlFunction.RTrim: return CreateFunction("RTRIM({0})", args);
                 case SqlFunction.Concat:
                     StringBuilder stringBuilder = new StringBuilder();
                     stringBuilder.Append("CONCAT(");

@@ -32,6 +32,10 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             db = helper.Where<DbArea>()
                        .Where(q=>q.NamePinyin.ToLower()== "yazhou")
                       .First();
+
+            db = helper.Where<DbArea>()
+               .Where(q => q.NamePinyin.Substring(1,2) == "ya")
+              .First();
         }
 
 
