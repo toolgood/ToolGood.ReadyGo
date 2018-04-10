@@ -160,30 +160,30 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             leftColumn = column1;
             this.op = op;
             this.value = value;
-            if ("=|==|<>|!=|>|<|>=|<=".Contains(op)) {
-                if (value is Int16 || value is Int32 || value is Int64
-                    || value is UInt16 || value is UInt32 || value is UInt64
-                    || value is Single || value is Double || value is Decimal
-                    ) {
-                    this.value = value.ToString();
-                }
-                if (value is Int16? || value is Int32? || value is Int64?
-                    || value is UInt16? || value is UInt32? || value is UInt64?
-                    || value is Single? || value is Double? || value is Decimal?
-                    ) {
-                    if (object.Equals(null, value) == false) {
-                        this.value = value.ToString();
-                    }
-                }
-                if (value is bool) {
-                    this.value = (bool)value ? "1" : "0";
-                }
-                if (value is bool?) {
-                    if (object.Equals(null, value) == false) {
-                        this.value = ((bool?)value).Value ? "1" : "0";
-                    }
-                }
-            }
+            //if ("=|==|<>|!=|>|<|>=|<=".Contains(op)) {
+            //    if (value is Int16 || value is Int32 || value is Int64
+            //        || value is UInt16 || value is UInt32 || value is UInt64
+            //        || value is Single || value is Double || value is Decimal
+            //        ) {
+            //        this.value = value.ToString();
+            //    }
+            //    if (value is Int16? || value is Int32? || value is Int64?
+            //        || value is UInt16? || value is UInt32? || value is UInt64?
+            //        || value is Single? || value is Double? || value is Decimal?
+            //        ) {
+            //        if (object.Equals(null, value) == false) {
+            //            this.value = value.ToString();
+            //        }
+            //    }
+            //    if (value is bool) {
+            //        this.value = (bool)value ? "1" : "0";
+            //    }
+            //    if (value is bool?) {
+            //        if (object.Equals(null, value) == false) {
+            //            this.value = ((bool?)value).Value ? "1" : "0";
+            //        }
+            //    }
+            //}
             isSetValaue = true;
         }
 

@@ -30,12 +30,39 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
                       .Where("ParentId=@0", 1)
                       .First();
             db = helper.Where<DbArea>()
-                       .Where(q=>q.NamePinyin.ToLower()== "yazhou")
+                       .Where(q => q.NamePinyin.ToLower() == "yazhou")
                       .First();
+            db = helper.Where<DbArea>()
+                  .Where(q => q.NamePinyin.ToUpper() == "yazhou".ToUpper())
+                 .First();
 
             db = helper.Where<DbArea>()
-               .Where(q => q.NamePinyin.Substring(1,2) == "ya")
+               .Where(q => q.NamePinyin.Substring(1, 2) == "ya")
               .First();
+
+            db = helper.Where<DbArea>()
+                .Where(q => q.NamePinyin.Contains("ya"))
+               .First();
+
+            db = helper.Where<DbArea>()
+                   .Where(q => q.NamePinyin.StartsWith("ya"))
+                  .First();
+            db = helper.Where<DbArea>()
+                         .Where(q => q.NamePinyin.EndsWith("ou"))
+                        .First();
+            db = helper.Where<DbArea>()
+                         .Where(q => q.NamePinyin.Trim() == ("yazhou"))
+                        .First();
+            db = helper.Where<DbArea>()
+                 .Where(q => q.NamePinyin.TrimStart() == ("yazhou"))
+                .First();
+            db = helper.Where<DbArea>()
+                 .Where(q => q.NamePinyin.TrimEnd() == ("yazhou"))
+                .First();
+            db = helper.Where<DbArea>()
+                 .Where(q => q.NamePinyin.ToString() == ("yazhou"))
+                .First();
+
         }
 
 
@@ -79,7 +106,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
                   .Select();
 
             dbs = helper.Where<DbArea>()
-                .IfSet("1") .Where("ParentId=@0", 1)
+                .IfSet("1").Where("ParentId=@0", 1)
                  .WhereIn("Name", new List<string>() { "中国", "英国" })
                  .Select();
         }

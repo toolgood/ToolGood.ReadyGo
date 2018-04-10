@@ -81,6 +81,35 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             DoSelect(tb, false, false, true);
             DoSelect<DbArea, Area>(tb, false, false, true);
 
+            tb.Clear();
+            tb.Where(tb.AddingTime.Month() < 2019);
+            DoSelect(tb, false, false, true);
+            DoSelect<DbArea, Area>(tb, false, false, true);
+
+            tb.Clear();
+            tb.Where(tb.AddingTime.Day() < 2019);
+            DoSelect(tb, false, false, true);
+            DoSelect<DbArea, Area>(tb, false, false, true);
+
+
+            tb.Clear();
+            tb.Where(tb.AddingTime.Hour() < 2019);
+            DoSelect(tb, false, false, true);
+            DoSelect<DbArea, Area>(tb, false, false, true);
+
+            tb.Clear();
+            tb.Where(tb.AddingTime.Minute() < 2019);
+            DoSelect(tb, false, false, true);
+            DoSelect<DbArea, Area>(tb, false, false, true);
+
+
+            tb.Clear();
+            tb.Where(tb.AddingTime.Second() < 2019);
+            DoSelect(tb, false, false, true);
+            DoSelect<DbArea, Area>(tb, false, false, true);
+
+
+
 
         }
 

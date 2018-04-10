@@ -151,8 +151,8 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             var wildcardArg = _args.Count > 0 ? _args[0] != null ? _args[0].ToString() : "" : "";
             switch (m.Method.Name) {
                 case "Trim": statement = provider.CreateFunction(SqlFunction.Trim, quotedColName); break;
-                case "LTrim": statement = provider.CreateFunction(SqlFunction.LTrim, quotedColName); break;
-                case "RTrim": statement = provider.CreateFunction(SqlFunction.RTrim, quotedColName); break;
+                case "TrimStart": statement = provider.CreateFunction(SqlFunction.LTrim, quotedColName); break;
+                case "TrimEnd": statement = provider.CreateFunction(SqlFunction.RTrim, quotedColName); break;
                 case "ToUpper": statement = provider.CreateFunction(SqlFunction.Upper, quotedColName); break;
                 case "ToLower": statement = provider.CreateFunction(SqlFunction.Lower, quotedColName); break;
                 case "StartsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, provider.EscapeLikeParam(wildcardArg) + "%"); break;
