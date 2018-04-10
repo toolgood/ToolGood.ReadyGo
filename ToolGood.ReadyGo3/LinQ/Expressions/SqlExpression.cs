@@ -344,6 +344,9 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
                 if (m.Expression != null) {
                     string r = VisitMemberAccess(m, paramDicts).ToString();
+                    //if (m.Member.ReflectedType == typeof(DateTime?) && m.Member.Name== "HasValue") {
+                    //    return r;
+                    //}
                     return $"{r}={GetQuotedTrueValue()}";
                 }
             }
@@ -427,7 +430,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
         private object VisitMemberAccess(MemberExpression m, Dictionary<ParameterExpression, string> paramDicts)
         {
-            //未测试，，，
             //if (IsNullableMember(m)) {
             //    m = m.Expression as MemberExpression;
             //}
@@ -449,22 +451,32 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 }
                 return new PartialSqlString(string.Format("{0}.{1}", paramDicts[p], colName));
             }
-            if (m.Member.ReflectedType == typeof(DateTime)) {
-                var p = Expression.Convert(m.Expression, typeof(object));
-                if (p.NodeType == ExpressionType.Convert) {
-                    var pp = (m.Expression as MemberExpression).Expression as ParameterExpression;
-                    if (pp != null) {
-                        string sql = null;
-                        switch (m.Member.Name) {
-                            case "Year": sql = provider.CreateFunction(SqlFunction.Year, Visit(m.Expression, paramDicts)); break;
-                            case "Month": sql = provider.CreateFunction(SqlFunction.Month, Visit(m.Expression, paramDicts)); break;
-                            case "Day": sql = provider.CreateFunction(SqlFunction.Day, Visit(m.Expression, paramDicts)); break;
-                            case "Hour": sql = provider.CreateFunction(SqlFunction.Hour, Visit(m.Expression, paramDicts)); break;
-                            case "Minute": sql = provider.CreateFunction(SqlFunction.Minute, Visit(m.Expression, paramDicts)); break;
-                            case "Second": sql = provider.CreateFunction(SqlFunction.Second, Visit(m.Expression, paramDicts)); break;
-                            default: throw new NotSupportedException("Not Supported " + m.Member.Name);
+            if (m.Member.ReflectedType == typeof(DateTime) || m.Member.ReflectedType == typeof(DateTime?)) {
+                var m1 = m.Expression as MemberExpression;
+                if (m1 != null) {
+                    var p = Expression.Convert(m1, typeof(object));
+                    if (p.NodeType == ExpressionType.Convert) {
+                        var pp = m1.Expression as ParameterExpression;
+                        if (pp == null) {
+                            m1 = m1.Expression as MemberExpression;
+                            if (m1 != null) { pp = m1.Expression as ParameterExpression; }
                         }
-                        return new PartialSqlString(sql);
+
+                        if (pp != null) {
+                            string sql = null;
+                            switch (m.Member.Name) {
+                                case "Year": sql = provider.CreateFunction(SqlFunction.Year, Visit(m1, paramDicts)); break;
+                                case "Month": sql = provider.CreateFunction(SqlFunction.Month, Visit(m1, paramDicts)); break;
+                                case "Day": sql = provider.CreateFunction(SqlFunction.Day, Visit(m1, paramDicts)); break;
+                                case "Hour": sql = provider.CreateFunction(SqlFunction.Hour, Visit(m1, paramDicts)); break;
+                                case "Minute": sql = provider.CreateFunction(SqlFunction.Minute, Visit(m1, paramDicts)); break;
+                                case "Second": sql = provider.CreateFunction(SqlFunction.Second, Visit(m1, paramDicts)); break;
+                                case "Value": return Visit(m1, paramDicts);
+                                //case "HasValue": sql = Visit(m1, paramDicts).ToString() + " IS NOT NULL "; break;
+                                default: throw new NotSupportedException("Not Supported " + m.Member.Name);
+                            }
+                            return new PartialSqlString(sql);
+                        }
                     }
                 }
             }
@@ -475,12 +487,12 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             return getter();
         }
 
-        private bool IsNullableMember(MemberExpression m)
-        {
-            var member = m.Expression as MemberExpression;
-            return member != null
-                && member.Type.GetType().IsGenericType && member.Type.GetGenericTypeDefinition() == typeof(Nullable<>);
-        }
+        //private bool IsNullableMember(MemberExpression m)
+        //{
+        //    var member = m.Expression as MemberExpression;
+        //    return member != null
+        //        && member.Type.GetType().IsGenericType && member.Type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        //}
 
         private object VisitMemberInit(MemberInitExpression exp, Dictionary<ParameterExpression, string> paramDicts)
         {

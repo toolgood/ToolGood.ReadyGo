@@ -29,6 +29,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
                       .Where("Id=@0", 8)
                       .Where("ParentId=@0", 1)
                       .First();
+            #region 字符串操作
             db = helper.Where<DbArea>()
                        .Where(q => q.NamePinyin.ToLower() == "yazhou")
                       .First();
@@ -62,12 +63,37 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             db = helper.Where<DbArea>()
                  .Where(q => q.NamePinyin.ToString() == ("yazhou"))
                 .First();
+            #endregion
+
+            #region 日期操作
             db = helper.Where<DbArea>()
-                   .Where(q => q.AddingTime.Year < 2019)
-                  .First();
+                .Where(q => q.AddingTime.Year < 2019)
+               .First();
             db = helper.Where<DbArea>()
                .Where(q => q.AddingTime.Year <= DateTime.Now.Year)
               .First();
+
+            var db2 = helper.Where<DbArea2>()
+                      .Where(q => q.AddingTime.Value.Year < 2019)
+                     .First();
+            db2 = helper.Where<DbArea2>()
+                   .Where(q => q.AddingTime.Value.Year <= DateTime.Now.Year)
+                  .First();
+            db2 = helper.Where<DbArea2>()
+                  .Where(q => q.AddingTime.Value < DateTime.Now)
+                 .First();
+            db2 = helper.Where<DbArea2>()
+                .Where(q => q.AddingTime < DateTime.Now)
+               .First();
+            db2 = helper.Where<DbArea2>()
+                 .Where(q => q.AddingTime == null)
+                .FirstOrDefault();
+
+            db2 = helper.Where<DbArea2>()
+                 .Where(q => q.AddingTime != null)
+                .First(); 
+            #endregion
+
         }
 
 
