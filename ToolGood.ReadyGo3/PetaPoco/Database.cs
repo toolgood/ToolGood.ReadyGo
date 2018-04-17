@@ -946,7 +946,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             if (string.IsNullOrEmpty(sql))
                 throw new ArgumentNullException("sql");
-
+            if (sql.StartsWith("UPDATE ",StringComparison.CurrentCultureIgnoreCase)) {
+                return Execute(sql, args);
+            }
             var pd = PocoData.ForType(typeof(T), _defaultMapper);
             return Execute(string.Format("UPDATE {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }

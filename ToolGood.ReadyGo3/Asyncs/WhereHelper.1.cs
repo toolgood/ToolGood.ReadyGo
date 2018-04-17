@@ -310,6 +310,76 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #endregion
 
+        #region Update
+        /// <summary>
+        /// 更新数据库,仅支持单一表格更新
+        /// </summary>
+        /// <param name="setData"></param>
+        /// <returns></returns>
+        public Task<int> UpdateAsync(object setData)
+        {
+            if (object.Equals(null, setData)) { throw new Exception("No setData Error!"); }
+            if (_where.Length == 0) { throw new Exception("No Where Error!"); }
+
+            var pis = setData.GetType().GetProperties();
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SET ");
+            int index = 0;
+            List<object> args = new List<object>();
+            foreach (var pi in pis) {
+                if (pi.CanRead == false) continue;
+                if (index > 0) { sb.Append(","); }
+                sb.AppendFormat("{0}=@{1}", pi.Name, index++);
+                args.Add(pi.GetValue(setData, null));
+            }
+            var sql = BuildUpdateSql(sb.ToString(), args);
+            return _sqlhelper.UpdateAsync<T1>(sql, _args.ToArray());
+        }
+
+        /// <summary>
+        /// 更新数据库,仅支持单一表格更新
+        /// </summary>
+        /// <param name="setData"></param>
+        /// <returns></returns>
+        public Task<int> UpdateAsync(IDictionary<string, object> setData)
+        {
+            if (setData.Count == 0) { throw new Exception("No setData Error!"); }
+            if (_where.Length == 0) { throw new Exception("No Where Error!"); }
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SET ");
+            int index = 0;
+            List<object> args = new List<object>();
+            foreach (var item in setData) {
+                if (index > 0) { sb.Append(","); }
+                sb.AppendFormat("{0}=@{1}", item.Key, index++);
+                args.Add(item.Value);
+            }
+            var sql = BuildUpdateSql(sb.ToString(), args);
+            return _sqlhelper.UpdateAsync<T1>(sql, _args.ToArray());
+
+        }
+
+        /// <summary>
+        /// 更新数据库,仅支持单一表格更新
+        /// </summary>
+        /// <param name="setSql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Task<int> UpdateAsync(string setSql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(setSql)) { throw new Exception("No SET Error!"); }
+            if (_where.Length == 0) { throw new Exception("No Where Error!"); }
+            setSql = setSql.Trim();
+            if (setSql.StartsWith("SET ", StringComparison.CurrentCultureIgnoreCase) == false) {
+                setSql = "SET " + setSql;
+            }
+            var sql = BuildUpdateSql(setSql, args);
+
+            return _sqlhelper.UpdateAsync<T1>(sql, _args.ToArray());
+        }
+
+        #endregion
     }
 }
 #endif

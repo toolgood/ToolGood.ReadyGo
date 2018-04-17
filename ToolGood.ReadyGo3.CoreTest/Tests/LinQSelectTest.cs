@@ -91,7 +91,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
 
             db2 = helper.Where<DbArea2>()
                  .Where(q => q.AddingTime != null)
-                .First(); 
+                .First();
             #endregion
 
         }
@@ -140,6 +140,40 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
                 .IfSet("1").Where("ParentId=@0", 1)
                  .WhereIn("Name", new List<string>() { "中国", "英国" })
                  .Select();
+        }
+
+        [Test]
+        public void Update()
+        {
+            var helper = Config.DbHelper;
+            helper.Where<DbArea>()
+             .Where("Id=@0", 1125)//圣菲利普
+             .Update("Name=@0,NameEn=@1", "测试", "123");
+
+            var db = helper.SingleById<DbArea>(1125);
+            Assert.AreEqual("测试", db.Name);
+            Assert.AreEqual("123", db.NameEn);
+
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+            dict["Name"] = "测试";
+            dict["NameEn"] = "456";
+
+            helper.Where<DbArea>()
+                 .Where("Id=@0", 1175)
+                 .Update(dict);
+
+            db = helper.SingleById<DbArea>(1175);
+            Assert.AreEqual("测试", db.Name);
+            Assert.AreEqual("456", db.NameEn);
+
+            helper.Where<DbArea>()
+                 .Where("Id=@0", 1185)
+                 .Update(new { Name = "测试", NameEn = "789" });
+
+            db = helper.SingleById<DbArea>(1185);
+            Assert.AreEqual("测试", db.Name);
+            Assert.AreEqual("789", db.NameEn);
+
         }
 
     }

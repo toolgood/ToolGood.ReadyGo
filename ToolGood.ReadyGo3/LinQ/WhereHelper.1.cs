@@ -1427,6 +1427,125 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #endregion
 
+        #region Update
+        /// <summary>
+        /// 更新数据库,仅支持单一表格更新
+        /// </summary>
+        /// <param name="setData"></param>
+        /// <returns></returns>
+        public int Update(object setData)
+        {
+            if (object.Equals(null, setData)) { throw new Exception("No setData Error!"); }
+            if (_where.Length == 0) { throw new Exception("No Where Error!"); }
+
+            var pis = setData.GetType().GetProperties();
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SET ");
+            int index = 0;
+            List<object> args = new List<object>();
+            foreach (var pi in pis) {
+                if (pi.CanRead == false) continue;
+                if (index > 0) { sb.Append(","); }
+                sb.AppendFormat("{0}=@{1}", pi.Name, index++);
+                args.Add(pi.GetValue(setData, null));
+            }
+            var sql = BuildUpdateSql(sb.ToString(), args);
+            return _sqlhelper.Update<T1>(sql, _args.ToArray());
+        }
+
+        /// <summary>
+        /// 更新数据库,仅支持单一表格更新
+        /// </summary>
+        /// <param name="setData"></param>
+        /// <returns></returns>
+        public int Update(IDictionary<string, object> setData)
+        {
+            if (setData.Count == 0) { throw new Exception("No setData Error!"); }
+            if (_where.Length == 0) { throw new Exception("No Where Error!"); }
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SET ");
+            int index = 0;
+            List<object> args = new List<object>();
+            foreach (var item in setData) {
+                if (index > 0) { sb.Append(","); }
+                sb.AppendFormat("{0}=@{1}", item.Key, index++);
+                args.Add(item.Value);
+            }
+            var sql = BuildUpdateSql(sb.ToString(), args);
+            return _sqlhelper.Update<T1>(sql, _args.ToArray());
+
+        }
+
+        /// <summary>
+        /// 更新数据库,仅支持单一表格更新
+        /// </summary>
+        /// <param name="setSql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public int Update(string setSql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(setSql)) { throw new Exception("No SET Error!"); }
+            if (_where.Length == 0) { throw new Exception("No Where Error!"); }
+            setSql = setSql.Trim();
+            if (setSql.StartsWith("SET ", StringComparison.CurrentCultureIgnoreCase) == false) {
+                setSql = "SET " + setSql;
+            }
+            var sql = BuildUpdateSql(setSql, args);
+
+            return _sqlhelper.Update<T1>(sql, _args.ToArray());
+        }
+
+        private string BuildUpdateSql(string setSql, ICollection args)
+        {
+            StringBuilder sb = new StringBuilder();
+            update(sb, setSql, args);
+            sb.Append(" ");
+            sb.Append(" WHERE ");
+            sb.Append(_where);
+            return sb.ToString();
+        }
+
+        private void update(StringBuilder updateSb, string setSql, ICollection args)
+        {
+            bool isInText = false, isStart = false;
+            var c = 'a';
+            var text = "";
+
+            for (int i = 0; i < setSql.Length; i++) {
+                var t = setSql[i];
+                if (isInText) {
+                    if (t == c) isInText = false;
+                } else if ("\"'`".Contains(t)) {
+                    isInText = true;
+                    c = t;
+                    isStart = false;
+                } else if (isStart == false) {
+                    if (t == '@') {
+                        isStart = true;
+                        text = "@";
+                        continue;
+                    }
+                } else if ("@1234567890".Contains(t)) {
+                    text += t;
+                    continue;
+                } else {
+                    whereTranslate(updateSb, text);
+                    isStart = false;
+                }
+                updateSb.Append(t);
+            }
+            if (isStart) whereTranslate(updateSb, text);
+
+
+            foreach (var item in args) {
+                _args.Add(item);
+            }
+        }
+        #endregion
+
+
+
         /// <summary>
         /// 释放
         /// </summary>

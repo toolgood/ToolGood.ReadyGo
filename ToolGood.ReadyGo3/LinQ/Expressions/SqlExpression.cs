@@ -95,26 +95,26 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             return new PartialSqlString("0");
         }
 
-        private object VisitMethodCall(MethodCallExpression m, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitMethodCall(MethodCallExpression m)
         {
             if (m.Method.DeclaringType == typeof(ObjectExtend))
-                return VisitObjectExtendMethodCall(m, paramDicts);
+                return VisitObjectExtendMethodCall(m);
 
             //if (m.Method.DeclaringType == typeof(SQL))
-            //    return VisitSqlMethodCall(paramDicts, m);
+            //    return VisitSqlMethodCall( m);
 
             if (IsStaticArrayMethod(m))
-                return VisitStaticArrayMethodCall(m, paramDicts);
+                return VisitStaticArrayMethodCall(m);
 
             if (IsEnumerableMethod(m))
-                return VisitEnumerableMethodCall(m, paramDicts);
+                return VisitEnumerableMethodCall(m);
 
             if (IsColumnAccess(m))
-                return VisitColumnAccessMethod(m, paramDicts);
+                return VisitColumnAccessMethod(m);
 
             return Expression.Lambda(m).Compile().DynamicInvoke();
         }
-        private string VisitSqlMethodCall(Dictionary<ParameterExpression, string> paramDicts, MethodCallExpression call)
+        private string VisitSqlMethodCall(MethodCallExpression call)
         {
             //if (call.Method.DeclaringType != typeof(SQL)) throw new Exception("无效列！！！");
             var callName = call.Method.Name;
@@ -127,7 +127,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             for (int i = 0, n = original.Count; i < n; i++) {
                 var o = original[i];
                 if (o.NodeType == ExpressionType.MemberAccess) {
-                    quotedColName = getColumnName(paramDicts, o as MemberExpression);
+                    quotedColName = getColumnName(o as MemberExpression);
                 } else {
                     args.Add((o as ConstantExpression).Value);
                 }
@@ -143,10 +143,10 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         }
 
         // String 类方法调用
-        private object VisitColumnAccessMethod(MethodCallExpression m, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitColumnAccessMethod(MethodCallExpression m)
         {
-            List<Object> _args = this.VisitExpressionList(m.Arguments, paramDicts);
-            var quotedColName = Visit(m.Object, paramDicts);
+            List<Object> _args = this.VisitExpressionList(m.Arguments);
+            var quotedColName = Visit(m.Object);
             var statement = "";
             var wildcardArg = _args.Count > 0 ? _args[0] != null ? _args[0].ToString() : "" : "";
             switch (m.Method.Name) {
@@ -195,16 +195,16 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             }
 
             if (exp.Body.NodeType == ExpressionType.New) {
-                sql = Visit(exp, paramDicts).ToString();
+                sql = Visit(exp).ToString();
             } else if (exp.Body.NodeType == ExpressionType.MemberAccess) {
-                sql = getColumnName(paramDicts, exp.Body as MemberExpression);
+                sql = getColumnName(exp.Body as MemberExpression);
 
             } else if (exp.Body.NodeType != ExpressionType.Call) {
-                sql = getColumnName(paramDicts, (exp.Body as UnaryExpression).Operand.Reduce() as MemberExpression);
+                sql = getColumnName((exp.Body as UnaryExpression).Operand.Reduce() as MemberExpression);
 
             } else {
                 var call = exp.Body as MethodCallExpression;
-                sql = VisitSqlMethodCall(paramDicts, call);
+                sql = VisitSqlMethodCall(call);
             }
         }
         /// <summary>
@@ -219,7 +219,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 var item = exp.Parameters[i];
                 paramDicts[item] = "t" + (i + 1).ToString();
             }
-            sql = Visit(exp, paramDicts).ToString();
+            sql = Visit(exp).ToString();
 
         }
         /// <summary>
@@ -229,24 +229,18 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         /// <returns></returns>
         public string GetColumnName(LambdaExpression exp)
         {
-            Dictionary<ParameterExpression, string> paramDicts = new Dictionary<ParameterExpression, string>();
-            for (int i = 0; i < exp.Parameters.Count; i++) {
-                var item = exp.Parameters[i];
-                paramDicts[item] = "t" + (i + 1).ToString();
-            }
-
             if (exp.Body.NodeType == ExpressionType.MemberAccess) {
-                return getColumnName(paramDicts, exp.Body as MemberExpression);
+                return getColumnName(exp.Body as MemberExpression);
             }
             if (exp.Body.NodeType != ExpressionType.Call) {
-                return getColumnName(paramDicts, (exp.Body as UnaryExpression).Operand.Reduce() as MemberExpression);
+                return getColumnName((exp.Body as UnaryExpression).Operand.Reduce() as MemberExpression);
             }
 
             var call = exp.Body as MethodCallExpression;
-            return VisitSqlMethodCall(paramDicts, call);
+            return VisitSqlMethodCall(call);
         }
 
-        private string getColumnName(Dictionary<ParameterExpression, string> paramDicts, MemberExpression m)
+        private string getColumnName(MemberExpression m)
         {
             var colName = m.Member.Name;
             var p = m.Expression as ParameterExpression;
@@ -256,7 +250,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             if (col != null) {
                 colName = col.ColumnName;
             }
-            return $"{paramDicts[p]}." + provider.EscapeSqlIdentifier(colName);
+            return provider.EscapeSqlIdentifier(colName);
         }
 
 
@@ -280,13 +274,13 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
         #region Expression Visit
 
-        private object Visit(Expression exp, Dictionary<ParameterExpression, string> paramDicts)
+        private object Visit(Expression exp)
         {
             if (exp == null) return string.Empty;
             switch (exp.NodeType) {
-                case ExpressionType.Lambda: return VisitLambda(exp as LambdaExpression, paramDicts);
-                case ExpressionType.MemberAccess: return VisitMemberAccess(exp as MemberExpression, paramDicts);
-                case ExpressionType.Constant: return VisitConstant(exp as ConstantExpression, paramDicts);
+                case ExpressionType.Lambda: return VisitLambda(exp as LambdaExpression);
+                case ExpressionType.MemberAccess: return VisitMemberAccess(exp as MemberExpression);
+                case ExpressionType.Constant: return VisitConstant(exp as ConstantExpression);
                 case ExpressionType.Add:
                 case ExpressionType.AddChecked:
                 case ExpressionType.Subtract:
@@ -309,7 +303,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 case ExpressionType.ArrayIndex:
                 case ExpressionType.RightShift:
                 case ExpressionType.LeftShift:
-                case ExpressionType.ExclusiveOr: return VisitBinary(exp as BinaryExpression, paramDicts);
+                case ExpressionType.ExclusiveOr: return VisitBinary(exp as BinaryExpression);
                 case ExpressionType.Negate:
                 case ExpressionType.NegateChecked:
                 case ExpressionType.Not:
@@ -317,50 +311,50 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 case ExpressionType.ConvertChecked:
                 case ExpressionType.ArrayLength:
                 case ExpressionType.Quote:
-                case ExpressionType.TypeAs: return VisitUnary(exp as UnaryExpression, paramDicts);
-                case ExpressionType.Parameter: return VisitParameter(exp as ParameterExpression, paramDicts);
-                case ExpressionType.Call: return VisitMethodCall(exp as MethodCallExpression, paramDicts);
-                case ExpressionType.New: return VisitNew(exp as NewExpression, paramDicts);
+                case ExpressionType.TypeAs: return VisitUnary(exp as UnaryExpression);
+                case ExpressionType.Parameter: return VisitParameter(exp as ParameterExpression);
+                case ExpressionType.Call: return VisitMethodCall(exp as MethodCallExpression);
+                case ExpressionType.New: return VisitNew(exp as NewExpression);
                 case ExpressionType.NewArrayInit:
-                case ExpressionType.NewArrayBounds: return VisitNewArray(exp as NewArrayExpression, paramDicts);
-                case ExpressionType.MemberInit: return VisitMemberInit(exp as MemberInitExpression, paramDicts);
+                case ExpressionType.NewArrayBounds: return VisitNewArray(exp as NewArrayExpression);
+                case ExpressionType.MemberInit: return VisitMemberInit(exp as MemberInitExpression);
                 case ExpressionType.Conditional:
-                    return VisitConditional(exp as ConditionalExpression, paramDicts);
+                    return VisitConditional(exp as ConditionalExpression);
                 default: return exp.ToString();
             }
         }
-        private object VisitConditional(ConditionalExpression conditional, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitConditional(ConditionalExpression conditional)
         {
-            var test = Visit(conditional.Test, paramDicts);
-            var trueSql = Visit(conditional.IfTrue, paramDicts);
-            var falseSql = Visit(conditional.IfFalse, paramDicts);
+            var test = Visit(conditional.Test);
+            var trueSql = Visit(conditional.IfTrue);
+            var falseSql = Visit(conditional.IfFalse);
 
             return new PartialSqlString($"(case when {test} then {trueSql} else {falseSql} end)");
         }
-        private object VisitLambda(LambdaExpression lambda, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitLambda(LambdaExpression lambda)
         {
             if (lambda.Body.NodeType == ExpressionType.MemberAccess) {
                 MemberExpression m = lambda.Body as MemberExpression;
 
                 if (m.Expression != null) {
-                    string r = VisitMemberAccess(m, paramDicts).ToString();
+                    string r = VisitMemberAccess(m).ToString();
                     //if (m.Member.ReflectedType == typeof(DateTime?) && m.Member.Name== "HasValue") {
                     //    return r;
                     //}
                     return $"{r}={GetQuotedTrueValue()}";
                 }
             }
-            return Visit(lambda.Body, paramDicts);
+            return Visit(lambda.Body);
         }
 
-        private object VisitBinary(BinaryExpression b, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitBinary(BinaryExpression b)
         {
             var operand = BindOperant(b.NodeType);   //sep= " " ??
             if (operand == "AND" || operand == "OR") {
-                return VisitBinary_And_Or(b, operand, paramDicts);
+                return VisitBinary_And_Or(b, operand);
             }
-            object left = Visit(b.Left, paramDicts);
-            object right = Visit(b.Right, paramDicts);
+            object left = Visit(b.Left);
+            object right = Visit(b.Right);
 
             if (left as PartialSqlString == null && right as PartialSqlString == null) {
                 var result = Expression.Lambda(b).Compile().DynamicInvoke();
@@ -396,22 +390,22 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             return new PartialSqlString(left + sep + operand + sep + right);
         }
 
-        private object VisitBinary_And_Or(BinaryExpression b, string operand, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitBinary_And_Or(BinaryExpression b, string operand)
         {
             object left, right;
             var m = b.Left as MemberExpression;
             if (m != null && m.Expression != null
                 && m.Expression.NodeType == ExpressionType.Parameter)
-                left = new PartialSqlString(string.Format("{0}={1}", VisitMemberAccess(m, paramDicts), GetQuotedTrueValue()));
+                left = new PartialSqlString(string.Format("{0}={1}", VisitMemberAccess(m), GetQuotedTrueValue()));
             else
-                left = Visit(b.Left, paramDicts);
+                left = Visit(b.Left);
 
             m = b.Right as MemberExpression;
             if (m != null && m.Expression != null
                 && m.Expression.NodeType == ExpressionType.Parameter)
-                right = new PartialSqlString(string.Format("{0}={1}", VisitMemberAccess(m, paramDicts), GetQuotedTrueValue()));
+                right = new PartialSqlString(string.Format("{0}={1}", VisitMemberAccess(m), GetQuotedTrueValue()));
             else
-                right = Visit(b.Right, paramDicts);
+                right = Visit(b.Right);
 
             if (left as PartialSqlString == null && right as PartialSqlString == null) {
                 var result = Expression.Lambda(b).Compile().DynamicInvoke();
@@ -428,7 +422,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             return new PartialSqlString(left + sep + operand + sep + right);
         }
 
-        private object VisitMemberAccess(MemberExpression m, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitMemberAccess(MemberExpression m)
         {
             //if (IsNullableMember(m)) {
             //    m = m.Expression as MemberExpression;
@@ -449,7 +443,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 if (col != null) {
                     colName = col.ColumnName;
                 }
-                return new PartialSqlString(string.Format("{0}.{1}", paramDicts[p], colName));
+                return new PartialSqlString(colName);
             }
             if (m.Member.ReflectedType == typeof(DateTime) || m.Member.ReflectedType == typeof(DateTime?)) {
                 var m1 = m.Expression as MemberExpression;
@@ -465,14 +459,14 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                         if (pp != null) {
                             string sql = null;
                             switch (m.Member.Name) {
-                                case "Year": sql = provider.CreateFunction(SqlFunction.Year, Visit(m1, paramDicts)); break;
-                                case "Month": sql = provider.CreateFunction(SqlFunction.Month, Visit(m1, paramDicts)); break;
-                                case "Day": sql = provider.CreateFunction(SqlFunction.Day, Visit(m1, paramDicts)); break;
-                                case "Hour": sql = provider.CreateFunction(SqlFunction.Hour, Visit(m1, paramDicts)); break;
-                                case "Minute": sql = provider.CreateFunction(SqlFunction.Minute, Visit(m1, paramDicts)); break;
-                                case "Second": sql = provider.CreateFunction(SqlFunction.Second, Visit(m1, paramDicts)); break;
-                                case "Value": return Visit(m1, paramDicts);
-                                //case "HasValue": sql = Visit(m1, paramDicts).ToString() + " IS NOT NULL "; break;
+                                case "Year": sql = provider.CreateFunction(SqlFunction.Year, Visit(m1)); break;
+                                case "Month": sql = provider.CreateFunction(SqlFunction.Month, Visit(m1)); break;
+                                case "Day": sql = provider.CreateFunction(SqlFunction.Day, Visit(m1)); break;
+                                case "Hour": sql = provider.CreateFunction(SqlFunction.Hour, Visit(m1)); break;
+                                case "Minute": sql = provider.CreateFunction(SqlFunction.Minute, Visit(m1)); break;
+                                case "Second": sql = provider.CreateFunction(SqlFunction.Second, Visit(m1)); break;
+                                case "Value": return Visit(m1);
+                                //case "HasValue": sql = Visit(m1).ToString() + " IS NOT NULL "; break;
                                 default: throw new NotSupportedException("Not Supported " + m.Member.Name);
                             }
                             return new PartialSqlString(sql);
@@ -494,19 +488,19 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         //        && member.Type.GetType().IsGenericType && member.Type.GetGenericTypeDefinition() == typeof(Nullable<>);
         //}
 
-        private object VisitMemberInit(MemberInitExpression exp, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitMemberInit(MemberInitExpression exp)
         {
             return Expression.Lambda(exp).Compile().DynamicInvoke();
         }
 
-        private object VisitNew(NewExpression nex, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitNew(NewExpression nex)
         {
             var member = Expression.Convert(nex, typeof(object));
             var lambda = Expression.Lambda<Func<object>>(member);
             try {
                 return lambda.Compile()();
             } catch (System.InvalidOperationException) {
-                List<PartialSqlString> exprs = VisitExpressionList(nex.Arguments, paramDicts).OfType<PartialSqlString>().ToList();
+                List<PartialSqlString> exprs = VisitExpressionList(nex.Arguments).OfType<PartialSqlString>().ToList();
                 StringBuilder r = new StringBuilder();
                 for (int i = 0; i < exprs.Count; i++) {
                     if (i != 0) r.Append(", ");
@@ -518,22 +512,23 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             }
         }
 
-        private object VisitParameter(ParameterExpression p, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitParameter(ParameterExpression p)
         {
-            return paramDicts[p];
+            return "";
+            //return paramDicts[p];
         }
 
-        private object VisitConstant(ConstantExpression c, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitConstant(ConstantExpression c)
         {
             if (c.Value == null) return new PartialSqlString("NULL");
             return c.Value;
         }
 
-        private object VisitUnary(UnaryExpression u, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitUnary(UnaryExpression u)
         {
             switch (u.NodeType) {
                 case ExpressionType.Not:
-                    var o = Visit(u.Operand, paramDicts);
+                    var o = Visit(u.Operand);
                     if (o as PartialSqlString == null) return !((bool)o);
                     if (u.Operand.NodeType == ExpressionType.MemberAccess) {
                         o = o + "=" + GetQuotedTrueValue();
@@ -545,7 +540,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                         return Expression.Lambda(u).Compile().DynamicInvoke();
                     break;
             }
-            return Visit(u.Operand, paramDicts);
+            return Visit(u.Operand);
         }
 
 
@@ -570,7 +565,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             }
         }
 
-        private string RemoveQuoteFromAlias(string exp, Dictionary<ParameterExpression, string> paramDicts)
+        private string RemoveQuoteFromAlias(string exp)
         {
             if ((exp.StartsWith("\"") || exp.StartsWith("`") || exp.StartsWith("'"))
                 &&
@@ -631,11 +626,11 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             return false;
         }
 
-        private object VisitStaticArrayMethodCall(MethodCallExpression m, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitStaticArrayMethodCall(MethodCallExpression m)
         {
             switch (m.Method.Name) {
                 case "Contains":
-                    List<Object> _args = this.VisitExpressionList(m.Arguments, paramDicts);
+                    List<Object> _args = this.VisitExpressionList(m.Arguments);
                     object quotedColName = _args[1];
 
                     Expression memberExpr = m.Arguments[0];
@@ -660,11 +655,11 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             return false;
         }
 
-        private object VisitEnumerableMethodCall(MethodCallExpression m, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitEnumerableMethodCall(MethodCallExpression m)
         {
             switch (m.Method.Name) {
                 case "Contains":
-                    List<Object> _args = this.VisitExpressionList(m.Arguments, paramDicts);
+                    List<Object> _args = this.VisitExpressionList(m.Arguments);
                     object quotedColName = _args[0];
                     return ToInPartialString(m.Object, quotedColName, "IN");
 
@@ -722,12 +717,12 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         }
 
 
-        private object VisitObjectExtendMethodCall(MethodCallExpression m, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitObjectExtendMethodCall(MethodCallExpression m)
         {
             if (m.Arguments[0].NodeType != ExpressionType.MemberAccess) {
                 return Expression.Lambda(m).Compile().DynamicInvoke();
             }
-            var quotedColName = VisitMemberAccess((MemberExpression)m.Arguments[0], paramDicts);
+            var quotedColName = VisitMemberAccess((MemberExpression)m.Arguments[0]);
             var option = m.Method.Name == "IsIn" ? "IN" : "NOT IN";
             return ToInPartialString(m.Arguments[1], quotedColName, option);
         }
@@ -736,27 +731,27 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
         #region 获取 集合
 
-        private List<Object> VisitExpressionList(ReadOnlyCollection<Expression> original, Dictionary<ParameterExpression, string> paramDicts)
+        private List<Object> VisitExpressionList(ReadOnlyCollection<Expression> original)
         {
             List<Object> list = new List<Object>();
             for (int i = 0, n = original.Count; i < n; i++) {
                 if (original[i].NodeType == ExpressionType.NewArrayInit ||
                     original[i].NodeType == ExpressionType.NewArrayBounds)
-                    list.AddRange(VisitNewArrayFromExpressionList(original[i] as NewArrayExpression, paramDicts));
+                    list.AddRange(VisitNewArrayFromExpressionList(original[i] as NewArrayExpression));
                 else
-                    list.Add(Visit(original[i], paramDicts));
+                    list.Add(Visit(original[i]));
             }
             return list;
         }
 
-        private object VisitNewArray(NewArrayExpression na, Dictionary<ParameterExpression, string> paramDicts)
+        private object VisitNewArray(NewArrayExpression na)
         {
-            return string.Join(",", VisitExpressionList(na.Expressions, paramDicts));
+            return string.Join(",", VisitExpressionList(na.Expressions));
         }
 
-        private List<Object> VisitNewArrayFromExpressionList(NewArrayExpression na, Dictionary<ParameterExpression, string> paramDicts)
+        private List<Object> VisitNewArrayFromExpressionList(NewArrayExpression na)
         {
-            return VisitExpressionList(na.Expressions, paramDicts);
+            return VisitExpressionList(na.Expressions);
         }
 
         #endregion 获取 集合
