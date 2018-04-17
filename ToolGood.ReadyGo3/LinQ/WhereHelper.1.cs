@@ -1427,9 +1427,9 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #endregion
 
-        #region Update
+        #region 10 Update
         /// <summary>
-        /// 更新数据库,仅支持单一表格更新
+        /// 更新数据库,仅支持单一表格更新，WHERE条件为空报错
         /// </summary>
         /// <param name="setData"></param>
         /// <returns></returns>
@@ -1454,7 +1454,7 @@ namespace ToolGood.ReadyGo3.LinQ
         }
 
         /// <summary>
-        /// 更新数据库,仅支持单一表格更新
+        /// 更新数据库,仅支持单一表格更新，WHERE条件为空报错
         /// </summary>
         /// <param name="setData"></param>
         /// <returns></returns>
@@ -1478,7 +1478,7 @@ namespace ToolGood.ReadyGo3.LinQ
         }
 
         /// <summary>
-        /// 更新数据库,仅支持单一表格更新
+        /// 更新数据库,仅支持单一表格更新，WHERE条件为空报错
         /// </summary>
         /// <param name="setSql"></param>
         /// <param name="args"></param>
@@ -1544,6 +1544,18 @@ namespace ToolGood.ReadyGo3.LinQ
         }
         #endregion
 
+        #region 11 Delete
+        /// <summary>
+        /// 删除，只支持单一表格，WHERE条件为空报错
+        /// </summary>
+        /// <returns></returns>
+        public int Delete()
+        {
+            if (_where.Length == 0) { throw new Exception("No Where Error!"); }
+            return _sqlhelper.Delete<T1>($"WHERE {_where.ToString()}", _args.ToArray());
+        }
+
+        #endregion
 
 
         /// <summary>

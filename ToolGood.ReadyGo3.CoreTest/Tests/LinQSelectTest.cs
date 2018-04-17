@@ -174,6 +174,21 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             Assert.AreEqual("测试", db.Name);
             Assert.AreEqual("789", db.NameEn);
 
+
+
+        }
+
+        [Test]
+        public void Delete()
+        {
+            var helper = Config.DbHelper;
+
+            helper.Where<DbArea>()
+                .Where("Id=@0", 1990)
+                .Delete();
+
+            var db = helper.SingleOrDefaultById<DbArea>(1990);
+            Assert.AreEqual(null, db);
         }
 
     }
