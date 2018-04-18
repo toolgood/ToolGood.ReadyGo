@@ -17,7 +17,6 @@
         <RepositoryType>git</RepositoryType>
         <RepositoryUrl>https://github.com/toolgood/ToolGood.ReadyGo.git</RepositoryUrl>
         <PackageTargetFallback Condition=" '$(TargetFramework)' == 'netstandard2.0' ">$(PackageTargetFallback);dotnet</PackageTargetFallback>
-        <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
         <AutoUnifyAssemblyReferences Condition="'$(TargetFramework)' == 'net40'">false</AutoUnifyAssemblyReferences>
         <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
