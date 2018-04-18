@@ -221,15 +221,15 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, string sql = "", params object[] args)
+        public Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, string sql = "", params object[] args)
         {
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
-                return await RunAsync<Page<T>>(sql, args, async () => {
-                    return await getDatabase().PageAsync<T>(page, itemsPerPage, sql, args);
+                return RunAsync(sql, args, () => {
+                    return getDatabase().PageAsync<T>(page, itemsPerPage, sql, args);
                 }, "Page", page.ToString(), itemsPerPage.ToString());
             }
-            return await getDatabase().PageAsync<T>(page, itemsPerPage, sql, args);
+            return getDatabase().PageAsync<T>(page, itemsPerPage, sql, args);
         }
 
 
