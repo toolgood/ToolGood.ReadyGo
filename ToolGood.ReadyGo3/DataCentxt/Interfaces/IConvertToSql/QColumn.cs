@@ -59,9 +59,13 @@ namespace ToolGood.ReadyGo3.DataCentxt
             if (column._changeType == Enums.ColumnChangeType.NewValue) {
                 right = provider.EscapeParam(column.GetValue());
             } else {
-                right = (col.GetNewValue()).ToSql(provider, tableCount);
+                var newValue = col.GetNewValue();
+                if (object.Equals(null,newValue)) {
+                    right = "NULL";
+                } else {
+                    right = newValue.ToSql(provider, tableCount);
+                }
             }
-
             return left + " = " + right;
         }
 

@@ -110,15 +110,18 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <summary>
         /// 新值
         /// </summary>
-        public QTableColumn<T> NewValue
-        {
+        public QTableColumn<T> NewValue {
             get { return (QTableColumn<T>)_newValue; }
             set {
                 _newValue = value;
-                if (value._columnType == ColumnType.Value) {
-                    _value = ((QTableColumn<T>)value)._value;
+                if (object.Equals(null, value)) {
+                    _value = default(T);
                     _changeType = ColumnChangeType.NewValue;
-                    return;
+                } else {
+                    if (value._columnType == ColumnType.Value) {
+                        _value = ((QTableColumn<T>)value)._value;
+                        return;
+                    }
                 }
                 _changeType = ColumnChangeType.NewSql;
             }
@@ -148,10 +151,10 @@ namespace ToolGood.ReadyGo3.DataCentxt
             _changeType = ColumnChangeType.None;
         }
 
-       /// <summary>
-       /// 设置值
-       /// </summary>
-       /// <param name="value"></param>
+        /// <summary>
+        /// 设置值
+        /// </summary>
+        /// <param name="value"></param>
         protected internal override void SetValue(object value)
         {
             object obj = ChangeType(value, typeof(T));

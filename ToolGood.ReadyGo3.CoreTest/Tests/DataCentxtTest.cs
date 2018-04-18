@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using PetaTest;
 using ToolGood.ReadyGo3.CoreTest.Datas;
 using ToolGood.ReadyGo3.DataCentxt;
+using ToolGood.ReadyGo3.Test;
 
 namespace ToolGood.ReadyGo3.CoreTest.Tests
 {
@@ -113,7 +114,19 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
 
         }
 
+        [Test]
+        public void Update()
+        {
+            var helper = Config.DbHelper;
 
+            TbArea tb = new TbArea(helper);
+            tb.Name = null;
+            tb.Where(tb.Id == 1563).Update();
+
+            var db = helper.SingleById<DbArea>(1563);
+
+            Assert.AreEqual(null, db.Name);
+        }
 
 
 
