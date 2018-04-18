@@ -345,6 +345,7 @@ namespace ToolGood.ReadyGo3.Test.Datas
         private QTableColumn<string> _NameEn;
         private QTableColumn<string> _NamePinyin;
         private QTableColumn<string> _Code;
+        private QTableColumn<System.DateTime> _AddingTime;
 
         public TbArea() : base(Config.DbHelper) { }
 		public TbArea(SqlHelper sqlHelper) : base(sqlHelper) { }
@@ -362,6 +363,7 @@ namespace ToolGood.ReadyGo3.Test.Datas
             _NameEn = AddColumn<string>("NameEn", "NameEn", false);
             _NamePinyin = AddColumn<string>("NamePinyin", "NamePinyin", false);
             _Code = AddColumn<string>("Code", "Code", false);
+            _AddingTime = AddColumn<System.DateTime>("AddingTime", "AddingTime", false);
         }
 
         
@@ -387,6 +389,69 @@ namespace ToolGood.ReadyGo3.Test.Datas
 
         
         public QTableColumn<string> Code { get { return _Code; } set { _Code.NewValue = value; } }
+
+        
+        public QTableColumn<System.DateTime> AddingTime { get { return _AddingTime; } set { _AddingTime.NewValue = value; } }
+
+    }
+
+    public class TbArea2 : QTable<ToolGood.ReadyGo3.Test.Datas.DbArea2>
+    {
+        private QTableColumn<int> _Id;
+        private QTableColumn<int> _ParentId;
+        private QTableColumn<string> _Path;
+        private QTableColumn<int> _Level;
+        private QTableColumn<string> _Name;
+        private QTableColumn<string> _NameEn;
+        private QTableColumn<string> _NamePinyin;
+        private QTableColumn<string> _Code;
+        private QTableColumn<System.DateTime?> _AddingTime;
+
+        public TbArea2() : base(Config.DbHelper) { }
+		public TbArea2(SqlHelper sqlHelper) : base(sqlHelper) { }
+ 
+        protected override void Init()
+        {
+            __SchemaName__ = "";
+            __TableName__ = "Area";
+
+            _Id = AddColumn<int>("Id", "Id", true);
+            _ParentId = AddColumn<int>("ParentId", "ParentId", false);
+            _Path = AddColumn<string>("Path", "Path", false);
+            _Level = AddColumn<int>("Level", "Level", false);
+            _Name = AddColumn<string>("Name", "Name", false);
+            _NameEn = AddColumn<string>("NameEn", "NameEn", false);
+            _NamePinyin = AddColumn<string>("NamePinyin", "NamePinyin", false);
+            _Code = AddColumn<string>("Code", "Code", false);
+            _AddingTime = AddColumn<System.DateTime?>("AddingTime", "AddingTime", false);
+        }
+
+        
+        public QTableColumn<int> Id { get { return _Id; } set { _Id.NewValue = value; } }
+
+        
+        public QTableColumn<int> ParentId { get { return _ParentId; } set { _ParentId.NewValue = value; } }
+
+        
+        public QTableColumn<string> Path { get { return _Path; } set { _Path.NewValue = value; } }
+
+        
+        public QTableColumn<int> Level { get { return _Level; } set { _Level.NewValue = value; } }
+
+        
+        public QTableColumn<string> Name { get { return _Name; } set { _Name.NewValue = value; } }
+
+        
+        public QTableColumn<string> NameEn { get { return _NameEn; } set { _NameEn.NewValue = value; } }
+
+        
+        public QTableColumn<string> NamePinyin { get { return _NamePinyin; } set { _NamePinyin.NewValue = value; } }
+
+        
+        public QTableColumn<string> Code { get { return _Code; } set { _Code.NewValue = value; } }
+
+        
+        public QTableColumn<System.DateTime?> AddingTime { get { return _AddingTime; } set { _AddingTime.NewValue = value; } }
 
     }
 

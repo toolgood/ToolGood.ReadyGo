@@ -120,6 +120,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 } else {
                     if (value._columnType == ColumnType.Value) {
                         _value = ((QTableColumn<T>)value)._value;
+                        _changeType = ColumnChangeType.NewValue;
                         return;
                     }
                 }

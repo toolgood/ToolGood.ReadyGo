@@ -126,6 +126,14 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             var db = helper.SingleById<DbArea>(1563);
 
             Assert.AreEqual(null, db.Name);
+
+
+            TbArea tb1 = new TbArea(helper);
+            tb.Name = "aadd";
+            tb.Where(tb.Id == 1563).Update();
+            db = helper.SingleById<DbArea>(1563);
+
+            Assert.AreEqual("aadd", db.Name);
         }
 
 

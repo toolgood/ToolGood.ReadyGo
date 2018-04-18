@@ -7,7 +7,7 @@ using ToolGood.ReadyGo3.Test.Datas;
 
 namespace ToolGood.ReadyGo3.Test
 {
-    public class Setup
+    public partial class Setup
     {
         public static void Start()
         {
@@ -24,6 +24,7 @@ namespace ToolGood.ReadyGo3.Test
         private static void InitTable(SqlHelper helper)
         {
             var table = helper._TableHelper;
+            table.CreateTable(typeof(DbArea));
             table.CreateTable(typeof(DbAdmin));
             table.CreateTable(typeof(DbAdminGroup));
             table.CreateTable(typeof(DbAdminLoginLog));
@@ -116,6 +117,12 @@ namespace ToolGood.ReadyGo3.Test
             }
             #endregion
 
+            #region Area
+
+            var areas = GetArea();
+            helper.InsertList(areas);
+
+            #endregion
         }
 
     }
