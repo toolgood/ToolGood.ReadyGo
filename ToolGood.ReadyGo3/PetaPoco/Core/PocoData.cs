@@ -11,7 +11,7 @@ using ToolGood.ReadyGo3.PetaPoco.Internal;
 namespace ToolGood.ReadyGo3.PetaPoco.Core
 {
     /// <summary>
-    /// 
+    /// PocoData
     /// </summary>
     public class PocoData
     {
@@ -27,14 +27,15 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         private Type Type;
         internal string[] QueryColumns;
 
-        //public string[] UpdateColumns
-        //{
-        //    // No need to cache as it's not used by ToolGood.ReadyGo3.PetaPoco internally
-        //    get { return (from c in Columns where !c.Value.ResultColumn && c.Value.ColumnName != TableInfo.PrimaryKey select c.Key).ToArray(); }
-        //}
-
-        internal TableInfo TableInfo;
-        internal Dictionary<string, PocoColumn> Columns;
+ 
+        /// <summary>
+        /// 表信息
+        /// </summary>
+        public TableInfo TableInfo;
+        /// <summary>
+        /// 列信息
+        /// </summary>
+        public Dictionary<string, PocoColumn> Columns;
 
         internal PocoData()
         {

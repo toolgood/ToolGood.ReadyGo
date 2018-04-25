@@ -5,12 +5,8 @@ using ToolGood.ReadyGo3.Attributes;
 namespace ToolGood.ReadyGo3.PetaPoco
 {
     /// <summary>
-    ///     Hold information about a column in the database.
+    /// 使用PocoData.ForObject或PocoData.ForType来解析
     /// </summary>
-    /// <remarks>
-    ///     Typically ColumnInfo is automatically populated from the attributes on a POCO object and it's properties. It can
-    ///     however also be returned from the IMapper interface to provide your owning bindings between the DB and your POCOs.
-    /// </remarks>
     public class ColumnInfo
     {
         /// <summary>
@@ -47,7 +43,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         /// <param name="pi">The property whose column info is required</param>
         /// <returns>A ColumnInfo instance</returns>
-        public static ColumnInfo FromProperty(PropertyInfo pi)
+        internal static ColumnInfo FromProperty(PropertyInfo pi)
         {
             if (pi.CanRead == false || pi.CanWrite == false) return null;
             if (IsAllowType(pi.PropertyType) == false) return null;
