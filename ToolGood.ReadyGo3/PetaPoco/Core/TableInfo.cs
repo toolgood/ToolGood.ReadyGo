@@ -9,6 +9,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
     /// </summary>
     public class TableInfo
     {
+        internal TableInfo() { }
+
         /// <summary>
         ///     模式名;
         /// </summary>

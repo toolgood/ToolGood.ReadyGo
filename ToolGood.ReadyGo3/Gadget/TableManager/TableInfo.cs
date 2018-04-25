@@ -11,12 +11,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
     /// </summary>
     public class TableInfo
     {
-        public TableInfo()
-        {
-            Indexs = new List<List<string>>();
-            Uniques = new List<List<string>>();
-            Columns = new List<ColumnInfo>();
-        }
+        internal TableInfo() { }
 
         public string SchemaName;
         public string TableName;
@@ -25,9 +20,9 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
         public bool AutoIncrement;
         public string SequenceName;
 
-        public List<List<string>> Indexs;
-        public List<List<string>> Uniques;
-        public List<ColumnInfo> Columns;
+        public List<List<string>> Indexs = new List<List<string>>();
+        public List<List<string>> Uniques = new List<List<string>>();
+        public List<ColumnInfo> Columns = new List<ColumnInfo>();
 
 
         /// <summary>

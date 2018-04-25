@@ -9,6 +9,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
     /// </summary>
     public class ColumnInfo
     {
+        private ColumnInfo() { }
+
         /// <summary>
         ///     列名
         /// </summary>
