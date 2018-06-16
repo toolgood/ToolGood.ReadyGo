@@ -445,7 +445,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 }
                 return new PartialSqlString(colName);
             }
-            if (m.Member.ReflectedType == typeof(DateTime) || m.Member.ReflectedType == typeof(DateTime?)) {
+            if (m.Member.DeclaringType == typeof(DateTime) || m.Member.DeclaringType == typeof(DateTime?)) {
                 var m1 = m.Expression as MemberExpression;
                 if (m1 != null) {
                     var p = Expression.Convert(m1, typeof(object));
