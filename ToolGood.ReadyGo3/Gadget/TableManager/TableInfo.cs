@@ -6,14 +6,12 @@ using ToolGood.ReadyGo3.Attributes;
 
 namespace ToolGood.ReadyGo3.Gadget.TableManager
 {
+    /// <summary>
+    ///  解析类型，数据库生成器版
+    /// </summary>
     public class TableInfo
     {
-        public TableInfo()
-        {
-            Indexs = new List<List<string>>();
-            Uniques = new List<List<string>>();
-            Columns = new List<ColumnInfo>();
-        }
+        internal TableInfo() { }
 
         public string SchemaName;
         public string TableName;
@@ -22,13 +20,17 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
         public bool AutoIncrement;
         public string SequenceName;
 
-        public List<List<string>> Indexs;
-        public List<List<string>> Uniques;
-        public List<ColumnInfo> Columns;
+        public List<List<string>> Indexs = new List<List<string>>();
+        public List<List<string>> Uniques = new List<List<string>>();
+        public List<ColumnInfo> Columns = new List<ColumnInfo>();
 
- 
 
-        internal static TableInfo FromType(Type t)
+        /// <summary>
+        /// 解析类型
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public static TableInfo FromType(Type t)
         {
             TableInfo ti = new TableInfo();
             var a = t.GetCustomAttributes(typeof(TableAttribute), true);

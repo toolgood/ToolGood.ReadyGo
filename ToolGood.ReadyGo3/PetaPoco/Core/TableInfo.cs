@@ -5,10 +5,12 @@ using ToolGood.ReadyGo3.Attributes;
 namespace ToolGood.ReadyGo3.PetaPoco
 {
     /// <summary>
-    ///     Use by IMapper to override table bindings for an object
+    /// 使用PocoData.ForObject或PocoData.ForType来解析
     /// </summary>
     public class TableInfo
     {
+        internal TableInfo() { }
+
         /// <summary>
         ///     模式名;
         /// </summary>
@@ -40,7 +42,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         /// <param name="t">The POCO type</param>
         /// <returns>A TableInfo instance</returns>
-        public static TableInfo FromPoco(Type t)
+        internal static TableInfo FromPoco(Type t)
         {
             TableInfo ti = new TableInfo();
             var a = t.GetCustomAttributes(typeof(TableAttribute), true);

@@ -9,6 +9,8 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
 {
     public class ColumnInfo
     {
+        private ColumnInfo() { }
+
         public string ColumnName;
         public string Comment;
 
