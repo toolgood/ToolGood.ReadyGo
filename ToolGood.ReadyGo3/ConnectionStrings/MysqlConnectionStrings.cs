@@ -213,29 +213,19 @@ namespace ToolGood.ReadyGo3
         public string TreatBlobsAsUTF8 { set { SetValue("TreatBlobsAsUTF8" , value); } }
 
         /// <summary>
-        /// 是否启用 SSL 连接模式，默认：MySqlSslMode.None
+        /// 是否启用 SSL 连接模式，默认： None
         /// </summary>
-        public bool? SslMode {
-            set {
-                if(value!=null) {
-                    if(value.Value) {
-                        SetValue("SslMode" , "None");
-
-                    } else {
-                        SetValue("SslMode" , value);
-
-                    }
-                } else {
-                    SetValue("SslMode" , value);
-
-                }
-
-            }
-        }
+        public string SslMode { set { SetValue("SslMode" , value); } }
+ 
 
 
         private Dictionary<string , string> _dict = new Dictionary<string , string>();
-        private void SetValue(string key , object value)
+        /// <summary>
+        /// 设置值, value为null时删除值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void SetValue(string key , object value)
         {
             if(value == null) {
                 _dict.Remove(key);

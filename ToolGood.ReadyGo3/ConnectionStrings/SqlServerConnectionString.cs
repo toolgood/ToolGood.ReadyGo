@@ -104,13 +104,18 @@ namespace ToolGood.ReadyGo3
 
 
         private Dictionary<string , string> _dict = new Dictionary<string , string>();
-        private void SetValue(string key , object value)
+        /// <summary>
+        /// 设置值, value为null时删除值
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        public void SetValue(string key , object value)
         {
             if(value == null) {
                 _dict.Remove(key);
             } else if(value is bool?) {
                 var b = (value as bool?);
-                _dict[key] = b.Value.ToString();
+                _dict[key] = b.Value.ToString().ToLower();
             } else {
                 _dict[key] = value.ToString();
             }
