@@ -231,7 +231,7 @@ namespace ToolGood.ReadyGo3
                 _dict.Remove(key);
             }else if(value is bool?) {
                 var b = (value as bool?);
-                _dict[key] = b.Value.ToString();
+                _dict[key] = b.Value.ToString().ToLower();
             } else {
                 _dict[key] = value.ToString();
             }
