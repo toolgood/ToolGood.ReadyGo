@@ -190,9 +190,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<IEnumerable<T>> QueryAsync<T>(long skip, long take, string sql, params object[] args)
+        public Task<IEnumerable<T>> QueryAsync<T>(long skip, long take, string sql, object[] args)
         {
             string sqlCount, sqlPage;
+
             BuildPageQueries<T>(0, take, sql, ref args, out sqlCount, out sqlPage);
             return QueryAsync<T>(sqlPage, args);
         }

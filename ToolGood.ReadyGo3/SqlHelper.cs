@@ -505,7 +505,7 @@ namespace ToolGood.ReadyGo3
             }
             return getDatabase().Query<T>(0, 2, sql, args).Single();
         }
-        internal T _Single<T>(string sql = "", params object[] args)
+        internal T _Single<T>(string sql = "", object[] args = null)
         {
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
@@ -533,7 +533,7 @@ namespace ToolGood.ReadyGo3
             }
             return getDatabase().Query<T>(0, 2, sql, args).SingleOrDefault();
         }
-        internal T _SingleOrDefault<T>(string sql = "", params object[] args)
+        internal T _SingleOrDefault<T>(string sql = "", object[] args = null)
         {
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
@@ -561,7 +561,7 @@ namespace ToolGood.ReadyGo3
             }
             return getDatabase().Query<T>(0, 1, sql, args).First();
         }
-        internal T _First<T>(string sql = "", params object[] args)
+        internal T _First<T>(string sql = "", object[] args = null)
         {
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
@@ -591,7 +591,7 @@ namespace ToolGood.ReadyGo3
         }
 
 
-        internal T _FirstOrDefault<T>(string sql = "", params object[] args)
+        internal T _FirstOrDefault<T>(string sql = "", object[] args=null)
         {
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {

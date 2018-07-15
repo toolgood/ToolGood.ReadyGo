@@ -107,7 +107,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public Task<List<T>> SelectAsync<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SelectAsync<T>(GetFullSelectSql(sql), _args);
+            return _sqlhelper.SelectAsync<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 查询 返回列表
@@ -119,7 +119,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public Task<List<T>> SelectAsync<T>(long limit, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SelectAsync<T>(limit, GetFullSelectSql(sql), _args);
+            return _sqlhelper.SelectAsync<T>(limit, GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 查询 返回列表
@@ -132,7 +132,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public Task<List<T>> SelectAsync<T>(long skip, long take, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SelectAsync<T>(skip, take, GetFullSelectSql(sql), _args);
+            return _sqlhelper.SelectAsync<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
         }
 
         /// <summary>
@@ -144,7 +144,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public Task<T> SingleAsync<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SingleAsync<T>(GetFullSelectSql(sql), _args);
+            return _sqlhelper.SingleAsync<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回唯一列
@@ -155,7 +155,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public Task<T> SingleOrDefaultAsync<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SingleOrDefaultAsync<T>(GetFullSelectSql(sql), _args);
+            return _sqlhelper.SingleOrDefaultAsync<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回第一列
@@ -166,7 +166,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public Task<T> FirstAsync<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.FirstAsync<T>(GetFullSelectSql(sql), _args);
+            return _sqlhelper.FirstAsync<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回第一列
@@ -177,7 +177,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public Task<T> FirstOrDefaultAsync<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.FirstOrDefaultAsync<T>(GetFullSelectSql(sql), _args);
+            return _sqlhelper.FirstOrDefaultAsync<T>(GetFullSelectSql(sql), _args.ToArray());
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.PageAsync<T>(page, itemsPerPage, GetFullSelectSql(sql), _args);
+            return _sqlhelper.PageAsync<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
         #endregion

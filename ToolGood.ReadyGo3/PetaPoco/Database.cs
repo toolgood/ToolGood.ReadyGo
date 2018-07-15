@@ -290,16 +290,19 @@ namespace ToolGood.ReadyGo3.PetaPoco
             cmd.CommandText = sql;
             cmd.Transaction = _transaction;
             cmd.CommandType = commandType;
-            if (commandType == CommandType.StoredProcedure) {
-                foreach (var item in args) {
-                    var idbParam = item as IDbDataParameter;
-                    cmd.Parameters.Add(idbParam);
-                }
-            } else {
-                foreach (var item in args) {
-                    AddParam(cmd, item, null);
+            if (args!=null) {
+                if (commandType == CommandType.StoredProcedure) {
+                    foreach (var item in args) {
+                        var idbParam = item as IDbDataParameter;
+                        cmd.Parameters.Add(idbParam);
+                    }
+                } else {
+                    foreach (var item in args) {
+                        AddParam(cmd, item, null);
+                    }
                 }
             }
+  
 
             // Notify the DB type
             _provider.PreExecute(cmd);
@@ -612,7 +615,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public IEnumerable<T> Query<T>(long skip, long take, string sql, params object[] args)
+        public IEnumerable<T> Query<T>(long skip, long take, string sql, object[] args)
         {
             string sqlCount, sqlPage;
             BuildPageQueries<T>(0, take, sql, ref args, out sqlCount, out sqlPage);

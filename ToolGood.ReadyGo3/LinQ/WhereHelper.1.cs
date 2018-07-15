@@ -945,7 +945,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public List<T> Select<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.Select<T>(GetFullSelectSql(sql), _args);
+            return _sqlhelper.Select<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 查询 返回列表
@@ -957,7 +957,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public List<T> Select<T>(long limit, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.Select<T>(limit, GetFullSelectSql(sql), _args);
+            return _sqlhelper.Select<T>(limit, GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 查询 返回列表
@@ -970,7 +970,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public List<T> Select<T>(long skip, long take, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.Select<T>(skip, take, GetFullSelectSql(sql), _args);
+            return _sqlhelper.Select<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
         }
 
         /// <summary>
@@ -982,7 +982,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public T Single<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.Single<T>(GetFullSelectSql(sql), _args);
+            return _sqlhelper.Single<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回唯一列
@@ -993,7 +993,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public T SingleOrDefault<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SingleOrDefault<T>(GetFullSelectSql(sql), _args);
+            return _sqlhelper.SingleOrDefault<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回第一列
@@ -1004,7 +1004,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public T First<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.First<T>(GetFullSelectSql(sql), _args);
+            return _sqlhelper.First<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回第一列
@@ -1015,7 +1015,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public T FirstOrDefault<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.FirstOrDefault<T>(GetFullSelectSql(sql), _args);
+            return _sqlhelper.FirstOrDefault<T>(GetFullSelectSql(sql), _args.ToArray());
         }
 
         /// <summary>
@@ -1029,7 +1029,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public Page<T> Page<T>(long page, long itemsPerPage, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.Page<T>(page, itemsPerPage, GetFullSelectSql(sql), _args);
+            return _sqlhelper.Page<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
         #endregion
