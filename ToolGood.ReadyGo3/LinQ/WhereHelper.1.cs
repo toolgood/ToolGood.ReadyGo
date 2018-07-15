@@ -136,7 +136,7 @@ namespace ToolGood.ReadyGo3.LinQ
         }
 
 
-        private void where(string where, ICollection args)
+        internal void where(string where, ICollection args)
         {
             if (jump()) return;
             where = where.Trim();

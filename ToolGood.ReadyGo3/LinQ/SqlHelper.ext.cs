@@ -44,7 +44,8 @@ namespace ToolGood.ReadyGo3
         public WhereHelper<T> Where<T>(string where, params object[] args) where T : class, new()
         {
             var whereHelper = new WhereHelper<T>(this);
-            whereHelper.Where(where, args);
+            if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
+            whereHelper.where(where, args);
             return whereHelper;
         }
 
