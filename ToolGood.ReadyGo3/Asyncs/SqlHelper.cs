@@ -283,7 +283,7 @@ namespace ToolGood.ReadyGo3
             }
             return (await getDatabase().QueryAsync<T>(0, 2, sql, args)).Single();
         }
-        internal async Task<T> _SingleAsync<T>(string sql = "", object[] args = null)
+        internal async Task<T> _SingleAsync<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
@@ -311,7 +311,7 @@ namespace ToolGood.ReadyGo3
             }
             return (await getDatabase().QueryAsync<T>(0, 2, sql, args)).SingleOrDefault();
         }
-        internal async Task<T> _SingleOrDefaultAsync<T>(string sql = "", object[] args=null)
+        internal async Task<T> _SingleOrDefaultAsync<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
@@ -339,7 +339,7 @@ namespace ToolGood.ReadyGo3
             }
             return (await getDatabase().QueryAsync<T>(0, 1, sql, args)).First();
         }
-        internal async Task<T> _FirstAsync<T>(string sql = "", object[] args = null)
+        internal async Task<T> _FirstAsync<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
@@ -369,7 +369,7 @@ namespace ToolGood.ReadyGo3
         }
 
 
-        internal async Task<T> _FirstOrDefaultAsync<T>(string sql = "", object[] args = null)
+        internal async Task<T> _FirstOrDefaultAsync<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
