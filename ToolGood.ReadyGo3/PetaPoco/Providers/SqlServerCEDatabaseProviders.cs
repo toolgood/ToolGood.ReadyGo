@@ -9,7 +9,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
     {
         public override DbProviderFactory GetFactory()
         {
-            return GetFactory("System.Data.SqlServerCe.SqlCeProviderFactory, System.Data.SqlServerCe, Culture=neutral, PublicKeyToken=89845dcd8080cc91");
+            return GetFactory(
+                "System.Data.SqlServerCe.SqlCeProviderFactory, System.Data.SqlServerCe, Culture=neutral, PublicKeyToken=89845dcd8080cc91",
+                "System.Data.SqlServerCe.SqlCeProviderFactory, System.Data.SqlServerCe, PublicKeyToken=89845dcd8080cc91",
+                "System.Data.SqlServerCe.SqlCeProviderFactory, System.Data.SqlServerCe"
+                );
         }
 
         public override string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)

@@ -10,7 +10,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
     {
         public override DbProviderFactory GetFactory()
         {
-            return GetFactory("FirebirdSql.Data.FirebirdClient.FirebirdClientFactory, FirebirdSql.Data.FirebirdClient");
+            return GetFactory(
+                "FirebirdSql.Data.FirebirdClient.FirebirdClientFactory, FirebirdSql.Data.FirebirdClient, Culture=neutral, PublicKeyToken=3750abcc3150b00c",
+                "FirebirdSql.Data.FirebirdClient.FirebirdClientFactory, FirebirdSql.Data.FirebirdClient, PublicKeyToken=3750abcc3150b00c",
+                "FirebirdSql.Data.FirebirdClient.FirebirdClientFactory, FirebirdSql.Data.FirebirdClient"
+                );
         }
 
         public override string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)

@@ -11,7 +11,20 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
     {
         public override DbProviderFactory GetFactory()
         {
-            return GetFactory("System.Data.SqlClient.SqlClientFactory, System.Data, Culture=neutral, PublicKeyToken=b77a5c561934e089");
+#if NETSTANDARD2_0
+            return GetFactory(
+                "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient, PublicKeyToken=b03f5f7f11d50a3a",
+                "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient"
+                );
+#else
+            return GetFactory(
+                "System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
+                "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
+                "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient, PublicKeyToken=b03f5f7f11d50a3a",
+                "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient"
+                );
+#endif
         }
 
         public override string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)

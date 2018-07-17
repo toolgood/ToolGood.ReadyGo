@@ -8,9 +8,17 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         public override DbProviderFactory GetFactory()
         {
 #if NETSTANDARD2_0
-            return GetFactory("Microsoft.Data.Sqlite.SqliteFactory, Microsoft.Data.Sqlite, Culture=neutral, PublicKeyToken=adb9793829ddae60");
+            return GetFactory(
+                "Microsoft.Data.Sqlite.SqliteFactory, Microsoft.Data.Sqlite, Culture=neutral, PublicKeyToken=adb9793829ddae60",
+                "Microsoft.Data.Sqlite.SqliteFactory, Microsoft.Data.Sqlite, PublicKeyToken=adb9793829ddae60",
+                "Microsoft.Data.Sqlite.SqliteFactory, Microsoft.Data.Sqlite"
+                );
 #else
-            return GetFactory("System.Data.SQLite.SQLiteFactory, System.Data.SQLite, Culture=neutral, PublicKeyToken=db937bc2d44ff139");
+            return GetFactory(
+                "System.Data.SQLite.SQLiteFactory, System.Data.SQLite, Culture=neutral, PublicKeyToken=db937bc2d44ff139",
+                "System.Data.SQLite.SQLiteFactory, System.Data.SQLite, PublicKeyToken=db937bc2d44ff139",
+                "System.Data.SQLite.SQLiteFactory, System.Data.SQLite"
+                );
 #endif
         }
 
