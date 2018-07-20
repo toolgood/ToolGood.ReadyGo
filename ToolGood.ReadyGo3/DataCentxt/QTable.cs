@@ -5,6 +5,7 @@ using System.Text;
 
 using ToolGood.ReadyGo3.DataCentxt.Internals;
 using ToolGood.ReadyGo3.Gadget.Internals;
+using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
@@ -37,10 +38,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <summary>
         /// 
         /// </summary>
-        protected QTable()
-        {
-            Init();
-        }
+        protected QTable() { }
 
 
         /// <summary>
@@ -68,6 +66,8 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
 
         #region AddColumn
+
+
         private QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk, bool isAutoIncrement, bool resultColumn, string resultSql)
         {
             QTableColumn<T> column = new QTableColumn<T> {
@@ -127,6 +127,23 @@ namespace ToolGood.ReadyGo3.DataCentxt
             }
             return AddColumn<T>(columnName, fieldName, false, false, true, resultSql);
         }
+        /// <summary>
+        /// 添加列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
+        protected QTableColumn<T> AddColumn<T>(string fieldName)
+        {
+            var pd = PetaPoco.Core.PocoData.ForType(typeof(T), null);
+            var column = pd.Columns.Values.FirstOrDefault(q => q.PropertyName == fieldName);
+            if (column != null) {
+                var isPk = pd.TableInfo.PrimaryKey == fieldName;
+                return AddColumn<T>(column.ColumnName, fieldName, isPk, isPk ? pd.TableInfo.AutoIncrement : false, column.ResultColumn, column.ResultSql);
+            }
+            return new QTableColumn<T>();
+        }
+
         #endregion
 
         /// <summary>
@@ -191,16 +208,28 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <summary>
         /// 
         /// </summary>
-        protected QTable() : base() { }
- 
+        protected QTable() : base()
+        {
+            var pd = PetaPoco.Core.PocoData.ForType(typeof(T), null);
+            __TableName__ = pd.TableInfo.TableName;
+            __SchemaName__ = pd.TableInfo.SchemaName;
+            Init();
+        }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sqlHelper"></param>
         protected QTable(SqlHelper sqlHelper) : base(sqlHelper)
         {
-
+            var pd = PetaPoco.Core.PocoData.ForType(typeof(T), null);
+            __TableName__ = pd.TableInfo.TableName;
+            __SchemaName__ = pd.TableInfo.SchemaName;
+            Init();
         }
+
+
+
 
     }
 

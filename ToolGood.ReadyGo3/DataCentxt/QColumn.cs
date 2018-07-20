@@ -113,6 +113,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         public QTableColumn<T> NewValue {
             get { return (QTableColumn<T>)_newValue; }
             set {
+                if (_isResultColumn) return;
                 _newValue = value;
                 if (object.Equals(null, value)) {
                     _value = default(T);

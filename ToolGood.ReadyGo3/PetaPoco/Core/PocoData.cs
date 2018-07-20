@@ -25,8 +25,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         private static MethodInfo fnInvoke = typeof(Func<object, object>).GetMethod("Invoke");
         private Cache<string, Delegate> PocoFactories = new Cache<string, Delegate>();
         private Type Type;
-        internal string[] QueryColumns;
-
  
         /// <summary>
         /// 表信息
@@ -68,9 +66,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 // Store it
                 Columns.Add(pc.ColumnName, pc);
             }
-
-            // Build column list for automatic select
-            QueryColumns = (from c in Columns where !c.Value.ResultColumn select c.Key).ToArray();
         }
         /// <summary>
         /// 

@@ -37,9 +37,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 "Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess, Culture=neutral, PublicKeyToken=89b483f429c47342",
                 "Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess, PublicKeyToken=89b483f429c47342",
                 "Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess",
+
                 "Oracle.DataAccess.Client.OracleClientFactory, Oracle.DataAccess, Culture=neutral, PublicKeyToken=89b483f429c47342",
                 "Oracle.DataAccess.Client.OracleClientFactory, Oracle.DataAccess, PublicKeyToken=89b483f429c47342",
                 "Oracle.DataAccess.Client.OracleClientFactory, Oracle.DataAccess",
+
                 "System.Data.OracleClient.OracleClientFactory, System.Data.OracleClient, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "System.Data.OracleClient.OracleClientFactory, System.Data.OracleClient, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "System.Data.OracleClient.OracleClientFactory, System.Data.OracleClient, PublicKeyToken=b77a5c561934e089",
