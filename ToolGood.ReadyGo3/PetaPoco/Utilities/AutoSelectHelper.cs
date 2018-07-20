@@ -15,7 +15,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
         private static Regex rxFrom = new Regex(@"\A\s*FROM\s",
             RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
-        public static string AddSelectClause<T>(DatabaseProvider provider, string sql, StandardMapper defaultMapper)
+        public static string AddSelectClause<T>(DatabaseProvider provider, string sql)
         {
             sql = sql.Trim();
             if (sql.StartsWith(";")) return sql.Substring(1);
@@ -23,7 +23,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
 
             if (!rxSelect.IsMatch(sql))
             {
-                var pd = PocoData.ForType(typeof(T), defaultMapper);
+                var pd = PocoData.ForType(typeof(T));
                 var tableName = provider.EscapeTableName(pd.TableInfo.TableName);
                 
                 StringBuilder stringBuilder = new StringBuilder();

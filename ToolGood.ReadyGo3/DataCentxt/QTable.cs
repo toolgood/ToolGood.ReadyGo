@@ -135,7 +135,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <returns></returns>
         protected QTableColumn<T> AddColumn<T>(string fieldName)
         {
-            var pd = PetaPoco.Core.PocoData.ForType(typeof(T), null);
+            var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
             var column = pd.Columns.Values.FirstOrDefault(q => q.PropertyName == fieldName);
             if (column != null) {
                 var isPk = pd.TableInfo.PrimaryKey == fieldName;
@@ -210,7 +210,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// </summary>
         protected QTable() : base()
         {
-            var pd = PetaPoco.Core.PocoData.ForType(typeof(T), null);
+            var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
             __TableName__ = pd.TableInfo.TableName;
             __SchemaName__ = pd.TableInfo.SchemaName;
             Init();
@@ -222,7 +222,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="sqlHelper"></param>
         protected QTable(SqlHelper sqlHelper) : base(sqlHelper)
         {
-            var pd = PetaPoco.Core.PocoData.ForType(typeof(T), null);
+            var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
             __TableName__ = pd.TableInfo.TableName;
             __SchemaName__ = pd.TableInfo.SchemaName;
             Init();

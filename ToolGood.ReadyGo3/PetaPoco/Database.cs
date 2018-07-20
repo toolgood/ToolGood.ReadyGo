@@ -49,8 +49,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             _transactionDepth = 0;
             EnableAutoSelect = true;
             KeepConnectionAlive = true;
-
-            _defaultMapper = new StandardMapper();
         }
 
         #endregion
@@ -202,7 +200,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             // Convert value to from poco type to db type
             if (pi != null) {
-                var mapper = Mappers.GetMapper(pi.DeclaringType, _defaultMapper);
+                var mapper = Mappers.GetMapper(pi.DeclaringType);
                 var fn = mapper.GetToDbConverter(pi);
                 if (fn != null)
                     value = fn(value);
@@ -552,7 +550,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             // Add auto select clause
             if (EnableAutoSelect)
-                sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql, _defaultMapper);
+                sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
 
             // Split the SQL
             SQLParts parts;
@@ -638,13 +636,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public IEnumerable<T> Query<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             if (EnableAutoSelect)
-                sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql, _defaultMapper);
+                sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
 
             OpenSharedConnection();
             try {
                 using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                     IDataReader r;
-                    var pd = PocoData.ForType(typeof(T), _defaultMapper);
+                    var pd = PocoData.ForType(typeof(T));
                     try {
                         r = cmd.ExecuteReader();
                         OnExecutedCommand(cmd);
@@ -653,7 +651,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                         yield break;
                     }
-                    var factory = pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, r.FieldCount, r, _defaultMapper) as Func<IDataReader, T>;
+                    var factory = pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, r.FieldCount, r) as Func<IDataReader, T>;
                     using (r) {
                         while (true) {
                             T poco;
@@ -689,7 +687,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns>True if a record matching the condition is found.</returns>
         public bool Exists<T>(string sqlCondition, params object[] args)
         {
-            var poco = PocoData.ForType(typeof(T), _defaultMapper).TableInfo;
+            var poco = PocoData.ForType(typeof(T)).TableInfo;
 
             if (sqlCondition.TrimStart().StartsWith("where", StringComparison.OrdinalIgnoreCase))
                 sqlCondition = sqlCondition.TrimStart().Substring(5);
@@ -705,7 +703,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns>True if a record with the specified primary key value exists.</returns>
         public bool Exists<T>(object primaryKey)
         {
-            return Exists<T>(string.Format("{0}=@0", _provider.EscapeSqlIdentifier(PocoData.ForType(typeof(T), _defaultMapper).TableInfo.PrimaryKey)), primaryKey);
+            return Exists<T>(string.Format("{0}=@0", _provider.EscapeSqlIdentifier(PocoData.ForType(typeof(T)).TableInfo.PrimaryKey)), primaryKey);
         }
 
         #endregion
@@ -726,7 +724,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (poco == null)
                 throw new ArgumentNullException("poco");
 
-            var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
+            var pd = PocoData.ForType(poco.GetType());
             return ExecuteInsert(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
 
@@ -736,7 +734,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 OpenSharedConnection();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
-                        var pd = PocoData.ForObject(poco, primaryKeyName, _defaultMapper);
+                        var pd = PocoData.ForObject(poco, primaryKeyName);
                         var type = poco.GetType();
                         var sql = insert.Get(Tuple.Create(type, _sqlHelper._sqlType, 1), () => {
                             return CteateInsertSql(pd, 1, tableName, primaryKeyName, autoIncrement);
@@ -816,7 +814,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (list == null) throw new ArgumentNullException("poco");
             if (list.Count == 0) return;
 
-            var pd = PocoData.ForType(typeof(T), null);
+            var pd = PocoData.ForType(typeof(T));
             var tableName = pd.TableInfo.TableName;
 
             var index = 0;
@@ -839,7 +837,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0], CommandType.Text)) {
                         var type = typeof(T);
-                        var pd = PocoData.ForType(type, null);
+                        var pd = PocoData.ForType(type);
                         var sql = insert.Get(Tuple.Create(type, _sqlHelper._sqlType, size), () => {
                             return CteateInsertSql(pd, size, tableName, primaryKeyName, autoIncrement);
                         });
@@ -934,7 +932,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (poco == null)
                 throw new ArgumentNullException("poco");
 
-            var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
+            var pd = PocoData.ForType(poco.GetType());
             return ExecuteUpdate(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null, null);
         }
 
@@ -952,7 +950,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (sql.StartsWith("UPDATE ",StringComparison.CurrentCultureIgnoreCase)) {
                 return Execute(sql, args);
             }
-            var pd = PocoData.ForType(typeof(T), _defaultMapper);
+            var pd = PocoData.ForType(typeof(T));
             return Execute(string.Format("UPDATE {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
@@ -964,7 +962,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = poco.GetType();
-                        var pd = PocoData.ForObject(poco, primaryKeyName, _defaultMapper);
+                        var pd = PocoData.ForObject(poco, primaryKeyName);
                         var sql = update.Get(Tuple.Create(type, _sqlHelper._sqlType), () => {
                             var sb = new StringBuilder();
                             var index = 0;
@@ -1042,7 +1040,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             // If primary key value not specified, pick it up from the object
             if (primaryKeyValue == null) {
-                var pd = PocoData.ForObject(poco, primaryKeyName, _defaultMapper);
+                var pd = PocoData.ForObject(poco, primaryKeyName);
                 PocoColumn pc;
                 if (pd.Columns.TryGetValue(primaryKeyName, out pc)) {
                     primaryKeyValue = pc.GetValue(poco);
@@ -1061,7 +1059,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns>The number of rows affected</returns>
         public int Delete(object poco)
         {
-            var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
+            var pd = PocoData.ForType(poco.GetType());
             return Delete(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
 
@@ -1076,7 +1074,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (pocoOrPrimaryKey.GetType() == typeof(T))
                 return Delete(pocoOrPrimaryKey);
 
-            var pd = PocoData.ForType(typeof(T), _defaultMapper);
+            var pd = PocoData.ForType(typeof(T));
 
             if (pocoOrPrimaryKey.GetType().Name.Contains("AnonymousType")) {
                 var pi = pocoOrPrimaryKey.GetType().GetProperty(pd.TableInfo.PrimaryKey);
@@ -1101,7 +1099,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
 
 
-            var pd = PocoData.ForType(typeof(T), _defaultMapper);
+            var pd = PocoData.ForType(typeof(T));
             return Execute(string.Format("DELETE FROM {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
@@ -1117,7 +1115,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (poco == null)
                 throw new ArgumentNullException("poco");
 
-            var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
+            var pd = PocoData.ForType(poco.GetType());
             var tableName = pd.TableInfo.TableName;
             var primaryKeyName = pd.TableInfo.PrimaryKey;
 
@@ -1240,7 +1238,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         // Member variables
         private SqlHelper _sqlHelper;
-        private StandardMapper _defaultMapper;
         private DatabaseProvider _provider;
         private IDbConnection _sharedConnection;
         private IDbTransaction _transaction;

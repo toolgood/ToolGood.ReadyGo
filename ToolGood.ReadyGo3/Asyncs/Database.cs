@@ -208,7 +208,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             if (EnableAutoSelect)
-                sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql, _defaultMapper);
+                sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
 
             var resultList = new List<T>();
             await OpenSharedConnectionAsync();
@@ -223,7 +223,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         if (OnException(x))
                             throw;
                     }
-                    var factory = pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, r.FieldCount, r, _defaultMapper) as Func<IDataReader, T>;
+                    var factory = pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, r.FieldCount, r) as Func<IDataReader, T>;
                     using (r) {
                         while (true) {
                             try {
@@ -297,7 +297,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (poco == null)
                 throw new ArgumentNullException("poco");
 
-            var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
+            var pd = PocoData.ForType(poco.GetType());
             return ExecuteInsertAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
 
@@ -307,7 +307,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 await OpenSharedConnectionAsync();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
-                        var pd = PocoData.ForObject(poco, primaryKeyName, _defaultMapper);
+                        var pd = PocoData.ForObject(poco, primaryKeyName);
                         var type = poco.GetType();
                         var sql = insert.Get(Tuple.Create(type, _sqlHelper._sqlType, 1), () => {
                             return CteateInsertSql(pd, 1, tableName, primaryKeyName, autoIncrement);
@@ -385,7 +385,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (list == null) throw new ArgumentNullException("poco");
             if (list.Count == 0) return;
 
-            var pd = PocoData.ForType(typeof(T), null);
+            var pd = PocoData.ForType(typeof(T));
             var tableName = pd.TableInfo.TableName;
 
             var index = 0;
@@ -408,7 +408,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0], CommandType.Text)) {
                         var type = typeof(T);
-                        var pd = PocoData.ForType(type, null);
+                        var pd = PocoData.ForType(type);
                         var sql = insert.Get(Tuple.Create(type, _sqlHelper._sqlType, size), () => {
                             return CteateInsertSql(pd, size, tableName, primaryKeyName, autoIncrement);
                         });
@@ -453,7 +453,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (poco == null)
                 throw new ArgumentNullException("poco");
 
-            var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
+            var pd = PocoData.ForType(poco.GetType());
             return ExecuteUpdateAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null, null);
         }
 
@@ -469,7 +469,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (string.IsNullOrEmpty(sql))
                 throw new ArgumentNullException("sql");
 
-            var pd = PocoData.ForType(typeof(T), _defaultMapper);
+            var pd = PocoData.ForType(typeof(T));
             return ExecuteAsync(string.Format("UPDATE {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
@@ -480,7 +480,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = poco.GetType();
-                        var pd = PocoData.ForObject(poco, primaryKeyName, _defaultMapper);
+                        var pd = PocoData.ForObject(poco, primaryKeyName);
                         var sql = update.Get(Tuple.Create(type, _sqlHelper._sqlType), () => {
                             var sb = new StringBuilder();
                             var index = 0;
@@ -559,7 +559,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             // If primary key value not specified, pick it up from the object
             if (primaryKeyValue == null) {
-                var pd = PocoData.ForObject(poco, primaryKeyName, _defaultMapper);
+                var pd = PocoData.ForObject(poco, primaryKeyName);
                 PocoColumn pc;
                 if (pd.Columns.TryGetValue(primaryKeyName, out pc)) {
                     primaryKeyValue = pc.GetValue(poco);
@@ -578,7 +578,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns>The number of rows affected</returns>
         public Task<int> DeleteAsync(object poco)
         {
-            var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
+            var pd = PocoData.ForType(poco.GetType());
             return DeleteAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
 
@@ -593,7 +593,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (pocoOrPrimaryKey.GetType() == typeof(T))
                 return DeleteAsync(pocoOrPrimaryKey);
 
-            var pd = PocoData.ForType(typeof(T), _defaultMapper);
+            var pd = PocoData.ForType(typeof(T));
 
             if (pocoOrPrimaryKey.GetType().Name.Contains("AnonymousType")) {
                 var pi = pocoOrPrimaryKey.GetType().GetProperty(pd.TableInfo.PrimaryKey);
@@ -617,7 +617,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public Task<int> DeleteAsync<T>(string sql, params object[] args)
         {
 
-            var pd = PocoData.ForType(typeof(T), _defaultMapper);
+            var pd = PocoData.ForType(typeof(T));
             return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
@@ -634,7 +634,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (poco == null)
                 throw new ArgumentNullException("poco");
 
-            var pd = PocoData.ForType(poco.GetType(), _defaultMapper);
+            var pd = PocoData.ForType(poco.GetType());
             var tableName = pd.TableInfo.TableName;
             var primaryKeyName = pd.TableInfo.PrimaryKey;
 

@@ -103,7 +103,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
             List<string> selectColumns = new List<string>();
 
-            var pd = PetaPoco.Core.PocoData.ForType(typeof(T), null);
+            var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
             var columns = pd.Columns.Select(q => q.Value.ColumnName).ToList();
             if (columns.Count == 0) throw new NoColumnException();
 

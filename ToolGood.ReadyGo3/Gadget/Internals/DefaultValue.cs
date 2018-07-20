@@ -36,7 +36,7 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         private static Delegate CreateDefaultFunction<T>()
         {
             #region 初始时间
-            var pd = PocoData.ForType(typeof(T),null);
+            var pd = PocoData.ForType(typeof(T));
             List<PropertyInfo> datetimes = new List<PropertyInfo>();
             List<PropertyInfo> datetimeoffsets = new List<PropertyInfo>();
             List<PropertyInfo> strings = new List<PropertyInfo>();

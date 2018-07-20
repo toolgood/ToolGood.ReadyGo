@@ -39,12 +39,12 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         {
         }
 
-        internal PocoData(Type type, StandardMapper defaultMapper)
+        internal PocoData(Type type)
         {
             Type = type;
 
             // Get the mapper for this type
-            var mapper = Mappers.GetMapper(type, defaultMapper);
+            var mapper = Mappers.GetMapper();
 
             // Get the table info
             TableInfo = mapper.GetTableInfo(type);
@@ -74,7 +74,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="primaryKeyName"></param>
         /// <param name="defaultMapper"></param>
         /// <returns></returns>
-        public static PocoData ForObject(object obj, string primaryKeyName, StandardMapper defaultMapper)
+        public static PocoData ForObject(object obj, string primaryKeyName )
         {
             var t = obj.GetType();
             if (t == typeof(System.Dynamic.ExpandoObject)) {
@@ -90,7 +90,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 }
                 return pd;
             }
-            return ForType(t, defaultMapper);
+            return ForType(t);
         }
         /// <summary>
         /// 
@@ -98,12 +98,12 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="type"></param>
         /// <param name="defaultMapper"></param>
         /// <returns></returns>
-        public static PocoData ForType(Type type, StandardMapper defaultMapper = null)
+        public static PocoData ForType(Type type)
         {
             if (type == typeof(System.Dynamic.ExpandoObject))
                 throw new InvalidOperationException("Can't use dynamic types with this method");
 
-            return _pocoDatas.Get(type, () => new PocoData(type, defaultMapper));
+            return _pocoDatas.Get(type, () => new PocoData(type));
         }
 
         private static bool IsIntegralType(Type type)
@@ -122,7 +122,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="reader"></param>
         /// <param name="defaultMapper"></param>
         /// <returns></returns>
-        public Delegate GetFactory(string sql, string connectionString, int firstColumn, int countColumns, IDataReader reader, StandardMapper defaultMapper)
+        public Delegate GetFactory(string sql, string connectionString, int firstColumn, int countColumns, IDataReader reader )
         {
             #region 创建Key
             SortedSet<string> list = new SortedSet<string>();
@@ -143,7 +143,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 // Create the method
                 var m = new DynamicMethod("tg_readygo_" + PocoFactories.Count.ToString(), Type, new Type[] { typeof(IDataReader) }, true);
                 var il = m.GetILGenerator();
-                var mapper = Mappers.GetMapper(Type, defaultMapper);
+                var mapper = Mappers.GetMapper(Type);
 
                 if (Type == typeof(object)) {
                     // var poco=new T()

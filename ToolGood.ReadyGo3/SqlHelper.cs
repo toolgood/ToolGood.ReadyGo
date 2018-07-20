@@ -341,7 +341,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public bool Exists<T>(object primaryKey)
         {
-            var pd = PocoData.ForType(typeof(T), null);
+            var pd = PocoData.ForType(typeof(T));
             var table = _provider.EscapeSqlIdentifier(pd.TableInfo.TableName);
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
@@ -364,7 +364,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public int Count<T>(string sql = "", params object[] args)
         {
-            var pd = PocoData.ForType(typeof(T), null);
+            var pd = PocoData.ForType(typeof(T));
             var table = _provider.EscapeSqlIdentifier(pd.TableInfo.TableName);
             sql = formatSql(sql);
             sql = $"SELECT COUNT(*) FROM {table} {sql}";
@@ -467,7 +467,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T SingleById<T>(object primaryKey)
         {
-            var pd = PocoData.ForType(typeof(T), null);
+            var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
 
@@ -482,7 +482,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T SingleOrDefaultById<T>(object primaryKey)
         {
-            var pd = PocoData.ForType(typeof(T), null);
+            var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
             return SingleOrDefault<T>(sql, primaryKey);
