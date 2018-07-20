@@ -3,7 +3,7 @@ using ToolGood.ReadyGo3.Attributes;
 
 
 
-namespace ToolGood.ReadyGo3.CoreTest.Datas
+namespace ToolGood.ReadyGo3.Test.Datas
 {
     [Table("AdminMenu ")]
     [Index("ParentID")]

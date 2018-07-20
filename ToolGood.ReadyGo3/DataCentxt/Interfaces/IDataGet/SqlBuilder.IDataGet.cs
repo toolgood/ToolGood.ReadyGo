@@ -104,7 +104,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             List<string> selectColumns = new List<string>();
 
             var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
-            var columns = pd.Columns.Select(q => q.Value.ColumnName).ToList();
+            var columns = pd.Columns.Select(q => q.Key).ToList();
             if (columns.Count == 0) throw new NoColumnException();
 
             foreach (var table in _tables) {

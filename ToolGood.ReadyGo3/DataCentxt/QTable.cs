@@ -18,7 +18,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <summary>
         /// Schema名
         /// </summary>
-        public string __SchemaName__ { get { return _schemaName; } set { _schemaName = value.Trim(); } }
+        public string __SchemaName__ { get { return _schemaName; } set { _schemaName = value?.Trim(); } }
         /// <summary>
         /// SQL记录
         /// </summary>
@@ -49,7 +49,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
         {
             _singleSqlHelper = false;
             _sqlHelper = sqlHelper;
-            Init();
         }
         /// <summary>
         /// 
@@ -66,9 +65,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
 
         #region AddColumn
-
-
-        private QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk, bool isAutoIncrement, bool resultColumn, string resultSql)
+        protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk, bool isAutoIncrement, bool resultColumn, string resultSql)
         {
             QTableColumn<T> column = new QTableColumn<T> {
                 _columnType = Enums.ColumnType.Column,
@@ -127,22 +124,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             }
             return AddColumn<T>(columnName, fieldName, false, false, true, resultSql);
         }
-        /// <summary>
-        /// 添加列
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="fieldName"></param>
-        /// <returns></returns>
-        protected QTableColumn<T> AddColumn<T>(string fieldName)
-        {
-            var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
-            var column = pd.Columns.Values.FirstOrDefault(q => q.PropertyName == fieldName);
-            if (column != null) {
-                var isPk = pd.TableInfo.PrimaryKey == fieldName;
-                return AddColumn<T>(column.ColumnName, fieldName, isPk, isPk ? pd.TableInfo.AutoIncrement : false, column.ResultColumn, column.ResultSql);
-            }
-            return new QTableColumn<T>();
-        }
+
 
         #endregion
 
@@ -179,11 +161,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
             //                    _sqlHelper = new SqlHelper();
             //                }
             //#else
-            //                if (SqlHelper._lastSqlHelper != null && SqlHelper._lastSqlHelper._isDisposable == false) {
-            //                    _singleSqlHelper = false;
-            //                    _sqlHelper = SqlHelper._lastSqlHelper;
-            //                }
-            //                throw new InvalidProgramException();
+            //                            if (SqlHelper._lastSqlHelper != null && SqlHelper._lastSqlHelper._isDisposable == false) {
+            //                                _singleSqlHelper = false;
+            //                                _sqlHelper = SqlHelper._lastSqlHelper;
+            //                            }
+            //                            throw new InvalidProgramException();
             //#endif
             //            }
             return _sqlHelper;
@@ -229,7 +211,22 @@ namespace ToolGood.ReadyGo3.DataCentxt
         }
 
 
-
+        /// <summary>
+        /// 添加列
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
+        protected QTableColumn<T1> AddColumn<T1>(string fieldName)
+        {
+            var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
+            var column = pd.Columns.Where(q => q.Value.PropertyName == fieldName).Select(q => q.Value).FirstOrDefault();
+            if (column != null) {
+                var isPk = pd.TableInfo.PrimaryKey == fieldName;
+                return AddColumn<T1>(column.ColumnName, fieldName, isPk, isPk ? pd.TableInfo.AutoIncrement : false, column.ResultColumn, column.ResultSql);
+            }
+            return new QTableColumn<T1>();
+        }
 
     }
 

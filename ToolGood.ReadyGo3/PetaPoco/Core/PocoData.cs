@@ -44,7 +44,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             Type = type;
 
             // Get the mapper for this type
-            var mapper = Mappers.GetMapper();
+            var mapper = Singleton<StandardMapper>.Instance; 
 
             // Get the table info
             TableInfo = mapper.GetTableInfo(type);
@@ -58,6 +58,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
 
                 var pc = new PocoColumn();
                 pc.PropertyInfo = pi;
+                pc.PropertyName = pi.Name;
                 pc.ColumnName = ci.ColumnName;
                 pc.ResultColumn = ci.ResultColumn;
                 pc.ForceToUtc = ci.ForceToUtc;
@@ -143,7 +144,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 // Create the method
                 var m = new DynamicMethod("tg_readygo_" + PocoFactories.Count.ToString(), Type, new Type[] { typeof(IDataReader) }, true);
                 var il = m.GetILGenerator();
-                var mapper = Mappers.GetMapper(Type);
+                var mapper = Singleton<StandardMapper>.Instance;
 
                 if (Type == typeof(object)) {
                     // var poco=new T()

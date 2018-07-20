@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using PetaTest;
 using ToolGood.ReadyGo3.Test;
-using ToolGood.ReadyGo3.CoreTest.Datas;
+using ToolGood.ReadyGo3.Test.Datas;
 
 namespace ToolGood.ReadyGo3.CoreTest.Tests
 {

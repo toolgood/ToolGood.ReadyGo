@@ -2,6 +2,9 @@
 <#@ assembly name="System.Core" #>
 <#@ assembly name="EnvDTE"#>
 <#@ assembly name="EnvDTE80" #>
+<#@ assembly name="EnvDTE90" #>
+<#@ assembly name="EnvDTE90a" #>
+<#@ assembly name="EnvDTE100" #>
 <#@ import namespace="System" #>
 <#@ import namespace="System.Linq" #>
 <#@ import namespace="System.Text" #>
@@ -12,22 +15,18 @@
 <#@ output extension=".cs" #>
 <#
     //------------------------- 以下为 设置信息 --------------------------------------
-    // 输出命名空间
-    string nameSpace="ToolGood.ReadyGo3.CoreTest.Datas";
-    // 原类前缀
-    string oldClassPrefix="Db";
-    // 新类前缀
+	string oldNameSpace="ToolGood.ReadyGo3.Test.Datas";
+	string oldClassPrefix="Db";
+
+    string newNameSpace="ToolGood.ReadyGo3.Test.Datas";
     string newClassPrefix="Tb";
-    // 初始化默认连接字符串名称
-    string connectionStringName="";
-    // 初始化默认SqlHelper获取方式,当上面没设置时有效
-    string sqlHelper="";
+
+    string sqlHelper="";    // 初始化默认SqlHelper获取方式 
 
     //------------------------- 以下为 模板代码 --------------------------------------
-	var baseInitString=connectionStringName==""?sqlHelper:connectionStringName;
     this.VisualStudioHelper = new AutomationHelper(this.Host);
     var project = VisualStudioHelper.CurrentProject;
-    var allClasses = VisualStudioHelper.GetAllCodeElementsOfType(project.CodeModel.CodeElements, EnvDTE.vsCMElement.vsCMElementClass, false);
+    var allClasses = VisualStudioHelper.GetAllClassCodeElements(project.CodeModel.CodeElements,oldNameSpace);
     allClasses.RemoveAll(q=> q.Name.StartsWith(oldClassPrefix)==false);
     allClasses=allClasses.OrderBy(q=>q.FullName).ToList();
 #>
@@ -39,12 +38,12 @@ using ToolGood.ReadyGo3;
 using ToolGood.ReadyGo3.Attributes;
 using ToolGood.ReadyGo3.DataCentxt;
 
-namespace <#=        nameSpace #>
+namespace <#=        newNameSpace #>
 {
 <#    foreach(EnvDTE.CodeClass codeClass in allClasses){ #>
     public class <#=            GetClass(codeClass,oldClassPrefix,newClassPrefix) #> : QTable<<#=codeClass.FullName #>>
     {
-<#      var allProperty = VisualStudioHelper.GetAllCodeElementsOfType(codeClass.Members, EnvDTE.vsCMElement.vsCMElementProperty, false); 
+<#      var allProperty = VisualStudioHelper.GetAllCodeElementsOfType(codeClass.Members, EnvDTE.vsCMElement.vsCMElementProperty, true); 
         var pis =new List<EnvDTE80.CodeProperty2>();
         foreach  (EnvDTE80.CodeProperty2 pi in allProperty) {
             if(pi.ReadWrite==EnvDTE80.vsCMPropertyKind.vsCMPropertyKindReadWrite){
@@ -57,31 +56,19 @@ namespace <#=        nameSpace #>
         private QTableColumn<<#=                pi.Type.AsString #>> _<#=                pi.Name #>;
 <#        } #>
 
-        public <#= GetClass(codeClass,oldClassPrefix,newClassPrefix) #>() : base(<#=baseInitString#>) { }
+        public <#= GetClass(codeClass,oldClassPrefix,newClassPrefix) #>() : base(<#=sqlHelper#>) { }
 		public <#= GetClass(codeClass,oldClassPrefix,newClassPrefix) #>(SqlHelper sqlHelper) : base(sqlHelper) { }
 
         protected override void Init()
         {
-            __SchemaName__ = "<#=            GetSchemaName(codeClass) #>";
-            __TableName__ = "<#=            GetTableName(codeClass) #>";
-
 <#        foreach  (EnvDTE.CodeProperty pi in pis) { #>
-<#            if(IsResultColumn(pi)){ #>
-            _<#=                    pi.Name #> = AddColumn<<#= pi.Type.AsString #>>("<#= GetColumnName(pi) #>", "<#= pi.Name #>", "<#=                    GetResultSql(pi) #>");
-<#            } else { #>
-            _<#=                    pi.Name #> = AddColumn<<#= pi.Type.AsString #>>("<#= GetColumnName(pi) #>", "<#= pi.Name #>", <#= GetPkFlag(pi,codeClass) #>);
-<#            } #>
+			_<#=pi.Name #> = AddColumn<<#= pi.Type.AsString #>>("<#= pi.Name #>");
 <#        } #>
         }
 
 <#        foreach  (EnvDTE.CodeProperty pi in pis) { #>
         <#=                GetSummary(pi.DocComment) #>
-<#            if(IsResultColumn(pi)){ #>
-        public QTableColumn<<#= pi.Type.AsString #>> <#= pi.Name #> { get { return _<#= pi.Name #>; } }
-<#            } else { #>
         public QTableColumn<<#= pi.Type.AsString #>> <#= pi.Name #> { get { return _<#= pi.Name #>; } set { _<#= pi.Name #>.NewValue = value; } }
-<#            } #>
-
 <#        } #>
     }
 
@@ -362,6 +349,32 @@ namespace <#=        nameSpace #>
         #endregion
 
         #region Code Model
+
+		public List<EnvDTE80.CodeClass2> GetAllClassCodeElements(EnvDTE.CodeElements elements,string srcNamespace)
+        {
+            var ret = new List<EnvDTE80.CodeClass2>();
+			var elementType=EnvDTE.vsCMElement.vsCMElementClass;
+
+            foreach (EnvDTE.CodeElement elem in elements)
+            {
+                if (elem.Kind == EnvDTE.vsCMElement.vsCMElementNamespace)
+                {
+					if(srcNamespace.StartsWith(elem.FullName)==false) continue;
+                    ret.AddRange(GetAllClassCodeElements(((EnvDTE.CodeNamespace)elem).Members,srcNamespace));
+                }
+				else{
+					if (elem.Kind == EnvDTE.vsCMElement.vsCMElementClass) {
+						EnvDTE80.CodeClass2 codeClass=elem as EnvDTE80.CodeClass2;
+						if(codeClass.IsAbstract) continue;
+						if(codeClass.IsGeneric) continue;
+						if(codeClass.IsShared) continue;
+						ret.Add(codeClass);
+					}
+				}
+            }
+            return ret;
+        }
+
         /// <summary>
         /// Searches a given collection of CodeElements recursively for objects of the given elementType.
         /// </summary>
@@ -388,10 +401,10 @@ namespace <#=        nameSpace #>
                     continue;
                     // if its from the project
                     // > check its members
-                else if (elem.IsCodeType)
-                {
-                    ret.AddRange(GetAllCodeElementsOfType(((EnvDTE.CodeType)elem).Members, elementType, includeExternalTypes));
-                }
+              //  else if (elem.IsCodeType)
+               // {
+               //     ret.AddRange(GetAllCodeElementsOfType(((EnvDTE.CodeType)elem).Members, elementType, includeExternalTypes));
+               // }
 
                 // if this item is of the desired type
                 // > store it

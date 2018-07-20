@@ -2,7 +2,7 @@
 using ToolGood.ReadyGo3.Attributes;
 
 
-namespace ToolGood.ReadyGo3.CoreTest.Datas
+namespace ToolGood.ReadyGo3.Test.Datas
 {
     [Table("Admin")]
     [Index("AdminGroupID")]
@@ -16,6 +16,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Datas
         /// <summary>
         /// 用户名
         /// </summary>
+     [Column("nick")]
         public string Name { get; set; }
         /// <summary>
         /// 密码

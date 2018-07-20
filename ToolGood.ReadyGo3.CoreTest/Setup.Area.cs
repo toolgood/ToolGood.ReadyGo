@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo3.Test;
-using ToolGood.ReadyGo3.CoreTest.Datas;
+using ToolGood.ReadyGo3.Test.Datas;
 
 
 namespace ToolGood.ReadyGo3.CoreTest

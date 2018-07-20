@@ -246,7 +246,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             var p = m.Expression as ParameterExpression;
             var tableDef = PocoData.ForType(p.Type);
 
-            var col = tableDef.Columns.Where(q => q.Value.PropertyInfo.Name == colName).Select(q => q.Value).FirstOrDefault();
+            var col = tableDef.Columns.Where(q => q.Value.PropertyName == colName).Select(q => q.Value).FirstOrDefault();
             if (col != null) {
                 colName = col.ColumnName;
             }
@@ -439,7 +439,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 var tableDef = PocoData.ForType(p.Type);
                 var colName = m.Member.Name;
 
-                var col = tableDef.Columns.Where(q => q.Value.PropertyInfo.Name == colName).Select(q => q.Value).FirstOrDefault();
+                var col = tableDef.Columns.Where(q => q.Value.PropertyName == colName).Select(q => q.Value).FirstOrDefault();
                 if (col != null) {
                     colName = col.ColumnName;
                 }

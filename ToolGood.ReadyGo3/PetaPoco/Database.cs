@@ -200,7 +200,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             // Convert value to from poco type to db type
             if (pi != null) {
-                var mapper = Mappers.GetMapper(pi.DeclaringType);
+                var mapper = Singleton<StandardMapper>.Instance;
                 var fn = mapper.GetToDbConverter(pi);
                 if (fn != null)
                     value = fn(value);
@@ -993,7 +993,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         // Find the property info for the primary key
                         PropertyInfo pkpi = null;
                         if (primaryKeyName != null) {
-                            PocoColumn col = pd.Columns.FirstOrDefault(q => q.Value.ColumnName == primaryKeyName).Value;
+                            PocoColumn col = pd.Columns.FirstOrDefault(q => q.Key == primaryKeyName).Value;
                             if (col != null)
                                 pkpi = col.PropertyInfo;
                             else

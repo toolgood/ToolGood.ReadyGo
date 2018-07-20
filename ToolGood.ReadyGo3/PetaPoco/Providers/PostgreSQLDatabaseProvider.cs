@@ -13,8 +13,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         public override DbProviderFactory GetFactory()
         {
             return GetFactory(
-                "Npgsql.NpgsqlFactory, Npgsql, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7",
-                "Npgsql.NpgsqlFactory, Npgsql, PublicKeyToken=5d8b90d52f46fda7",
+                //"Npgsql.NpgsqlFactory, Npgsql, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7",
                 "Npgsql.NpgsqlFactory, Npgsql"
                 );
         }

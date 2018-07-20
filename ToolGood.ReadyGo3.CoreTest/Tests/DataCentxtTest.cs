@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using PetaTest;
-using ToolGood.ReadyGo3.CoreTest.Datas;
+using ToolGood.ReadyGo3.Test.Datas;
 using ToolGood.ReadyGo3.DataCentxt;
 using ToolGood.ReadyGo3.Test;
 
@@ -15,7 +15,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
         [Test]
         public void SelectTest()
         {
-            TbArea tb = new TbArea();
+            TbArea tb = new TbArea(Config.DbHelper);
             tb.Where(tb.Id == 1);
             DoSelect(tb, true, true, true);
             DoSelect<DbArea, Area>(tb, true, true, true);
@@ -141,7 +141,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
         [Test]
         public async void SelectAsyncTest()
         {
-            TbArea tb = new TbArea();
+            TbArea tb = new TbArea(Config.DbHelper);
             tb.Where(tb.Id == 1);
             await DoSelectAsync(tb, true, true, true);
             await DoSelectAsync<DbArea, Area>(tb, true, true, true);
