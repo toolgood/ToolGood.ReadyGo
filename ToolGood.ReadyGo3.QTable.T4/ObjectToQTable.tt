@@ -12,7 +12,7 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="EnvDTE" #>
 <#@ import namespace="Microsoft.VisualStudio.TextTemplating" #>
-<#@ output extension=".cs" #>
+<#@ output extension=".txt" #>
 <#
     //------------------------- 以下为 设置信息 --------------------------------------
 	string oldNameSpace="ToolGood.ReadyGo3.Test.Datas";

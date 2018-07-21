@@ -13,6 +13,7 @@
     <RepositoryType>git</RepositoryType>
     <ApplicationIcon />
     <Win32Resource />
+    <Version>1.0.0.1</Version>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
@@ -30,21 +31,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="ObjectToQTable.cs">
-      <DependentUpon>ObjectToQTable.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="ObjectToQTable.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>ObjectToQTable.cs</LastGenOutput>
+      <LastGenOutput>ObjectToQTable.txt</LastGenOutput>
+    </None>
+    <None Update="ObjectToQTable.txt">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ObjectToQTable.tt</DependentUpon>
     </None>
   </ItemGroup>
 
