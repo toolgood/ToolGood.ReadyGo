@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net40;net45;netstandard2.0;</TargetFrameworks>
+    <Company>ToolGood.com</Company>
+    <Authors>ToolGood.com</Authors>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Description>ToolGood.ReadyGo3.QTable.T4模板生成</Description>
+    <Copyright>Copyright 2016-2018 ToolGood</Copyright>
+    <PackageLicenseUrl>https://github.com/toolgood/ToolGood.ReadyGo/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/toolgood/ToolGood.ReadyGo</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/toolgood/ToolGood.ReadyGo.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <ApplicationIcon />
+    <Win32Resource />
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DefineConstants>RELEASE;NETFRAMEWORK;NET40</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="ObjectToQTable.tt">
+      <LastGenOutput>ObjectToQTable.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="ObjectToQTable.cs">
+      <DependentUpon>ObjectToQTable.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ObjectToQTable.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ObjectToQTable.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>
