@@ -77,7 +77,7 @@ namespace ToolGood.ReadyGo3
         public static SqlHelper OpenSqlServer(SqlServerConnectionString connectionString)
         {
             var connstr = connectionString.ToString();
-            return OpenDatabase(connstr , "System.Data.SqlClient" , SqlType.SqlServer);
+            return OpenDatabase(connstr, "System.Data.SqlClient", SqlType.SqlServer);
         }
 
         /// <summary>
@@ -117,7 +117,7 @@ namespace ToolGood.ReadyGo3
         public static SqlHelper OpenSqlServer2012(SqlServerConnectionString connectionString)
         {
             var connstr = connectionString.ToString();
-            return OpenDatabase(connstr , "System.Data.SqlClient" , SqlType.SqlServer2012);
+            return OpenDatabase(connstr, "System.Data.SqlClient", SqlType.SqlServer2012);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace ToolGood.ReadyGo3
         public static SqlHelper OpenMysql(MysqlConnectionString connectionString)
         {
             var connstr = connectionString.ToString();
-            return OpenDatabase(connstr , "MySql.Data.MySqlClient" , SqlType.MySql);
+            return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
         /// <summary>
         /// 打开Mysql数据库
@@ -169,7 +169,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static SqlHelper OpenMysql(string server, string database, string user, string pwd)
         {
-            var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd};charset=utf8;";
+            var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd};charset=utf8;Allow User Variables=True;";
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
 
@@ -184,7 +184,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static SqlHelper OpenMysql(string server, int port, string database, string user, string pwd)
         {
-            var connstr = string.Format("Server={0};Port={4}:Database={1};Uid={2};Pwd={3};charset=utf8;", server, database, user, pwd, port);
+            var connstr = $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};charset=utf8;Allow User Variables=True;";
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
 
@@ -205,7 +205,7 @@ namespace ToolGood.ReadyGo3
             return OpenDatabase(sb.ToString(), "System.Data.SQLite", SqlType.SQLite);
         }
 #else
- 
+
         /// <summary>
         /// 打开Sqlite数据库
         /// </summary>
@@ -262,5 +262,5 @@ namespace ToolGood.ReadyGo3
         }
 #endif
     }
- 
+
 }
