@@ -13,26 +13,30 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
 #if NETSTANDARD2_0
             return GetFactory(
-                //"System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
                 "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient"
                 );
 #else
             return GetFactory(
-                            "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient",
-
+                "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient",
                 "System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-
-                //"System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a",
-                //"System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient",
-
-                //"System.Data.SqlClient.SqlClientFactory, System.Data, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                 "System.Data.SqlClient.SqlClientFactory, System.Data"
                 );
 #endif
         }
+        protected static readonly Regex SelectTopRegex = new Regex(@"^SELECT +TOP(\d+)", RegexOptions.IgnoreCase);
+
 
         public override string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)
         {
+            if (SelectTopRegex.IsMatch(parts.Sql)) return parts.Sql;
+            if (skip == 0) {
+                if (parts.Sql.StartsWith("SELECT ", StringComparison.InvariantCultureIgnoreCase)) {
+                    var sql = $"SELECT TOP(@{args.Length}) " + parts.Sql.Substring(7/*"SELECT ".Length*/);
+                    args = args.Concat(new object[] { take }).ToArray();
+                    return sql;
+                }
+            }
+
             var helper = PagingUtility;
             // when the query does not contain an "order by", it is very slow
             if (helper.SimpleRegexOrderBy.IsMatch(parts.SqlSelectRemoved)) {
@@ -46,9 +50,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 parts.SqlSelectRemoved = $"peta_inner.* FROM (SELECT {parts.SqlSelectRemoved}) peta_inner";
             }
             var sqlPage =
-                $"SELECT * FROM (SELECT ROW_NUMBER() OVER ({parts.SqlOrderBy ?? "ORDER BY (SELECT NULL)"}) peta_rn, " +
-                $"{parts.SqlSelectRemoved}) peta_paged " +
-                $"WHERE peta_rn > @{args.Length} AND peta_rn <= @{args.Length + 1}";
+              $"SELECT * FROM (SELECT ROW_NUMBER() OVER ({parts.SqlOrderBy ?? "ORDER BY (SELECT NULL)"}) peta_rn, " +
+              $"{parts.SqlSelectRemoved}) peta_paged " +
+              $"WHERE peta_rn > @{args.Length} AND peta_rn <= @{args.Length + 1}";
             args = args.Concat(new object[] { skip, skip + take }).ToArray();
             return sqlPage;
         }
