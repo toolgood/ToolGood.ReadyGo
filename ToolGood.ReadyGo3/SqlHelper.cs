@@ -364,10 +364,13 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public int Count<T>(string sql = "", params object[] args)
         {
-            var pd = PocoData.ForType(typeof(T));
-            var table = _provider.EscapeSqlIdentifier(pd.TableInfo.TableName);
-            sql = formatSql(sql);
-            sql = $"SELECT COUNT(*) FROM {table} {sql}";
+            sql = sql.Trim();
+            if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase)==false) {
+                var pd = PocoData.ForType(typeof(T));
+                var table = _provider.EscapeSqlIdentifier(pd.TableInfo.TableName);
+                sql = formatSql(sql);
+                sql = $"SELECT COUNT(*) FROM {table} {sql}";
+            }
 
             if (_usedCacheServiceOnce) {
                 return Run(sql, args, () => {
