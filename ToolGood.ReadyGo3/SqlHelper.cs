@@ -21,6 +21,8 @@ namespace ToolGood.ReadyGo3
         internal bool _setDateTimeDefaultNow;
         internal bool _setStringDefaultNotNull;
         internal bool _setGuidDefaultNew;
+        internal bool _sql_firstWithLimit1;
+        internal bool _sql_singleWithLimit2;
 
 
         // 读写数据库
@@ -365,7 +367,7 @@ namespace ToolGood.ReadyGo3
         public int Count<T>(string sql = "", params object[] args)
         {
             sql = sql.Trim();
-            if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase)==false) {
+            if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 var pd = PocoData.ForType(typeof(T));
                 var table = _provider.EscapeSqlIdentifier(pd.TableInfo.TableName);
                 sql = formatSql(sql);
@@ -500,9 +502,11 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T Single<T>(string sql = "", params object[] args)
         {
+            if (_sql_singleWithLimit2 == false) { return _Single<T>(sql, args); }
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return Run<T>(sql, args, () => {
+
                     return getDatabase().Query<T>(0, 2, sql, args).Single();
                 }, "Single");
             }
@@ -528,6 +532,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T SingleOrDefault<T>(string sql = "", params object[] args)
         {
+            if (_sql_singleWithLimit2 == false) { return _SingleOrDefault<T>(sql, args); }
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return Run<T>(sql, args, () => {
@@ -556,6 +561,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T First<T>(string sql = "", params object[] args)
         {
+            if (_sql_firstWithLimit1 == false) { return _First<T>(sql, args); }
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return Run<T>(sql, args, () => {
@@ -584,6 +590,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T FirstOrDefault<T>(string sql = "", params object[] args)
         {
+            if (_sql_firstWithLimit1 == false) { return _FirstOrDefault<T>(sql, args); }
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return Run<T>(sql, args, () => {

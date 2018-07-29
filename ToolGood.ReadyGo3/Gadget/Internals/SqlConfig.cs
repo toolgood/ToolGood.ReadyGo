@@ -35,6 +35,16 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         public bool Insert_Guid_Default_New { get { return _sqlHelper._setGuidDefaultNew; } set { _sqlHelper._setGuidDefaultNew = value; } }
 
         /// <summary>
+        /// 查询 First 使用 limit 1
+        /// </summary>
+        public bool Select_First_With_Limit_1 { get { return _sqlHelper._sql_firstWithLimit1; } set { _sqlHelper._sql_firstWithLimit1 = value; } }
+
+        /// <summary>
+        /// 查询 single 使用 limit 2
+        /// </summary>
+        public bool Select_Single_With_Limit_2 { get { return _sqlHelper._sql_singleWithLimit2; } set { _sqlHelper._sql_singleWithLimit2 = value; } }
+
+        /// <summary>
         /// SQL执行监控
         /// </summary>
         public ISqlMonitor SqlMonitor

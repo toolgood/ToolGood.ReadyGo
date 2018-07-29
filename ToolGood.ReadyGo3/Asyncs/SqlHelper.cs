@@ -278,6 +278,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<T> SingleAsync<T>(string sql = "", params object[] args)
         {
+            if (_sql_singleWithLimit2 == false) { return await _SingleAsync<T>(sql, args); }
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return await RunAsync<T>(sql, args, async () => {
@@ -306,6 +307,8 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<T> SingleOrDefaultAsync<T>(string sql = "", params object[] args)
         {
+            if (_sql_singleWithLimit2 == false) { return await _SingleOrDefaultAsync<T>(sql, args); }
+
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return await RunAsync<T>(sql, args, async () => {
@@ -334,6 +337,8 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<T> FirstAsync<T>(string sql = "", params object[] args)
         {
+            if (_sql_firstWithLimit1 == false) { return await _FirstAsync<T>(sql, args); }
+
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return await RunAsync<T>(sql, args, async () => {
@@ -362,6 +367,8 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<T> FirstOrDefaultAsync<T>(string sql = "", params object[] args)
         {
+            if (_sql_firstWithLimit1 == false) { return await _FirstOrDefaultAsync<T>(sql, args); }
+
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return await RunAsync<T>(sql, args, async () => {
