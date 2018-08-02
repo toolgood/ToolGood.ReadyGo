@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 
 namespace ToolGood.ReadyGo3
 {
@@ -57,6 +59,14 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public virtual long NextId()
         {
+            //lock (_lock) {
+            //    var timestamp = TimeGen();
+            //    long increment = Interlocked.Increment(ref _sequence) & SequenceMask;
+            //    _lastTimestamp = timestamp;
+            //    return (timestamp << TimestampLeftShift) | (WorkerId << WorkerIdShift) | increment;
+            //}
+            //雪花算法(Snowflake)C#版本 压测Id重复严重
+            //https://www.cnblogs.com/yushuo/p/9406906.html
             lock (_lock) {
                 var timestamp = TimeGen();
                 if (timestamp < _lastTimestamp) {
@@ -101,6 +111,35 @@ namespace ToolGood.ReadyGo3
             //private static readonly DateTime Twepoch1 = new DateTime(2015, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             //return (long)(DateTime.UtcNow - Twepoch1).TotalSeconds
             return (DateTime.UtcNow.Ticks - Twepoch) >> 23;
+        }
+
+
+
+        private static DateTime dt1970 = new DateTime(1970, 1, 1);
+        private static Random rnd = new Random();
+        private static readonly int __staticMachine = ((0x00ffffff & Environment.MachineName.GetHashCode()) +
+#if NETSTANDARD1_5 || NETSTANDARD1_6
+    1
+#else
+    AppDomain.CurrentDomain.Id
+#endif
+    ) & 0x00ffffff;
+        private static readonly int __staticPid = Process.GetCurrentProcess().Id;
+        private static int __staticIncrement = rnd.Next();
+
+        /// <summary>
+        /// 生成类似Mongodb的ObjectId有序、不重复Guid
+        /// https://www.cnblogs.com/yushuo/p/9406906.html 回复2楼
+        /// </summary>
+        /// <returns></returns>
+        public static Guid NewGuid()
+        {
+            var now = DateTime.Now;
+            var uninxtime = (int)now.Subtract(dt1970).TotalSeconds;
+            int increment = Interlocked.Increment(ref __staticIncrement) & 0x00ffffff;
+            var rand = rnd.Next(0, int.MaxValue);
+            var guid = $"{uninxtime.ToString("x8").PadLeft(8, '0')}{__staticMachine.ToString("x8").PadLeft(8, '0').Substring(2, 6)}{__staticPid.ToString("x8").PadLeft(8, '0').Substring(6, 2)}{increment.ToString("x8").PadLeft(8, '0')}{rand.ToString("x8").PadLeft(8, '0')}";
+            return Guid.Parse(guid);
         }
     }
 
