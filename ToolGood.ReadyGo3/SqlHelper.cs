@@ -738,7 +738,15 @@ namespace ToolGood.ReadyGo3
 
         #endregion Object  Insert Update Delete DeleteById Save
 
-
-
+        #region 生成序列化的Guid
+        /// <summary>
+        /// 生成序列化的Guid
+        /// </summary>
+        /// <returns></returns>
+        public Guid NewGuid()
+        {
+            return IdWorker.NewMongodbId();
+        } 
+        #endregion
     }
 }

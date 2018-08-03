@@ -59,14 +59,8 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public virtual long NextId()
         {
-            //lock (_lock) {
-            //    var timestamp = TimeGen();
-            //    long increment = Interlocked.Increment(ref _sequence) & SequenceMask;
-            //    _lastTimestamp = timestamp;
-            //    return (timestamp << TimestampLeftShift) | (WorkerId << WorkerIdShift) | increment;
-            //}
-            //雪花算法(Snowflake)C#版本 压测Id重复严重
-            //https://www.cnblogs.com/yushuo/p/9406906.html
+            ////雪花算法(Snowflake)C#版本 压测Id重复严重
+            ////https://www.cnblogs.com/yushuo/p/9406906.html
             lock (_lock) {
                 var timestamp = TimeGen();
                 if (timestamp < _lastTimestamp) {
@@ -117,13 +111,7 @@ namespace ToolGood.ReadyGo3
 
         private static DateTime dt1970 = new DateTime(1970, 1, 1);
         private static Random rnd = new Random();
-        private static readonly int __staticMachine = ((0x00ffffff & Environment.MachineName.GetHashCode()) +
-#if NETSTANDARD1_5 || NETSTANDARD1_6
-    1
-#else
-    AppDomain.CurrentDomain.Id
-#endif
-    ) & 0x00ffffff;
+        private static readonly int __staticMachine = ((0x00ffffff & Environment.MachineName.GetHashCode()) +AppDomain.CurrentDomain.Id) & 0x00ffffff;
         private static readonly int __staticPid = Process.GetCurrentProcess().Id;
         private static int __staticIncrement = rnd.Next();
 
@@ -132,7 +120,7 @@ namespace ToolGood.ReadyGo3
         /// https://www.cnblogs.com/yushuo/p/9406906.html 回复2楼
         /// </summary>
         /// <returns></returns>
-        public static Guid NewGuid()
+        public static Guid NewMongodbId()
         {
             var now = DateTime.Now;
             var uninxtime = (int)now.Subtract(dt1970).TotalSeconds;
