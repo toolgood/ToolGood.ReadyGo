@@ -1044,7 +1044,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public int SelectCount(string selectSql = null, bool distinct = false)
         {
-            return this._sqlhelper.getDatabase().Execute(this.GetCountSql(selectSql, distinct), this._args.ToArray());
+            return this._sqlhelper.getDatabase().ExecuteScalar<int>(this.GetCountSql(selectSql, distinct), this._args.ToArray());
         }
         /// <summary>
         /// 执行返回DataTable
@@ -1273,7 +1273,7 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             StringBuilder sb = new StringBuilder();
             sb.Append(select);
-            sb.Append(_joinOnString);
+            sb.Append(GetFromAndJoinOn());
             if (_where.Length > 0) {
                 sb.Append(" WHERE ");
                 sb.Append(_where);

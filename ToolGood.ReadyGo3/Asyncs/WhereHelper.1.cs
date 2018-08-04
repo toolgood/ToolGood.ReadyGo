@@ -207,7 +207,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public Task<int> SelectCountAsync(string selectSql = null, bool distinct = false)
         {
-            return _sqlhelper.getDatabase().ExecuteAsync(GetCountSql(selectSql, distinct), _args.ToArray());
+            return _sqlhelper.getDatabase().ExecuteScalarAsync<int>(GetCountSql(selectSql, distinct), _args.ToArray());
         }
         /// <summary>
         /// 执行返回DataTable
