@@ -11,8 +11,14 @@ namespace ToolGood.ReadyGo3.Test
     {
         static void Main(string[] args)
         {
+        var helper=    SqlHelperFactory.OpenSqlServer("", "", "", "");
+
+         var f=   helper.First<DbAdmin>("where IsDelete=0");
+
             Setup.Start();
             PetaTest.Runner.RunMain(args);
+
+
         }
 
 

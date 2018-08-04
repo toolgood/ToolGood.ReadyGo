@@ -128,7 +128,7 @@ namespace ToolGood.ReadyGo3
             if (_usedCacheServiceOnce) {
                 return await RunAsync(sql, args, async () => {
                     return await getDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
-                }, "Count");
+                }, "Exists");
             }
             return await getDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
         }
@@ -152,6 +152,23 @@ namespace ToolGood.ReadyGo3
 
             if (_usedCacheServiceOnce) {
                 return RunAsync(sql, args, () => {
+                    return getDatabase().ExecuteScalarAsync<int>(sql, args);
+                }, "Count");
+            }
+            return getDatabase().ExecuteScalarAsync<int>(sql, args);
+        }
+
+        /// <summary>
+        /// 执行SQL 查询,返回数量
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Task<int> CountAsync(string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
+            if (_usedCacheServiceOnce) {
+                return Run(sql, args, () => {
                     return getDatabase().ExecuteScalarAsync<int>(sql, args);
                 }, "Count");
             }

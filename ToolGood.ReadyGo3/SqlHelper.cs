@@ -382,6 +382,23 @@ namespace ToolGood.ReadyGo3
             return getDatabase().ExecuteScalar<int>(sql, args);
         }
 
+        /// <summary>
+        /// 执行SQL 查询,返回数量
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public int Count(string sql,params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
+            if (_usedCacheServiceOnce) {
+                return Run(sql, args, () => {
+                    return getDatabase().ExecuteScalar<int>(sql, args);
+                }, "Count");
+            }
+            return getDatabase().ExecuteScalar<int>(sql, args);
+        }
+
         #endregion Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
 
         #region Select Page Select
