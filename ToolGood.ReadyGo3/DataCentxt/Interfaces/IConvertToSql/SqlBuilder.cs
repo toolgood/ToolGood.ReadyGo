@@ -226,6 +226,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                 sb.Append(" FROM ");
                 sb.Append(fromTable);
                 if (string.IsNullOrEmpty(joinTable) == false) {
+                    if (_tables.Count == 1) { sb.Append(" AS  " + _tables[0]._asName); }
                     sb.Append(" ");
                     sb.Append(joinTable);
                 }

@@ -182,6 +182,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
             }
             return _sqlBuilder;
         }
+        internal virtual Type GetTableType()
+        {
+            return null;
+        }
+
     }
 
     public abstract partial class QTable<T> : QTable
@@ -228,6 +233,10 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QTableColumn<T1>();
         }
 
+        internal override Type GetTableType()
+        {
+            return typeof(T);
+        }
     }
 
 

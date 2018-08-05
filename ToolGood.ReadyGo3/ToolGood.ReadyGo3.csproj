@@ -21,13 +21,13 @@
         <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <FileVersion>3.1.0.41</FileVersion>
-        <Version>3.1.0.41</Version>
+        <FileVersion>3.1.0.42</FileVersion>
+        <Version>3.1.0.42</Version>
         <PackageReleaseNotes></PackageReleaseNotes>
         <Product>ToolGood.ReadyGo3</Product>
         <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
-        <AssemblyVersion>3.1.0.41</AssemblyVersion>
+        <AssemblyVersion>3.1.0.42</AssemblyVersion>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">

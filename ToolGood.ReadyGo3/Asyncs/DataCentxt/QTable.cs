@@ -647,6 +647,30 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         #endregion
 
+        #region SelectInsert
+        /// <summary>
+        /// Insert Into T(*)  Select * from T
+        /// </summary>
+        /// <param name="replaceColumns"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Task<int> SelectInsertAsync(string replaceColumns = "", params object[] args)
+        {
+            return GetSqlBuilder().SelectInsertAsync(replaceColumns, args);
+        }
+
+        /// <summary>
+        /// Insert Into T1(*)  Select * from T
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="replaceColumns"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Task<int> SelectInsertAsync<T1>(string replaceColumns = "", params object[] args)
+        {
+            return GetSqlBuilder().SelectInsertAsync<T1>(replaceColumns, args);
+        }
+        #endregion
 
     }
 }

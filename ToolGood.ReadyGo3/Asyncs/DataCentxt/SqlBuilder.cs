@@ -310,7 +310,35 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         #endregion
 
+        #region SelectInsert
+        /// <summary>
+        /// Insert Into T(*)  Select * from T
+        /// </summary>
+        /// <param name="replaceColumns"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Task<int> SelectInsertAsync(string replaceColumns, object[] args)
+        {
+            var sql = CreateSelectInsertSql(_tables[0].GetTableType(), replaceColumns, args);
+            return GetSqlHelper().ExecuteAsync(sql);
+        }
 
+
+
+
+        /// <summary>
+        /// Insert Into T1(*)  Select * from T
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="replaceColumns"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Task<int> SelectInsertAsync<T>(string replaceColumns, object[] args)
+        {
+            var sql = CreateSelectInsertSql(typeof(T), replaceColumns, args);
+            return GetSqlHelper().ExecuteAsync(sql);
+        }
+        #endregion
     }
 }
 #endif

@@ -70,9 +70,11 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         private List<string> ToSelectColumns(QColumn[] columns)
         {
+            var count = string.IsNullOrEmpty(_joinOnText) ? 0 : 1;
+
             List<string> selectColumns = new List<string>();
             foreach (var item in columns) {
-                var column = (item).ToSelectColumn(Provider, _tables.Count);
+                var column = (item).ToSelectColumn(Provider, _tables.Count+ count);
                 selectColumns.Add(column);
             }
             return selectColumns;
@@ -82,12 +84,14 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             List<string> selectColumns = new List<string>();
             List<string> columnNames = new List<string>();
 
+            var count = string.IsNullOrEmpty(_joinOnText) ? 0 : 1;
+
             foreach (var table in _tables) {
                 foreach (var item in table._columns) {
                     var col = item.Value;
 
                     if (columnNames.Contains(col._asName)) {
-                        var column = (col).ToSelectColumn(Provider, _tables.Count);
+                        var column = (col).ToSelectColumn(Provider, _tables.Count+ count);
                         columnNames.Add(col._asName);
                         selectColumns.Add(column);
                     }
@@ -107,15 +111,17 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             var columns = pd.Columns.Select(q => q.Key).ToList();
             if (columns.Count == 0) throw new NoColumnException();
 
+            var count = string.IsNullOrEmpty(_joinOnText) ? 0 : 1;
+
             foreach (var table in _tables) {
                 foreach (var item in table._columns) {
                     var col = item.Value;
                     if (columns.Contains(col._columnName)) {
                         columns.Remove(col._columnName);
-                        selectColumns.Add((col).ToSelectColumn(Provider, _tables.Count));
+                        selectColumns.Add((col).ToSelectColumn(Provider, _tables.Count+ count));
                     } else if (columns.Contains(col._asName)) {
                         columns.Remove(col._asName);
-                        selectColumns.Add((col).ToSelectColumn(Provider, _tables.Count));
+                        selectColumns.Add((col).ToSelectColumn(Provider, _tables.Count+ count));
                     }
                 }
             }
