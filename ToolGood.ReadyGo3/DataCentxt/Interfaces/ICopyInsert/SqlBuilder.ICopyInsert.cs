@@ -59,6 +59,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             sb.Append(Provider.EscapeSqlIdentifier(pd.TableInfo.TableName));
             sb.Append("(");
             Dictionary<string, string> selectColumns = new Dictionary<string, string>();
+            var count = string.IsNullOrEmpty(joinTable) ? 0 : 1;
             foreach (var item in pd.Columns) {
                 var colName = item.Key;
                 if (colName == pd.TableInfo.PrimaryKey) continue;
@@ -67,8 +68,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                 if (replaceCols.TryGetValue(colName, out string sql)) {
                     selectColumns[Provider.EscapeSqlIdentifier(colName)] = sql;
                 } else if (_tables[0]._columns.TryGetValue(colName.ToLower(), out QTableColumn column)) {
-                    var count = string.IsNullOrEmpty(joinTable) ? 0 : 1;
-                    selectColumns[Provider.EscapeSqlIdentifier(colName)] = column.ToSelectColumn(Provider, _tables.Count+ count);
+                    selectColumns[Provider.EscapeSqlIdentifier(colName)] = column.ToSelectColumn(Provider, _tables.Count + count);
                 }
             }
             sb.Append(string.Join(",", selectColumns.Keys));
