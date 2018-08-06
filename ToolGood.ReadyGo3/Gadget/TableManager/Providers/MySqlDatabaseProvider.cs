@@ -25,7 +25,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             foreach (var item in ti.Uniques) {
                 var txt = "u_" + string.Join("_", item);
                 var columns = string.Join(",", item);
-                sql += "    UNIQUE INDEX "+ txt + " ( "+ columns + "),\r\n  ";
+                sql += "    UNIQUE INDEX "+ txt + " ( "+ columns + "),\r\n";
             }
             sql = sql.Substring(0, sql.Length - 3);
             sql += "\r\n);";
@@ -47,7 +47,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             foreach (var item in ti.Uniques) {
                 var txt = "u_" + string.Join("_", item);
                 var columns = string.Join(",", item);
-                sql += "    UNIQUE INDEX " + txt + " ( " + columns + "),\r\n  ";
+                sql += "    UNIQUE INDEX " + txt + " ( " + columns + "),\r\n";
             }
             sql = sql.Substring(0, sql.Length - 3);
             sql += "\r\n);";
