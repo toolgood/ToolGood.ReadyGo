@@ -12,6 +12,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
         internal TableInfo() { }
 
         /// <summary>
+        /// 数据库名
+        /// </summary>
+        public string DatabaseName;
+
+        /// <summary>
         ///     模式名;
         /// </summary>
         public string SchemaName;
@@ -48,6 +53,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var a = t.GetCustomAttributes(typeof(TableAttribute), true);
             if (a.Length > 0) {
                 var ta = (a[0] as TableAttribute);
+                ti.DatabaseName = ta.DatabaseName;
                 ti.SchemaName = ta.SchemaName;
                 ti.TableName = ta.TableName;
             } else {

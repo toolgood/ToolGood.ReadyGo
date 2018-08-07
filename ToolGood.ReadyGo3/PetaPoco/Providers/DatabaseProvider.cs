@@ -60,6 +60,39 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         }
 
         /// <summary>
+        /// 获取表名
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public string GetTableName(PocoData data)
+        {
+            var ti = data.TableInfo;
+            return GetTableName(ti.DatabaseName, ti.SchemaName, ti.TableName);
+        }
+
+        /// <summary>
+        /// 获取表名
+        /// </summary>
+        /// <param name="databaseName"></param>
+        /// <param name="schemaName"></param>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
+        public virtual string GetTableName(string databaseName,string schemaName,string tableName)
+        {
+            if (string.IsNullOrEmpty(databaseName) == false) {
+                if (string.IsNullOrEmpty(schemaName) == false) {
+                    return $"[{databaseName}].[{schemaName}].[{tableName}]";
+                }
+                return $"[{databaseName}].[dbo].[{tableName}]";
+            }
+            if (string.IsNullOrEmpty(schemaName) == false) {
+                return $"[{schemaName}].[{tableName}]";
+            }
+            return $"[{tableName}]";
+        }
+
+
+        /// <summary>
         ///     Returns the prefix used to delimit parameters in SQL query strings.
         /// </summary>
         /// <param name="connectionString">The connection string.</param>

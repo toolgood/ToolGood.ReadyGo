@@ -15,8 +15,8 @@ namespace ToolGood.ReadyGo3.DataCentxt
     {
         internal string ToSql(DatabaseProvider provider, bool schemaName)
         {
-            if (schemaName && string.IsNullOrEmpty(_schemaName) == false) {
-                return provider.EscapeSqlIdentifier(_schemaName) + "." + provider.EscapeSqlIdentifier(_tableName);
+            if (schemaName) {
+                return provider.GetTableName(_databaseName, _schemaName, _tableName);
             }
             return provider.EscapeSqlIdentifier(_tableName);
         }

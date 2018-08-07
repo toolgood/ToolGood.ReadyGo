@@ -50,6 +50,19 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             return $"\"{sqlIdentifier.ToUpperInvariant()}\"";
         }
+        public override string GetTableName(string databaseName, string schemaName, string tableName)
+        {
+            if (string.IsNullOrEmpty(databaseName) == false) {
+                if (string.IsNullOrEmpty(schemaName) == false) {
+                    return $"\"{databaseName}\".\"{schemaName}\".\"{tableName}\"";
+                }
+                return $"\"{databaseName}\".\"{tableName}\"";
+            }
+            if (string.IsNullOrEmpty(schemaName) == false) {
+                return $"\"{schemaName}\".\"{tableName}\"";
+            }
+            return $"\"{tableName}\"";
+        }
 
         public override string GetAutoIncrementExpression(TableInfo ti)
         {

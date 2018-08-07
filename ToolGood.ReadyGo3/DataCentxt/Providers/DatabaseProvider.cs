@@ -9,23 +9,16 @@ using ToolGood.ReadyGo3.DataCentxt.Enums;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.DataCentxt.Providers;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
+using System.Data.Common;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {
-    public class DatabaseProvider
+    public class DatabaseProvider: ToolGood.ReadyGo3.PetaPoco.Core.DatabaseProvider
     {
         protected bool usedEscapeSql = false;
         protected char escapeSql = '`';
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sqlIdentifier"></param>
-        /// <returns></returns>
-        public virtual string EscapeSqlIdentifier(string sqlIdentifier)
-        {
-            return $"[{sqlIdentifier}]";
-        }
+ 
         /// <summary>
         /// 创建生成SQL Function
         /// </summary>
@@ -348,6 +341,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 default: break;
             }
             return Singleton<SqlServerDatabaseProvider>.Instance;
+        }
+
+        public override DbProviderFactory GetFactory()
+        {
+            throw new NotImplementedException();
         }
     }
 }

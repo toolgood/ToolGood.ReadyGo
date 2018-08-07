@@ -19,15 +19,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
             usedEscapeSql = true;
             escapeSql = '`';
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sqlIdentifier"></param>
-        /// <returns></returns>
-        public override string EscapeSqlIdentifier(string sqlIdentifier)
-        {
-            return $"`{sqlIdentifier}`";
-        }
+     
         /// <summary>
         /// 
         /// </summary>

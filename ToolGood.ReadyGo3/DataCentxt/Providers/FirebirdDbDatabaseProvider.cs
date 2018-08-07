@@ -110,18 +110,5 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
             return sb.ToString();
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sqlIdentifier"></param>
-        /// <returns></returns>
-        public override string EscapeSqlIdentifier(string sqlIdentifier)
-        {
-            return $"\"{sqlIdentifier}\"";
-        }
-
- 
-
     }
 }

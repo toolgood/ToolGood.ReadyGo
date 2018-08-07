@@ -122,10 +122,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
 
 
 
-        public override string EscapeSqlIdentifier(  string sqlIdentifier)
-        {
-            return $"\"{sqlIdentifier}\"";
-        }
+ 
 
  
     }

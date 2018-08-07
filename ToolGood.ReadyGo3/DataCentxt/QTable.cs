@@ -20,6 +20,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// </summary>
         public string __SchemaName__ { get { return _schemaName; } set { _schemaName = value?.Trim(); } }
         /// <summary>
+        /// Schema名
+        /// </summary>
+        public string __DatabaseName__ { get { return _databaseName; } set { _databaseName = value?.Trim(); } }
+
+        /// <summary>
         /// SQL记录
         /// </summary>
         public SqlRecord __SQL__ { get { return GetSqlHelper()._Sql; } }
@@ -28,6 +33,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         private SqlHelper _sqlHelper;
 
         internal SqlBuilder _sqlBuilder;
+        internal string _databaseName;
         internal string _schemaName;
         internal string _tableName;
         internal string _asName;
@@ -61,8 +67,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 }
             }
         }
-
-
 
         #region AddColumn
         protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk, bool isAutoIncrement, bool resultColumn, string resultSql)
@@ -200,6 +204,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
             __TableName__ = pd.TableInfo.TableName;
             __SchemaName__ = pd.TableInfo.SchemaName;
+            __DatabaseName__ = pd.TableInfo.DatabaseName;
             Init();
         }
 

@@ -19,6 +19,12 @@ namespace ToolGood.ReadyGo3.Attributes
         public string SchemaName;
 
         /// <summary>
+        /// 数据库名
+        /// </summary>
+        public string DatabaseName;
+
+
+        /// <summary>
         /// 数据表
         /// </summary>
         /// <param name="tableName"></param>
@@ -36,5 +42,19 @@ namespace ToolGood.ReadyGo3.Attributes
             SchemaName = schemaName.Trim();
             TableName = tableName.Trim();
         }
+
+        /// <summary>
+        /// 数据表
+        /// </summary>
+        /// <param name="schemaName"></param>
+        /// <param name="tableName"></param>
+        public TableAttribute(string tableName, string schemaName,string databaseName)
+        {
+            SchemaName = schemaName.Trim();
+            TableName = tableName.Trim();
+            DatabaseName = databaseName.Trim();
+        }
+
+
     }
 }

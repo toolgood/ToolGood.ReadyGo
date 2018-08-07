@@ -26,6 +26,17 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return $"`{sqlIdentifier}`";
         }
 
+        public override string GetTableName(string databaseName, string schemaName, string tableName)
+        {
+            if (string.IsNullOrEmpty(databaseName) == false) {
+                return $"`{databaseName}`.`{tableName}`";
+            }
+            if (string.IsNullOrEmpty(schemaName) == false) {
+                return $"`{schemaName}`.`{tableName}`";
+            }
+            return $"`{tableName}`";
+        }
+
         public override string GetExistsSql()
         {
             return "SELECT EXISTS (SELECT 1 FROM {0} WHERE {1})";
