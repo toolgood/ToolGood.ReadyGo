@@ -11,18 +11,18 @@ namespace ToolGood.ReadyGo3.DataCentxt
 {
     public abstract partial class QTable : IDisposable
     {
-        /// <summary>
-        /// 表名
-        /// </summary>
-        public string __TableName__ { get { return _tableName; } set { _tableName = value.Trim(); } }
-        /// <summary>
-        /// Schema名
-        /// </summary>
-        public string __SchemaName__ { get { return _schemaName; } set { _schemaName = value?.Trim(); } }
-        /// <summary>
-        /// Schema名
-        /// </summary>
-        public string __DatabaseName__ { get { return _databaseName; } set { _databaseName = value?.Trim(); } }
+        ///// <summary>
+        ///// 表名
+        ///// </summary>
+        //public string __TableName__ { get { return _tableName; } set { _tableName = value.Trim(); } }
+        ///// <summary>
+        ///// Schema名
+        ///// </summary>
+        //public string __SchemaName__ { get { return _schemaName; } set { _schemaName = value?.Trim(); } }
+        ///// <summary>
+        ///// Schema名
+        ///// </summary>
+        //public string __DatabaseName__ { get { return _databaseName; } set { _databaseName = value?.Trim(); } }
 
         /// <summary>
         /// SQL记录
@@ -33,9 +33,9 @@ namespace ToolGood.ReadyGo3.DataCentxt
         private SqlHelper _sqlHelper;
 
         internal SqlBuilder _sqlBuilder;
-        internal string _databaseName;
-        internal string _schemaName;
-        internal string _tableName;
+        //internal string _databaseName;
+        //internal string _schemaName;
+        //internal string _tableName;
         internal string _asName;
         internal JoinType _joinType;
         internal QJoinCondition _joinCondition;
@@ -201,10 +201,10 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// </summary>
         protected QTable() : base()
         {
-            var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
-            __TableName__ = pd.TableInfo.TableName;
-            __SchemaName__ = pd.TableInfo.SchemaName;
-            __DatabaseName__ = pd.TableInfo.DatabaseName;
+            //var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
+            //__TableName__ = pd.TableInfo.TableName;
+            //__SchemaName__ = pd.TableInfo.SchemaName;
+            //__DatabaseName__ = pd.TableInfo.DatabaseName;
             Init();
         }
 
@@ -214,9 +214,9 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="sqlHelper"></param>
         protected QTable(SqlHelper sqlHelper) : base(sqlHelper)
         {
-            var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
-            __TableName__ = pd.TableInfo.TableName;
-            __SchemaName__ = pd.TableInfo.SchemaName;
+            //var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
+            //__TableName__ = pd.TableInfo.TableName;
+            //__SchemaName__ = pd.TableInfo.SchemaName;
             Init();
         }
 
@@ -238,9 +238,13 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return new QTableColumn<T1>();
         }
 
+        private Type _type;
         internal override Type GetTableType()
         {
-            return typeof(T);
+            if (_type==null) {
+                _type= typeof(T);
+            }
+            return _type;
         }
     }
 

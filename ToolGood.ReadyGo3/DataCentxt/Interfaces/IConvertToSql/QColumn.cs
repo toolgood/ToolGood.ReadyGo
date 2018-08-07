@@ -15,7 +15,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         {
             if (this._isResultColumn && string.IsNullOrEmpty(this._resultSql) == false) {
                 string sql;
-                if (tableCount > 1) {
+                if (tableCount > 1 ) {
                     sql = _resultSql.Replace("{0}", _table._asName + ".");
                 } else {
                     sql = _resultSql.Replace("{0}", (_table).ToSql(provider, false) + ".");

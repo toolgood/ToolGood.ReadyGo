@@ -15,10 +15,11 @@ namespace ToolGood.ReadyGo3.DataCentxt
     {
         internal string ToSql(DatabaseProvider provider, bool schemaName)
         {
+            var pd = PetaPoco.Core.PocoData.ForType(GetTableType());
             if (schemaName) {
-                return provider.GetTableName(_databaseName, _schemaName, _tableName);
+                return provider.GetTableName(pd,GetSqlHelper()._tableNameManager);
             }
-            return provider.EscapeSqlIdentifier(_tableName);
+            return provider.GetMiniTableName(pd, GetSqlHelper()._tableNameManager);
         }
 
 

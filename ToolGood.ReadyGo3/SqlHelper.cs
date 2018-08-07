@@ -26,10 +26,9 @@ namespace ToolGood.ReadyGo3
 
 
         // 读写数据库
-        internal string _connectionString;
-        internal DbProviderFactory _factory;
+        internal readonly string _connectionString;
+        internal readonly DbProviderFactory _factory;
         internal Database _database;
-        internal string _schemaName;
 
         // 缓存设置
 #if NETSTANDARD2_0
@@ -47,13 +46,13 @@ namespace ToolGood.ReadyGo3
         internal int _oneTimeCommandTimeout;
         internal IsolationLevel? _isolationLevel;
 
-        internal TableNameManager _tableNameManager = new TableNameManager();
-        internal SqlEvents _events;
-        private SqlConfig _sqlConfig;
-        internal SqlType _sqlType;
-        internal SqlRecord _sql = new SqlRecord();
+        internal readonly TableNameManager _tableNameManager = new TableNameManager();
+        internal readonly SqlEvents _events;
+        private readonly SqlConfig _sqlConfig;
+        internal readonly SqlType _sqlType;
+        internal readonly SqlRecord _sql = new SqlRecord();
         internal ISqlMonitor _sqlMonitor = new NullSqlMonitor();
-        private DatabaseProvider _provider;
+        private readonly  DatabaseProvider _provider;
         internal bool _isDisposable;
 
 
@@ -100,15 +99,6 @@ namespace ToolGood.ReadyGo3
 
             _events = new SqlEvents(this);
             _connectionString = connectionString;
-            var txts = connectionString.Split(';');
-            foreach (var txt in txts) {
-                var sp = txt.Split('=');
-                if (sp.Length != 2) continue;
-                if (sp[0].ToLower() == "database" || sp[0].ToLower() == "data source") {
-                    _schemaName = sp[1];
-                    break;
-                }
-            }
             _sqlConfig = new SqlConfig(this);
             _provider = DatabaseProvider.Resolve(_sqlType);
         }

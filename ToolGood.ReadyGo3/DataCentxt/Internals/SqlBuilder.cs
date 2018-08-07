@@ -38,9 +38,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         {
             _tables.Add(table);
             table._asName = "t" + _tables.Count;
-            if (string.IsNullOrEmpty(table._schemaName) == false) {
-                SetUsedSchemaName();
-            }
+            //if (string.IsNullOrEmpty(table._schemaName) == false) {
+            //    SetUsedSchemaName();
+            //}
         }
 
         private SqlHelper GetSqlHelper()
@@ -48,31 +48,31 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             return _tables[0].GetSqlHelper();
         }
 
-        private void SetUsedSchemaName()
-        {
-            if (_usedSchemaName == false) {
-                bool hasSchemaName = false;
-                string schemaName = "";
+        //private void SetUsedSchemaName()
+        //{
+        //    if (_usedSchemaName == false) {
+        //        bool hasSchemaName = false;
+        //        string schemaName = "";
 
-                if (string.IsNullOrEmpty(GetSqlHelper()._schemaName) == false) {
-                    hasSchemaName = true;
-                    schemaName = GetSqlHelper()._schemaName;
-                }
-                foreach (var item in _tables) {
-                    if (string.IsNullOrEmpty(item._schemaName) == false) {
-                        if (hasSchemaName) {
-                            if (schemaName != item._schemaName) {
-                                _usedSchemaName = true;
-                                return;
-                            }
-                        } else {
-                            hasSchemaName = true;
-                            schemaName = item._schemaName;
-                        }
-                    }
-                }
-            }
-        }
+        //        if (string.IsNullOrEmpty(GetSqlHelper()._schemaName) == false) {
+        //            hasSchemaName = true;
+        //            schemaName = GetSqlHelper()._schemaName;
+        //        }
+        //        foreach (var item in _tables) {
+        //            if (string.IsNullOrEmpty(item._schemaName) == false) {
+        //                if (hasSchemaName) {
+        //                    if (schemaName != item._schemaName) {
+        //                        _usedSchemaName = true;
+        //                        return;
+        //                    }
+        //                } else {
+        //                    hasSchemaName = true;
+        //                    schemaName = item._schemaName;
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
 
 
 

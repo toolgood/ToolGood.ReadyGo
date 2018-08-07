@@ -109,6 +109,28 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         }
 
         /// <summary>
+        /// 获取表名 ,不带databaseName ， schemaName
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="manager"></param>
+        /// <returns></returns>
+        public string GetMiniTableName(PocoData data, TableNameManager manager = null)
+        {
+            var ti = data.TableInfo;
+            var tableName = ti.TableName;
+            if (manager != null && manager.IsUsed) {
+                var setting = manager.TryGetSetting(ti.SettingName);
+                if (string.IsNullOrEmpty(setting.TableNamePrefixText) == false) {
+                    tableName = setting.TableNamePrefixText + tableName;
+                }
+                if (string.IsNullOrEmpty(setting.TableNameSuffixText) == false) {
+                    tableName = tableName + setting.TableNameSuffixText;
+                }
+            }
+            return GetTableName(null, null, tableName);
+        }
+
+        /// <summary>
         /// 获取表名
         /// </summary>
         /// <param name="databaseName"></param>
