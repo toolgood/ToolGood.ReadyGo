@@ -1418,7 +1418,7 @@ namespace ToolGood.ReadyGo3.LinQ
             var dp = DatabaseProvider.Resolve(_sqlhelper._sqlType);
             StringBuilder sb = new StringBuilder();
             sb.Append("FROM ");
-            sb.Append(dp.GetTableName(pd1));
+            sb.Append(dp.GetTableName(pd1,_sqlhelper._tableNameManager));
 
             sb.Append(" AS t1 ");
             sb.Append(_joinOnString);

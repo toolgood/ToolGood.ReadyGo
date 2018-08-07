@@ -27,6 +27,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public string TableName;
 
         /// <summary>
+        /// 配置名
+        /// </summary>
+        public string SettingName;
+
+        /// <summary>
         ///     主键
         /// </summary>
         public string PrimaryKey;
@@ -56,6 +61,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 ti.DatabaseName = ta.DatabaseName;
                 ti.SchemaName = ta.SchemaName;
                 ti.TableName = ta.TableName;
+                ti.SettingName = ta.SettingName;
             } else {
                 ti.TableName = t.Name;
             }

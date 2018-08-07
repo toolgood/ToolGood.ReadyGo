@@ -120,7 +120,7 @@ namespace ToolGood.ReadyGo3
         public async Task<bool> ExistsAsync<T>(object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T));
-            var table = _provider.GetTableName(pd);
+            var table = _provider.GetTableName(pd,_tableNameManager);
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
@@ -145,7 +145,7 @@ namespace ToolGood.ReadyGo3
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 var pd = PocoData.ForType(typeof(T));
-                var table = _provider.GetTableName(pd);
+                var table = _provider.GetTableName(pd,_tableNameManager);
                 sql = formatSql(sql);
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }

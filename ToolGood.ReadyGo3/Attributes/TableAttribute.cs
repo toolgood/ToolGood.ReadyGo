@@ -23,6 +23,10 @@ namespace ToolGood.ReadyGo3.Attributes
         /// </summary>
         public string DatabaseName;
 
+        /// <summary>
+        /// 配置名
+        /// </summary>
+        public string SettingName;
 
         /// <summary>
         /// 数据表

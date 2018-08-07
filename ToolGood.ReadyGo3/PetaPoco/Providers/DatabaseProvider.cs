@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using ToolGood.ReadyGo3.Gadget.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.PetaPoco.Providers;
 using ToolGood.ReadyGo3.PetaPoco.Utilities;
@@ -22,16 +23,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <summary>
         ///     Gets a flag for whether the DB has native support for GUID/UUID.
         /// </summary>
-        public virtual bool HasNativeGuidSupport
-        {
+        public virtual bool HasNativeGuidSupport {
             get { return false; }
         }
 
         /// <summary>
         ///     Gets the <seealso cref="PagingHelper" /> this provider supplies.
         /// </summary>
-        public virtual PagingHelper PagingUtility
-        {
+        public virtual PagingHelper PagingUtility {
             get { return PagingHelper.Instance; }
         }
 
@@ -63,11 +62,50 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// 获取表名
         /// </summary>
         /// <param name="data"></param>
+        /// <param name="manager"></param>
         /// <returns></returns>
-        public string GetTableName(PocoData data)
+        public string GetTableName(PocoData data, TableNameManager manager = null)
         {
             var ti = data.TableInfo;
-            return GetTableName(ti.DatabaseName, ti.SchemaName, ti.TableName);
+            var databaseName = ti.DatabaseName;
+            var schemaName = ti.SchemaName;
+            var tableName = ti.TableName;
+            if (manager != null && manager.IsUsed) {
+                var setting = manager.TryGetSetting(ti.SettingName);
+                if (string.IsNullOrEmpty(databaseName)) {
+                    if (string.IsNullOrEmpty(setting.DatabaseNameNullText) == false) {
+                        databaseName = setting.DatabaseNameNullText;
+                    }
+                } else {
+                    if (string.IsNullOrEmpty(setting.DatabaseNamePrefixText) == false) {
+                        databaseName = setting.DatabaseNamePrefixText + databaseName;
+                    }
+                    if (string.IsNullOrEmpty(setting.DatabaseNameSuffixText) == false) {
+                        databaseName = databaseName + setting.DatabaseNameNullText;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(schemaName)) {
+                    if (string.IsNullOrEmpty(setting.SchemaNameNullText) == false) {
+                        schemaName = setting.SchemaNameNullText;
+                    }
+                } else {
+                    if (string.IsNullOrEmpty(setting.SchemaNamePrefixText) == false) {
+                        schemaName = setting.SchemaNamePrefixText + schemaName;
+                    }
+                    if (string.IsNullOrEmpty(setting.SchemaNameSuffixText) == false) {
+                        schemaName = schemaName + setting.SchemaNameSuffixText;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(setting.TableNamePrefixText) == false) {
+                    tableName = setting.TableNamePrefixText + tableName;
+                }
+                if (string.IsNullOrEmpty(setting.TableNameSuffixText) == false) {
+                    tableName = tableName + setting.TableNameSuffixText;
+                }
+            }
+            return GetTableName(databaseName, schemaName, tableName);
         }
 
         /// <summary>
@@ -77,7 +115,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="schemaName"></param>
         /// <param name="tableName"></param>
         /// <returns></returns>
-        public virtual string GetTableName(string databaseName,string schemaName,string tableName)
+        public virtual string GetTableName(string databaseName, string schemaName, string tableName)
         {
             if (string.IsNullOrEmpty(databaseName) == false) {
                 if (string.IsNullOrEmpty(schemaName) == false) {
