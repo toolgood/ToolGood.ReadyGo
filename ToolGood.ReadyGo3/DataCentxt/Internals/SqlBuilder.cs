@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using ToolGood.ReadyGo3.DataCentxt.Internals;
 
 namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
-     partial class SqlBuilder : IDisposable
+    partial class SqlBuilder : IDisposable
     {
         internal DatabaseProvider _provider;
         internal DatabaseProvider Provider

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-
-namespace ToolGood.ReadyGo3.DataCentxt.Internals
+﻿namespace ToolGood.ReadyGo3.DataCentxt.Internals
 {
 
-     partial class OrderItem
+    partial class OrderItem
     {
         private QColumn column;
         private OrderType orderType;

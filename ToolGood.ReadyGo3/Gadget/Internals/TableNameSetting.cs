@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace ToolGood.ReadyGo3.Gadget.Internals
+﻿namespace ToolGood.ReadyGo3.Gadget.Internals
 {
     /// <summary>
     /// 表名设置类

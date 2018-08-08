@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
+﻿using System.Configuration;
 using System.Data.Common;
-using System.IO;
-using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 

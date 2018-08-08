@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,10 +11,10 @@ namespace ToolGood.ReadyGo3.LinQ
     partial class WhereHelper<T1>
     {
 
-        #region 06 查询 Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+#region 06 查询 Select Page SkipTake Single SingleOrDefault First FirstOrDefault
 
 
-        #region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+#region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -95,9 +94,9 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.FirstOrDefaultAsync<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
 
-        #endregion Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+#endregion Select Page SkipTake Single SingleOrDefault First FirstOrDefault
 
-        #region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+#region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -194,11 +193,11 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.PageAsync<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
-        #endregion
+#endregion
 
-        #endregion
+#endregion
 
-        #region 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page Single SingleOrDefault First FirstOrDefault
+#region 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page Single SingleOrDefault First FirstOrDefault
         /// <summary>
         /// 获取数量
         /// </summary>
@@ -308,9 +307,9 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.PageAsync<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
-        #endregion
+#endregion
 
-        #region 10 Update
+#region 10 Update
         /// <summary>
         /// 更新数据库,仅支持单一表格更新，WHERE条件为空报错
         /// </summary>
@@ -379,9 +378,9 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.UpdateAsync<T1>(sql, _args.ToArray());
         }
 
-        #endregion
+#endregion
 
-        #region 11 Delete
+#region 11 Delete
         /// <summary>
         /// 删除，只支持单一表格，WHERE条件为空报错
         /// </summary>
@@ -392,7 +391,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.DeleteAsync<T1>($"WHERE {_where.ToString()}", _args.ToArray());
         }
 
-        #endregion
+#endregion
     }
 }
 #endif

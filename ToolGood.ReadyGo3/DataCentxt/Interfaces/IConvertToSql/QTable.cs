@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
 
-using ToolGood.ReadyGo3.DataCentxt.Internals;
-
 namespace ToolGood.ReadyGo3.DataCentxt
 {
     /// <summary>

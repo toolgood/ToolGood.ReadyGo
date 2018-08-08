@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.DataCentxt.Enums;
-
-using ToolGood.ReadyGo3.PetaPoco.Internal;
-using ToolGood.ReadyGo3.DataCentxt.Providers;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-using System.Data.Common;
+using ToolGood.ReadyGo3.DataCentxt.Providers;
+using ToolGood.ReadyGo3.PetaPoco.Internal;
 
 namespace ToolGood.ReadyGo3.DataCentxt
 {

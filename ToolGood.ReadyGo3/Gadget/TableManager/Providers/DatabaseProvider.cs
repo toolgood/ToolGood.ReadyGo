@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ToolGood.ReadyGo3.Gadget.TableManager.Providers;
-using ToolGood.ReadyGo3.DataCentxt.Exceptions;
-using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.Gadget.Internals;
+using ToolGood.ReadyGo3.Gadget.TableManager.Providers;
+using ToolGood.ReadyGo3.PetaPoco.Internal;
 
 namespace ToolGood.ReadyGo3.Gadget.TableManager
 {

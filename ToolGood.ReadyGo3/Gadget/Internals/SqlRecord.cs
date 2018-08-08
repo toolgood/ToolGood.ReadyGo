@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using ToolGood.ReadyGo3.Gadget.Monitor;
 
 namespace ToolGood.ReadyGo3.Gadget.Internals
 {
