@@ -13,19 +13,19 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
         public override string GetTryCreateTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            var sql = "CREATE TABLE IF NOT EXISTS " + getTableName(ti) + "(\r\n";
+            var sql = "CREATE TABLE IF NOT EXISTS " + GetTableName(ti) + "(\r\n";
             foreach (var item in ti.Columns) {
                 sql += "    " + CreateColumn(ti, item) + ",\r\n";
             }
             foreach (var item in ti.Indexs) {
                 var txt = "i_" + string.Join("_", item);
-                var columns= string.Join(",", item);
-                sql += "    INDEX "+ txt+"("+ columns+"),\r\n";
+                var columns = string.Join(",", item);
+                sql += "    INDEX " + txt + "(" + columns + "),\r\n";
             }
             foreach (var item in ti.Uniques) {
                 var txt = "u_" + string.Join("_", item);
                 var columns = string.Join(",", item);
-                sql += "    UNIQUE INDEX "+ txt + " ( "+ columns + "),\r\n";
+                sql += "    UNIQUE INDEX " + txt + " ( " + columns + "),\r\n";
             }
             sql = sql.Substring(0, sql.Length - 3);
             sql += "\r\n);";
@@ -35,7 +35,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
         public override string GetCreateTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            var sql = "CREATE TABLE " + getTableName(ti) + "(\r\n";
+            var sql = "CREATE TABLE " + GetTableName(ti) + "(\r\n";
             foreach (var item in ti.Columns) {
                 sql += "    " + CreateColumn(ti, item) + ",\r\n";
             }
@@ -57,25 +57,14 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
         public override string GetDropTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            return "DROP TABLE IF EXISTS "+getTableName(ti)+";";
+            return "DROP TABLE IF EXISTS " + GetTableName(ti) + ";";
         }
 
         public override string GetTruncateTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            return "TRUNCATE TABLE " + getTableName(ti) + ";";
+            return "TRUNCATE TABLE " + GetTableName(ti) + ";";
         }
-
-
-
-        private string getTableName(TableInfo ti)
-        {
-            if (string.IsNullOrEmpty(ti.SchemaName)) {
-                return "`" + ti.TableName + "`"; 
-            }
-            return "`" + ti.SchemaName + "`.`" + ti.TableName + "`"; 
-        }
-
 
         public string CreateColumn(TableInfo ti, ColumnInfo ci)
         {
@@ -139,6 +128,17 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
                 sb.AppendFormat(" COMMENT '{0}'", ci.Comment.Replace("'", @"\'"));
             }
             return sb.ToString();
+        }
+
+        public override string GetTableName(string databaseName, string schemaName, string tableName)
+        {
+            if (string.IsNullOrEmpty(databaseName) == false) {
+                return $"`{databaseName}`.`{tableName}`";
+            }
+            if (string.IsNullOrEmpty(schemaName) == false) {
+                return $"`{schemaName}`.`{tableName}`";
+            }
+            return $"`{tableName}`";
         }
     }
 }

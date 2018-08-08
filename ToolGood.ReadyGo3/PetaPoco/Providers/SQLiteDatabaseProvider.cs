@@ -43,5 +43,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             return "SELECT EXISTS (SELECT 1 FROM {0} WHERE {1})";
         }
+
+        public override string GetTableName(string databaseName, string schemaName, string tableName)
+        {
+            return $"[{tableName}]";
+        }
     }
 }

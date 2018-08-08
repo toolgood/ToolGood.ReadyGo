@@ -13,8 +13,10 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
     {
         internal TableInfo() { }
 
+        public string DatabaseName;
         public string SchemaName;
         public string TableName;
+        public string SettingName;
 
         public string PrimaryKey;
         public bool AutoIncrement;
@@ -36,8 +38,10 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             var a = t.GetCustomAttributes(typeof(TableAttribute), true);
             if (a.Length > 0) {
                 var ta = (a[0] as TableAttribute);
+                ti.DatabaseName = ta.DatabaseName;
                 ti.SchemaName = ta.SchemaName;
                 ti.TableName = ta.TableName;
+                ti.SettingName = ta.SettingName;
             } else {
                 ti.TableName = t.Name;
             }

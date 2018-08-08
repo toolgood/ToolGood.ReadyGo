@@ -13,7 +13,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
         public override string GetTryCreateTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            var sql = "CREATE TABLE IF NOT EXISTS " + getTableName(ti) + "(\r\n";
+            var sql = "CREATE TABLE IF NOT EXISTS " + GetTableName(ti) + "(\r\n";
             foreach (var item in ti.Columns) {
                 sql += "    " + CreateColumn(ti, item) + ",\r\n";
             }
@@ -35,7 +35,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
         public override string GetCreateTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            var sql = "CREATE TABLE " + getTableName(ti) + "(\r\n";
+            var sql = "CREATE TABLE " + GetTableName(ti) + "(\r\n";
             foreach (var item in ti.Columns) {
                 sql += "    " + CreateColumn(ti, item) + ",\r\n";
             }
@@ -57,22 +57,15 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
         public override string GetDropTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            return "DROP TABLE IF EXISTS [" + ti.TableName + "];";
+            return "DROP TABLE IF EXISTS " + GetTableName(ti) + ";";
         }
 
         public override string GetTruncateTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            return "TRUNCATE TABLE " + getTableName(ti) + ";";
+            return "TRUNCATE TABLE " + GetTableName(ti) + ";";
         }
 
-        private string getTableName(TableInfo ti)
-        {
-            if (string.IsNullOrEmpty(ti.SchemaName)) {
-                return "[" + ti.TableName + "]";
-            }
-            return "[" + ti.SchemaName + "].[" + ti.TableName + "]";
-        }
 
 
         public string CreateColumn(TableInfo ti, ColumnInfo ci)
