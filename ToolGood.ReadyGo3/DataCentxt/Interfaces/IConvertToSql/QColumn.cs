@@ -21,9 +21,9 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 return sql + " AS '" + _columnName + "'";
             }
             if (string.IsNullOrEmpty(_asName)) {
-                return (this).ToSql(provider, tableCount);
+                return ToSql(provider, tableCount);
             }
-            return (this).ToSql(provider, tableCount) + " AS '" + _asName + "'";
+            return ToSql(provider, tableCount) + " AS '" + _asName + "'";
         }
 
         internal string ToSql(DatabaseProvider provider, int tableCount)

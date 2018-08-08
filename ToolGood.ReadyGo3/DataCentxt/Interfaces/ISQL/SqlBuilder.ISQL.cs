@@ -84,7 +84,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public void Join(QTable table, JoinType joinType = JoinType.Inner)
         {
             if (_jump) { _jump = false; return; }
-            this.AddTable(table);
+            AddTable(table);
             table._joinType = joinType;
 
         }
@@ -92,7 +92,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public void Join(QTable table, JoinType joinType, QJoinCondition @on)
         {
             if (_jump) { _jump = false; return; }
-            this.AddTable(table);
+            AddTable(table);
             table._joinType = joinType;
             table._joinCondition = @on;
 
@@ -101,14 +101,14 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public void LeftJoin(QTable table)
         {
             if (_jump) { _jump = false; return; }
-            this.AddTable(table);
+            AddTable(table);
             table._joinType = JoinType.Left;
         }
 
         public void LeftJoin(QTable table, QJoinCondition @on)
         {
             if (_jump) { _jump = false; return; }
-            this.AddTable(table);
+            AddTable(table);
             table._joinType = JoinType.Left;
             table._joinCondition = @on;
 
@@ -117,7 +117,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public void RightJoin(QTable table)
         {
             if (_jump) { _jump = false; return; }
-            this.AddTable(table);
+            AddTable(table);
             table._joinType = JoinType.Right;
 
         }
@@ -125,7 +125,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public void RightJoin(QTable table, QJoinCondition @on)
         {
             if (_jump) { _jump = false; return; }
-            this.AddTable(table);
+            AddTable(table);
             table._joinType = JoinType.Right;
             table._joinCondition = @on;
 
@@ -134,8 +134,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public void InnerJoin(QTable table)
         {
             if (_jump) { _jump = false; return; }
-
-            this.AddTable(table);
+            AddTable(table);
             table._joinType = JoinType.Inner;
 
         }
@@ -143,7 +142,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public void InnerJoin(QTable table, QJoinCondition @on)
         {
             if (_jump) { _jump = false; return; }
-            this.AddTable(table);
+            AddTable(table);
             table._joinType = JoinType.Inner;
             table._joinCondition = @on;
 
@@ -152,7 +151,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public void FullJoin(QTable table)
         {
             if (_jump) { _jump = false; return; }
-            this.AddTable(table);
+            AddTable(table);
             table._joinType = JoinType.Full;
 
         }
@@ -160,7 +159,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         public void FullJoin(QTable table, QJoinCondition @on)
         {
             if (_jump) { _jump = false; return; }
-            this.AddTable(table);
+            AddTable(table);
             table._joinType = JoinType.Full;
             table._joinCondition = @on;
 

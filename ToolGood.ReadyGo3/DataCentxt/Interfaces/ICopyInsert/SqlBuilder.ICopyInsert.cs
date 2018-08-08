@@ -48,12 +48,12 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             }
 
             var pd = PetaPoco.Core.PocoData.ForType(type);
-            var where = (this).GetWhere(Provider);
-            var fromTable = (this).GetFromTable(Provider);
-            var joinTable = (this).GetJoinSql(Provider);
-            var orderSql = (this).GetOrderSql(Provider);
-            var groupSql = (this).GetGroupBySql(Provider);
-            var havingSql = (this).GetHavingSql(Provider);
+            var where = GetWhere(Provider);
+            var fromTable = GetFromTable(Provider);
+            var joinTable = GetJoinSql(Provider);
+            var orderSql = GetOrderSql(Provider);
+            var groupSql = GetGroupBySql(Provider);
+            var havingSql = GetHavingSql(Provider);
 
             StringBuilder sb = new StringBuilder();
             sb.Append("INSERT INTO ");

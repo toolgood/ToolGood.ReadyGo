@@ -41,7 +41,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
                 return (leftCondition).ToSql(provider, tableCount);
             }
             StringBuilder stringBuilder = new StringBuilder();
-            (this).ToSql(stringBuilder, provider, tableCount);
+            ToSql(stringBuilder, provider, tableCount);
             return stringBuilder.ToString();
         }
         /// <summary>

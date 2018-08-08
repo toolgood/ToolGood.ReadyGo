@@ -11,25 +11,25 @@ namespace ToolGood.ReadyGo3.DataCentxt
     /// </summary>
     partial class QTable
     {
-        internal string ToSql(DatabaseProvider provider, bool schemaName)
+        internal string ToSql(DatabaseProvider provider, bool schemaName=true)
         {
             var pd = PetaPoco.Core.PocoData.ForType(GetTableType());
             if (schemaName) {
-                return provider.GetTableName(pd,GetSqlHelper()._tableNameManager);
+                return provider.GetTableName(pd, GetSqlHelper()._tableNameManager);
             }
             return provider.GetMiniTableName(pd, GetSqlHelper()._tableNameManager);
         }
 
 
-        internal string ToTableSql(DatabaseProvider provider, int tableCount, bool schemaName)
+        internal string ToTableSql(DatabaseProvider provider, int tableCount, bool schemaName = true)
         {
             if (tableCount > 1) {
-                return (this).ToSql(provider, schemaName) + " AS " + _asName;
+                return ToSql(provider, schemaName) + " AS " + _asName;
             }
-            return (this).ToSql(provider, schemaName);
+            return ToSql(provider, schemaName);
         }
 
-        internal string ToJoinSql(DatabaseProvider provider, int tableCount, bool schemaName)
+        internal string ToJoinSql(DatabaseProvider provider, int tableCount, bool schemaName=true)
         {
             if (_joinCondition == null) throw new NoJoinOnException();
             StringBuilder stringBuilder = new StringBuilder();
@@ -41,7 +41,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
                 stringBuilder.Append("FULL ");
             }
             stringBuilder.Append("JOIN ");
-            var table = (this).ToTableSql(provider, tableCount, schemaName);
+            var table = ToTableSql(provider, tableCount, schemaName);
             stringBuilder.Append(table);
             stringBuilder.Append(" ON ");
             (_joinCondition).ToSql(stringBuilder, provider, tableCount);
@@ -106,7 +106,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
 
         internal List<QTableColumn> GetUpdateSetRelationColumn()
         {
-            var cols = (this).GetUpdateColumns();
+            var cols = GetUpdateColumns();
             List<QTableColumn> list = new List<QTableColumn>();
 
             foreach (var col in cols) {

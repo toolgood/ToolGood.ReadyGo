@@ -61,7 +61,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             if (config.Insert_DateTime_Default_Now
                 || config.Insert_Guid_Default_New
                 || config.Insert_String_Default_NotNull) {
-                (this).SetDefaultValue(config.Insert_DateTime_Default_Now,
+                SetDefaultValue(config.Insert_DateTime_Default_Now,
                     config.Insert_String_Default_NotNull, config.Insert_Guid_Default_New);
             }
             return GetSqlBuilder().Insert(returnInsertId);

@@ -20,7 +20,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         string GetUpdateWhere(DatabaseProvider provider)
         {
-            var where = (this).GetWhere(provider);
+            var where = GetWhere(provider);
             if (string.IsNullOrEmpty(where) == false) {
                 return where;
             }
@@ -38,7 +38,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         string GetFromTable(DatabaseProvider provider)
         {
             var table = _tables[0];
-            return table.ToTableSql(provider, _tables.Count, _usedSchemaName);
+            return table.ToTableSql(provider, _tables.Count);
         }
 
         string GetJoinSql(DatabaseProvider provider)
@@ -48,7 +48,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             for (int i = 1; i < _tables.Count; i++) {
                 var table = _tables[i];
                 stringBuilder.Append(" ");
-                var joinsql = table.ToJoinSql(provider, _tables.Count, _usedSchemaName);
+                var joinsql = table.ToJoinSql(provider, _tables.Count);
                 stringBuilder.Append(joinsql);
             }
             if (string.IsNullOrWhiteSpace(_joinOnText) == false) {
@@ -122,7 +122,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("INSERT INTO ");
-            stringBuilder.Append(table.ToTableSql(provider, 0, _usedSchemaName));
+            stringBuilder.Append(table.ToTableSql(provider, 0));
             stringBuilder.Append(" (");
             for (int i = 0; i < cols.Count; i++) {
                 var col = cols[i];
@@ -161,9 +161,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         string GetFullInsertSql(DatabaseProvider provider)
         {
-            var header = (this).GetInsertHeaderSql(provider);
+            var header = GetInsertHeaderSql(provider);
             if (header == null) throw new NoColumnException();
-            var value = (this).GetInsertValueSql(provider);
+            var value = GetInsertValueSql(provider);
             return header + " VALUES " + value ;
         }
 
@@ -174,16 +174,16 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             if (where == null) throw new NoWhereException();
 
             if (_tables.Count == 1) {
-                var setValues = (this).GetUpdateSetSql(provider);
+                var setValues = GetUpdateSetSql(provider);
 
                 var table = _tables[0];
-                return "UPDATE " + table.ToTableSql(provider, _tables.Count, _usedSchemaName)
+                return "UPDATE " + table.ToTableSql(provider, _tables.Count)
                        + " SET " + setValues
                        + " WHERE " + where;
             } else {
-                var setValues = (this).GetUpdateSetSql(provider);
+                var setValues = GetUpdateSetSql(provider);
                 var table = _tables[0];
-                var fromtable = table.ToTableSql(provider, _tables.Count, _usedSchemaName);
+                var fromtable = table.ToTableSql(provider, _tables.Count);
                 var jointables = sb.GetJoinSql(provider);
 
                 return provider.Update(_tables, setValues, fromtable, jointables, where);
@@ -198,11 +198,11 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
             var table = _tables[0];
 
             if (_tables.Count == 1) {
-                return "DELETE FROM " + table.ToTableSql(provider, _tables.Count, _usedSchemaName) + " WHERE " + where;
+                return "DELETE FROM " + table.ToTableSql(provider, _tables.Count) + " WHERE " + where;
             }
 
-            var tableName = table.ToSql(provider, _usedSchemaName);
-            var fromtable = table.ToTableSql(provider, _tables.Count, _usedSchemaName);
+            var tableName = table.ToSql(provider);
+            var fromtable = table.ToTableSql(provider, _tables.Count);
             var jointables = sb.GetJoinSql(provider);
             var pk = table.GetPrimaryKey();
             return provider.Delete(_tables, pk, tableName, fromtable, jointables, where);
@@ -210,12 +210,12 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         string GetFullSelectSql(DatabaseProvider provider, int limit, int offset, List<string> selectColumns)
         {
-            var where = (this).GetWhere(provider);
-            var fromTable = (this).GetFromTable(provider);
-            var joinTable = (this).GetJoinSql(provider);
-            var orderSql = (this).GetOrderSql(provider);
-            var groupSql = (this).GetGroupBySql(provider);
-            var havingSql = (this).GetHavingSql(provider);
+            var where = GetWhere(provider);
+            var fromTable = GetFromTable(provider);
+            var joinTable = GetJoinSql(provider);
+            var orderSql = GetOrderSql(provider);
+            var groupSql = GetGroupBySql(provider);
+            var havingSql = GetHavingSql(provider);
 
             if (limit <= 0) {
                 StringBuilder sb = new StringBuilder();

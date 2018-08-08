@@ -9,31 +9,14 @@ namespace ToolGood.ReadyGo3.DataCentxt
 {
     public abstract partial class QTable : IDisposable
     {
-        ///// <summary>
-        ///// 表名
-        ///// </summary>
-        //public string __TableName__ { get { return _tableName; } set { _tableName = value.Trim(); } }
-        ///// <summary>
-        ///// Schema名
-        ///// </summary>
-        //public string __SchemaName__ { get { return _schemaName; } set { _schemaName = value?.Trim(); } }
-        ///// <summary>
-        ///// Schema名
-        ///// </summary>
-        //public string __DatabaseName__ { get { return _databaseName; } set { _databaseName = value?.Trim(); } }
-
+ 
         /// <summary>
         /// SQL记录
         /// </summary>
         public SqlRecord __SQL__ { get { return GetSqlHelper()._Sql; } }
-
-        private bool _singleSqlHelper;
-        private SqlHelper _sqlHelper;
+        private readonly SqlHelper _sqlHelper;
 
         internal SqlBuilder _sqlBuilder;
-        //internal string _databaseName;
-        //internal string _schemaName;
-        //internal string _tableName;
         internal string _asName;
         internal JoinType _joinType;
         internal QJoinCondition _joinCondition;
@@ -42,7 +25,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <summary>
         /// 
         /// </summary>
-        protected QTable() { }
+        protected QTable() {                    }
 
 
         /// <summary>
@@ -51,7 +34,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="sqlHelper"></param>
         protected QTable(SqlHelper sqlHelper)
         {
-            _singleSqlHelper = false;
             _sqlHelper = sqlHelper;
         }
         /// <summary>
@@ -59,14 +41,21 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// </summary>
         public void Dispose()
         {
-            if (_singleSqlHelper) {
-                if (_sqlHelper != null) {
-                    _sqlHelper.Dispose();
-                }
-            }
+         
         }
 
         #region AddColumn
+        /// <summary>
+        /// 添加列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columnName"></param>
+        /// <param name="fieldName"></param>
+        /// <param name="isPk"></param>
+        /// <param name="isAutoIncrement"></param>
+        /// <param name="resultColumn"></param>
+        /// <param name="resultSql"></param>
+        /// <returns></returns>
         protected QTableColumn<T> AddColumn<T>(string columnName, string fieldName, bool isPk, bool isAutoIncrement, bool resultColumn, string resultSql)
         {
             QTableColumn<T> column = new QTableColumn<T> {
@@ -199,10 +188,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// </summary>
         protected QTable() : base()
         {
-            //var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
-            //__TableName__ = pd.TableInfo.TableName;
-            //__SchemaName__ = pd.TableInfo.SchemaName;
-            //__DatabaseName__ = pd.TableInfo.DatabaseName;
             Init();
         }
 
@@ -212,9 +197,6 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="sqlHelper"></param>
         protected QTable(SqlHelper sqlHelper) : base(sqlHelper)
         {
-            //var pd = PetaPoco.Core.PocoData.ForType(typeof(T));
-            //__TableName__ = pd.TableInfo.TableName;
-            //__SchemaName__ = pd.TableInfo.SchemaName;
             Init();
         }
 
