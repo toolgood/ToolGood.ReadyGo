@@ -10,12 +10,13 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         /// <summary>
         /// Insert Into T(*)  Select * from T
         /// </summary>
+        /// <param name="insertTableName"></param>
         /// <param name="replaceColumns"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public int SelectInsert(string replaceColumns, object[] args)
+        public int SelectInsert(string insertTableName, string replaceColumns, object[] args)
         {
-            var sql = CreateSelectInsertSql(_tables[0].GetTableType(), replaceColumns, args);
+            var sql = CreateSelectInsertSql(_tables[0].GetTableType(), insertTableName, replaceColumns, args);
             return GetSqlHelper().Execute(sql);
         }
 
@@ -26,17 +27,18 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         /// Insert Into T1(*)  Select * from T
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="insertTableName"></param>
         /// <param name="replaceColumns"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public int SelectInsert<T>(string replaceColumns, object[] args)
+        public int SelectInsert<T>(string insertTableName, string replaceColumns, object[] args)
         {
-            var sql = CreateSelectInsertSql(typeof(T), replaceColumns, args);
+            var sql = CreateSelectInsertSql(typeof(T), insertTableName, replaceColumns, args);
             return GetSqlHelper().Execute(sql);
         }
 
 
-        private string CreateSelectInsertSql(Type type, string replaceColumns, object[] args)
+        private string CreateSelectInsertSql(Type type, string insertTableName, string replaceColumns, object[] args)
         {
             var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
             Dictionary<string, string> replaceCols = new Dictionary<string, string>();
@@ -56,7 +58,11 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
             StringBuilder sb = new StringBuilder();
             sb.Append("INSERT INTO ");
-            sb.Append(Provider.EscapeSqlIdentifier(pd.TableInfo.TableName));
+            if (string.IsNullOrEmpty(insertTableName)) {
+                sb.Append(Provider.GetTableName(pd));
+            } else {
+                sb.Append(insertTableName);
+            }
             sb.Append("(");
             Dictionary<string, string> selectColumns = new Dictionary<string, string>();
             var count = string.IsNullOrEmpty(joinTable) ? 0 : 1;

@@ -651,24 +651,26 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <summary>
         /// Insert Into T(*)  Select * from T
         /// </summary>
-        /// <param name="replaceColumns"></param>
+        /// <param name="insertTableName">可以设置为null</param>
+        /// <param name="replaceColumns">替换插入的列</param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<int> SelectInsertAsync(string replaceColumns = "", params object[] args)
+        public Task<int> SelectInsertAsync(string insertTableName=null, string replaceColumns = "", params object[] args)
         {
-            return GetSqlBuilder().SelectInsertAsync(replaceColumns, args);
+            return GetSqlBuilder().SelectInsertAsync(insertTableName,replaceColumns, args);
         }
 
         /// <summary>
         /// Insert Into T1(*)  Select * from T
         /// </summary>
         /// <typeparam name="T1"></typeparam>
-        /// <param name="replaceColumns"></param>
+        /// <param name="insertTableName">可以设置为null</param>
+        /// <param name="replaceColumns">替换插入的列</param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<int> SelectInsertAsync<T1>(string replaceColumns = "", params object[] args)
+        public Task<int> SelectInsertAsync<T1>(string insertTableName = null, string replaceColumns = "", params object[] args)
         {
-            return GetSqlBuilder().SelectInsertAsync<T1>(replaceColumns, args);
+            return GetSqlBuilder().SelectInsertAsync<T1>(insertTableName,replaceColumns, args);
         }
         #endregion
 

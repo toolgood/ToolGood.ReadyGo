@@ -314,12 +314,13 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         /// <summary>
         /// Insert Into T(*)  Select * from T
         /// </summary>
+        /// <param name="insertTableName"></param>
         /// <param name="replaceColumns"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<int> SelectInsertAsync(string replaceColumns, object[] args)
+        public Task<int> SelectInsertAsync(string insertTableName, string replaceColumns, object[] args)
         {
-            var sql = CreateSelectInsertSql(_tables[0].GetTableType(), replaceColumns, args);
+            var sql = CreateSelectInsertSql(_tables[0].GetTableType(), insertTableName, replaceColumns, args);
             return GetSqlHelper().ExecuteAsync(sql);
         }
 
@@ -330,12 +331,13 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
         /// Insert Into T1(*)  Select * from T
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="insertTableName"></param>
         /// <param name="replaceColumns"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<int> SelectInsertAsync<T>(string replaceColumns, object[] args)
+        public Task<int> SelectInsertAsync<T>(string insertTableName, string replaceColumns, object[] args)
         {
-            var sql = CreateSelectInsertSql(typeof(T), replaceColumns, args);
+            var sql = CreateSelectInsertSql(typeof(T), insertTableName, replaceColumns, args);
             return GetSqlHelper().ExecuteAsync(sql);
         }
         #endregion
