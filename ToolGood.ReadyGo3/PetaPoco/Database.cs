@@ -26,9 +26,16 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         public void Dispose()
         {
-            // Automatically close one open connection reference
-            //  (Works with KeepConnectionAlive and manually opening a shared connection)
+            if (_isDisposable) return;
+            if (_transactionDepth >= 1) {
+                _transactionDepth = 1;
+                AbortTransaction();
+            }
+            if (_sharedConnectionDepth > 1) {
+                _sharedConnectionDepth = 1;
+            }
             CloseSharedConnection();
+            _isDisposable = true;
         }
 
         #endregion
@@ -101,6 +108,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 _sharedConnectionDepth--;
                 if (_sharedConnectionDepth == 0) {
                     OnConnectionClosing(_sharedConnection);
+                    if (_sharedConnection.State == ConnectionState.Broken)
+                        _sharedConnection.Close();
                     _sharedConnection.Dispose();
                     _sharedConnection = null;
                 }
@@ -172,9 +181,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </remarks>
         public void AbortTransaction()
         {
-            _transactionCancelled = true;
-            if ((--_transactionDepth) == 0)
-                CleanupTransaction();
+            if (_isDisposable == false) {
+                _transactionCancelled = true;
+                if ((--_transactionDepth) == 0)
+                    CleanupTransaction();
+            }
         }
 
         /// <summary>
@@ -182,8 +193,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         public void CompleteTransaction()
         {
-            if ((--_transactionDepth) == 0)
-                CleanupTransaction();
+            if (_isDisposable == false) {
+                if ((--_transactionDepth) == 0)
+                    CleanupTransaction();
+            }
         }
 
         #endregion
@@ -288,7 +301,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             cmd.CommandText = sql;
             cmd.Transaction = _transaction;
             cmd.CommandType = commandType;
-            if (args!=null) {
+            if (args != null) {
                 if (commandType == CommandType.StoredProcedure) {
                     foreach (var item in args) {
                         var idbParam = item as IDbDataParameter;
@@ -300,7 +313,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 }
             }
-  
+
 
             // Notify the DB type
             _provider.PreExecute(cmd);
@@ -947,7 +960,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             if (string.IsNullOrEmpty(sql))
                 throw new ArgumentNullException("sql");
-            if (sql.StartsWith("UPDATE ",StringComparison.CurrentCultureIgnoreCase)) {
+            if (sql.StartsWith("UPDATE ", StringComparison.CurrentCultureIgnoreCase)) {
                 return Execute(sql, args);
             }
             var pd = PocoData.ForType(typeof(T));
@@ -1246,6 +1259,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private bool _transactionCancelled;
         private string _paramPrefix;
         private DbProviderFactory _factory;
+        private bool _isDisposable;
 
         #endregion
 
