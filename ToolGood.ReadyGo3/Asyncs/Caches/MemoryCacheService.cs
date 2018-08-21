@@ -12,6 +12,15 @@ namespace ToolGood.ReadyGo3.Gadget.Caches
     /// </summary>
      partial class MemoryCacheService : ICacheService
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="name"></param>
+        /// <param name="func"></param>
+        /// <param name="expiredSecond"></param>
+        /// <param name="regionName"></param>
+        /// <returns></returns>
         public virtual async Task<T> GetAsync<T>(string name, Func<Task<T>> func, int expiredSecond, string regionName)
         {
             var cache = GetMemoryCache();

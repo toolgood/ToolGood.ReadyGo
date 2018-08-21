@@ -13,6 +13,13 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
 {
     partial class DatabaseProvider
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="cmd"></param>
+        /// <param name="PrimaryKeyName"></param>
+        /// <returns></returns>
         public virtual Task<object> ExecuteInsertAsync(Database db, SqlCommand cmd, string PrimaryKeyName)
         {
             cmd.CommandText += ";\nSELECT @@IDENTITY AS NewID;";

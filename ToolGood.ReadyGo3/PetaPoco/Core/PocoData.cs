@@ -73,7 +73,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// </summary>
         /// <param name="obj"></param>
         /// <param name="primaryKeyName"></param>
-        /// <param name="defaultMapper"></param>
         /// <returns></returns>
         public static PocoData ForObject(object obj, string primaryKeyName )
         {
@@ -97,7 +96,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// 
         /// </summary>
         /// <param name="type"></param>
-        /// <param name="defaultMapper"></param>
         /// <returns></returns>
         public static PocoData ForType(Type type)
         {
@@ -121,7 +119,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="firstColumn"></param>
         /// <param name="countColumns"></param>
         /// <param name="reader"></param>
-        /// <param name="defaultMapper"></param>
         /// <returns></returns>
         public Delegate GetFactory(string sql, string connectionString, int firstColumn, int countColumns, IDataReader reader )
         {

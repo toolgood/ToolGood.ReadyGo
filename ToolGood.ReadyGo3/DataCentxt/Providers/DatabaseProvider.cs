@@ -324,7 +324,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
             return param.Replace(@"\", @"\\").Replace("'", @"\'");
         }
 
-        internal static DatabaseProvider Resolve(SqlType type)
+        internal new static DatabaseProvider Resolve(SqlType type)
         {
             switch (type) {
                 case SqlType.SqlServer: return Singleton<SqlServerDatabaseProvider>.Instance;

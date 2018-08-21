@@ -12,7 +12,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
     public class SqlServer2012DatabaseProvider : SqlServerDatabaseProvider
     {
 
-        private static readonly Regex SelectTopRegex = new Regex(@"^SELECT +TOP(\d+)", RegexOptions.IgnoreCase);
+        //private static readonly Regex SelectTopRegex = new Regex(@"^SELECT +TOP(\d+)", RegexOptions.IgnoreCase);
 
         public override string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)
         {

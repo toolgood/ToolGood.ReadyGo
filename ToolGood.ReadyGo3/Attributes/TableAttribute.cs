@@ -52,6 +52,7 @@ namespace ToolGood.ReadyGo3.Attributes
         /// </summary>
         /// <param name="schemaName"></param>
         /// <param name="tableName"></param>
+        /// <param name="databaseName"></param>
         public TableAttribute(string tableName, string schemaName,string databaseName)
         {
             SchemaName = schemaName.Trim();
