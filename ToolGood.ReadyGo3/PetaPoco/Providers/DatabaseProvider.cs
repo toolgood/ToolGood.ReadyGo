@@ -249,6 +249,8 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             return database.ExecuteScalarHelper(cmd);
         }
 
+
+        private DbProviderFactory providerFactory = null;
         /// <summary>
         ///     Returns the .net standard conforming DbProviderFactory.
         /// </summary>
@@ -257,17 +259,18 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <exception cref="ArgumentException">Thrown when <paramref name="assemblyQualifiedNames" /> does not match a type.</exception>
         protected DbProviderFactory GetFactory(params string[] assemblyQualifiedNames)
         {
-            Type ft = null;
-            foreach (var assemblyName in assemblyQualifiedNames) {
-                ft = Type.GetType(assemblyName);
-                if (ft != null)
-                    break;
+            if (providerFactory == null) {
+                Type ft = null;
+                foreach (var assemblyName in assemblyQualifiedNames) {
+                    ft = Type.GetType(assemblyName);
+                    if (ft != null) break;
+                }
+
+                if (ft == null) throw new ArgumentException("Could not load the " + GetType().Name + " DbProviderFactory.");
+
+                providerFactory = (DbProviderFactory)ft.GetField("Instance").GetValue(null);
             }
-
-            if (ft == null)
-                throw new ArgumentException("Could not load the " + GetType().Name + " DbProviderFactory.");
-
-            return (DbProviderFactory)ft.GetField("Instance").GetValue(null);
+            return providerFactory;
         }
 
         internal static DatabaseProvider Resolve(SqlType type)

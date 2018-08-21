@@ -31,10 +31,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 _transactionDepth = 1;
                 AbortTransaction();
             }
-            if (_sharedConnectionDepth > 1) {
+            if (_sharedConnectionDepth >= 1) {
                 _sharedConnectionDepth = 1;
+                CloseSharedConnection();
             }
-            CloseSharedConnection();
             _isDisposable = true;
         }
 
@@ -108,8 +108,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 _sharedConnectionDepth--;
                 if (_sharedConnectionDepth == 0) {
                     OnConnectionClosing(_sharedConnection);
-                    if (_sharedConnection.State != ConnectionState.Closed)
-                        _sharedConnection.Close();
                     _sharedConnection.Dispose();
                     _sharedConnection = null;
                 }
