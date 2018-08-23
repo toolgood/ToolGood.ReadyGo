@@ -14,7 +14,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3
 {
-    public partial class SqlHelper : IDisposable
+    public partial class SqlHelper : IDisposable, ISqlHelper
     {
         #region 私有变量
         //是否设置默认值

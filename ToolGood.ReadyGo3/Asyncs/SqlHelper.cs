@@ -7,11 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo3.Gadget.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;
+
 #if !NET40
 
 namespace ToolGood.ReadyGo3
 {
-    partial class SqlHelper
+    partial class SqlHelper: ISqlHelperAsync
     {
         internal Task<T> RunAsync<T>(string sql, object[] args, Func<Task<T>> func, params string[] methodtags)
         {
