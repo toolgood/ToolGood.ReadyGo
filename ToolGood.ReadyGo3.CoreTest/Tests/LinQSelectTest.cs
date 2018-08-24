@@ -191,5 +191,15 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             Assert.AreEqual(null, db);
         }
 
+        [Test]
+        public async void SelectInsertTest()
+        {
+            var helper = Config.DbHelper;
+
+            helper.Where<DbArea>(q => q.Id < 500).SelectInsert<DbArea3>("", "1 as Level");
+            await helper.Where<DbArea>(q => q.Id < 500).SelectInsertAsync<DbArea3>();
+
+        }
+
     }
 }

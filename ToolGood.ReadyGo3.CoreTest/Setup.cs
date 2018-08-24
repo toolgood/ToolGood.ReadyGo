@@ -33,6 +33,7 @@ namespace ToolGood.ReadyGo3.CoreTest
             table.CreateTable(typeof(DbAdminMenu));
             table.CreateTable(typeof(DbAdminMenuPass));
             table.CreateTable(typeof(DbArea));
+            table.CreateTable(typeof(DbArea3));
         }
 
 

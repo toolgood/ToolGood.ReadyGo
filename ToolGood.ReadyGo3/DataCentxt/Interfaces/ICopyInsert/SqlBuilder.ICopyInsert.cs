@@ -39,12 +39,14 @@ namespace ToolGood.ReadyGo3.DataCentxt.Internals
 
         private string CreateSelectInsertSql(Type type, string insertTableName, string replaceColumns, object[] args)
         {
-            var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            Dictionary<string, string> replaceCols = new Dictionary<string, string>();
-            foreach (var item in columnSqls) {
-                var sp = item.Split(new char[] { '.', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                var header = sp[sp.Length - 1];
-                replaceCols[header] = item;
+            Dictionary<string, string> replaceCols = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            if (string.IsNullOrEmpty(replaceColumns)==false) {
+                var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var item in columnSqls) {
+                    var sp = item.Split(new char[] { '.', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    var header = sp[sp.Length - 1].Replace("'", "").Replace("\"", ""); ;
+                    replaceCols[header] = item;
+                }
             }
 
             var pd = PetaPoco.Core.PocoData.ForType(type);

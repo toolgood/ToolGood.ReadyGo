@@ -652,7 +652,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="replaceColumns">替换插入的列</param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<int> SelectInsertAsync(string insertTableName=null, string replaceColumns = "", params object[] args)
+        public Task<int> SelectInsertAsync(string insertTableName=null, string replaceColumns = null, params object[] args)
         {
             return GetSqlBuilder().SelectInsertAsync(insertTableName,replaceColumns, args);
         }
@@ -665,7 +665,7 @@ namespace ToolGood.ReadyGo3.DataCentxt
         /// <param name="replaceColumns">替换插入的列</param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<int> SelectInsertAsync<T1>(string insertTableName = null, string replaceColumns = "", params object[] args)
+        public Task<int> SelectInsertAsync<T1>(string insertTableName = null, string replaceColumns = null, params object[] args)
         {
             return GetSqlBuilder().SelectInsertAsync<T1>(insertTableName,replaceColumns, args);
         }

@@ -15,7 +15,7 @@ namespace ToolGood.ReadyGo3.LinQ
     /// 
     /// </summary>
     /// <typeparam name="T1"></typeparam>
-    public partial class WhereHelper<T1>  
+    public partial class WhereHelper<T1>
         where T1 : class, new()
     {
         internal WhereHelper(SqlHelper helper)
@@ -853,7 +853,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="distinct"></param>
         /// <returns></returns>
-        public WhereHelper<T1> Distinct(bool distinct=true)
+        public WhereHelper<T1> Distinct(bool distinct = true)
         {
             _useDistinct = distinct;
             return this;
@@ -1066,7 +1066,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return this._sqlhelper.ExecuteDataTable(this.GetFullSelectSql(selectSql), this._args.ToArray());
         }
-//#if !NETSTANDARD2_0
+        //#if !NETSTANDARD2_0
         /// <summary>
         /// 执行返回DataSet
         /// </summary>
@@ -1076,7 +1076,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return this._sqlhelper.ExecuteDataSet(this.GetFullSelectSql(selectSql), this._args.ToArray());
         }
-//#endif
+        //#endif
         /// <summary>
         /// 执行返回集合
         /// </summary>
@@ -1239,7 +1239,7 @@ namespace ToolGood.ReadyGo3.LinQ
             }
 
             StringBuilder sb = new StringBuilder();
-            if (select.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase) == false) {
+            if (select.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase)) {
                 sb.Append(select);
             } else {
                 sb.Append("SELECT ");
@@ -1435,7 +1435,7 @@ namespace ToolGood.ReadyGo3.LinQ
             var dp = DatabaseProvider.Resolve(_sqlhelper._sqlType);
             StringBuilder sb = new StringBuilder();
             sb.Append("FROM ");
-            sb.Append(dp.GetTableName(pd1,_sqlhelper._tableNameManager));
+            sb.Append(dp.GetTableName(pd1, _sqlhelper._tableNameManager));
 
             sb.Append(" AS t1 ");
             sb.Append(_joinOnString);
@@ -1594,7 +1594,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="insertTableName"></param>
         /// <param name="replaceSelect"></param>
         /// <param name="args"></param>
-        public void SelectInsert<T>(string insertTableName = null,string replaceSelect=null,params object[] args)
+        public void SelectInsert<T>(string insertTableName = null, string replaceSelect = null, params object[] args)
         {
             var sql = CreateSelectInsertSql(typeof(T), insertTableName, replaceSelect, args);
             _sqlhelper.Execute(sql, _args.ToArray());
@@ -1602,14 +1602,17 @@ namespace ToolGood.ReadyGo3.LinQ
 
         private string CreateSelectInsertSql(Type type, string insertTableName, string replaceColumns, object[] args)
         {
+            Dictionary<string, string> replaceCols = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             var Provider = ToolGood.ReadyGo3.DataCentxt.DatabaseProvider.Resolve(_sqlhelper._sqlType);
-            var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-            Dictionary<string, string> replaceCols = new Dictionary<string, string>();
-            foreach (var item in columnSqls) {
-                var sp = item.Split(new char[] { '.', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                var header = sp[sp.Length - 1];
-                replaceCols[header] = item.ToLower();
+            if (string.IsNullOrEmpty(replaceColumns) == false) {
+                var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var item in columnSqls) {
+                    var sp = item.Split(new char[] { '.', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                    var header = sp[sp.Length - 1].Replace("'", "").Replace("\"","");
+                    replaceCols[header] = item;
+                }
             }
+
             var pd = PetaPoco.Core.PocoData.ForType(type);
             var pocoData = PetaPoco.Core.PocoData.ForType(typeof(T1));
 
@@ -1622,12 +1625,12 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             sb.Append("(");
             Dictionary<string, string> selectColumns = new Dictionary<string, string>();
-             foreach (var item in pd.Columns) {
+            foreach (var item in pd.Columns) {
                 var colName = item.Key;
                 if (colName == pd.TableInfo.PrimaryKey) continue;
                 if (item.Value.ResultColumn) continue;
 
-                if (replaceCols.TryGetValue(colName.ToLower(), out string sql)) {
+                if (replaceCols.TryGetValue(colName, out string sql)) {
                     selectColumns[Provider.EscapeSqlIdentifier(colName)] = sql;
                 } else if (pocoData.Columns.ContainsKey(colName)) {
                     var ci = pocoData.Columns[colName];
@@ -1638,7 +1641,7 @@ namespace ToolGood.ReadyGo3.LinQ
             sb.Append(") SELECT ");
             if (_useDistinct) sb.Append("DISTINCT ");
             sb.Append(string.Join(",", selectColumns.Values));
-
+            sb.Append(" ");
             sb.Append(GetFromAndJoinOn());
 
             if (_where.Length > 0) {
