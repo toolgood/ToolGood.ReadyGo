@@ -380,7 +380,7 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #endregion
 
-        #region 11 Delete
+        #region 11 DeleteAsync
         /// <summary>
         /// 删除，只支持单一表格，WHERE条件为空报错
         /// </summary>
@@ -390,6 +390,37 @@ namespace ToolGood.ReadyGo3.LinQ
             if (_where.Length == 0) { throw new Exception("No Where Error!"); }
             return _sqlhelper.DeleteAsync<T1>($"WHERE {_where.ToString()}", _args.ToArray());
         }
+
+        #endregion
+
+        #region 12 SelectInsertAsync
+        /// <summary>
+        /// 查询插入
+        /// </summary>
+        /// <param name="insertTableName"></param>
+        /// <param name="replaceSelect"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Task SelectInsertAsync(string insertTableName = null, string replaceSelect = null, params object[] args)
+        {
+            var sql = CreateSelectInsertSql(typeof(T1), insertTableName, replaceSelect, args);
+            return _sqlhelper.ExecuteAsync(sql, _args.ToArray());
+        }
+
+        /// <summary>
+        /// 查询插入
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="insertTableName"></param>
+        /// <param name="replaceSelect"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Task SelectInsertAsync<T>(string insertTableName = null, string replaceSelect = null, params object[] args)
+        {
+            var sql = CreateSelectInsertSql(typeof(T), insertTableName, replaceSelect, args);
+            return _sqlhelper.ExecuteAsync(sql, _args.ToArray());
+        }
+
 
         #endregion
     }

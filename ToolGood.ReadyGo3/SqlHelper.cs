@@ -14,7 +14,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3
 {
-    public partial class SqlHelper : IDisposable, ISqlHelper
+    public partial class SqlHelper : IDisposable,ISqlHelperSync
     {
         #region 私有变量
         //是否设置默认值
@@ -298,7 +298,7 @@ namespace ToolGood.ReadyGo3
 
         }
 
-#if !NETSTANDARD2_0
+//#if !NETSTANDARD2_0
         /// <summary>
         /// 执行SQL 查询,返回 DataSet
         /// </summary>
@@ -316,7 +316,7 @@ namespace ToolGood.ReadyGo3
             }
             return getDatabase().ExecuteDataSet(sql, args);
         }
-#endif
+//#endif
 
         /// <summary>
         /// 执行SQL 查询,判断是否存在，返回bool类型

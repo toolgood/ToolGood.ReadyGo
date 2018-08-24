@@ -509,7 +509,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return default(DataTable);
             }
         }
-#if !NETSTANDARD2_0
+//#if !NETSTANDARD2_0
         /// <summary>
         /// 
         /// </summary>
@@ -540,7 +540,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return default(DataSet);
             }
         }
-#endif
+//#endif
 
         #endregion
 

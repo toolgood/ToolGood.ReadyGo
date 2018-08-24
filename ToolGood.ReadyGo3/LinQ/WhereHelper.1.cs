@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using ToolGood.ReadyGo3.Interfaces;
 using ToolGood.ReadyGo3.LinQ.Expressions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
@@ -14,7 +15,7 @@ namespace ToolGood.ReadyGo3.LinQ
     /// 
     /// </summary>
     /// <typeparam name="T1"></typeparam>
-    public partial class WhereHelper<T1>
+    public partial class WhereHelper<T1>  
         where T1 : class, new()
     {
         internal WhereHelper(SqlHelper helper)
@@ -36,8 +37,8 @@ namespace ToolGood.ReadyGo3.LinQ
         private string _order = "";
         private string _groupby = "";
         private string _having = "";
-
-        #endregion  
+        private bool _useDistinct = false;
+        #endregion
 
         #region 02 SQL拼接 基础方法
 
@@ -847,6 +848,16 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
 
+        /// <summary>
+        /// 非重复
+        /// </summary>
+        /// <param name="distinct"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> Distinct(bool distinct=true)
+        {
+            _useDistinct = distinct;
+            return this;
+        }
 
         #endregion WhereIn Where OrderBy Having
 
@@ -1055,7 +1066,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return this._sqlhelper.ExecuteDataTable(this.GetFullSelectSql(selectSql), this._args.ToArray());
         }
-#if !NETSTANDARD2_0
+//#if !NETSTANDARD2_0
         /// <summary>
         /// 执行返回DataSet
         /// </summary>
@@ -1065,7 +1076,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return this._sqlhelper.ExecuteDataSet(this.GetFullSelectSql(selectSql), this._args.ToArray());
         }
-#endif
+//#endif
         /// <summary>
         /// 执行返回集合
         /// </summary>
@@ -1226,15 +1237,17 @@ namespace ToolGood.ReadyGo3.LinQ
             if (select == null) {
                 select = CreateSelectHeader(_includeColumns);
             }
-            if (select.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase) == false) {
-                select = "SELECT " + select;
-            }
 
             StringBuilder sb = new StringBuilder();
-            sb.Append(select);
+            if (select.TrimStart().StartsWith("SELECT ", StringComparison.OrdinalIgnoreCase) == false) {
+                sb.Append(select);
+            } else {
+                sb.Append("SELECT ");
+                if (_useDistinct) sb.Append(" DISTINCT ");
+                sb.Append(select);
+            }
             sb.Append(" ");
             sb.Append(GetFromAndJoinOn());
-            sb.Append(_joinOnString);
 
             if (_where.Length > 0) {
                 sb.Append(" WHERE ");
@@ -1326,7 +1339,11 @@ namespace ToolGood.ReadyGo3.LinQ
                     sb.Append("'");
                 }
             }
-            sb.Insert(0, "SELECT ");
+            if (_useDistinct) {
+                sb.Insert(0, "SELECT DISTINCT ");
+            } else {
+                sb.Insert(0, "SELECT ");
+            }
             return sb.ToString();
         }
 
@@ -1553,6 +1570,95 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             if (_where.Length == 0) { throw new Exception("No Where Error!"); }
             return _sqlhelper.Delete<T1>($"WHERE {_where.ToString()}", _args.ToArray());
+        }
+
+        #endregion
+
+        #region 12 SelectInsert
+        /// <summary>
+        /// 查询插入
+        /// </summary>
+        /// <param name="insertTableName"></param>
+        /// <param name="replaceSelect"></param>
+        /// <param name="args"></param>
+        public void SelectInsert(string insertTableName = null, string replaceSelect = null, params object[] args)
+        {
+            var sql = CreateSelectInsertSql(typeof(T1), insertTableName, replaceSelect, args);
+            _sqlhelper.Execute(sql, _args.ToArray());
+        }
+
+        /// <summary>
+        /// 查询插入
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="insertTableName"></param>
+        /// <param name="replaceSelect"></param>
+        /// <param name="args"></param>
+        public void SelectInsert<T>(string insertTableName = null,string replaceSelect=null,params object[] args)
+        {
+            var sql = CreateSelectInsertSql(typeof(T), insertTableName, replaceSelect, args);
+            _sqlhelper.Execute(sql, _args.ToArray());
+        }
+
+        private string CreateSelectInsertSql(Type type, string insertTableName, string replaceColumns, object[] args)
+        {
+            var Provider = ToolGood.ReadyGo3.DataCentxt.DatabaseProvider.Resolve(_sqlhelper._sqlType);
+            var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            Dictionary<string, string> replaceCols = new Dictionary<string, string>();
+            foreach (var item in columnSqls) {
+                var sp = item.Split(new char[] { '.', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                var header = sp[sp.Length - 1];
+                replaceCols[header] = item.ToLower();
+            }
+            var pd = PetaPoco.Core.PocoData.ForType(type);
+            var pocoData = PetaPoco.Core.PocoData.ForType(typeof(T1));
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("INSERT INTO ");
+            if (string.IsNullOrEmpty(insertTableName)) {
+                sb.Append(Provider.GetTableName(pd));
+            } else {
+                sb.Append(insertTableName);
+            }
+            sb.Append("(");
+            Dictionary<string, string> selectColumns = new Dictionary<string, string>();
+             foreach (var item in pd.Columns) {
+                var colName = item.Key;
+                if (colName == pd.TableInfo.PrimaryKey) continue;
+                if (item.Value.ResultColumn) continue;
+
+                if (replaceCols.TryGetValue(colName.ToLower(), out string sql)) {
+                    selectColumns[Provider.EscapeSqlIdentifier(colName)] = sql;
+                } else if (pocoData.Columns.ContainsKey(colName)) {
+                    var ci = pocoData.Columns[colName];
+                    selectColumns[Provider.EscapeSqlIdentifier(colName)] = "t1." + ci.ColumnName;
+                }
+            }
+            sb.Append(string.Join(",", selectColumns.Keys));
+            sb.Append(") SELECT ");
+            if (_useDistinct) sb.Append("DISTINCT ");
+            sb.Append(string.Join(",", selectColumns.Values));
+
+            sb.Append(GetFromAndJoinOn());
+
+            if (_where.Length > 0) {
+                sb.Append(" WHERE ");
+                sb.Append(_where);
+            }
+
+            if (_groupby.Length > 0) {
+                sb.Append(" GROUP BY ");
+                sb.Append(_groupby);
+                if (_having.Length > 0) {
+                    sb.Append(" HAVING ");
+                    sb.Append(_having);
+                }
+            }
+            if (_order.Length > 0) {
+                sb.Append(" ORDER BY ");
+                sb.Append(_order);
+            }
+            return sb.ToString();
         }
 
         #endregion

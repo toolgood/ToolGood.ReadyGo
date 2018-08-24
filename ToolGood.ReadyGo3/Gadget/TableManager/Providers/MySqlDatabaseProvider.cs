@@ -114,7 +114,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             }
             sb.Append(" NULL");
             if (string.IsNullOrEmpty(ci.DefaultValue) == false) {
-                sb.AppendFormat(" DEFAULT({0})", ci.DefaultValue);
+                sb.AppendFormat(" DEFAULT {0} ", ci.DefaultValue);
             }
             if (ti.PrimaryKey == ci.ColumnName) {
                 sb.Append(" PRIMARY KEY");

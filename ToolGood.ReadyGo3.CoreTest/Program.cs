@@ -1,4 +1,5 @@
 ﻿using System;
+using ToolGood.ReadyGo3.Test;
 
 namespace ToolGood.ReadyGo3.CoreTest
 {
@@ -14,6 +15,7 @@ namespace ToolGood.ReadyGo3.CoreTest
             Setup.Start();
             //SQLitePCL.Batteries.Init();
             PetaTest.Runner.RunMain(args);
+            Config.DbHelper.Dispose();
         }
     }
 }
