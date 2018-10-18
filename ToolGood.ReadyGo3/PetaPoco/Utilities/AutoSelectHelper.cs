@@ -29,16 +29,17 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
                 StringBuilder stringBuilder = new StringBuilder();
                 foreach (var item in pd.Columns) {
                     var col = item.Value;
-                    stringBuilder.Append(",");
 
                     if (col.ResultColumn) {
                         if (string.IsNullOrEmpty(col.ResultSql)==false) {
+                            stringBuilder.Append(",");
                             stringBuilder.AppendFormat(col.ResultSql, tableName + ".");
                             stringBuilder.Append(" AS '");
                             stringBuilder.Append(col.ColumnName);
                             stringBuilder.Append("'");
                         }
                     } else {
+                        stringBuilder.Append(",");
                         stringBuilder.AppendFormat("{0}.{1}", tableName, provider.EscapeSqlIdentifier(col.ColumnName));
                     }
                 }

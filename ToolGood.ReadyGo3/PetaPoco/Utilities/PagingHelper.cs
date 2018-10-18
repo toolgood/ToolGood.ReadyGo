@@ -5,7 +5,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Utilities
     /// <summary>
     /// 
     /// </summary>
-    public class PagingHelper 
+    public class PagingHelper
     {
         internal Regex RegexColumns = new Regex(@"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b",
             RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
@@ -49,15 +49,29 @@ namespace ToolGood.ReadyGo3.PetaPoco.Utilities
             var g = m.Groups[1];
             parts.SqlSelectRemoved = sql.Substring(g.Index);
 
-            if (RegexDistinct.IsMatch(parts.SqlSelectRemoved))
-                parts.SqlCount = sql.Substring(0, g.Index) + "COUNT(" + m.Groups[1].ToString().Trim() + ") " + sql.Substring(g.Index + g.Length);
-            else
+            if (RegexDistinct.IsMatch(parts.SqlSelectRemoved)) {
+                var txt = m.Groups[1].ToString().Trim();
+                if (txt.StartsWith("Distinct", System.StringComparison.CurrentCultureIgnoreCase) && txt.Contains(",") == false) {
+                    parts.SqlCount = sql.Substring(0, g.Index) + "COUNT(" + m.Groups[1].ToString().Trim() + ") " + sql.Substring(g.Index + g.Length);
+                } else if (txt.Contains(",")) {
+                    m = SimpleRegexOrderBy.Match(sql);
+                    if (m.Success) {
+                        g = m.Groups[0];
+                        parts.SqlOrderBy = g + sql.Substring(g.Index + g.Length);
+                        parts.SqlCount = $"SELECT COUNT(*) FROM ({sql.Substring(0, g.Index)}) __toolgood__ ";
+                        return true;
+                    } else {
+                        parts.SqlCount = $"SELECT COUNT(*) FROM ({sql}) __toolgood__ ";
+                    }
+                } else {
+                    parts.SqlCount = sql.Substring(0, g.Index) + "COUNT(" + m.Groups[1].ToString().Trim() + ") " + sql.Substring(g.Index + g.Length);
+                }
+            } else
                 parts.SqlCount = sql.Substring(0, g.Index) + "COUNT(*) " + sql.Substring(g.Index + g.Length);
 
             // Look for the last "ORDER BY <whatever>" clause not part of a ROW_NUMBER expression
             m = SimpleRegexOrderBy.Match(parts.SqlCount);
-            if (m.Success)
-            {
+            if (m.Success) {
                 g = m.Groups[0];
                 parts.SqlOrderBy = g + parts.SqlCount.Substring(g.Index + g.Length);
                 parts.SqlCount = parts.SqlCount.Substring(0, g.Index);
