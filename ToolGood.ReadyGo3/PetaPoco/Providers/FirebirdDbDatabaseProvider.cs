@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Text;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Utilities;
 
@@ -52,7 +53,34 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return $"\"{tableName}\"";
         }
 
-    
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <param name="selectColumns"></param>
+        /// <param name="fromtable"></param>
+        /// <param name="order"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
+        public override string CreateSql(int limit, int offset, string selectColumns, string fromtable, string order, string where)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT ");
+            sb.Append(selectColumns);
+            sb.Append(" FROM ");
+            sb.Append(fromtable);
+            if (string.IsNullOrEmpty(where) == false) {
+                sb.Append(" WHERE ");
+                sb.Append(where);
+            }
+            if (string.IsNullOrEmpty(order) == false) {
+                sb.Append(" ORDER BY ");
+                sb.Append(order);
+            }
+            sb.AppendFormat($" ROWS {offset + 1} TO {offset + limit}");
+            return sb.ToString();
+        }
 
     }
 }

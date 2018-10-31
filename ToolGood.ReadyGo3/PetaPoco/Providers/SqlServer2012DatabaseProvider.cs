@@ -39,6 +39,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 return $"NEXT VALUE FOR {tableInfo.SequenceName}";
             return null;
         }
-
+ 
     }
 }

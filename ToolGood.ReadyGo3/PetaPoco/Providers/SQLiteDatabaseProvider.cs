@@ -1,4 +1,5 @@
 ﻿using System.Data.Common;
+using System.Text;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Providers
@@ -47,6 +48,31 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         public override string GetTableName(string databaseName, string schemaName, string tableName)
         {
             return $"[{tableName}]";
+        }
+        public override string CreateSql(int limit, int offset, string selectColumns, string fromtable, string order, string where)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT ");
+            sb.Append(string.Join(",", selectColumns));
+            sb.Append(" FROM ");
+            sb.Append(fromtable);
+            if (string.IsNullOrEmpty(where) == false) {
+                sb.Append(" WHERE ");
+                sb.Append(where);
+            }
+            if (string.IsNullOrEmpty(order) == false) {
+                sb.Append(" ORDER BY ");
+                sb.Append(order);
+            }
+            if (limit > 0) {
+                sb.Append(" LIMIT ");
+                if (offset > 0) {
+                    sb.Append(offset);
+                    sb.Append(",");
+                }
+                sb.Append(limit);
+            }
+            return sb.ToString();
         }
     }
 }

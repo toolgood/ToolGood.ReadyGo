@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Common;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Utilities;
@@ -70,6 +71,39 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         public override string GetInsertOutputClause(string primaryKeyName)
         {
             return $" OUTPUT INSERTED.[{primaryKeyName}]";
+        }
+        public override string CreateSql(int limit, int offset, string selectColumns, string fromtable, string order, string where)
+        {
+            if (offset <= 0) {
+                StringBuilder sb = new StringBuilder();
+                sb.Append("SELECT ");
+                sb.Append("TOP ");
+                sb.Append(limit);
+                sb.Append(" ");
+                sb.Append(selectColumns);
+                sb.Append(" FROM ");
+                sb.Append(fromtable);
+                if (string.IsNullOrEmpty(where) == false) {
+                    sb.Append(" WHERE ");
+                    sb.Append(where);
+                }
+                if (string.IsNullOrEmpty(order) == false) {
+                    sb.Append(" ORDER BY ");
+                    sb.Append(order);
+                }
+                return sb.ToString();
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.AppendFormat("SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY ({0})) peta_rn,{1} FROM (", order ?? "SELECT NULL", selectColumns);
+                sb.Append(fromtable);
+                if (string.IsNullOrEmpty(where) == false) {
+                    sb.Append(" WHERE ");
+                    sb.Append(where);
+                }
+                sb.AppendFormat("))  peta_paged WHERE peta_rn>{0} AND peta_rn<={1}", offset, limit + offset);
+                return sb.ToString();
+            }
+    
         }
     }
 }

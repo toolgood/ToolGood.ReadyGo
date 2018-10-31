@@ -14,7 +14,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3
 {
-    public partial class SqlHelper : IDisposable,ISqlHelperSync
+    public partial class SqlHelper : IDisposable, ISqlHelperSync
     {
         #region 私有变量
         //是否设置默认值
@@ -52,7 +52,7 @@ namespace ToolGood.ReadyGo3
         internal readonly SqlType _sqlType;
         internal readonly SqlRecord _sql = new SqlRecord();
         internal ISqlMonitor _sqlMonitor = new NullSqlMonitor();
-        private readonly  DatabaseProvider _provider;
+        private readonly DatabaseProvider _provider;
         internal bool _isDisposable;
 
 
@@ -159,6 +159,7 @@ namespace ToolGood.ReadyGo3
 
             return _cacheService.Get(tag, func, _cacheTimeOnce, _cacheTag);
         }
+
 
         /// <summary>
         /// 格式SQL语句
@@ -298,7 +299,7 @@ namespace ToolGood.ReadyGo3
 
         }
 
-//#if !NETSTANDARD2_0
+        //#if !NETSTANDARD2_0
         /// <summary>
         /// 执行SQL 查询,返回 DataSet
         /// </summary>
@@ -316,7 +317,7 @@ namespace ToolGood.ReadyGo3
             }
             return getDatabase().ExecuteDataSet(sql, args);
         }
-//#endif
+        //#endif
 
         /// <summary>
         /// 执行SQL 查询,判断是否存在，返回bool类型
@@ -340,7 +341,7 @@ namespace ToolGood.ReadyGo3
         public bool Exists<T>(object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T));
-            var table = _provider.GetTableName(pd,_tableNameManager);
+            var table = _provider.GetTableName(pd, _tableNameManager);
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
@@ -365,7 +366,7 @@ namespace ToolGood.ReadyGo3
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 var pd = PocoData.ForType(typeof(T));
-                var table = _provider.GetTableName(pd,_tableNameManager);
+                var table = _provider.GetTableName(pd, _tableNameManager);
                 sql = formatSql(sql);
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
@@ -384,7 +385,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public int Count(string sql,params object[] args)
+        public int Count(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             if (_usedCacheServiceOnce) {
@@ -472,6 +473,91 @@ namespace ToolGood.ReadyGo3
             return getDatabase().Page<T>(page, itemsPerPage, sql, args);
         }
 
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="selectSql"></param>
+        /// <param name="tableSql"></param>
+        /// <param name="orderSql"></param>
+        /// <param name="whereSql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public List<T> SelectSql<T>(long page, long itemsPerPage, string selectSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        {
+            #region 格式化
+            selectSql = selectSql.Trim();
+            tableSql = tableSql.Trim();
+            orderSql = orderSql.Trim();
+            whereSql = whereSql.Trim();
+            if (selectSql.StartsWith("SELECT ", StringComparison.InvariantCultureIgnoreCase)) {
+                selectSql = selectSql.Substring(7);
+            }
+            if (tableSql.StartsWith("FROM ", StringComparison.InvariantCultureIgnoreCase)) {
+                tableSql = tableSql.Substring(5);
+            }
+            if (orderSql.StartsWith("ORDER BY ", StringComparison.InvariantCultureIgnoreCase)) {
+                orderSql = orderSql.Substring(9);
+            }
+            if (whereSql.StartsWith("WHERE ", StringComparison.InvariantCultureIgnoreCase)) {
+                whereSql = whereSql.Substring(6);
+            }
+            #endregion
+            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), selectSql, tableSql, orderSql, whereSql);
+            sql = formatSql(sql);
+            if (_usedCacheServiceOnce) {
+                return Run<List<T>>(sql, args, () => {
+                    return getDatabase().Query<T>( sql, args).ToList();
+                }, "Select");
+            }
+            return getDatabase().Query<T>(sql, args).ToList();
+        }
+        /// <summary>
+        /// 执行SQL 查询,返回Page类型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="selectSql"></param>
+        /// <param name="tableSql"></param>
+        /// <param name="orderSql"></param>
+        /// <param name="whereSql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Page<T> PageSql<T>(long page, long itemsPerPage, string selectSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        {
+            #region 格式化
+            selectSql = selectSql.Trim();
+            tableSql = tableSql.Trim();
+            orderSql = orderSql.Trim();
+            whereSql = whereSql.Trim();
+            if (selectSql.StartsWith("SELECT ", StringComparison.InvariantCultureIgnoreCase)) {
+                selectSql = selectSql.Substring(7);
+            }
+            if (tableSql.StartsWith("FROM ", StringComparison.InvariantCultureIgnoreCase)) {
+                tableSql = tableSql.Substring(5);
+            }
+            if (orderSql.StartsWith("ORDER BY ", StringComparison.InvariantCultureIgnoreCase)) {
+                orderSql = orderSql.Substring(9);
+            }
+            if (whereSql.StartsWith("WHERE ", StringComparison.InvariantCultureIgnoreCase)) {
+                whereSql = whereSql.Substring(6);
+            }
+            #endregion
+            var countSql = $"SELECT COUNT(1) FROM {tableSql} WHERE {whereSql}";
+            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), selectSql, tableSql, orderSql, whereSql);
+            countSql = formatSql(countSql);
+            sql = formatSql(sql);
+
+            if (_usedCacheServiceOnce) {
+                return Run<Page<T>>(sql, args, () => {
+                   return getDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
+                }, "PageSql");
+            }
+            return getDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
+        }
 
         #endregion Select Page Select
 
@@ -759,7 +845,7 @@ namespace ToolGood.ReadyGo3
         public Guid NewGuid()
         {
             return IdWorker.NewMongodbId();
-        } 
+        }
         #endregion
     }
 }

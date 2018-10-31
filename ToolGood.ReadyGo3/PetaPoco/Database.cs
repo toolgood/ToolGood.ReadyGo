@@ -611,6 +611,37 @@ namespace ToolGood.ReadyGo3.PetaPoco
             //return Page<T>(page, itemsPerPage, sqlCount, args, sqlPage, args);
         }
 
+        /// <summary>
+        /// Retrieves a page of records	and the total number of available records
+        /// </summary>
+        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
+        /// <param name="page">The 1 based page number to retrieve</param>
+        /// <param name="itemsPerPage">The number of records per page</param>
+        /// <param name="selectSql"></param>
+        /// <param name="countSql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Page<T> PageSql<T>(long page,long itemsPerPage,string selectSql,string countSql, params object[] args)
+        {
+            // Save the one-time command time out and use it for both queries
+            var saveTimeout = OneTimeCommandTimeout;
+
+            // Setup the paged result
+            var result = new Page<T> {
+                CurrentPage = page,
+                PageSize = itemsPerPage,
+                TotalItems = ExecuteScalar<long>(countSql, args)
+            };
+            OneTimeCommandTimeout = saveTimeout;
+
+            // Get the records
+            result.Items = Query<T>(selectSql, args).ToList();
+            // Done
+            return result;
+        }
+
+
+
 
         #endregion
 

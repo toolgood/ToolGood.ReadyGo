@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.Common;
+using System.Text;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.PetaPoco.Utilities;
@@ -92,5 +93,41 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 return -1;
             }
         }
+        public override string CreateSql(int limit, int offset, string selectColumns, string fromtable, string order, string where)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT ");
+            sb.Append(selectColumns);
+            sb.Append(" FROM ");
+            sb.Append(fromtable);
+            if (string.IsNullOrEmpty(where) == false) {
+                sb.Append(" WHERE ");
+                sb.Append(where);
+            }
+            if (string.IsNullOrEmpty(order) == false) {
+                sb.Append(" ORDER BY ");
+                sb.Append(order);
+            }
+            var sql = sb.ToString();
+            sb.Clear();
+            if (offset <= 0) {
+                sb.Append("SELECT * FROM (");
+                sb.Append(sql);
+                sb.Append(" ) WHERE rownum <= ");
+                sb.Append(limit.ToString());
+                sb.Append(";");
+            } else {
+                sb.Append("SELECT * FROM (");
+                sb.Append("SELECT outtable.*, rownum rn FROM (");
+                sb.Append(sql);
+                sb.Append(" ) outtable WHERE rownum > ");
+                sb.Append(offset.ToString());
+                sb.Append(" ) WHERE rn <= ");
+                sb.Append((limit + offset).ToString());
+                sb.Append(";");
+            }
+            return sb.ToString();
+        }
+
     }
 }

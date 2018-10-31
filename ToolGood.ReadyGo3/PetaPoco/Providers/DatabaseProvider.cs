@@ -336,5 +336,12 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             var unwrapped = sp.GetService(factory.GetType()) as DbProviderFactory;
             return unwrapped == null ? factory : Unwrap(unwrapped);
         }
+
+
+        public virtual string CreateSql(int limit, int offset, string selectColumns, string fromtable, string order, string where)
+        {
+            throw new  Exception("不支持！！！");
+        }
+
     }
 }
