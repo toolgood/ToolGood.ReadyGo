@@ -477,13 +477,13 @@ namespace ToolGood.ReadyGo3
         /// 执行SQL 查询,返回集合
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="page"></param>
-        /// <param name="itemsPerPage"></param>
-        /// <param name="selectSql"></param>
-        /// <param name="tableSql"></param>
-        /// <param name="orderSql"></param>
-        /// <param name="whereSql"></param>
-        /// <param name="args"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="selectSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
         /// <returns></returns>
         public List<T> SelectSql<T>(long page, long itemsPerPage, string selectSql, string tableSql, string orderSql, string whereSql, params object[] args)
         {
@@ -518,13 +518,13 @@ namespace ToolGood.ReadyGo3
         /// 执行SQL 查询,返回Page类型
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="page"></param>
-        /// <param name="itemsPerPage"></param>
-        /// <param name="selectSql"></param>
-        /// <param name="tableSql"></param>
-        /// <param name="orderSql"></param>
-        /// <param name="whereSql"></param>
-        /// <param name="args"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="selectSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
         /// <returns></returns>
         public Page<T> PageSql<T>(long page, long itemsPerPage, string selectSql, string tableSql, string orderSql, string whereSql, params object[] args)
         {
@@ -557,6 +557,54 @@ namespace ToolGood.ReadyGo3
                 }, "PageSql");
             }
             return getDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
+        }
+
+        /// <summary>
+        /// SQL批量拼接，Union 字符串，参数使用 @@
+        /// </summary>
+        /// <param name="sql">完整SQL语句，参数使用 @@</param>
+        /// <param name="objs">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> SelectUnion<T>(string sql,params object[] objs)
+        {
+            if (objs.Length==0) {
+                throw new ArgumentException("objs count is 0.");
+            }
+
+            sql = formatSql(sql);
+            var count = objs.Length;
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < count; i++) {
+                if (i>0) {
+                    stringBuilder.Append(" UNION ");
+                }
+                stringBuilder.Append(sql.Replace("@@", "@" + i.ToString()));
+            }
+            return Select<T>(stringBuilder.ToString(), objs);
+        }
+
+        /// <summary>
+        /// SQL批量拼接，Union all 字符串，参数使用 @@
+        /// </summary>
+        /// <param name="sql">完整SQL语句，参数使用 @@</param>
+        /// <param name="objs">SQL 参数</param>
+        /// <returns></returns>
+        /// <returns></returns>
+        public List<T> SelectUnionAll<T>(string sql, params object[] objs)
+        {
+            if (objs.Length == 0) {
+                throw new ArgumentException("objs count is 0.");
+            }
+            sql = formatSql(sql);
+            var count = objs.Length;
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < count; i++) {
+                if (i > 0) {
+                    stringBuilder.Append(" UNION ALL ");
+                }
+                stringBuilder.Append(sql.Replace("@@", "@" + i.ToString()));
+            }
+            return Select<T>(stringBuilder.ToString(), objs);
         }
 
         #endregion Select Page Select

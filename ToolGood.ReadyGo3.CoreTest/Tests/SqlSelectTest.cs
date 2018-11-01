@@ -24,6 +24,8 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             var t222 = helper.Single<DbArea>("where id=@id", parameters2);
 
 
+            var ts = helper.SelectUnion<DbArea>("Select * from Area where id=@@", 1, 2, 3);
+
 
             helper.Single<DbArea>("where id=@0", 1);
             helper.SingleOrDefault<DbArea>("where id=@0", 1);

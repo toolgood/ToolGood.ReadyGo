@@ -12,7 +12,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3
 {
-    partial class SqlHelper: ISqlHelperAsync
+    partial class SqlHelper : ISqlHelperAsync
     {
         internal Task<T> RunAsync<T>(string sql, object[] args, Func<Task<T>> func, params string[] methodtags)
         {
@@ -121,7 +121,7 @@ namespace ToolGood.ReadyGo3
         public async Task<bool> ExistsAsync<T>(object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T));
-            var table = _provider.GetTableName(pd,_tableNameManager);
+            var table = _provider.GetTableName(pd, _tableNameManager);
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
@@ -146,7 +146,7 @@ namespace ToolGood.ReadyGo3
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 var pd = PocoData.ForType(typeof(T));
-                var table = _provider.GetTableName(pd,_tableNameManager);
+                var table = _provider.GetTableName(pd, _tableNameManager);
                 sql = formatSql(sql);
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
@@ -251,6 +251,141 @@ namespace ToolGood.ReadyGo3
                 }, "Page", page.ToString(), itemsPerPage.ToString());
             }
             return getDatabase().PageAsync<T>(page, itemsPerPage, sql, args);
+        }
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="selectSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<List<T>> SelectSqlAsync<T>(long page, long itemsPerPage, string selectSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        {
+            #region 格式化
+            selectSql = selectSql.Trim();
+            tableSql = tableSql.Trim();
+            orderSql = orderSql.Trim();
+            whereSql = whereSql.Trim();
+            if (selectSql.StartsWith("SELECT ", StringComparison.InvariantCultureIgnoreCase)) {
+                selectSql = selectSql.Substring(7);
+            }
+            if (tableSql.StartsWith("FROM ", StringComparison.InvariantCultureIgnoreCase)) {
+                tableSql = tableSql.Substring(5);
+            }
+            if (orderSql.StartsWith("ORDER BY ", StringComparison.InvariantCultureIgnoreCase)) {
+                orderSql = orderSql.Substring(9);
+            }
+            if (whereSql.StartsWith("WHERE ", StringComparison.InvariantCultureIgnoreCase)) {
+                whereSql = whereSql.Substring(6);
+            }
+            #endregion
+            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), selectSql, tableSql, orderSql, whereSql);
+            sql = formatSql(sql);
+            if (_usedCacheServiceOnce) {
+                return await Run(sql, args, async () => {
+                    return (await getDatabase().QueryAsync<T>(sql, args)).ToList();
+                }, "Select");
+            }
+            return (await getDatabase().QueryAsync<T>(sql, args)).ToList();
+        }
+        /// <summary>
+        /// 执行SQL 查询,返回Page类型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="selectSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public Task<Page<T>> PageSqlAsync<T>(long page, long itemsPerPage, string selectSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        {
+            #region 格式化
+            selectSql = selectSql.Trim();
+            tableSql = tableSql.Trim();
+            orderSql = orderSql.Trim();
+            whereSql = whereSql.Trim();
+            if (selectSql.StartsWith("SELECT ", StringComparison.InvariantCultureIgnoreCase)) {
+                selectSql = selectSql.Substring(7);
+            }
+            if (tableSql.StartsWith("FROM ", StringComparison.InvariantCultureIgnoreCase)) {
+                tableSql = tableSql.Substring(5);
+            }
+            if (orderSql.StartsWith("ORDER BY ", StringComparison.InvariantCultureIgnoreCase)) {
+                orderSql = orderSql.Substring(9);
+            }
+            if (whereSql.StartsWith("WHERE ", StringComparison.InvariantCultureIgnoreCase)) {
+                whereSql = whereSql.Substring(6);
+            }
+            #endregion
+            var countSql = $"SELECT COUNT(1) FROM {tableSql} WHERE {whereSql}";
+            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), selectSql, tableSql, orderSql, whereSql);
+            countSql = formatSql(countSql);
+            sql = formatSql(sql);
+
+            if (_usedCacheServiceOnce) {
+                return Run(sql, args, () => {
+                    return getDatabase().PageSqlAsync<T>(page, itemsPerPage, sql, countSql, args);
+                }, "PageSql");
+            }
+            return getDatabase().PageSqlAsync<T>(page, itemsPerPage, sql, countSql, args);
+        }
+
+        /// <summary>
+        /// SQL批量拼接，Union 字符串，参数使用 @@
+        /// </summary>
+        /// <param name="sql">完整SQL语句，参数使用 @@</param>
+        /// <param name="objs">SQL 参数</param>
+        /// <returns></returns>
+        public Task<List<T>> SelectUnionAsync<T>(string sql, params object[] objs)
+        {
+            if (objs.Length == 0) {
+                throw new ArgumentException("objs count is 0.");
+            }
+
+            sql = formatSql(sql);
+            var count = objs.Length;
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < count; i++) {
+                if (i > 0) {
+                    stringBuilder.Append(" UNION ");
+                }
+                stringBuilder.Append(sql.Replace("@@", "@" + i.ToString()));
+            }
+            return SelectAsync<T>(stringBuilder.ToString(),objs);
+        }
+
+        /// <summary>
+        /// SQL批量拼接，Union all 字符串，参数使用 @@
+        /// </summary>
+        /// <param name="sql">完整SQL语句，参数使用 @@</param>
+        /// <param name="objs">SQL 参数</param>
+        /// <returns></returns>
+        /// <returns></returns>
+        public Task<List<T>> SelectUnionAllAsync<T>(string sql, params object[] objs)
+        {
+            if (objs.Length == 0) {
+                throw new ArgumentException("objs count is 0.");
+            }
+
+            sql = formatSql(sql);
+            var count = objs.Length;
+            StringBuilder stringBuilder = new StringBuilder();
+            for (int i = 0; i < count; i++) {
+                if (i > 0) {
+                    stringBuilder.Append(" UNION ALL ");
+                }
+                stringBuilder.Append(sql.Replace("@@", "@" + i.ToString()));
+            }
+            return SelectAsync<T>(stringBuilder.ToString(),objs);
         }
 
 
