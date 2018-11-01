@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -217,6 +218,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     value = fn(value);
             }
 
+            var dbParam = value as SqlParameter;
+            if (dbParam!=null) {
+                CreateParam(cmd, dbParam.Value, dbParam.ParameterName, null);
+                return;
+            }
+
             // Support passed in parameters
             var idbParam = value as IDbDataParameter;
             if (idbParam != null) {
@@ -224,10 +231,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 cmd.Parameters.Add(idbParam);
                 return;
             }
-
+            CreateParam(cmd, value, cmd.Parameters.Count.ToString(), pi);
+        }
+        private void CreateParam(IDbCommand cmd, object value,string name, PropertyInfo pi)
+        {
             // Create the parameter
             var p = cmd.CreateParameter();
-            p.ParameterName = string.Format("{0}{1}", _paramPrefix, cmd.Parameters.Count);
+            p.ParameterName = string.Format("{0}{1}", _paramPrefix, name);
 
             // Assign the parmeter value
             if (value == null) {
@@ -277,6 +287,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             cmd.Parameters.Add(p);
         }
 
+
         // Create a command
         private static Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
         /// <summary>
@@ -307,7 +318,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 } else {
                     foreach (var item in args) {
-                        AddParam(cmd, item, null);
+                        if (item is IList) {
+                            foreach (var obj in (IList)item) {
+                                AddParam(cmd, obj, null);
+                            }
+                        } else {
+                            AddParam(cmd, item, null);
+                        }
                     }
                 }
             }

@@ -15,6 +15,16 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
         {
             var helper = Config.DbHelper;
 
+            List<SqlParameter> parameters = new List<SqlParameter>();
+            parameters.Add(new SqlParameter("id", 1));
+            var t22 = helper.Single<DbArea>("where id=@id", parameters);
+
+            SqlParameterCollection parameters2 = new SqlParameterCollection();
+            parameters2.Add("id", 1);
+            var t222 = helper.Single<DbArea>("where id=@id", parameters2);
+
+
+
             helper.Single<DbArea>("where id=@0", 1);
             helper.SingleOrDefault<DbArea>("where id=@0", 1);
             helper.SingleById<DbArea>(1);
@@ -29,6 +39,10 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
 
             helper.Execute("select count(*) from Area");
             helper.ExecuteDataTable("select count(*) from Area where Level=@0", 2);
+
+            ISqlHelperSync h = helper;
+            ISqlHelperAsync t = helper;
+
 
         }
 
