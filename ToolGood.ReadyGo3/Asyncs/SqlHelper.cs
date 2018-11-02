@@ -12,7 +12,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3
 {
-    partial class SqlHelper : ISqlHelperAsync
+    partial class SqlHelper 
     {
         internal Task<T> RunAsync<T>(string sql, object[] args, Func<Task<T>> func, params string[] methodtags)
         {

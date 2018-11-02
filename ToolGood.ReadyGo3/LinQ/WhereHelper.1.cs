@@ -5,7 +5,6 @@ using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
-using ToolGood.ReadyGo3.Interfaces;
 using ToolGood.ReadyGo3.LinQ.Expressions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 

@@ -31,7 +31,7 @@ namespace ToolGood.ReadyGo3
         /// 机器标识
         /// </summary>
         public long WorkerId { get; private set; }
- 
+
         /// <summary>
         /// IdWorker
         /// </summary>
@@ -108,7 +108,7 @@ namespace ToolGood.ReadyGo3
 
         private static DateTime dt1970 = new DateTime(1970, 1, 1);
         private static Random rnd = new Random();
-        private static readonly int __staticMachine = ((0x00ffffff & Environment.MachineName.GetHashCode()) +AppDomain.CurrentDomain.Id) & 0x00ffffff;
+        private static readonly int __staticMachine = ((0x00ffffff & Environment.MachineName.GetHashCode()) + AppDomain.CurrentDomain.Id) & 0x00ffffff;
         private static readonly int __staticPid = Process.GetCurrentProcess().Id;
         private static int __staticIncrement = rnd.Next();
 
