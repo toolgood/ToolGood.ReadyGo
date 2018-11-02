@@ -338,7 +338,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         }
 
 
-        public virtual string CreateSql(int limit, int offset, string selectColumns, string fromtable, string order, string where)
+        public virtual string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
         {
             throw new  Exception("不支持！！！");
         }

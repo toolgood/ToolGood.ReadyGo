@@ -139,7 +139,9 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
             }
             if (useDistinct) {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendFormat("SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY ({0})) peta_rn,", order ?? "SELECT NULL");
+                sb.AppendFormat("SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY {0}) peta_rn,* FROM (", string.IsNullOrWhiteSpace(order) ? "(SELECT NULL)" : order);
+                sb.Append("SELECT ");
+                sb.Append("DISTINCT ");
                 sb.Append(string.Join(",", selectColumns));
                 sb.Append(" FROM ");
                 sb.Append(fromtable);
@@ -159,12 +161,13 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
                     sb.Append(" HAVING ");
                     sb.Append(having);
                 }
-                sb.AppendFormat(") peta_paged WHERE peta_rn>{0} AND peta_rn<={1}", offset, limit + offset);
+                sb.AppendFormat(")) peta_paged WHERE peta_rn>{0} AND peta_rn<={1}", offset, limit + offset);
                 return sb.ToString();
             } else {
-                var fields = GetOutSelectColumns(selectColumns);
                 StringBuilder sb = new StringBuilder();
-                sb.AppendFormat("SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY ({0})) peta_rn,{1} FROM (", order ?? "SELECT NULL", fields);
+                sb.AppendFormat("SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY {0})", string.IsNullOrWhiteSpace(order) ? "(SELECT NULL)" : order);
+                sb.AppendFormat(" peta_rn,{0} ", selectColumns);
+                sb.Append(" FROM ");
                 sb.Append(fromtable);
                 if (string.IsNullOrEmpty(jointables) == false) {
                     sb.Append(" ");
@@ -182,7 +185,7 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
                     sb.Append(" HAVING ");
                     sb.Append(having);
                 }
-                sb.AppendFormat("))  peta_paged WHERE peta_rn>{0} AND peta_rn<={1}", offset, limit + offset);
+                sb.AppendFormat(")  peta_paged WHERE peta_rn>{0} AND peta_rn<={1}", offset, limit + offset);
                 return sb.ToString();
             }
         }
@@ -197,6 +200,6 @@ namespace ToolGood.ReadyGo3.DataCentxt.Providers
             return string.Join(",", list);
         }
 
- 
+
     }
 }

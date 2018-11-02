@@ -603,29 +603,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     records for the specified page.  It will also execute a second query to retrieve the
         ///     total number of records in the result set.
         /// </remarks>
-        public Page<T> Page<T>(long page, long itemsPerPage, string sql, params object[] args)
+        public Page<T> Page<T>(long page, long itemsPerPage, string sql,  object[] args)
         {
             BuildPageQueries<T>((page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
-
-
-            // Save the one-time command time out and use it for both queries
-            var saveTimeout = OneTimeCommandTimeout;
-
-            // Setup the paged result
-            var result = new Page<T> {
-                CurrentPage = page,
-                PageSize = itemsPerPage,
-                TotalItems = ExecuteScalar<long>(sqlCount, args)
-            };
-            OneTimeCommandTimeout = saveTimeout;
-
-            // Get the records
-            result.Items = Query<T>(sqlPage, args).ToList();
-
-            // Done
-            return result;
-
-            //return Page<T>(page, itemsPerPage, sqlCount, args, sqlPage, args);
+            return PageSql<T>(page, itemsPerPage, sqlPage, sqlCount, args);
         }
 
         /// <summary>
@@ -638,7 +619,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="countSql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Page<T> PageSql<T>(long page,long itemsPerPage,string selectSql,string countSql, params object[] args)
+        public Page<T> PageSql<T>(long page,long itemsPerPage,string selectSql,string countSql,  object[] args)
         {
             // Save the one-time command time out and use it for both queries
             var saveTimeout = OneTimeCommandTimeout;

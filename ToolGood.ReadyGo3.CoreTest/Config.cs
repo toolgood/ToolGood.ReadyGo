@@ -45,5 +45,13 @@ namespace ToolGood.ReadyGo3.Test
                 return SqlHelperFactory.OpenSqliteFile(DbFile);
             }
         }
+
+
+        public static SqlHelper SqlServerHelper {
+            get {
+                return SqlHelperFactory.OpenDatabase(@"Server=(LocalDB)\MSSQLLocalDB; Integrated Security=true ;AttachDbFileName=F:\git\ToolGood.ReadyGo\ToolGood.ReadyGo3.CoreTest\bin\Debug\test.mdf", "", SqlType.SqlServer);
+            }
+        }
+
     }
 }

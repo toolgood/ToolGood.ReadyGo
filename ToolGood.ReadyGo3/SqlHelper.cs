@@ -479,37 +479,41 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T"></typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页数量</param>
-        /// <param name="selectSql">查询列 SQL语句</param>
+        /// <param name="columnSql">查询列 SQL语句</param>
         /// <param name="tableSql">TABLE SQL语句</param>
         /// <param name="orderSql">ORDER BY SQL语句</param>
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> SelectSql<T>(long page, long itemsPerPage, string selectSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        public List<T> SelectSql<T>(long page, long itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
         {
+            if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
+            if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
+
             #region 格式化
-            selectSql = selectSql.Trim();
+            columnSql = columnSql.Trim();
             tableSql = tableSql.Trim();
-            orderSql = orderSql.Trim();
-            whereSql = whereSql.Trim();
-            if (selectSql.StartsWith("SELECT ", StringComparison.InvariantCultureIgnoreCase)) {
-                selectSql = selectSql.Substring(7);
+            orderSql = orderSql?.Trim();
+            whereSql = whereSql?.Trim();
+            if (columnSql.StartsWith("SELECT ", StringComparison.InvariantCultureIgnoreCase)) {
+                columnSql = columnSql.Substring(7);
             }
             if (tableSql.StartsWith("FROM ", StringComparison.InvariantCultureIgnoreCase)) {
                 tableSql = tableSql.Substring(5);
             }
-            if (orderSql.StartsWith("ORDER BY ", StringComparison.InvariantCultureIgnoreCase)) {
+            if (orderSql?.StartsWith("ORDER BY ", StringComparison.InvariantCultureIgnoreCase) ?? false) {
                 orderSql = orderSql.Substring(9);
             }
-            if (whereSql.StartsWith("WHERE ", StringComparison.InvariantCultureIgnoreCase)) {
+            if (whereSql?.StartsWith("WHERE ", StringComparison.InvariantCultureIgnoreCase) ?? false) {
                 whereSql = whereSql.Substring(6);
             }
             #endregion
-            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), selectSql, tableSql, orderSql, whereSql);
+
+            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return Run<List<T>>(sql, args, () => {
-                    return getDatabase().Query<T>( sql, args).ToList();
+                    return getDatabase().Query<T>(sql, args).ToList();
                 }, "Select");
             }
             return getDatabase().Query<T>(sql, args).ToList();
@@ -520,40 +524,44 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T"></typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页数量</param>
-        /// <param name="selectSql">查询列 SQL语句</param>
+        /// <param name="columnSql">查询列 SQL语句</param>
         /// <param name="tableSql">TABLE SQL语句</param>
         /// <param name="orderSql">ORDER BY SQL语句</param>
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Page<T> PageSql<T>(long page, long itemsPerPage, string selectSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        public Page<T> PageSql<T>(long page, long itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
         {
+            if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
+            if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
+
             #region 格式化
-            selectSql = selectSql.Trim();
+            columnSql = columnSql.Trim();
             tableSql = tableSql.Trim();
-            orderSql = orderSql.Trim();
-            whereSql = whereSql.Trim();
-            if (selectSql.StartsWith("SELECT ", StringComparison.InvariantCultureIgnoreCase)) {
-                selectSql = selectSql.Substring(7);
+            orderSql = orderSql?.Trim();
+            whereSql = whereSql?.Trim();
+            if (columnSql.StartsWith("SELECT ", StringComparison.InvariantCultureIgnoreCase)) {
+                columnSql = columnSql.Substring(7);
             }
             if (tableSql.StartsWith("FROM ", StringComparison.InvariantCultureIgnoreCase)) {
                 tableSql = tableSql.Substring(5);
             }
-            if (orderSql.StartsWith("ORDER BY ", StringComparison.InvariantCultureIgnoreCase)) {
+            if (orderSql?.StartsWith("ORDER BY ", StringComparison.InvariantCultureIgnoreCase) ?? false) {
                 orderSql = orderSql.Substring(9);
             }
-            if (whereSql.StartsWith("WHERE ", StringComparison.InvariantCultureIgnoreCase)) {
+            if (whereSql?.StartsWith("WHERE ", StringComparison.InvariantCultureIgnoreCase) ?? false) {
                 whereSql = whereSql.Substring(6);
             }
             #endregion
-            var countSql = $"SELECT COUNT(1) FROM {tableSql} WHERE {whereSql}";
-            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), selectSql, tableSql, orderSql, whereSql);
+            string countSql = string.IsNullOrEmpty(whereSql) ? $"SELECT COUNT(1) FROM {tableSql}" : $"SELECT COUNT(1) FROM {tableSql} WHERE {whereSql}";
             countSql = formatSql(countSql);
+
+            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
             sql = formatSql(sql);
 
             if (_usedCacheServiceOnce) {
                 return Run<Page<T>>(sql, args, () => {
-                   return getDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
+                    return getDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
                 }, "PageSql");
             }
             return getDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
@@ -565,9 +573,9 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">完整SQL语句，参数使用 @@</param>
         /// <param name="objs">SQL 参数</param>
         /// <returns></returns>
-        public List<T> SelectUnion<T>(string sql,params object[] objs)
+        public List<T> SelectUnion<T>(string sql, params object[] objs)
         {
-            if (objs.Length==0) {
+            if (objs.Length == 0) {
                 throw new ArgumentException("objs count is 0.");
             }
 
@@ -575,7 +583,7 @@ namespace ToolGood.ReadyGo3
             var count = objs.Length;
             StringBuilder stringBuilder = new StringBuilder();
             for (int i = 0; i < count; i++) {
-                if (i>0) {
+                if (i > 0) {
                     stringBuilder.Append(" UNION ");
                 }
                 stringBuilder.Append(sql.Replace("@@", "@" + i.ToString()));

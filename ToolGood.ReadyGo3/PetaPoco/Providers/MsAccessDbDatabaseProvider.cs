@@ -31,7 +31,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             throw new NotSupportedException("The Access provider does not support paging.");
         }
 
-        public override string CreateSql(int limit, int offset, string selectColumns, string fromtable, string order, string where)
+        public override string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
         {
             if (offset <= 0) {
                 StringBuilder sb = new StringBuilder();
@@ -39,7 +39,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 sb.Append("TOP ");
                 sb.Append(limit);
                 sb.Append(" ");
-                sb.Append(selectColumns);
+                sb.Append(columnSql);
                 sb.Append(" FROM ");
                 sb.Append(fromtable);
                 if (string.IsNullOrEmpty(where) == false) {

@@ -55,7 +55,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
             _sharedConnectionDepth++;
         }
- 
+
 
         internal async Task ExecuteNonQueryHelperAsync(SqlCommand cmd)
         {
@@ -257,27 +257,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public async Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, string sql, params object[] args)
+        public Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, string sql, object[] args)
         {
             BuildPageQueries<T>((page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
 
-
-            // Save the one-time command time out and use it for both queries
-            var saveTimeout = OneTimeCommandTimeout;
-
-            // Setup the paged result
-            var result = new Page<T> {
-                CurrentPage = page,
-                PageSize = itemsPerPage,
-                TotalItems = await ExecuteScalarAsync<long>(sqlCount, args)
-            };
-            OneTimeCommandTimeout = saveTimeout;
-
-            // Get the records
-            result.Items = (await QueryAsync<T>(sqlPage, args)).ToList();
-
-            // Done
-            return result;
+            return PageSqlAsync<T>(page, itemsPerPage, sqlPage, sqlCount, args);
         }
 
         /// <summary>
@@ -290,7 +274,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="countSql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public async Task<Page<T>> PageSqlAsync<T>(long page, long itemsPerPage, string selectSql, string countSql, params object[] args)
+        public async Task<Page<T>> PageSqlAsync<T>(long page, long itemsPerPage, string selectSql, string countSql, object[] args)
         {
             // Save the one-time command time out and use it for both queries
             var saveTimeout = OneTimeCommandTimeout;

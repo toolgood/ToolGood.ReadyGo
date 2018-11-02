@@ -7,7 +7,7 @@ namespace ToolGood.ReadyGo3.Test.Datas
     [Table("Admin")]
     [Index("AdminGroupID")]
     [Serializable]
-    public class DbAdmin 
+    public class DbAdmin
     {
         /// <summary>
         /// ID
@@ -16,7 +16,7 @@ namespace ToolGood.ReadyGo3.Test.Datas
         /// <summary>
         /// 用户名
         /// </summary>
-     [Column("nick")]
+        [Column("nick")]
         public string Name { get; set; }
         /// <summary>
         /// 密码

@@ -72,7 +72,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             return $" OUTPUT INSERTED.[{primaryKeyName}]";
         }
-        public override string CreateSql(int limit, int offset, string selectColumns, string fromtable, string order, string where)
+        public override string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
         {
             if (offset <= 0) {
                 StringBuilder sb = new StringBuilder();
@@ -80,7 +80,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 sb.Append("TOP ");
                 sb.Append(limit);
                 sb.Append(" ");
-                sb.Append(selectColumns);
+                sb.Append(columnSql);
                 sb.Append(" FROM ");
                 sb.Append(fromtable);
                 if (string.IsNullOrEmpty(where) == false) {
@@ -94,16 +94,18 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 return sb.ToString();
             } else {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendFormat("SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY ({0})) peta_rn,{1} FROM (", order ?? "SELECT NULL", selectColumns);
+                sb.AppendFormat("SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY {0})", string.IsNullOrWhiteSpace(order) ? "(SELECT NULL)" : order);
+                sb.AppendFormat(" peta_rn,{0} ", columnSql);
+                sb.Append(" FROM ");
                 sb.Append(fromtable);
                 if (string.IsNullOrEmpty(where) == false) {
                     sb.Append(" WHERE ");
                     sb.Append(where);
                 }
-                sb.AppendFormat("))  peta_paged WHERE peta_rn>{0} AND peta_rn<={1}", offset, limit + offset);
+                sb.AppendFormat(")  peta_paged WHERE peta_rn>{0} AND peta_rn<={1}", offset, limit + offset);
                 return sb.ToString();
             }
-    
+
         }
     }
 }

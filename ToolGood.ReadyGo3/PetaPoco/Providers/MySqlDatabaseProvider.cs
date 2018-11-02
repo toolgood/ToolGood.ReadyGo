@@ -42,11 +42,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             return "SELECT EXISTS (SELECT 1 FROM {0} WHERE {1})";
         }
-        public override string CreateSql(int limit, int offset, string selectColumns, string fromtable, string order, string where)
+        public override string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("SELECT ");
-            sb.Append(selectColumns);
+            sb.Append(columnSql);
             sb.Append(" FROM ");
             sb.Append(fromtable);
             if (string.IsNullOrEmpty(where) == false) {

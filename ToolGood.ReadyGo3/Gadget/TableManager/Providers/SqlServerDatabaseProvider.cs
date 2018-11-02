@@ -3,7 +3,7 @@ using System.Text;
 
 namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 {
-    public class SqlServer2012DatabaseProvider : SqlServerDatabaseProvider{}
+    public class SqlServer2012DatabaseProvider : SqlServerDatabaseProvider { }
     public class SqlServerDatabaseProvider : DatabaseProvider
     {
         // http://www.cnblogs.com/gouchaonan/p/6127799.html
@@ -71,7 +71,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             var type = ci.PropertyType;
             var isRequired = ci.Required;
             if (type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, true);
-            if (type == typeof(string)) return CreateField(ti, ci, ci.IsText ? "Text" : "nvarchar", ci.IsText ? "" : (ci.FieldLength == "" ? "4000" : ci.FieldLength), isRequired);
+            if (type == typeof(string)) return CreateField(ti, ci, ci.IsText ? "Text" : "nvarchar", ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), isRequired);
             if (type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(SByte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "varchar", ci.FieldLength, isRequired);

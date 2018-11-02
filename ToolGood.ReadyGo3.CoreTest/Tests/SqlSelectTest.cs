@@ -13,6 +13,8 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
         [Test]
         public void SelectTest()
         {
+    
+
             var helper = Config.DbHelper;
 
             List<SqlParameter> parameters = new List<SqlParameter>();
@@ -26,6 +28,16 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
 
             var ts1 = helper.SelectUnion<DbArea>("Select * from Area where id=@@", 1, 2, 3, 2);
             var ts2 = helper.SelectUnionAll<DbArea>("Select * from Area where id=@@", 1, 2, 3, 2);
+
+            var selectColumns = "Name,NameEn";
+            var table = "Area";
+            var where = "id>120";
+            var tt1 = helper.SelectSql<DbArea>(1, 20, selectColumns, table, null, where);
+            var tt2 = helper.SelectSql<DbArea>(2, 20, selectColumns, table, null, where);
+
+            var tt11 = helper.PageSql<DbArea>(1, 20, selectColumns, table, null, where);
+            var tt22 = helper.PageSql<DbArea>(2, 20, selectColumns, table, null, where);
+
 
 
             helper.Single<DbArea>("where id=@0", 1);
@@ -56,6 +68,17 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
         public async void SelectAsyncTest()
         {
             var helper = Config.DbHelper;
+
+
+
+            var selectColumns = "Name,NameEn";
+            var table = "Area";
+            var where = "id>120";
+
+            var tt13 = await helper.SelectSqlAsync<DbArea>(1, 20, selectColumns, table, null, where);
+            var tt23 = await helper.SelectSqlAsync<DbArea>(2, 20, selectColumns, table, null, where);
+            var tt33 = await helper.PageSqlAsync<DbArea>(1, 20, selectColumns, table, null, where);
+            var tt43 = await helper.PageSqlAsync<DbArea>(5, 20, selectColumns, table, null, where);
 
             await helper.SingleAsync<DbArea>("where id=@0", 1);
             await helper.SingleOrDefaultAsync<DbArea>("where id=@0", 1);
