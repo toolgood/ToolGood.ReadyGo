@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 
 namespace ToolGood.ReadyGo3.Gadget.Monitor
@@ -88,7 +89,8 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
             SqlMonitorItem item = new SqlMonitorItem {
                 Parent = _cur,
                 StartTime = DateTime.Now,
-                Sql = sql
+                Sql = sql,
+                Args = args,
             };
 
             _items.Add(item);
@@ -143,6 +145,7 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
         {
             public SqlMonitorItem Parent;
             public string Sql;
+            public object[] Args;
             public string Exception;
             public DateTime StartTime;
             public DateTime EndTime;
@@ -154,6 +157,15 @@ namespace ToolGood.ReadyGo3.Gadget.Monitor
 
                 sb.AppendFormat("{0:yyyy-MM-dd HH:mm:ss}[{1}ms]：", StartTime, ts);
                 sb.Append(Sql);
+                if (Args != null) {
+                    for (int i = 0; i < Args.Length; i++) {
+                        var arg = Args[i] as IDataParameter;
+                        if (arg != null) {
+                            sb.AppendFormat("\r\n----->[{0}]=>{1}", arg.ParameterName, arg.Value?.ToString() ?? "[NULL]");
+                        }
+                    }
+                }
+
                 if (string.IsNullOrEmpty(Exception) == false) {
                     sb.Append("\r\n");
                     sb.Append("\t" + Exception.Replace("\r\n", "\n").Replace("\n", "\r\n\t"));

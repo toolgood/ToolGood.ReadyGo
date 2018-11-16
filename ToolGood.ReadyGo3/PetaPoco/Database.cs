@@ -398,10 +398,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var objs = (from IDataParameter parameter in cmd.Parameters select parameter.Value).ToArray();
             _sqlHelper._sql.LastSQL = cmd.CommandText;
             _sqlHelper._sql.LastArgs = objs;
-            _sqlHelper._sqlMonitor.ExecutingCommand(cmd.CommandText, objs);
-
             _sqlHelper._events.OnExecutingCommand(cmd.CommandText, objs);
 
+            var objs2 = (from IDataParameter parameter in cmd.Parameters select parameter).ToArray();
+            _sqlHelper._sqlMonitor.ExecutingCommand(cmd.CommandText, objs2);
         }
 
         /// <summary>
