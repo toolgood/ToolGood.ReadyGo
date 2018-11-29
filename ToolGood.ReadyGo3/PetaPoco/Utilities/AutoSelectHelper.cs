@@ -9,7 +9,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
 {
     internal static class AutoSelectHelper
     {
-        private static Regex rxSelect = new Regex(@"\A\s*(SELECT|EXEC|EXECUTE|CALL|WITH|SET|DECLARE|USE|GO|PRINT)\s",
+        private static Regex rxSelect = new Regex(@"\A\s*(SELECT|SQLEXEC|EXEC|EXECUTE|CALL|WITH|SET|DECLARE|USE|GO|PRINT)\s",
             RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
         private static Regex rxFrom = new Regex(@"\A\s*FROM\s",
