@@ -9,7 +9,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         public override DbProviderFactory GetFactory()
         {
             return GetFactory(
-                //"MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Culture=neutral, PublicKeyToken=c5687fc88969c44d",
+                "MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Culture=neutral, PublicKeyToken=c5687fc88969c44d",
                 "MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data"
                 );
         }
