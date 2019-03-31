@@ -25,7 +25,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         private static MethodInfo fnInvoke = typeof(Func<object, object>).GetMethod("Invoke");
         private Cache<string, Delegate> PocoFactories = new Cache<string, Delegate>();
         private Type Type;
- 
+
         /// <summary>
         /// 表信息
         /// </summary>
@@ -44,7 +44,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             Type = type;
 
             // Get the mapper for this type
-            var mapper = Singleton<StandardMapper>.Instance; 
+            var mapper = Singleton<StandardMapper>.Instance;
 
             // Get the table info
             TableInfo = mapper.GetTableInfo(type);
@@ -74,7 +74,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="obj"></param>
         /// <param name="primaryKeyName"></param>
         /// <returns></returns>
-        public static PocoData ForObject(object obj, string primaryKeyName )
+        public static PocoData ForObject(object obj, string primaryKeyName)
         {
             var t = obj.GetType();
             if (t == typeof(System.Dynamic.ExpandoObject)) {
@@ -120,7 +120,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="countColumns"></param>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public Delegate GetFactory(string sql, string connectionString, int firstColumn, int countColumns, IDataReader reader )
+        public Delegate GetFactory(string sql, string connectionString, int firstColumn, int countColumns, IDataReader reader)
         {
             #region 创建Key
             SortedSet<string> list = new SortedSet<string>();
@@ -156,16 +156,16 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                         il.Emit(OpCodes.Dup); // obj, obj
                         il.Emit(OpCodes.Ldstr, reader.GetName(i)); // obj, obj, fieldname
 
-                        // Get the converter
-                        Func<object, object> converter = mapper.GetFromDbConverter((PropertyInfo)null, srcType);
+                        //// Get the converter
+                        //Func<object, object> converter = mapper.GetFromDbConverter((PropertyInfo)null, srcType);
 
                         /*
 						if (ForceDateTimesToUtc && converter == null && srcType == typeof(DateTime))
 							converter = delegate(object src) { return new DateTime(((DateTime)src).Ticks, DateTimeKind.Utc); };
 						 */
 
-                        // Setup stack for call to converter
-                        AddConverterToStack(il, converter);
+                        //// Setup stack for call to converter
+                        //AddConverterToStack(il, converter);
 
                         // r[i]
                         il.Emit(OpCodes.Ldarg_0); // obj, obj, fieldname, converter?,    rdr
@@ -178,18 +178,20 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                         var lblNotNull = il.DefineLabel();
                         il.Emit(OpCodes.Brfalse_S, lblNotNull); // obj, obj, fieldname, converter?,  value
                         il.Emit(OpCodes.Pop); // obj, obj, fieldname, converter?
-                        if (converter != null)
-                            il.Emit(OpCodes.Pop); // obj, obj, fieldname, 
+                        //if (converter != null)
+                        //    il.Emit(OpCodes.Pop); // obj, obj, fieldname, 
                         il.Emit(OpCodes.Ldnull); // obj, obj, fieldname, null
-                        if (converter != null) {
-                            var lblReady = il.DefineLabel();
-                            il.Emit(OpCodes.Br_S, lblReady);
-                            il.MarkLabel(lblNotNull);
-                            il.Emit(OpCodes.Callvirt, fnInvoke);
-                            il.MarkLabel(lblReady);
-                        } else {
-                            il.MarkLabel(lblNotNull);
-                        }
+
+                        //if (converter != null) {
+                        //    var lblReady = il.DefineLabel();
+                        //    il.Emit(OpCodes.Br_S, lblReady);
+                        //    il.MarkLabel(lblNotNull);
+                        //    il.Emit(OpCodes.Callvirt, fnInvoke);
+                        //    il.MarkLabel(lblReady);
+                        //} else {
+                        //    il.MarkLabel(lblNotNull);
+                        //}
+                        il.MarkLabel(lblNotNull);
 
                         il.Emit(OpCodes.Callvirt, fnAdd);
                     }
@@ -335,12 +337,12 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         {
             Func<object, object> converter = null;
 
-            // Get converter from the mapper
-            if (pc != null) {
-                converter = mapper.GetFromDbConverter(pc.PropertyInfo, srcType);
-                if (converter != null)
-                    return converter;
-            }
+            //// Get converter from the mapper
+            //if (pc != null) {
+            //    converter = mapper.GetFromDbConverter(pc.PropertyInfo, srcType);
+            //    if (converter != null)
+            //        return converter;
+            //}
 
             // Standard DateTime->Utc mapper
             if (pc != null && pc.ForceToUtc && srcType == typeof(DateTime) && (dstType == typeof(DateTime) || dstType == typeof(DateTime?))) {

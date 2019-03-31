@@ -210,16 +210,16 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="pi">Optional, a reference to the property info of the POCO property from which the value is coming.</param>
         private void AddParam(IDbCommand cmd, object value, PropertyInfo pi)
         {
-            // Convert value to from poco type to db type
-            if (pi != null) {
-                var mapper = Singleton<StandardMapper>.Instance;
-                var fn = mapper.GetToDbConverter(pi);
-                if (fn != null)
-                    value = fn(value);
-            }
+            //// Convert value to from poco type to db type
+            //if (pi != null) {
+            //    var mapper = Singleton<StandardMapper>.Instance;
+            //    var fn = mapper.GetToDbConverter(pi);
+            //    if (fn != null)
+            //        value = fn(value);
+            //}
 
             var dbParam = value as SqlParameter;
-            if (dbParam!=null) {
+            if (dbParam != null) {
                 CreateParam(cmd, dbParam.Value, dbParam.ParameterName, null);
                 return;
             }
@@ -233,7 +233,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
             CreateParam(cmd, value, cmd.Parameters.Count.ToString(), pi);
         }
-        private void CreateParam(IDbCommand cmd, object value,string name, PropertyInfo pi)
+        private void CreateParam(IDbCommand cmd, object value, string name, PropertyInfo pi)
         {
             // Create the parameter
             var p = cmd.CreateParameter();
@@ -251,8 +251,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 value = _provider.MapParameterValue(value);
 
                 var t = value.GetType();
-                if (t.IsEnum) // PostgreSQL .NET driver wont cast enum to int
-                {
+                if (t.IsEnum) {
+                    // PostgreSQL .NET driver wont cast enum to int
                     p.Value = Convert.ChangeType(value, ((Enum)value).GetTypeCode());
                 } else if (t == typeof(Guid) && !_provider.HasNativeGuidSupport) {
                     p.Value = value.ToString();
@@ -270,13 +270,23 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     p.Size = Math.Max((value as AnsiString).Value.Length + 1, 4000);
                     p.Value = (value as AnsiString).Value;
                     p.DbType = DbType.AnsiString;
-                } else if (value.GetType().Name == "SqlGeography") //SqlGeography is a CLR Type
-                  {
+                } else if (value.GetType().Name == "SqlGeography") {
+                    //SqlGeography is a CLR Type
                     p.GetType().GetProperty("UdtTypeName").SetValue(p, "geography", null); //geography is the equivalent SQL Server Type
                     p.Value = value;
-                } else if (value.GetType().Name == "SqlGeometry") //SqlGeometry is a CLR Type
-                  {
+                } else if (value.GetType().Name == "SqlGeometry") {
+                    //SqlGeometry is a CLR Type
                     p.GetType().GetProperty("UdtTypeName").SetValue(p, "geometry", null); //geography is the equivalent SQL Server Type
+                    p.Value = value;
+                } else if (t == typeof(DateTime) || t == typeof(DateTime?)) {
+                    // 在sql server 内会影响查询速度 
+                    p.DbType = DbType.DateTime;
+                    p.Value = value;
+                } else if (t == typeof(TimeSpan) || t == typeof(TimeSpan?)) {
+                    p.DbType = DbType.DateTime;
+                    p.Value = value;
+                } else if (t == typeof(DateTimeOffset) || t == typeof(DateTimeOffset?)) {
+                    p.DbType = DbType.DateTimeOffset;
                     p.Value = value;
                 } else {
                     p.Value = value;
@@ -526,7 +536,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return default(DataTable);
             }
         }
-//#if !NETSTANDARD2_0
+        //#if !NETSTANDARD2_0
         /// <summary>
         /// 
         /// </summary>
@@ -557,7 +567,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return default(DataSet);
             }
         }
-//#endif
+        //#endif
 
         #endregion
 
@@ -603,7 +613,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     records for the specified page.  It will also execute a second query to retrieve the
         ///     total number of records in the result set.
         /// </remarks>
-        public Page<T> Page<T>(long page, long itemsPerPage, string sql,  object[] args)
+        public Page<T> Page<T>(long page, long itemsPerPage, string sql, object[] args)
         {
             BuildPageQueries<T>((page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
             return PageSql<T>(page, itemsPerPage, sqlPage, sqlCount, args);
@@ -619,7 +629,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="countSql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Page<T> PageSql<T>(long page,long itemsPerPage,string selectSql,string countSql,  object[] args)
+        public Page<T> PageSql<T>(long page, long itemsPerPage, string selectSql, string countSql, object[] args)
         {
             // Save the one-time command time out and use it for both queries
             var saveTimeout = OneTimeCommandTimeout;
