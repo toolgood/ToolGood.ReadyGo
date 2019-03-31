@@ -299,12 +299,12 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                         il.MarkLabel(lblNext);
                     }
 
-                    var fnOnLoaded = RecurseInheritedTypes<MethodInfo>(Type,
-                        (x) => x.GetMethod("OnLoaded", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
-                    if (fnOnLoaded != null) {
-                        il.Emit(OpCodes.Dup);
-                        il.Emit(OpCodes.Callvirt, fnOnLoaded);
-                    }
+                    //var fnOnLoaded = RecurseInheritedTypes<MethodInfo>(Type,
+                    //    (x) => x.GetMethod("OnLoaded", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
+                    //if (fnOnLoaded != null) {
+                    //    il.Emit(OpCodes.Dup);
+                    //    il.Emit(OpCodes.Callvirt, fnOnLoaded);
+                    //}
                 }
 
                 il.Emit(OpCodes.Ret);
