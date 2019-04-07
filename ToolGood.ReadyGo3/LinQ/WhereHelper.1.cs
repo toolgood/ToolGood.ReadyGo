@@ -227,7 +227,7 @@ namespace ToolGood.ReadyGo3.LinQ
                 table = col.Substring(0, index);
                 col = col.Substring(index + 1);
             }
-            if (asName == null) {
+            if (string.IsNullOrWhiteSpace(asName)) {
                 _includeColumns.Insert(0, new SelectHeader() {
                     AsName = col,
                     Table = table,
@@ -237,7 +237,8 @@ namespace ToolGood.ReadyGo3.LinQ
                 _includeColumns.Insert(0, new SelectHeader() {
                     AsName = asName,
                     Table = table,
-                    QuerySql = col
+                    QuerySql = col,
+                    UseAsName = true,
                 });
             }
 
@@ -1230,7 +1231,8 @@ namespace ToolGood.ReadyGo3.LinQ
             _includeColumns.Insert(0, new SelectHeader() {
                 AsName = asName,
                 Table = "t1",
-                QuerySql = columnSql
+                QuerySql = columnSql,
+                UseAsName = true
             });
             return this;
         }
