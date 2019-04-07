@@ -220,7 +220,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             var dbParam = value as SqlParameter;
             if (dbParam != null) {
-                CreateParam(cmd, dbParam.Value, dbParam.ParameterName, null);
+                CreateParam(cmd, dbParam.Value, dbParam.ParameterName, null, dbParam.Size, dbParam.Scale, dbParam.DbType, dbParam.ParameterDirection);
                 return;
             }
 
@@ -231,13 +231,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 cmd.Parameters.Add(idbParam);
                 return;
             }
-            CreateParam(cmd, value, cmd.Parameters.Count.ToString(), pi);
+            CreateParam(cmd, value, cmd.Parameters.Count.ToString(), pi, null, null, null, null);
         }
-        private void CreateParam(IDbCommand cmd, object value, string name, PropertyInfo pi)
+        private void CreateParam(IDbCommand cmd, object value, string name, PropertyInfo pi, int? size, byte? scale, DbType? dbType, ParameterDirection? parameterDirection)
         {
             // Create the parameter
             var p = cmd.CreateParameter();
             p.ParameterName = string.Format("{0}{1}", _paramPrefix, name);
+
 
             // Assign the parmeter value
             if (value == null) {
@@ -280,18 +281,22 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     p.Value = value;
                 } else if (t == typeof(DateTime) || t == typeof(DateTime?)) {
                     // 在sql server 内会影响查询速度 
-                    p.DbType = DbType.DateTime;
                     p.Value = value;
+                    p.DbType = DbType.DateTime;
                 } else if (t == typeof(TimeSpan) || t == typeof(TimeSpan?)) {
+                    p.Value = value;
                     p.DbType = DbType.DateTime;
-                    p.Value = value;
                 } else if (t == typeof(DateTimeOffset) || t == typeof(DateTimeOffset?)) {
-                    p.DbType = DbType.DateTimeOffset;
                     p.Value = value;
+                    p.DbType = DbType.DateTimeOffset;
                 } else {
                     p.Value = value;
                 }
             }
+            if (scale != null) { p.Precision = scale.Value; }
+            if (parameterDirection != null) { p.Direction = parameterDirection.Value; }
+            if (dbType != null) { p.DbType = dbType.Value; }
+            if (size != null) { p.Size = size.Value; }
 
             // Add to the collection
             cmd.Parameters.Add(p);
@@ -328,12 +333,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 } else {
                     foreach (var item in args) {
-                        if (item is IList) {
-                            foreach (var obj in (IList)item) {
+                        var items = item as IList;
+                        if (items!=null) {
+                            foreach (var obj in items) {
                                 AddParam(cmd, obj, null);
                             }
                         } else {
                             AddParam(cmd, item, null);
+
                         }
                     }
                 }
