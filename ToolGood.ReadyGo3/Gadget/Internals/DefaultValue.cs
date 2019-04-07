@@ -82,7 +82,7 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
 
             #endregion
 
-            var m = new DynamicMethod("toolgood_default_" + _setDefault.Count.ToString(), typeof(void), new Type[] { typeof(T), typeof(bool), typeof(bool), typeof(bool) }, true);
+            var m = new DynamicMethod("toolgood_default_" + Guid.NewGuid().ToString().Replace("-", ""), typeof(void), new Type[] { typeof(T), typeof(bool), typeof(bool), typeof(bool) }, true);
             var il = m.GetILGenerator();
 
             #region string
@@ -113,7 +113,7 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
             #endregion
 
             #region AnsiString
-            if (ansiStrings.Count>0) {
+            if (ansiStrings.Count > 0) {
                 il.Emit(OpCodes.Ldarg_1);
                 var lab1 = il.DefineLabel();
                 if (ansiStrings.Count < 7) {

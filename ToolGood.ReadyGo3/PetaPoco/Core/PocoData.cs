@@ -139,7 +139,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
 
             return PocoFactories.Get(key, () => {
                 // Create the method
-                var m = new DynamicMethod("tg_readygo_" + PocoFactories.Count.ToString(), Type, new Type[] { typeof(IDataReader) }, true);
+                var m = new DynamicMethod("tg_readygo_" + Guid.NewGuid().ToString().Replace("-","") , Type, new Type[] { typeof(IDataReader) }, true);
                 var il = m.GetILGenerator();
                 var mapper = Singleton<StandardMapper>.Instance;
 

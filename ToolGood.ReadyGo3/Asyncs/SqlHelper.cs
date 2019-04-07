@@ -345,57 +345,7 @@ namespace ToolGood.ReadyGo3
             }
             return getDatabase().PageSqlAsync<T>(page, itemsPerPage, sql, countSql, args);
         }
-
-        /// <summary>
-        /// SQL批量拼接，Union 字符串，参数使用 @@
-        /// </summary>
-        /// <param name="sql">完整SQL语句，参数使用 @@</param>
-        /// <param name="objs">SQL 参数</param>
-        /// <returns></returns>
-        public Task<List<T>> SelectUnionAsync<T>(string sql, params object[] objs)
-        {
-            if (objs.Length == 0) {
-                throw new ArgumentException("objs count is 0.");
-            }
-
-            sql = formatSql(sql);
-            var count = objs.Length;
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < count; i++) {
-                if (i > 0) {
-                    stringBuilder.Append(" UNION ");
-                }
-                stringBuilder.Append(sql.Replace("@@", "@" + i.ToString()));
-            }
-            return SelectAsync<T>(stringBuilder.ToString(), objs);
-        }
-
-        /// <summary>
-        /// SQL批量拼接，Union all 字符串，参数使用 @@
-        /// </summary>
-        /// <param name="sql">完整SQL语句，参数使用 @@</param>
-        /// <param name="objs">SQL 参数</param>
-        /// <returns></returns>
-        /// <returns></returns>
-        public Task<List<T>> SelectUnionAllAsync<T>(string sql, params object[] objs)
-        {
-            if (objs.Length == 0) {
-                throw new ArgumentException("objs count is 0.");
-            }
-
-            sql = formatSql(sql);
-            var count = objs.Length;
-            StringBuilder stringBuilder = new StringBuilder();
-            for (int i = 0; i < count; i++) {
-                if (i > 0) {
-                    stringBuilder.Append(" UNION ALL ");
-                }
-                stringBuilder.Append(sql.Replace("@@", "@" + i.ToString()));
-            }
-            return SelectAsync<T>(stringBuilder.ToString(), objs);
-        }
-
-
+ 
         #endregion Select Page Select
 
         #region Single SingleOrDefault First FirstOrDefault

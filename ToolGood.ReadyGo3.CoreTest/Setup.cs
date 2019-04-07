@@ -14,14 +14,19 @@ namespace ToolGood.ReadyGo3.CoreTest
     {
         public static void Start()
         {
-            if (File.Exists(Config.DbFile)) {
-                File.Delete(Config.DbFile);
-            }
-            File.Create(Config.DbFile).Close();
-            var helper2 = Config.DbHelper;
-            InitTable(helper2);
-            CreateData(helper2);
-            helper2.Dispose();
+            //if (File.Exists(Config.DbFile)) {
+            //    File.Delete(Config.DbFile);
+            //}
+            //File.Create(Config.DbFile).Close();
+            //var helper2 = Config.DbHelper;
+            //InitTable(helper2);
+            //CreateData(helper2);
+            //helper2.Dispose();
+
+            var helper3 = Config.SqlServerHelper;
+            InitTable(helper3);
+            CreateData(helper3);
+            helper3.Dispose();
         }
 
         private static void InitTable(SqlHelper helper)

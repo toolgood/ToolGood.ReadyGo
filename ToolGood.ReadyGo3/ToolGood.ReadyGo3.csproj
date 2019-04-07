@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <Description>A high performance Micro-ORM supporting SQL Server, MySQL, Sqlite, SqlCE, PostgreSQL, Firebird etc..</Description>
-        <Copyright>Copyright 2016-2018 ToolGood</Copyright>
+        <Copyright>Copyright 2016-2019 ToolGood</Copyright>
         <AssemblyTitle>ToolGood.ReadyGo</AssemblyTitle>
         <VersionPrefix>2.0.0</VersionPrefix>
         <Authors>ToolGood</Authors>
@@ -21,13 +21,13 @@
         <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <FileVersion>3.1.0.55</FileVersion>
-        <Version>3.1.0.55</Version>
-        <PackageReleaseNotes></PackageReleaseNotes>
+        <FileVersion>3.1.1.0</FileVersion>
+        <Version>3.1.1.0</Version>
+        <PackageReleaseNotes>去除SelectUnion，SelectUnionAll方法，sqlite 默认以 System.Data.SQLite 为主</PackageReleaseNotes>
         <Product>ToolGood.ReadyGo3</Product>
         <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
-        <AssemblyVersion>3.1.0.55</AssemblyVersion>
+        <AssemblyVersion>3.1.1.0</AssemblyVersion>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">

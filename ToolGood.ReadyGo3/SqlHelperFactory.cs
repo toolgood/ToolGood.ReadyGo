@@ -184,26 +184,9 @@ namespace ToolGood.ReadyGo3
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
 
-#if NETSTANDARD2_0
-        /// <summary>
-        /// 打开Sqlite数据库
-        /// </summary>
-        /// <param name="filePath">文件目录</param>
-        /// <param name="pwd">密码</param>
-        /// <returns></returns>
-        public static SqlHelper OpenSqliteFile(string filePath, string pwd = "")
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Data Source={0};", filePath);
-            if (string.IsNullOrEmpty(pwd) == false) {
-                sb.AppendFormat("Password={0};", pwd);
-            }
-            return OpenDatabase(sb.ToString(), "System.Data.SQLite", SqlType.SQLite);
-        }
-#else
 
-        /// <summary>
-        /// 打开Sqlite数据库
+        /// <summary> 
+        /// 打开Sqlite数据库 使用System.Data.SQLite类库
         /// </summary>
         /// <param name="filePath">文件目录</param>
         /// <param name="pwd">密码</param>
@@ -226,6 +209,8 @@ namespace ToolGood.ReadyGo3
             return OpenDatabase(sb.ToString(), "System.Data.SQLite", SqlType.SQLite);
         }
 
+
+#if !NETSTANDARD2_0
 
         /// <summary>
         /// 打开Access数据库 32位

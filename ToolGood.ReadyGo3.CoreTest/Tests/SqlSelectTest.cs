@@ -26,8 +26,8 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             var t222 = helper.Single<DbArea>("where id=@id", parameters2);
 
 
-            var ts1 = helper.SelectUnion<DbArea>("Select * from Area where id=@@", 1, 2, 3, 2);
-            var ts2 = helper.SelectUnionAll<DbArea>("Select * from Area where id=@@", 1, 2, 3, 2);
+            //var ts1 = helper.SelectUnion<DbArea>("Select * from Area where id=@@", 1, 2, 3, 2);
+            //var ts2 = helper.SelectUnionAll<DbArea>("Select * from Area where id=@@", 1, 2, 3, 2);
 
             var selectColumns = "Name,NameEn";
             var table = "Area";
@@ -54,9 +54,6 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
 
             helper.Execute("select count(*) from Area");
             helper.ExecuteDataTable("select count(*) from Area where Level=@0", 2);
-
-            ISqlHelperSync h = helper;
-            ISqlHelperAsync t = helper;
 
 
         }

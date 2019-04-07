@@ -1,7 +1,6 @@
 ﻿namespace ToolGood.ReadyGo3
 {
 
-#if !NETSTANDARD2_0
 
     /// <summary>
     /// Sqlite 
@@ -42,5 +41,4 @@
         /// </summary>
         Off
     }
-#endif
 }

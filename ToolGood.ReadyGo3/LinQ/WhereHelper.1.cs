@@ -1214,6 +1214,19 @@ namespace ToolGood.ReadyGo3.LinQ
             includeColumn(column, asName);
             return this;
         }
+
+        /// <summary>
+        /// 包含列
+        /// </summary>
+        /// <param name="column"></param>
+        /// <param name="asName"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> AddColumn(string column, string asName = null)
+        {
+            includeColumn(column, asName);
+            return this;
+        }
+
         #endregion
 
         #region 09 获取Sql和args方法

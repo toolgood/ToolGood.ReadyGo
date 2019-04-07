@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using ToolGood.ReadyGo3.Attributes;
+using ToolGood.ReadyGo3.PetaPoco.Internal;
 
 namespace ToolGood.ReadyGo3.PetaPoco
 {
@@ -81,56 +82,60 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 ci.ColumnName = pi.Name;
                 ci.ForceToUtc = false;
                 ci.ResultColumn = false;
-
             }
             return ci;
         }
+
+        internal static Cache<Type, bool> _IsAllowType = new Cache<Type, bool>();
         internal static bool IsAllowType(Type type)
         {
-            if (type == null) return false;
-            if (type.IsEnum) return true;
-            if (type == typeof(byte[])) return true;
-            if (type == typeof(sbyte[])) return true;
-            if (type.FullName == "Microsoft.SqlServer.Types.SqlGeography") return true;
-            if (type.FullName == "Microsoft.SqlServer.Types.SqlGeometry") return true;
+            return _IsAllowType.Get(type, () => {
+                if (type == null) return false;
+                if (type.IsEnum) return true;
+                if (type == typeof(byte[])) return true;
+                if (type == typeof(sbyte[])) return true;
+                if (type.FullName == "Microsoft.SqlServer.Types.SqlGeography") return true;
+                if (type.FullName == "Microsoft.SqlServer.Types.SqlGeometry") return true;
 
-            if (type.IsGenericType) {
-                if (type.GetGenericTypeDefinition().Equals(typeof(Nullable<>))) {
-                    type = type.GetGenericArguments()[0];
-                } else {
-                    return false;
+                if (type.IsGenericType) {
+                    if (type.GetGenericTypeDefinition().Equals(typeof(Nullable<>))) {
+                        type = type.GetGenericArguments()[0];
+                    } else {
+                        return false;
+                    }
                 }
-            }
 
-            if (type == typeof(Guid)) return true;
-            if (type == typeof(AnsiString)) return true;
-            if (type == typeof(TimeSpan)) return true;
-            if (type == typeof(DateTimeOffset)) return true;
+                if (type == typeof(Guid)) return true;
+                if (type == typeof(AnsiString)) return true;
+                if (type == typeof(TimeSpan)) return true;
+                if (type == typeof(DateTimeOffset)) return true;
 
-            var tc = Type.GetTypeCode(type);
-            switch (tc) {
-                case TypeCode.Boolean:
-                case TypeCode.Byte:
-                case TypeCode.Char:
-                case TypeCode.DateTime:
-                case TypeCode.Decimal:
-                case TypeCode.Double:
-                case TypeCode.Int16:
-                case TypeCode.Int32:
-                case TypeCode.Int64:
-                case TypeCode.SByte:
-                case TypeCode.Single:
-                case TypeCode.String:
-                case TypeCode.UInt16:
-                case TypeCode.UInt32:
-                case TypeCode.UInt64:
-                    return true;
+                var tc = Type.GetTypeCode(type);
+                switch (tc) {
+                    case TypeCode.Boolean:
+                    case TypeCode.Byte:
+                    case TypeCode.Char:
+                    case TypeCode.DateTime:
+                    case TypeCode.Decimal:
+                    case TypeCode.Double:
+                    case TypeCode.Int16:
+                    case TypeCode.Int32:
+                    case TypeCode.Int64:
+                    case TypeCode.SByte:
+                    case TypeCode.Single:
+                    case TypeCode.String:
+                    case TypeCode.UInt16:
+                    case TypeCode.UInt32:
+                    case TypeCode.UInt64:
+                        return true;
 
-                case TypeCode.Object:
-                default:
-                    break;
-            }
-            return false;
+                    case TypeCode.Object:
+                    default:
+                        break;
+                }
+                return false;
+            });
+
         }
     }
 }
