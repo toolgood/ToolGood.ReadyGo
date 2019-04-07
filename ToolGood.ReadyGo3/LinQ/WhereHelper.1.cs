@@ -1218,12 +1218,20 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <summary>
         /// 包含列
         /// </summary>
-        /// <param name="column"></param>
+        /// <param name="columnSql"></param>
         /// <param name="asName"></param>
         /// <returns></returns>
-        public WhereHelper<T1> AddColumn(string column, string asName = null)
+        public WhereHelper<T1> AddColumn(string columnSql, string asName)
         {
-            includeColumn(column, asName);
+            if (string.IsNullOrEmpty(columnSql)) throw new ArgumentException(nameof(columnSql));
+            if (string.IsNullOrEmpty(asName)) throw new ArgumentException(nameof(asName));
+            if (jump()) { return this; }
+
+            _includeColumns.Insert(0, new SelectHeader() {
+                AsName = asName,
+                Table = "t1",
+                QuerySql = columnSql
+            });
             return this;
         }
 
@@ -1620,7 +1628,7 @@ namespace ToolGood.ReadyGo3.LinQ
                 var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var item in columnSqls) {
                     var sp = item.Split(new char[] { '.', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    var header = sp[sp.Length - 1].Replace("'", "").Replace("\"","");
+                    var header = sp[sp.Length - 1].Replace("'", "").Replace("\"", "");
                     replaceCols[header] = item;
                 }
             }
