@@ -20,10 +20,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
 
         public TValue Get(TKey key, Func<TValue> factory)
         {
+            if (object.Equals(key, null)) { return factory(); }
+
             long lastTicks;
-            // Check cache
-            _lock.EnterReadLock();
             TValue val;
+            _lock.EnterReadLock();
             try {
                 if (_map.TryGetValue(key, out val)) return val;
                 lastTicks = _lastTicks;
@@ -34,19 +35,22 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
             try {
                 _lock.EnterReadLock();
                 try {
-                    if (_lastTicks != lastTicks && _map.TryGetValue(key, out val)) return val;
-                } finally {
-                    _lock.ExitReadLock();
-                }
-                _slimLock.EnterWriteLock();
-                if (_lockDict.TryGetValue(key, out slim) == false) {
-                    slim = new AntiDupLockSlim();
-                    _lockDict[key] = slim;
-                }
-                slim.UseCount++;
-                _slimLock.ExitWriteLock();
-            } finally { _slimLock.ExitUpgradeableReadLock(); }
+                    if (_lastTicks != lastTicks) {
+                        if (_map.TryGetValue(key, out val)) return val;
+                        lastTicks = _lastTicks;
+                    }
+                } finally { _lock.ExitReadLock(); }
 
+                _slimLock.EnterWriteLock();
+                try {
+                    if (_lockDict.TryGetValue(key, out slim) == false) {
+                        slim = new AntiDupLockSlim();
+                        _lockDict[key] = slim;
+                    }
+                    slim.UseCount++;
+                } finally { _slimLock.ExitWriteLock(); }
+            } finally { _slimLock.ExitUpgradeableReadLock(); }
+ 
 
             slim.EnterWriteLock();
             try {
@@ -57,19 +61,21 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
 
                 val = factory();
                 _lock.EnterWriteLock();
-                _lastTicks = DateTime.Now.Ticks;
-                _map[key] = val;
-                _lock.ExitWriteLock();
+                try {
+                    _lastTicks = DateTime.Now.Ticks;
+                    _map[key] = val;
+                } finally { _lock.ExitWriteLock(); }
                 return val;
             } finally {
                 slim.ExitWriteLock();
                 _slimLock.EnterWriteLock();
-                slim.UseCount--;
-                if (slim.UseCount == 0) {
-                    _lockDict.Remove(key);
-                    slim.Dispose();
-                }
-                _slimLock.ExitWriteLock();
+                try {
+                    slim.UseCount--;
+                    if (slim.UseCount == 0) {
+                        _lockDict.Remove(key);
+                        slim.Dispose();
+                    }
+                } finally { _slimLock.ExitWriteLock(); }
             }
         }
 
@@ -79,6 +85,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
             _lock.EnterWriteLock();
             try {
                 _map.Clear();
+                _lockDict.Clear();
             } finally {
                 _lock.ExitWriteLock();
             }
