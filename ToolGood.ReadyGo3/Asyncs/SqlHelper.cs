@@ -244,6 +244,9 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, string sql = "", params object[] args)
         {
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
+
             sql = formatSql(sql);
             if (_usedCacheServiceOnce) {
                 return RunAsync(sql, args, () => {
@@ -269,6 +272,8 @@ namespace ToolGood.ReadyGo3
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             #region 格式化
             columnSql = columnSql.Trim();
@@ -313,6 +318,8 @@ namespace ToolGood.ReadyGo3
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             #region 格式化
             columnSql = columnSql.Trim();
