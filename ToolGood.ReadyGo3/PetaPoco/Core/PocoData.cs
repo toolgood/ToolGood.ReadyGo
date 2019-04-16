@@ -44,15 +44,15 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             Type = type;
 
             // Get the mapper for this type
-            var mapper = Singleton<StandardMapper>.Instance;
+            //var mapper = Singleton<StandardMapper>.Instance;
 
             // Get the table info
-            TableInfo = mapper.GetTableInfo(type);
+            TableInfo = TableInfo.FromPoco(type);
 
             // Work out bound properties
             Columns = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase);
             foreach (var pi in type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)) {
-                ColumnInfo ci = mapper.GetColumnInfo(pi);
+                ColumnInfo ci = ColumnInfo.FromProperty(pi);// mapper.GetColumnInfo(pi);
                 if (ci == null)
                     continue;
 
@@ -139,9 +139,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
 
             return PocoFactories.Get(key, () => {
                 // Create the method
-                var m = new DynamicMethod("tg_readygo_" + Guid.NewGuid().ToString().Replace("-","") , Type, new Type[] { typeof(IDataReader) }, true);
+                var m = new DynamicMethod("tg_readygo_" + Guid.NewGuid().ToString().Replace("-", ""), Type, new Type[] { typeof(IDataReader) }, true);
                 var il = m.GetILGenerator();
-                var mapper = Singleton<StandardMapper>.Instance;
+                //var mapper = Singleton<StandardMapper>.Instance;
 
                 if (Type == typeof(object)) {
                     // var poco=new T()
@@ -198,7 +198,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 } else if (Type.IsValueType || Type == typeof(string) || Type == typeof(byte[])) {
                     // Do we need to install a converter?
                     var srcType = reader.GetFieldType(0);
-                    var converter = GetConverter(mapper, null, srcType, Type);
+                    var converter = GetConverter(null, srcType, Type);
 
                     // "if (!rdr.IsDBNull(i))"
                     il.Emit(OpCodes.Ldarg_0); // rdr
@@ -254,7 +254,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                         il.Emit(OpCodes.Dup); // poco,poco
 
                         // Do we need to install a converter?
-                        var converter = GetConverter(mapper, pc, srcType, dstType);
+                        var converter = GetConverter(pc, srcType, dstType);
 
                         // Fast
                         bool Handled = false;
@@ -333,9 +333,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             }
         }
 
-        private static Func<object, object> GetConverter(StandardMapper mapper, PocoColumn pc, Type srcType, Type dstType)
+        private static Func<object, object> GetConverter(PocoColumn pc, Type srcType, Type dstType)
         {
-            Func<object, object> converter = null;
+            //Func<object, object> converter = null;
 
             //// Get converter from the mapper
             //if (pc != null) {
