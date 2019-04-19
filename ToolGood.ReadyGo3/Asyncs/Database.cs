@@ -40,7 +40,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     _sharedConnection.Close();
 
                 if (_sharedConnection.State == ConnectionState.Closed)
-                    await ((SqlConnection)_sharedConnection).OpenAsync();
+                    await ((SqlConnection)_sharedConnection).OpenAsync().ConfigureAwait(false);
 
                 _sharedConnection = OnConnectionOpened(_sharedConnection);
 
@@ -51,7 +51,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     _sharedConnection.Close();
 
                 if (_sharedConnection.State == ConnectionState.Closed)
-                    await ((SqlConnection)_sharedConnection).OpenAsync();
+                    await ((SqlConnection)_sharedConnection).OpenAsync().ConfigureAwait(false);
             }
             _sharedConnectionDepth++;
         }
@@ -60,14 +60,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
         internal async Task ExecuteNonQueryHelperAsync(SqlCommand cmd)
         {
             DoPreExecute(cmd);
-            await cmd.ExecuteNonQueryAsync();
+            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
             OnExecutedCommand(cmd);
         }
 
         internal async Task<object> ExecuteScalarHelperAsync(SqlCommand cmd)
         {
             DoPreExecute(cmd);
-            object r = await cmd.ExecuteScalarAsync();
+            object r = await cmd.ExecuteScalarAsync().ConfigureAwait(false);
             OnExecutedCommand(cmd);
             return r;
         }
@@ -84,10 +84,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public async Task<int> ExecuteAsync(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             try {
-                await OpenSharedConnectionAsync();
+                await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
-                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync();
+                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                         return retv;
                     }
@@ -111,10 +111,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public async Task<T> ExecuteScalarAsync<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             try {
-                await OpenSharedConnectionAsync();
+                await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
-                        object val = await ((SqlCommand)cmd).ExecuteScalarAsync();
+                        object val = await ((SqlCommand)cmd).ExecuteScalarAsync().ConfigureAwait(false);
                         OnExecutedCommand(cmd);
 
                         // Handle nullable types
@@ -143,10 +143,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public async Task<DataTable> ExecuteDataTableAsync(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             try {
-                await OpenSharedConnectionAsync();
+                await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
-                        var reader = await ((SqlCommand)cmd).ExecuteReaderAsync();
+                        var reader = await ((SqlCommand)cmd).ExecuteReaderAsync().ConfigureAwait(false);
                         DataTable dt = new DataTable();
                         bool init = false;
                         dt.BeginLoadData();
@@ -211,13 +211,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
 
             var resultList = new List<T>();
-            await OpenSharedConnectionAsync();
+            await OpenSharedConnectionAsync().ConfigureAwait(false);
             try {
                 using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                     SqlDataReader r = null;
                     var pd = PocoData.ForType(typeof(T));
                     try {
-                        r = await ((SqlCommand)cmd).ExecuteReaderAsync();
+                        r = await ((SqlCommand)cmd).ExecuteReaderAsync().ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                     } catch (Exception x) {
                         if (OnException(x))
@@ -283,8 +283,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var result = new Page<T> {
                 CurrentPage = page,
                 PageSize = itemsPerPage,
-                TotalItems = await ExecuteScalarAsync<long>(countSql, args)
-            };
+                TotalItems = await ExecuteScalarAsync<long>(countSql, args).ConfigureAwait(false)
+        };
             OneTimeCommandTimeout = saveTimeout;
 
             // Get the records
@@ -317,7 +317,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private async Task<object> ExecuteInsertAsync(string tableName, string primaryKeyName, bool autoIncrement, object poco)
         {
             try {
-                await OpenSharedConnectionAsync();
+                await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var pd = PocoData.ForObject(poco, primaryKeyName);
@@ -337,7 +337,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
                         if (!autoIncrement) {
                             DoPreExecute(cmd);
-                            await ((SqlCommand)cmd).ExecuteNonQueryAsync();
+                            await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);
                             OnExecutedCommand(cmd);
 
                             PocoColumn pkColumn;
@@ -372,7 +372,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         internal async Task<object> ExecuteInsertAsync(string sql, string primaryKeyName)
         {
             try {
-                await OpenSharedConnectionAsync();
+                await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         cmd.CommandText = sql;
@@ -417,7 +417,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private async Task ExecuteInsertAsync<T>(string tableName, string primaryKeyName, bool autoIncrement, List<T> list, int index2, int size)
         {
             try {
-                await OpenSharedConnectionAsync();
+                await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0], CommandType.Text)) {
                         var type = typeof(T);
@@ -439,7 +439,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         cmd.CommandText = sql;
 
                         DoPreExecute(cmd);
-                        await ((SqlCommand)cmd).ExecuteNonQueryAsync();
+                        await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                     }
                 } finally {
@@ -489,7 +489,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private async Task<int> ExecuteUpdateAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue, IEnumerable<string> columns)
         {
             try {
-                await OpenSharedConnectionAsync();
+                await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = poco.GetType();
@@ -535,7 +535,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         DoPreExecute(cmd);
 
                         // Do it
-                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync();
+                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                         return retv;
                     }
