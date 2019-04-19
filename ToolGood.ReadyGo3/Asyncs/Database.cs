@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using ToolGood.ReadyGo3.DataCentxt.Exceptions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
+using System.Data.Common;
 
 #if !NET40
 using SqlCommand = System.Data.Common.DbCommand;
 using SqlDataReader = System.Data.Common.DbDataReader;
-using SqlConnection = System.Data.Common.DbConnection;
 #else
 using System.Data.Common;
 using System.Data.SqlClient;
@@ -39,9 +39,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 if (_sharedConnection.State == ConnectionState.Broken)
                     _sharedConnection.Close();
 
-                if (_sharedConnection.State == ConnectionState.Closed)
-                    await ((SqlConnection)_sharedConnection).OpenAsync().ConfigureAwait(false);
-
+                if (_sharedConnection.State == ConnectionState.Closed) {
+                    var con = _sharedConnection as DbConnection;
+                    if (con != null)
+                        await con.OpenAsync().ConfigureAwait(false);
+                    else
+                        _sharedConnection.Open();
+                }
+ 
                 _sharedConnection = OnConnectionOpened(_sharedConnection);
 
                 if (KeepConnectionAlive)
@@ -50,8 +55,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 if (_sharedConnection.State == ConnectionState.Broken)
                     _sharedConnection.Close();
 
-                if (_sharedConnection.State == ConnectionState.Closed)
-                    await ((SqlConnection)_sharedConnection).OpenAsync().ConfigureAwait(false);
+                if (_sharedConnection.State == ConnectionState.Closed) {
+                    var con = _sharedConnection as DbConnection;
+                    if (con != null)
+                        await con.OpenAsync().ConfigureAwait(false);
+                    else
+                        _sharedConnection.Open();
+                }
             }
             _sharedConnectionDepth++;
         }
