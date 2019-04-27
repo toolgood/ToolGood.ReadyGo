@@ -204,7 +204,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             string sqlCount, sqlPage;
 
-            BuildPageQueries<T>(0, take, sql, ref args, out sqlCount, out sqlPage);
+            BuildPageQueries<T>(skip, take, sql, ref args, out sqlCount, out sqlPage);
             return QueryAsync<T>(sqlPage, args);
         }
         /// <summary>
@@ -223,7 +223,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var resultList = new List<T>();
             await OpenSharedConnectionAsync().ConfigureAwait(false);
             try {
-                using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
+                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                     SqlDataReader r = null;
                     var pd = PocoData.ForType(typeof(T));
                     try {
@@ -233,7 +233,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         if (OnException(x))
                             throw;
                     }
-                    var factory = pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, r.FieldCount, r) as Func<IDataReader, T>;
+                    var factory = pd.GetFactory(0, r.FieldCount, r) as Func<IDataReader, T>;
                     using (r) {
                         while (true) {
                             try {

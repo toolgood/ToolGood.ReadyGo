@@ -114,19 +114,17 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <summary>
         /// Create factory function that can convert a IDataReader record into a POCO
         /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="connectionString"></param>
         /// <param name="firstColumn"></param>
         /// <param name="countColumns"></param>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public Delegate GetFactory(string sql, string connectionString, int firstColumn, int countColumns, IDataReader reader)
+        public Delegate GetFactory( int firstColumn, int countColumns, IDataReader reader)
         {
             #region 创建Key
             StringBuilder sb = new StringBuilder();
-            sb.Append(Type.FullName);
+            sb.Append(reader.GetType().FullName);
             for (int i = 0; i < countColumns; i++) {
-                sb.AppendFormat("|{0}-{1}", reader.GetName(i), reader.GetFieldType(i).Name);
+                sb.AppendFormat("|{0}-{1}", reader.GetName(i), reader.GetFieldType(i).FullName);
             }
             var key = sb.ToString();
             #endregion 创建Key

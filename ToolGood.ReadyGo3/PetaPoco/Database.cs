@@ -673,7 +673,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public IEnumerable<T> Query<T>(long skip, long take, string sql, object[] args)
         {
             string sqlCount, sqlPage;
-            BuildPageQueries<T>(0, take, sql, ref args, out sqlCount, out sqlPage);
+            BuildPageQueries<T>(skip, take, sql, ref args, out sqlCount, out sqlPage);
             return Query<T>(sqlPage, args);
         }
 
@@ -708,7 +708,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                         yield break;
                     }
-                    var factory = pd.GetFactory(cmd.CommandText, _sharedConnection.ConnectionString, 0, r.FieldCount, r) as Func<IDataReader, T>;
+                    var factory = pd.GetFactory(0, r.FieldCount, r) as Func<IDataReader, T>;
                     using (r) {
                         while (true) {
                             T poco;
