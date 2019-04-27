@@ -123,15 +123,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         public Delegate GetFactory(string sql, string connectionString, int firstColumn, int countColumns, IDataReader reader)
         {
             #region 创建Key
-            SortedSet<string> list = new SortedSet<string>();
-            for (int i = 0; i < countColumns; i++) {
-                list.Add(reader.GetName(i));
-            }
-            list.Add(Type.FullName);
             StringBuilder sb = new StringBuilder();
-            foreach (var item in list) {
-                sb.Append(item);
-                sb.Append("|");
+            sb.Append(Type.FullName);
+            for (int i = 0; i < countColumns; i++) {
+                sb.AppendFormat("|{0}-{1}", reader.GetName(i), reader.GetFieldType(i).Name);
             }
             var key = sb.ToString();
             #endregion 创建Key
