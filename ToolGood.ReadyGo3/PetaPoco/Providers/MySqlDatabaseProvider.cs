@@ -6,6 +6,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
     public class MySqlDatabaseProvider : DatabaseProvider
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public MySqlDatabaseProvider()
+        {
+            usedEscapeSql = true;
+            escapeSql = '`';
+        }
         public override DbProviderFactory GetFactory()
         {
             return GetFactory(

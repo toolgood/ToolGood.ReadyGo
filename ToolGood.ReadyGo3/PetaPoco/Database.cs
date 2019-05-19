@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using ToolGood.ReadyGo3.DataCentxt.Exceptions;
+using ToolGood.ReadyGo3.Exceptions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.PetaPoco.Utilities;

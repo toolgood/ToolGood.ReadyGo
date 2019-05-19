@@ -7,8 +7,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using ToolGood.ReadyGo3.Enums;
 using ToolGood.ReadyGo3.PetaPoco.Core;
-using ToolGood.ReadyGo3.DataCentxt.Enums;
 
 namespace ToolGood.ReadyGo3.LinQ.Expressions
 {
@@ -18,7 +18,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
     public class SqlExpression
     {
         private const string sep = " ";
-        private DataCentxt.DatabaseProvider provider;
+        private DatabaseProvider provider;
 
         /// <summary>
         /// SqlExpression
@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         /// <param name="type"></param>
         public SqlExpression(SqlType type)
         {
-            this.provider = DataCentxt.DatabaseProvider.Resolve(type);
+            this.provider = DatabaseProvider.Resolve(type);
         }
 
 

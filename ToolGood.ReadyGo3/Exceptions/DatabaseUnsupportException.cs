@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ToolGood.ReadyGo3.DataCentxt.Exceptions
+namespace ToolGood.ReadyGo3.Exceptions
 {
     /// <summary>
     /// 数据库不支付异常

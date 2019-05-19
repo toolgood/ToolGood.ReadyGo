@@ -1,4 +1,4 @@
-﻿namespace ToolGood.ReadyGo3.DataCentxt.Enums
+﻿namespace ToolGood.ReadyGo3.Enums
 {
     /// <summary>
     /// SQL函数

@@ -1625,7 +1625,7 @@ namespace ToolGood.ReadyGo3.LinQ
         private string CreateSelectInsertSql(Type type, string insertTableName, string replaceColumns, object[] args)
         {
             Dictionary<string, string> replaceCols = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            var Provider = ToolGood.ReadyGo3.DataCentxt.DatabaseProvider.Resolve(_sqlhelper._sqlType);
+            var Provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
             if (string.IsNullOrEmpty(replaceColumns) == false) {
                 var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var item in columnSqls) {
