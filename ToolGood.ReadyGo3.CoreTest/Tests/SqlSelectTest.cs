@@ -17,9 +17,9 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
 
             var helper = Config.DbHelper;
 
-            List<SqlParameter> parameters = new List<SqlParameter>();
-            parameters.Add(new SqlParameter("id", 1));
-            var t22 = helper.Single<DbArea>("where id=@id", parameters);
+            //List<SqlParameter> parameters = new List<SqlParameter>();
+            //parameters.Add(new SqlParameter("id", 1));
+            //var t22 = helper.Single<DbArea>("where id=@id", parameters);
 
             SqlParameterCollection parameters2 = new SqlParameterCollection();
             parameters2.Add("id", 1);

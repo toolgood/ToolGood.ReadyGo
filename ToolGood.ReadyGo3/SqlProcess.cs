@@ -127,86 +127,6 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         }
         #endregion Add _G _S
 
-        #region 05 缓存设置
-
-        private ICacheService _cacheService;
-        private bool _usedCacheService;
-        private int _cacheTime;
-        private string _cacheTag;
-        /// <summary>
-        /// 使用缓存
-        /// </summary>
-        /// <param name="second"></param>
-        /// <param name="cacheTag"></param>
-        /// <param name="cacheService"></param>
-        public void UseCache(int second, string cacheTag = null, ICacheService cacheService = null)
-        {
-            _usedCacheService = true;
-            _cacheTime = second;
-            _cacheTag = cacheTag;
-            if (cacheService != null) {
-                _cacheService = cacheService;
-            }
-        }
-        /// <summary>
-        /// 使用缓存
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="type"></param>
-        /// <param name="t"></param>
-        /// <param name="args"></param>
-        /// <param name="func"></param>
-        /// <returns></returns>
-        private T SetCache<T>(string type, Type t, object[] args, Func<T> func)
-        {
-            if (_usedCacheService == false) {
-                return func();
-            }
-
-            var name = _cacheTag + "." + t.FullName + ".SqlProcess." + ProcessName + "." + type + "|";
-            foreach (var item in args) {
-                name += ((IDbDataParameter)item).Value.ToString() + "|";
-            }
-            var cacheService = _cacheService ?? _sqlhelper._cacheService;
-            var run = cacheService.Get<Tuple<T, object[]>>(name, () => {
-                var dt = func();
-                var objs = _outs.Select(q => q.Value).ToArray();
-                return Tuple.Create(dt, objs);
-            }, _cacheTime, "");
-            for (int i = 0; i < _outs.Count; i++) {
-                _outs[i].Value = run.Item2[i];
-            }
-            return run.Item1;
-        }
-        /// <summary>
-        /// 设置缓存
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="type"></param>
-        /// <param name="args"></param>
-        /// <param name="func"></param>
-        /// <returns></returns>
-        private T SetCache<T>(string type, object[] args, Func<T> func)
-        {
-            var name = _cacheTag + ".SqlProcess." + ProcessName + "." + type + "|";
-            foreach (var item in args) {
-                name += ((IDbDataParameter)item).Value.ToString() + "|";
-            }
-            var cacheService = _cacheService ?? _sqlhelper._cacheService;
-            var run = cacheService.Get<Tuple<T, object[]>>(name, () => {
-                var dt = func();
-                var objs = _outs.Select(q => q.Value).ToArray();
-                return Tuple.Create(dt, objs);
-            }, _cacheTime, "");
-            for (var i = 0; i < _outs.Count; i++) {
-                _outs[i].Value = run.Item2[i];
-            }
-            return run.Item1;
-        }
-
-
-        #endregion 05 缓存设置
-
         #region 执行
         /// <summary>
         /// 执行
@@ -215,10 +135,8 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public int Execute()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            return SetCache("Execute", args, () => {
-                var db = _sqlhelper.getDatabase();
-                return db.Execute(ProcessName, args, CommandType.StoredProcedure);
-            });
+            var db = _sqlhelper.getDatabase();
+            return db.Execute(ProcessName, args, CommandType.StoredProcedure);
         }
         /// <summary>
         /// 执行
@@ -228,10 +146,8 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public T ExecuteScalar<T>()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            return SetCache("ExecuteScalar", typeof(T), args, () => {
-                var db = _sqlhelper.getDatabase();
-                return db.ExecuteScalar<T>(ProcessName, args, CommandType.StoredProcedure);
-            });
+            var db = _sqlhelper.getDatabase();
+            return db.ExecuteScalar<T>(ProcessName, args, CommandType.StoredProcedure);
         }
         /// <summary>
         /// 执行
@@ -240,10 +156,8 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public DataTable ExecuteDataTable()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            return SetCache("ExecuteDataTable", args, () => {
-                var db = _sqlhelper.getDatabase();
-                return db.ExecuteDataTable(ProcessName, args, CommandType.StoredProcedure);
-            });
+            var db = _sqlhelper.getDatabase();
+            return db.ExecuteDataTable(ProcessName, args, CommandType.StoredProcedure);
         }
 #if !NETSTANDARD2_0
         /// <summary>
@@ -253,10 +167,8 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public DataSet ExecuteDataSet()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            return SetCache("ExecuteDataSet", args, () => {
-                var db = _sqlhelper.getDatabase();
-                return db.ExecuteDataSet(ProcessName, args, CommandType.StoredProcedure);
-            });
+            var db = _sqlhelper.getDatabase();
+            return db.ExecuteDataSet(ProcessName, args, CommandType.StoredProcedure);
         }
 #endif
 
@@ -268,10 +180,8 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public List<T> Select<T>() where T : class, new()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            return SetCache("Select", typeof(T), args, () => {
-                var db = _sqlhelper.getDatabase();
-                return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).ToList();
-            });
+            var db = _sqlhelper.getDatabase();
+            return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).ToList();
         }
         /// <summary>
         /// 
@@ -281,10 +191,8 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public T Single<T>()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            return SetCache("Single", typeof(T), args, () => {
-                var db = _sqlhelper.getDatabase();
-                return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).Single();
-            });
+            var db = _sqlhelper.getDatabase();
+            return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).Single();
         }
         /// <summary>
         /// 
@@ -294,10 +202,8 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public T SingleOrDefault<T>()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            return SetCache("SingleOrDefault", typeof(T), args, () => {
-                var db = _sqlhelper.getDatabase();
-                return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).SingleOrDefault();
-            });
+            var db = _sqlhelper.getDatabase();
+            return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).SingleOrDefault();
         }
         /// <summary>
         /// 
@@ -307,10 +213,8 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public T First<T>()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            return SetCache("First", typeof(T), args, () => {
-                var db = _sqlhelper.getDatabase();
-                return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).First();
-            });
+            var db = _sqlhelper.getDatabase();
+            return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).First();
         }
         /// <summary>
         /// 
@@ -320,15 +224,12 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public T FirstOrDefault<T>()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            return SetCache("FirstOrDefault", typeof(T), args, () => {
-                var db = _sqlhelper.getDatabase();
-                return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).FirstOrDefault();
-            });
-
+            var db = _sqlhelper.getDatabase();
+            return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).FirstOrDefault();
         }
 
 
 
-#endregion 执行
+        #endregion 执行
     }
 }

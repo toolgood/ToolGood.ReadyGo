@@ -30,17 +30,6 @@ namespace ToolGood.ReadyGo3
         internal readonly DbProviderFactory _factory;
         internal Database _database;
 
-        // 缓存设置
-#if NETSTANDARD2_0
-        internal ICacheService _cacheService = new NullCacheService();
-#else
-        internal ICacheService _cacheService = new MemoryCacheService();
-#endif
-
-        private bool _usedCacheServiceOnce;
-        private int _cacheTimeOnce;
-        private string _cacheTag;
-
         // 连接时间 事务级别
         internal int _commandTimeout;
         internal int _oneTimeCommandTimeout;
@@ -135,32 +124,6 @@ namespace ToolGood.ReadyGo3
             return db;
         }
 
-        internal T Run<T>(string sql, object[] args, Func<T> func, params string[] methodtags)
-        {
-            _usedCacheServiceOnce = false;//记录一次
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append(_cacheTag);
-            sb.Append("|");
-
-            sb.Append(sql);
-            sb.Append("|");
-            sb.Append(typeof(T).FullName);
-
-            for (int i = 0; i < args.Length; i++) {
-                sb.Append("|");
-                sb.Append(args[i].ToString());
-            }
-            for (int i = 0; i < methodtags.Length; i++) {
-                sb.Append("|");
-                sb.Append(methodtags[i]);
-            }
-            string tag = sb.ToString();// getMd5String(sb.ToString());
-
-            return _cacheService.Get(tag, func, _cacheTimeOnce, _cacheTag);
-        }
-
-
         /// <summary>
         /// 格式SQL语句
         /// </summary>
@@ -221,24 +184,6 @@ namespace ToolGood.ReadyGo3
         {
             return new Transaction(getDatabase());
         }
-        /// <summary>
-        /// 使用缓存
-        /// </summary>
-        /// <param name="second"></param>
-        /// <param name="cacheTag"></param>
-        /// <param name="cacheService"></param>
-        /// <returns></returns>
-        public SqlHelper UseChache(int second, string cacheTag = null, ICacheService cacheService = null)
-        {
-            _usedCacheServiceOnce = true;
-            _cacheTimeOnce = second;
-            _cacheTag = cacheTag;
-            if (cacheService != null) {
-                _cacheService = cacheService;
-            }
-            return this;
-        }
-
         #endregion UseTransaction UseCache UseRecord
 
         #region Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
@@ -253,11 +198,6 @@ namespace ToolGood.ReadyGo3
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<int>(sql, args, () => {
-                    return getDatabase().Execute(sql, args);
-                }, "Execute");
-            }
             return getDatabase().Execute(sql, args);
         }
 
@@ -272,11 +212,6 @@ namespace ToolGood.ReadyGo3
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<T>(sql, args, () => {
-                    return getDatabase().ExecuteScalar<T>(sql, args);
-                }, "ExecuteScalar");
-            }
             return getDatabase().ExecuteScalar<T>(sql, args);
         }
 
@@ -290,11 +225,6 @@ namespace ToolGood.ReadyGo3
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<DataTable>(sql, args, () => {
-                    return getDatabase().ExecuteDataTable(sql, args);
-                }, "ExecuteDataTable");
-            }
             return getDatabase().ExecuteDataTable(sql, args);
 
         }
@@ -310,11 +240,6 @@ namespace ToolGood.ReadyGo3
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<DataSet>(sql, args, () => {
-                    return getDatabase().ExecuteDataSet(sql, args);
-                }, "ExecuteDataTable");
-            }
             return getDatabase().ExecuteDataSet(sql, args);
         }
         //#endif
@@ -370,12 +295,6 @@ namespace ToolGood.ReadyGo3
                 sql = formatSql(sql);
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
-
-            if (_usedCacheServiceOnce) {
-                return Run(sql, args, () => {
-                    return getDatabase().ExecuteScalar<int>(sql, args);
-                }, "Count");
-            }
             return getDatabase().ExecuteScalar<int>(sql, args);
         }
 
@@ -388,11 +307,6 @@ namespace ToolGood.ReadyGo3
         public int Count(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            if (_usedCacheServiceOnce) {
-                return Run(sql, args, () => {
-                    return getDatabase().ExecuteScalar<int>(sql, args);
-                }, "Count");
-            }
             return getDatabase().ExecuteScalar<int>(sql, args);
         }
 
@@ -409,11 +323,6 @@ namespace ToolGood.ReadyGo3
         public List<T> Select<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<List<T>>(sql, args, () => {
-                    return getDatabase().Query<T>(sql, args).ToList();
-                }, "Select");
-            }
             return getDatabase().Query<T>(sql, args).ToList();
         }
         /// <summary>
@@ -427,11 +336,6 @@ namespace ToolGood.ReadyGo3
         public List<T> Select<T>(long limit, string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<List<T>>(sql, args, () => {
-                    return getDatabase().Query<T>(0, limit, sql, args).ToList();
-                }, "Select", limit.ToString());
-            }
             return getDatabase().Query<T>(0, limit, sql, args).ToList();
         }
         /// <summary>
@@ -446,11 +350,6 @@ namespace ToolGood.ReadyGo3
         public List<T> Select<T>(long limit, long offset, string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<List<T>>(sql, args, () => {
-                    return getDatabase().Query<T>(offset, limit, sql, args).ToList();
-                }, "Select", offset.ToString(), limit.ToString());
-            }
             return getDatabase().Query<T>(offset, limit, sql, args).ToList();
         }
         /// <summary>
@@ -468,11 +367,6 @@ namespace ToolGood.ReadyGo3
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<Page<T>>(sql, args, () => {
-                    return getDatabase().Page<T>(page, itemsPerPage, sql, args);
-                }, "Page", page.ToString(), itemsPerPage.ToString());
-            }
             return getDatabase().Page<T>(page, itemsPerPage, sql, args);
         }
 
@@ -516,11 +410,6 @@ namespace ToolGood.ReadyGo3
 
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<List<T>>(sql, args, () => {
-                    return getDatabase().Query<T>(sql, args).ToList();
-                }, "Select");
-            }
             return getDatabase().Query<T>(sql, args).ToList();
         }
         /// <summary>
@@ -565,12 +454,6 @@ namespace ToolGood.ReadyGo3
 
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
             sql = formatSql(sql);
-
-            if (_usedCacheServiceOnce) {
-                return Run<Page<T>>(sql, args, () => {
-                    return getDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
-                }, "PageSql");
-            }
             return getDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
         }
 
@@ -618,21 +501,11 @@ namespace ToolGood.ReadyGo3
         {
             if (_sql_singleWithLimit2 == false) { return _Single<T>(sql, args); }
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<T>(sql, args, () => {
-                    return getDatabase().Query<T>(0, 2, sql, args).Single();
-                }, "Single");
-            }
             return getDatabase().Query<T>(0, 2, sql, args).Single();
         }
         internal T _Single<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<T>(sql, args, () => {
-                    return getDatabase().Query<T>(sql, args).Single();
-                }, "Single");
-            }
             return getDatabase().Query<T>(sql, args).Single();
         }
 
@@ -647,21 +520,11 @@ namespace ToolGood.ReadyGo3
         {
             if (_sql_singleWithLimit2 == false) { return _SingleOrDefault<T>(sql, args); }
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<T>(sql, args, () => {
-                    return getDatabase().Query<T>(0, 2, sql, args).SingleOrDefault();
-                }, "SingleOrDefault");
-            }
             return getDatabase().Query<T>(0, 2, sql, args).SingleOrDefault();
         }
         internal T _SingleOrDefault<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<T>(sql, args, () => {
-                    return getDatabase().Query<T>(sql, args).SingleOrDefault();
-                }, "SingleOrDefault");
-            }
             return getDatabase().Query<T>(sql, args).SingleOrDefault();
         }
 
@@ -676,21 +539,11 @@ namespace ToolGood.ReadyGo3
         {
             if (_sql_firstWithLimit1 == false) { return _First<T>(sql, args); }
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<T>(sql, args, () => {
-                    return getDatabase().Query<T>(0, 1, sql, args).First();
-                }, "First");
-            }
             return getDatabase().Query<T>(0, 1, sql, args).First();
         }
         internal T _First<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<T>(sql, args, () => {
-                    return getDatabase().Query<T>(sql, args).First();
-                }, "First");
-            }
             return getDatabase().Query<T>(sql, args).First();
         }
 
@@ -705,11 +558,6 @@ namespace ToolGood.ReadyGo3
         {
             if (_sql_firstWithLimit1 == false) { return _FirstOrDefault<T>(sql, args); }
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<T>(sql, args, () => {
-                    return getDatabase().Query<T>(0, 1, sql, args).FirstOrDefault();
-                }, "FirstOrDefault");
-            }
             return getDatabase().Query<T>(0, 1, sql, args).FirstOrDefault();
         }
 
@@ -717,11 +565,6 @@ namespace ToolGood.ReadyGo3
         internal T _FirstOrDefault<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return Run<T>(sql, args, () => {
-                    return getDatabase().Query<T>(sql, args).FirstOrDefault();
-                }, "FirstOrDefault");
-            }
             return getDatabase().Query<T>(sql, args).FirstOrDefault();
         }
         #endregion Single SingleOrDefault First FirstOrDefault

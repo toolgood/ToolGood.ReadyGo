@@ -153,11 +153,6 @@ namespace ToolGood.ReadyGo3
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
                 var args = new object[] { condition };
-                if (_usedCacheServiceOnce) {
-                    return Run(sql, args, () => {
-                        return getDatabase().ExecuteScalar<int>(sql, args) > 0;
-                    }, "Count");
-                }
                 return getDatabase().ExecuteScalar<int>(sql, args) > 0;
             }
         }
@@ -389,11 +384,6 @@ namespace ToolGood.ReadyGo3
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
                 var args = new object[] { condition };
-                if (_usedCacheServiceOnce) {
-                    return await RunAsync(sql, args, async () => {
-                        return await getDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
-                    }, "Exists");
-                }
                 return await getDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
             }
         }

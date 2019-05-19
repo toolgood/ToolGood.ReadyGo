@@ -14,29 +14,7 @@ namespace ToolGood.ReadyGo3
 {
     partial class SqlHelper 
     {
-        internal Task<T> RunAsync<T>(string sql, object[] args, Func<Task<T>> func, params string[] methodtags)
-        {
-            _usedCacheServiceOnce = false;//记录一次
-
-            StringBuilder sb = new StringBuilder();
-            sb.Append(_cacheTag);
-            sb.Append("|");
-
-            sb.Append(sql);
-            sb.Append("|");
-            sb.Append(typeof(T).FullName);
-
-            for (int i = 0; i < args.Length; i++) {
-                sb.Append("|");
-                sb.Append(args[i].ToString());
-            }
-            for (int i = 0; i < methodtags.Length; i++) {
-                sb.Append("|");
-                sb.Append(methodtags[i]);
-            }
-            string tag = sb.ToString();// getMd5String(sb.ToString());
-            return _cacheService.Get(tag, func, _cacheTimeOnce, _cacheTag);
-        }
+ 
 
 
         #region Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
@@ -51,11 +29,6 @@ namespace ToolGood.ReadyGo3
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return RunAsync(sql, args, () => {
-                    return getDatabase().ExecuteAsync(sql, args);
-                }, "Execute");
-            }
             return getDatabase().ExecuteAsync(sql, args);
         }
 
@@ -70,11 +43,6 @@ namespace ToolGood.ReadyGo3
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return RunAsync(sql, args, () => {
-                    return getDatabase().ExecuteScalarAsync<T>(sql, args);
-                }, "ExecuteScalar");
-            }
             return getDatabase().ExecuteScalarAsync<T>(sql, args);
         }
 
@@ -88,11 +56,6 @@ namespace ToolGood.ReadyGo3
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return RunAsync(sql, args, () => {
-                    return getDatabase().ExecuteDataTableAsync(sql, args);
-                }, "ExecuteDataTable");
-            }
             return getDatabase().ExecuteDataTableAsync(sql, args);
 
         }
@@ -150,12 +113,6 @@ namespace ToolGood.ReadyGo3
                 sql = formatSql(sql);
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
-
-            if (_usedCacheServiceOnce) {
-                return RunAsync(sql, args, () => {
-                    return getDatabase().ExecuteScalarAsync<int>(sql, args);
-                }, "Count");
-            }
             return getDatabase().ExecuteScalarAsync<int>(sql, args);
         }
 
@@ -168,11 +125,6 @@ namespace ToolGood.ReadyGo3
         public Task<int> CountAsync(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            if (_usedCacheServiceOnce) {
-                return Run(sql, args, () => {
-                    return getDatabase().ExecuteScalarAsync<int>(sql, args);
-                }, "Count");
-            }
             return getDatabase().ExecuteScalarAsync<int>(sql, args);
         }
 
@@ -189,11 +141,6 @@ namespace ToolGood.ReadyGo3
         public async Task<List<T>> SelectAsync<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await RunAsync(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(sql, args)).ToList();
-                }, "Select");
-            }
             return (await getDatabase().QueryAsync<T>(sql, args)).ToList();
         }
         /// <summary>
@@ -207,11 +154,6 @@ namespace ToolGood.ReadyGo3
         public async Task<List<T>> SelectAsync<T>(long limit, string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await RunAsync(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(0, limit, sql, args)).ToList();
-                }, "Select", limit.ToString());
-            }
             return (await getDatabase().QueryAsync<T>(0, limit, sql, args)).ToList();
         }
         /// <summary>
@@ -226,11 +168,6 @@ namespace ToolGood.ReadyGo3
         public async Task<List<T>> SelectAsync<T>(long limit, long offset, string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await RunAsync<List<T>>(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(offset, limit, sql, args)).ToList();
-                }, "Select", offset.ToString(), limit.ToString());
-            }
             return (await getDatabase().QueryAsync<T>(offset, limit, sql, args)).ToList();
         }
         /// <summary>
@@ -248,11 +185,6 @@ namespace ToolGood.ReadyGo3
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return RunAsync(sql, args, () => {
-                    return getDatabase().PageAsync<T>(page, itemsPerPage, sql, args);
-                }, "Page", page.ToString(), itemsPerPage.ToString());
-            }
             return getDatabase().PageAsync<T>(page, itemsPerPage, sql, args);
         }
 
@@ -295,11 +227,6 @@ namespace ToolGood.ReadyGo3
             #endregion
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await Run(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(sql, args)).ToList();
-                }, "Select");
-            }
             return (await getDatabase().QueryAsync<T>(sql, args)).ToList();
         }
         /// <summary>
@@ -345,11 +272,6 @@ namespace ToolGood.ReadyGo3
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
             sql = formatSql(sql);
 
-            if (_usedCacheServiceOnce) {
-                return Run(sql, args, () => {
-                    return getDatabase().PageSqlAsync<T>(page, itemsPerPage, sql, countSql, args);
-                }, "PageSql");
-            }
             return getDatabase().PageSqlAsync<T>(page, itemsPerPage, sql, countSql, args);
         }
  
@@ -397,21 +319,11 @@ namespace ToolGood.ReadyGo3
         {
             if (_sql_singleWithLimit2 == false) { return await _SingleAsync<T>(sql, args); }
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await RunAsync<T>(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(0, 2, sql, args)).Single();
-                }, "Single");
-            }
             return (await getDatabase().QueryAsync<T>(0, 2, sql, args)).Single();
         }
         internal async Task<T> _SingleAsync<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await RunAsync<T>(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(sql, args)).Single();
-                }, "Single");
-            }
             return (await getDatabase().QueryAsync<T>(sql, args)).Single();
         }
 
@@ -427,21 +339,11 @@ namespace ToolGood.ReadyGo3
             if (_sql_singleWithLimit2 == false) { return await _SingleOrDefaultAsync<T>(sql, args); }
 
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await RunAsync<T>(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(0, 2, sql, args)).SingleOrDefault();
-                }, "SingleOrDefault");
-            }
             return (await getDatabase().QueryAsync<T>(0, 2, sql, args)).SingleOrDefault();
         }
         internal async Task<T> _SingleOrDefaultAsync<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await RunAsync<T>(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(sql, args)).SingleOrDefault();
-                }, "SingleOrDefault");
-            }
             return (await getDatabase().QueryAsync<T>(sql, args)).SingleOrDefault();
         }
 
@@ -457,21 +359,11 @@ namespace ToolGood.ReadyGo3
             if (_sql_firstWithLimit1 == false) { return await _FirstAsync<T>(sql, args); }
 
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await RunAsync<T>(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(0, 1, sql, args)).First();
-                }, "First");
-            }
             return (await getDatabase().QueryAsync<T>(0, 1, sql, args)).First();
         }
         internal async Task<T> _FirstAsync<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await RunAsync<T>(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(sql, args)).First();
-                }, "First");
-            }
             return (await getDatabase().QueryAsync<T>(sql, args)).First();
         }
 
@@ -487,11 +379,6 @@ namespace ToolGood.ReadyGo3
             if (_sql_firstWithLimit1 == false) { return await _FirstOrDefaultAsync<T>(sql, args); }
 
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await RunAsync<T>(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(0, 1, sql, args)).FirstOrDefault();
-                }, "FirstOrDefault");
-            }
             return (await getDatabase().QueryAsync<T>(0, 1, sql, args)).FirstOrDefault();
         }
 
@@ -499,11 +386,6 @@ namespace ToolGood.ReadyGo3
         internal async Task<T> _FirstOrDefaultAsync<T>(string sql = "", params object[] args)
         {
             sql = formatSql(sql);
-            if (_usedCacheServiceOnce) {
-                return await RunAsync<T>(sql, args, async () => {
-                    return (await getDatabase().QueryAsync<T>(sql, args)).FirstOrDefault();
-                }, "FirstOrDefault");
-            }
             return (await getDatabase().QueryAsync<T>(sql, args)).FirstOrDefault();
         }
         #endregion Single SingleOrDefault First FirstOrDefault
