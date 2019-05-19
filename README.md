@@ -181,8 +181,8 @@ public User FindUser(int userId,string userName,string nickName)
 * `Select<T>`、`Page<T>`、`SkipTake<T>`、`Single<T>`、`SingleOrDefault<T>`、`First<T>`、`FirstOrDefault<T>`
  
 
-#### 6、存储过程
-##### 6.1、定义类
+#### 5、存储过程
+##### 5.1、定义类
 ```` csharp
     public class Chart_GetDeviceCount : SqlProcess
     {
@@ -206,7 +206,7 @@ public User FindUser(int userId,string userName,string nickName)
     }
 ````
 
-##### 6.2、存储执行
+##### 5.2、存储执行
 ```` csharp
     var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "wifi", "root", "123456");
     Chart_GetDeviceCount c = new Chart_GetDeviceCount(helper);
@@ -220,9 +220,9 @@ public User FindUser(int userId,string userName,string nickName)
 ````
 
  
-#### 8、SQL执行监控
+#### 6、SQL执行监控
 
-#### 8.1、上一次SQL执行语句
+#### 6.1、上一次SQL执行语句
 
 ```` csharp
     var sql = helper._Sql.LastSQL;
@@ -234,7 +234,7 @@ public User FindUser(int userId,string userName,string nickName)
 
 
 
-#### 8.2、查看监控
+#### 6.2、查看监控
 ```` csharp
 using ToolGood.ReadyGo.Monitor
 
@@ -245,7 +245,7 @@ var text = sqlMonitor.ToText();
 
 
 
-#### 8.3、替换监控类
+#### 6.3、替换监控类
 
 ```` csharp
 using ToolGood.ReadyGo.Monitor
