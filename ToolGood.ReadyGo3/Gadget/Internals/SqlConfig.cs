@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using ToolGood.ReadyGo3.Gadget.Caches;
 using ToolGood.ReadyGo3.Gadget.Monitor;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 

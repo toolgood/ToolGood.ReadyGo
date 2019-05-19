@@ -5,7 +5,6 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo3.Gadget.Caches;
 using ToolGood.ReadyGo3.Gadget.Events;
 using ToolGood.ReadyGo3.Gadget.Internals;
 using ToolGood.ReadyGo3.Gadget.Monitor;
