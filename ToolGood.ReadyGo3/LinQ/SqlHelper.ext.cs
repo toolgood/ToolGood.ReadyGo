@@ -14,7 +14,7 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public WhereHelper<T> Where<T>() where T : class//, new()
+        public WhereHelper<T> Where<T>() where T : class
         {
             var where = new WhereHelper<T>(this);
             return where;
@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T"></typeparam>
         /// <param name="where"></param>
         /// <returns></returns>
-        public WhereHelper<T> Where<T>(string where) where T : class//, new()
+        public WhereHelper<T> Where<T>(string where) where T : class
         {
             var whereHelper = new WhereHelper<T>(this);
             whereHelper.Where(where);
@@ -41,7 +41,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="where"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public WhereHelper<T> Where<T>(string where, params object[] args) where T : class//, new()
+        public WhereHelper<T> Where<T>(string where, params object[] args) where T : class
         {
             var whereHelper = new WhereHelper<T>(this);
             if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
@@ -54,7 +54,7 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="where"></param>
         /// <returns></returns>
-        public WhereHelper<T> Where<T>(Expression<Func<T, bool>> where) where T : class//, new()
+        public WhereHelper<T> Where<T>(Expression<Func<T, bool>> where) where T : class
         {
             var whereHelper = new WhereHelper<T>(this);
             whereHelper.Where(where);

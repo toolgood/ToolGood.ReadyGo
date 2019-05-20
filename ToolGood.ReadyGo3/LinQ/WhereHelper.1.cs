@@ -15,7 +15,7 @@ namespace ToolGood.ReadyGo3.LinQ
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     public partial class WhereHelper<T1>
-        where T1 : class//, new()
+        where T1 : class
     {
         internal WhereHelper(SqlHelper helper)
         {

@@ -265,7 +265,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public List<T> Select<T>() where T : class, new()
+        public List<T> Select<T>() where T : class
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
             return SetCache("Select", typeof(T), args, () => {
