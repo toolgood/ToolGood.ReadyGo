@@ -57,7 +57,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="offset"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public List<T1> Select<T1>(long limit, long offset, object condition = null)
+        public List<T1> Select<T1>(long limit, long offset, object condition)
         {
             if (null == condition && condition.GetType() == typeof(string)) {
                 return Select<T1>(limit, offset, (string)condition);
@@ -70,7 +70,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="limit"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public List<T1> Select<T1>(long limit, object condition = null)
+        public List<T1> Select<T1>(long limit, object condition)
         {
             if (null == condition && condition.GetType() == typeof(string)) {
                 return Select<T1>(limit, (string)condition);
@@ -83,7 +83,7 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T1"></typeparam>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public List<T1> Select<T1>(object condition = null)
+        public List<T1> Select<T1>(object condition)
         {
             if (null == condition && condition.GetType() == typeof(string)) {
                 return Select<T1>((string)condition);
@@ -214,7 +214,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="offset"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public List<T2> Select<T1, T2>(long limit, long offset, object condition = null) where T1 : class
+        public List<T2> Select<T1, T2>(long limit, long offset, object condition) where T1 : class
         {
             if (null == condition && condition.GetType() == typeof(string)) {
                 return Where<T1>((string)condition).Select<T2>(limit, offset);
@@ -227,7 +227,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="limit"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public List<T2> Select<T1, T2>(long limit, object condition = null) where T1 : class
+        public List<T2> Select<T1, T2>(long limit, object condition) where T1 : class
         {
             if (null == condition && condition.GetType() == typeof(string)) {
                 return Where<T1>((string)condition).Select<T2>(limit);
@@ -241,7 +241,7 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T2"></typeparam>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public List<T2> Select<T1, T2>(object condition = null) where T1 : class
+        public List<T2> Select<T1, T2>(object condition) where T1 : class
         {
             if (null == condition && condition.GetType() == typeof(string)) {
                 return Where<T1>((string)condition, new object[0]).Select<T2>();
@@ -446,7 +446,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="offset"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<List<T2>> SelectAsync<T1, T2>(long limit, long offset, object condition = null) where T1 : class
+        public Task<List<T2>> SelectAsync<T1, T2>(long limit, long offset, object condition) where T1 : class
         {
             if (null == condition && condition.GetType() == typeof(string)) {
                 return Where<T1>((string)condition).SelectAsync<T2>(limit, offset);
@@ -459,7 +459,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="limit"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<List<T2>> SelectAsync<T1, T2>(long limit, object condition = null) where T1 : class
+        public Task<List<T2>> SelectAsync<T1, T2>(long limit, object condition) where T1 : class
         {
             if (null == condition && condition.GetType() == typeof(string)) {
                 return Where<T1>((string)condition).SelectAsync<T2>(limit);
@@ -473,7 +473,7 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T2"></typeparam>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<List<T2>> SelectAsync<T1, T2>(object condition = null) where T1 : class
+        public Task<List<T2>> SelectAsync<T1, T2>(object condition) where T1 : class
         {
             if (null == condition && condition.GetType() == typeof(string)) {
                 return Where<T1>((string)condition, new object[0]).SelectAsync<T2>();
@@ -491,11 +491,11 @@ namespace ToolGood.ReadyGo3
             }
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("WHERE ");
-            ObjectToSql(stringBuilder, condition, " AND ");
+            ObjectToSql(stringBuilder, condition, " AND ", null);
             return stringBuilder.ToString();
         }
 
-        private string ConditionObjectToUpdateSetWhere(object set, object condition, string[] ignoreFields = null)
+        private string ConditionObjectToUpdateSetWhere(object set, object condition, string[] ignoreFields)
         {
             if (set == null) {
                 throw new ArgumentException("set is  null object!");
@@ -506,12 +506,12 @@ namespace ToolGood.ReadyGo3
             if (condition != null) {
                 stringBuilder.Append(" WHERE ");
 
-                ObjectToSql(stringBuilder, condition, " AND ");
+                ObjectToSql(stringBuilder, condition, " AND ", null);
             }
             return stringBuilder.ToString();
         }
 
-        private void ObjectToSql(StringBuilder stringBuilder, object condition, string middelStr, string[] ignoreFields = null)
+        private void ObjectToSql(StringBuilder stringBuilder, object condition, string middelStr, string[] ignoreFields)
         {
             if (condition is IEnumerable) { throw new ArgumentException("condition is IEnumerable object!"); }
 
