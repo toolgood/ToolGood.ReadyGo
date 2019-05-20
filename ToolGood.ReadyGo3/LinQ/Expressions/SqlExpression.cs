@@ -253,7 +253,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             return provider.EscapeSqlIdentifier(colName);
         }
 
-
         #endregion getColumnName
 
         #region GetSelectSql
@@ -565,16 +564,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             }
         }
 
-        private string RemoveQuoteFromAlias(string exp)
-        {
-            if ((exp.StartsWith("\"") || exp.StartsWith("`") || exp.StartsWith("'"))
-                &&
-                (exp.EndsWith("\"") || exp.EndsWith("`") || exp.EndsWith("'"))) {
-                exp = exp.Remove(0, 1);
-                exp = exp.Remove(exp.Length - 1, 1);
-            }
-            return exp;
-        }
 
         #endregion Expression Visit
 

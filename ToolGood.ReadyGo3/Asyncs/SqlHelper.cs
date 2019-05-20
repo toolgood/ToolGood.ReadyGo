@@ -75,28 +75,6 @@ namespace ToolGood.ReadyGo3
             return await CountAsync<T>(sql, args) > 0;
         }
 
-        ///// <summary>
-        ///// 执行SQL 查询,判断是否存在，返回bool类型
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="primaryKey">主键值</param>
-        ///// <returns></returns>
-        //public async Task<bool> ExistsAsync<T>(object primaryKey)
-        //{
-        //    var pd = PocoData.ForType(typeof(T));
-        //    var table = _provider.GetTableName(pd, _tableNameManager);
-        //    var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
-        //    var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
-
-        //    var args = new object[] { primaryKey };
-        //    if (_usedCacheServiceOnce) {
-        //        return await RunAsync(sql, args, async () => {
-        //            return await getDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
-        //        }, "Exists");
-        //    }
-        //    return await getDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
-        //}
-
         /// <summary>
         ///  执行SQL 查询,返回数量
         /// </summary>

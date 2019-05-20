@@ -256,28 +256,6 @@ namespace ToolGood.ReadyGo3
             return Count<T>(sql, args) > 0;
         }
 
-        ///// <summary>
-        ///// 执行SQL 查询,判断是否存在，返回bool类型
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="primaryKey">主键值</param>
-        ///// <returns></returns>
-        //public bool Exists<T>(object primaryKey)
-        //{
-        //    var pd = PocoData.ForType(typeof(T));
-        //    var table = _provider.GetTableName(pd, _tableNameManager);
-        //    var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
-        //    var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
-
-        //    var args = new object[] { primaryKey };
-        //    if (_usedCacheServiceOnce) {
-        //        return Run(sql, args, () => {
-        //            return getDatabase().ExecuteScalar<int>(sql, args) > 0;
-        //        }, "Count");
-        //    }
-        //    return getDatabase().ExecuteScalar<int>(sql, args) > 0;
-        //}
-
         /// <summary>
         ///  执行SQL 查询,返回数量
         /// </summary>

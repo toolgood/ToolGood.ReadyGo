@@ -67,12 +67,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 
 
-        internal async Task ExecuteNonQueryHelperAsync(SqlCommand cmd)
-        {
-            DoPreExecute(cmd);
-            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
-            OnExecutedCommand(cmd);
-        }
+        //internal async Task ExecuteNonQueryHelperAsync(SqlCommand cmd)
+        //{
+        //    DoPreExecute(cmd);
+        //    await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
+        //    OnExecutedCommand(cmd);
+        //}
 
         internal async Task<object> ExecuteScalarHelperAsync(SqlCommand cmd)
         {

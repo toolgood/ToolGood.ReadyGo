@@ -370,28 +370,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             return null;
         }
 
-        private static T RecurseInheritedTypes<T>(Type t, Func<Type, T> cb)
-        {
-            while (t != null) {
-                T info = cb(t);
-                if (info != null)
-                    return info;
-                t = t.BaseType;
-            }
-            return default(T);
-        }
-
         internal static void FlushCaches()
         {
             _pocoDatas.Flush();
         }
-
-        //public string GetColumnName(string propertyName)
-        //{
-        //    return Columns.Values.First(c => c.PropertyInfo.Name.Equals(propertyName)).ColumnName;
-        //}
-
-
 
 
     }
