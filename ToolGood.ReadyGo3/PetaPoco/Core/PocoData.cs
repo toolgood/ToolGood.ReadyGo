@@ -67,6 +67,20 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 // Store it
                 Columns.Add(pc.ColumnName, pc);
             }
+            // 支持 is_system_object 匹配 IsSystemObject
+            var names = Columns.Keys.ToList();
+            foreach (var name in names) {
+                StringBuilder sb = new StringBuilder();
+                foreach (var c in name) {
+                    if (c >= 'A' && c <= 'Z') { sb.Append("_"); }
+                    sb.Append(c);
+                }
+                if (sb[0] == '_') { sb.Remove(0, 1); }
+                var newName = sb.ToString();
+                if (Columns.ContainsKey(newName) == false) {
+                    Columns.Add(newName, Columns[name]);
+                }
+            }
         }
         /// <summary>
         /// 
@@ -118,7 +132,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="countColumns"></param>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public Delegate GetFactory( int firstColumn, int countColumns, IDataReader reader)
+        public Delegate GetFactory(int firstColumn, int countColumns, IDataReader reader)
         {
             #region 创建Key
             StringBuilder sb = new StringBuilder();
