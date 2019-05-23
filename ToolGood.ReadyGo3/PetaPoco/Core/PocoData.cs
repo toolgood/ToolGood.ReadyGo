@@ -34,6 +34,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// 列信息
         /// </summary>
         public Dictionary<string, PocoColumn> Columns;
+        public Dictionary<string, PocoColumn> SelectColumns;
 
         internal PocoData()
         {
@@ -67,6 +68,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 // Store it
                 Columns.Add(pc.ColumnName, pc);
             }
+            SelectColumns = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in Columns) {
+                SelectColumns[item.Key] = item.Value;
+            }
+
             // 支持 is_system_object 匹配 IsSystemObject
             var names = Columns.Keys.ToList();
             foreach (var name in names) {
@@ -77,8 +83,8 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 }
                 if (sb[0] == '_') { sb.Remove(0, 1); }
                 var newName = sb.ToString();
-                if (Columns.ContainsKey(newName) == false) {
-                    Columns.Add(newName, Columns[name]);
+                if (SelectColumns.ContainsKey(newName) == false) {
+                    SelectColumns.Add(newName, Columns[name]);
                 }
             }
         }
@@ -101,6 +107,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 foreach (var col in (obj as IDictionary<string, object>).Keys) {
                     if (col != primaryKeyName)
                         pd.Columns.Add(col, new ExpandoColumn() { ColumnName = col });
+                }
+                pd.SelectColumns = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase);
+                foreach (var item in pd.Columns) {
+                    pd.SelectColumns[item.Key] = item.Value;
                 }
                 return pd;
             }
@@ -244,7 +254,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                     for (int i = firstColumn; i < firstColumn + countColumns; i++) {
                         // Get the PocoColumn for this db column, ignore if not known
                         PocoColumn pc;
-                        if (!Columns.TryGetValue(reader.GetName(i), out pc))
+                        if (!SelectColumns.TryGetValue(reader.GetName(i), out pc))
                             continue;
 
                         // Get the source type for this column
