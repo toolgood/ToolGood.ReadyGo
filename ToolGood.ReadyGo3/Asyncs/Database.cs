@@ -47,7 +47,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     else
                         _sharedConnection.Open();
                 }
- 
+
                 _sharedConnection = OnConnectionOpened(_sharedConnection);
 
                 if (KeepConnectionAlive)
@@ -295,7 +295,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 CurrentPage = page,
                 PageSize = itemsPerPage,
                 TotalItems = await ExecuteScalarAsync<long>(countSql, args).ConfigureAwait(false)
-        };
+            };
             OneTimeCommandTimeout = saveTimeout;
 
             // Get the records
@@ -334,7 +334,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         var pd = PocoData.ForObject(poco, primaryKeyName);
                         var type = poco.GetType();
                         cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, 1, tableName, primaryKeyName, autoIncrement);
- 
+
                         foreach (var i in pd.Columns) {
                             if (i.Value.ResultColumn) continue;
                             if (autoIncrement && primaryKeyName != null && string.Compare(i.Value.ColumnName, primaryKeyName, true) == 0) {
@@ -342,7 +342,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             }
                             AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
                         }
- 
+
                         if (!autoIncrement) {
                             DoPreExecute(cmd);
                             await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);

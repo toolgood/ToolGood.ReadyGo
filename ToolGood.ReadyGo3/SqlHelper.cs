@@ -174,7 +174,7 @@ namespace ToolGood.ReadyGo3
         }
         #endregion 私有方法
 
-        #region UseTransaction UseCache UseRecord
+        #region UseTransaction 
         /// <summary>
         /// 使用事务
         /// </summary>
@@ -366,24 +366,10 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            #region 格式化
-            columnSql = columnSql.Trim();
-            tableSql = tableSql.Trim();
-            orderSql = orderSql?.Trim();
-            whereSql = whereSql?.Trim();
-            if (columnSql.StartsWith("SELECT ", StringComparison.InvariantCultureIgnoreCase)) {
-                columnSql = columnSql.Substring(7);
-            }
-            if (tableSql.StartsWith("FROM ", StringComparison.InvariantCultureIgnoreCase)) {
-                tableSql = tableSql.Substring(5);
-            }
-            if (orderSql?.StartsWith("ORDER BY ", StringComparison.InvariantCultureIgnoreCase) ?? false) {
-                orderSql = orderSql.Substring(9);
-            }
-            if (whereSql?.StartsWith("WHERE ", StringComparison.InvariantCultureIgnoreCase) ?? false) {
-                whereSql = whereSql.Substring(6);
-            }
-            #endregion
+            columnSql = RemoveStart(columnSql, "SELECT ");
+            tableSql = RemoveStart(tableSql, "FROM ");
+            orderSql = RemoveStart(orderSql, "ORDER BY ");
+            whereSql = RemoveStart(whereSql, "WHERE ");
 
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
             sql = formatSql(sql);
@@ -408,30 +394,27 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            #region 格式化
-            columnSql = columnSql.Trim();
-            tableSql = tableSql.Trim();
-            orderSql = orderSql?.Trim();
-            whereSql = whereSql?.Trim();
-            if (columnSql.StartsWith("SELECT ", StringComparison.InvariantCultureIgnoreCase)) {
-                columnSql = columnSql.Substring(7);
-            }
-            if (tableSql.StartsWith("FROM ", StringComparison.InvariantCultureIgnoreCase)) {
-                tableSql = tableSql.Substring(5);
-            }
-            if (orderSql?.StartsWith("ORDER BY ", StringComparison.InvariantCultureIgnoreCase) ?? false) {
-                orderSql = orderSql.Substring(9);
-            }
-            if (whereSql?.StartsWith("WHERE ", StringComparison.InvariantCultureIgnoreCase) ?? false) {
-                whereSql = whereSql.Substring(6);
-            }
-            #endregion
+            columnSql= RemoveStart(columnSql, "SELECT ");
+            tableSql = RemoveStart(tableSql, "FROM ");
+            orderSql = RemoveStart(orderSql, "ORDER BY ");
+            whereSql = RemoveStart(whereSql, "WHERE ");
+
             string countSql = string.IsNullOrEmpty(whereSql) ? $"SELECT COUNT(1) FROM {tableSql}" : $"SELECT COUNT(1) FROM {tableSql} WHERE {whereSql}";
             countSql = formatSql(countSql);
 
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
             sql = formatSql(sql);
             return getDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
+        }
+        private string RemoveStart(string txt, string startsText)
+        {
+            if (string.IsNullOrEmpty(txt) == false) {
+                txt = txt.Trim();
+                if (txt.StartsWith(txt, StringComparison.InvariantCultureIgnoreCase)) {
+                    txt = txt.Substring(txt.Length);
+                }
+            }
+            return txt;
         }
 
         #endregion Select Page Select
