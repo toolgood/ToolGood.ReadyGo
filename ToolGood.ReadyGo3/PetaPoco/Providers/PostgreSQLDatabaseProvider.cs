@@ -144,5 +144,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             }
             return base.CreateFunction(function, args);
         }
+
+
+        public override string ToString()
+        {
+            return "PostgreSQLDatabaseProvider";
+        }
     }
 }

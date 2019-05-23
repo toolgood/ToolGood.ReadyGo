@@ -75,5 +75,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             }
             return sb.ToString();
         }
+
+
+        public override string ToString()
+        {
+            return "MySqlDatabaseProvider";
+        }
     }
 }

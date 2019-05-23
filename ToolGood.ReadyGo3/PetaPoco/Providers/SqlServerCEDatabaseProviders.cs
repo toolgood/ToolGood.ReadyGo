@@ -50,5 +50,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             sb.AppendFormat($" OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY");
             return sb.ToString();
         }
+
+
+        public override string ToString()
+        {
+            return "SqlServerCEDatabaseProviders";
+        }
     }
 }

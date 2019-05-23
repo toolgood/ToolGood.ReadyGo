@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 using ToolGood.ReadyGo3.Exceptions;
+using ToolGood.ReadyGo3.Gadget;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Internal
@@ -22,33 +23,13 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
             if (!rxSelect.IsMatch(sql))
             {
                 var pd = PocoData.ForType(typeof(T));
-                var tableName = provider.EscapeTableName(pd.TableInfo.TableName);
-                
-                StringBuilder stringBuilder = new StringBuilder();
-                foreach (var item in pd.Columns) {
-                    var col = item.Value;
-
-                    if (col.ResultColumn) {
-                        if (string.IsNullOrEmpty(col.ResultSql)==false) {
-                            stringBuilder.Append(",");
-                            stringBuilder.AppendFormat(col.ResultSql, tableName + ".");
-                            stringBuilder.Append(" AS '");
-                            stringBuilder.Append(col.ColumnName);
-                            stringBuilder.Append("'");
-                        }
-                    } else {
-                        stringBuilder.Append(",");
-                        stringBuilder.AppendFormat("{0}.{1}", tableName, provider.EscapeSqlIdentifier(col.ColumnName));
-                    }
+                var columns = CrudCache.GetSelectColumnsSql(provider, pd);
+                if (!rxFrom.IsMatch(sql)) {
+                    var tableName = provider.EscapeTableName(pd.TableInfo.TableName);
+                    sql = $"SELECT {columns} FROM {tableName} {sql}";
                 }
-                if (stringBuilder.Length==0) throw new NoColumnException();
-                stringBuilder.Remove(0, 1);
-
-   
-                if (!rxFrom.IsMatch(sql))
-                    sql = $"SELECT {stringBuilder.ToString()} FROM {tableName} {sql}";
                 else
-                    sql = $"SELECT {stringBuilder.ToString()} {sql}";
+                    sql = $"SELECT {columns} {sql}";
             }
             return sql;
         }

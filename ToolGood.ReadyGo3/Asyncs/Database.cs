@@ -9,6 +9,7 @@ using ToolGood.ReadyGo3.Exceptions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using System.Data.Common;
+using ToolGood.ReadyGo3.Gadget;
 
 #if !NET40
 using SqlCommand = System.Data.Common.DbCommand;
@@ -332,10 +333,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var pd = PocoData.ForObject(poco, primaryKeyName);
                         var type = poco.GetType();
-                        var sql = insert.Get(Tuple.Create(type, _sqlHelper._sqlType, 1), () => {
-                            return CteateInsertSql(pd, 1, tableName, primaryKeyName, autoIncrement);
-                        });
-
+                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, 1, tableName, primaryKeyName, autoIncrement);
+ 
                         foreach (var i in pd.Columns) {
                             if (i.Value.ResultColumn) continue;
                             if (autoIncrement && primaryKeyName != null && string.Compare(i.Value.ColumnName, primaryKeyName, true) == 0) {
@@ -343,8 +342,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             }
                             AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
                         }
-                        cmd.CommandText = sql;
-
+ 
                         if (!autoIncrement) {
                             DoPreExecute(cmd);
                             await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);
@@ -432,9 +430,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0], CommandType.Text)) {
                         var type = typeof(T);
                         var pd = PocoData.ForType(type);
-                        var sql = insert.Get(Tuple.Create(type, _sqlHelper._sqlType, size), () => {
-                            return CteateInsertSql(pd, size, tableName, primaryKeyName, autoIncrement);
-                        });
+                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, 1, tableName, primaryKeyName, autoIncrement);
 
                         for (int j = 0; j < size; j++) {
                             var poco = list[index2 + j];
@@ -446,7 +442,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                                 AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
                             }
                         }
-                        cmd.CommandText = sql;
 
                         DoPreExecute(cmd);
                         await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);
@@ -504,23 +499,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = poco.GetType();
                         var pd = PocoData.ForObject(poco, primaryKeyName);
-                        var sql = update.Get(Tuple.Create(type, _sqlHelper._sqlType), () => {
-                            var sb = new StringBuilder();
-                            var index = 0;
-                            foreach (var i in pd.Columns) {
-                                if (String.Compare(i.Value.ColumnName, primaryKeyName, StringComparison.OrdinalIgnoreCase) == 0) continue;
-                                if (i.Value.ResultColumn) continue;
-
-                                // Build the sql
-                                if (index > 0) sb.Append(", ");
-                                sb.AppendFormat("{0} = {1}{2}", _provider.EscapeSqlIdentifier(i.Value.ColumnName), _paramPrefix, index++);
-                            }
-
-                            return string.Format("UPDATE {0} SET {1} WHERE {2} = {3}{4}",
-                                _provider.EscapeTableName(tableName), sb.ToString(), _provider.EscapeSqlIdentifier(primaryKeyName), _paramPrefix, index++);
-                        });
-
-                        cmd.CommandText = sql;
+                        cmd.CommandText = CrudCache.GetUpdateSql(_provider, _paramPrefix, pd, tableName, primaryKeyName);
 
                         foreach (var i in pd.Columns) {
                             if (i.Value.ResultColumn) continue;

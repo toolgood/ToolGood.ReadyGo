@@ -39,6 +39,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 return $"NEXT VALUE FOR {tableInfo.SequenceName}";
             return null;
         }
- 
+
+        public override string ToString()
+        {
+            return "SqlServer2012DatabaseProvider";
+        }
+
     }
 }

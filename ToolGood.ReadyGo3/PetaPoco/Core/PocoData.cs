@@ -399,6 +399,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             _pocoDatas.Flush();
         }
 
-
+        public override string ToString()
+        {
+            return Type.FullName;
+        }
     }
 }

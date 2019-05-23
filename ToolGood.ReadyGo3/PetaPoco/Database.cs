@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using ToolGood.ReadyGo3.Exceptions;
+using ToolGood.ReadyGo3.Gadget;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.PetaPoco.Utilities;
@@ -793,9 +794,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var pd = PocoData.ForObject(poco, primaryKeyName);
                         var type = poco.GetType();
-                        var sql = insert.Get(Tuple.Create(type, _sqlHelper._sqlType, 1), () => {
-                            return CteateInsertSql(pd, 1, tableName, primaryKeyName, autoIncrement);
-                        });
+                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, 1, tableName, primaryKeyName, autoIncrement);
 
                         foreach (var i in pd.Columns) {
                             if (i.Value.ResultColumn) continue;
@@ -804,8 +803,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             }
                             AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
                         }
-                        cmd.CommandText = sql;
-
+ 
                         if (!autoIncrement) {
                             DoPreExecute(cmd);
                             cmd.ExecuteNonQuery();
@@ -860,7 +858,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 
 
-        private static Cache<Tuple<Type, SqlType, int>, string> insert = new Cache<Tuple<Type, SqlType, int>, string>();
         /// <summary>
         /// 插入列表
         /// </summary>
@@ -895,9 +892,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0], CommandType.Text)) {
                         var type = typeof(T);
                         var pd = PocoData.ForType(type);
-                        var sql = insert.Get(Tuple.Create(type, _sqlHelper._sqlType, size), () => {
-                            return CteateInsertSql(pd, size, tableName, primaryKeyName, autoIncrement);
-                        });
+                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, size, tableName, primaryKeyName, autoIncrement);
 
                         for (int j = 0; j < size; j++) {
                             var poco = list[index2 + j];
@@ -909,7 +904,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                                 AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
                             }
                         }
-                        cmd.CommandText = sql;
 
                         DoPreExecute(cmd);
                         cmd.ExecuteNonQuery();
@@ -924,56 +918,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        private string CteateInsertSql(PocoData pd, int size, string tableName, string primaryKeyName, bool autoIncrement)
-        {
-            var names = new List<string>();
-            var values = new List<string>();
-            var index = 0;
-            foreach (var i in pd.Columns) {
-                if (i.Value.ResultColumn) continue;
-
-                // Don't insert the primary key (except under oracle where we need bring in the next sequence value)
-                if (autoIncrement && primaryKeyName != null && string.Compare(i.Value.ColumnName, primaryKeyName, true) == 0) {
-                    // Setup auto increment expression
-                    string autoIncExpression = _provider.GetAutoIncrementExpression(pd.TableInfo);
-                    if (autoIncExpression != null) {
-                        names.Add(i.Value.ColumnName);
-                        values.Add(autoIncExpression);
-                    }
-                    continue;
-                }
-
-                names.Add(_provider.EscapeSqlIdentifier(i.Value.ColumnName));
-                values.Add(_paramPrefix + index.ToString());
-                index++;
-            }
-
-            string outputClause = String.Empty;
-            if (autoIncrement) {
-                outputClause = _provider.GetInsertOutputClause(primaryKeyName);
-            }
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("INSERT INTO {0} ({1}){2} VALUES ({3})",
-                _provider.EscapeTableName(tableName),
-                string.Join(",", names.ToArray()),
-                outputClause,
-                string.Join(",", values.ToArray())
-                );
-
-            var k = index;
-            for (int i = 1; i < size; i++) {
-                sb.Append(",(");
-                for (int j = 0; j < k; j++) {
-                    if (j > 0) { sb.Append(","); }
-                    sb.Append(_paramPrefix);
-                    sb.Append(index.ToString());
-                    index++;
-                }
-                sb.Append(")");
-            }
-            return sb.ToString();
-        }
 
         #endregion
 
@@ -1011,7 +955,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return Execute(string.Format("UPDATE {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
-        private static Cache<Tuple<Type, SqlType>, string> update = new Cache<Tuple<Type, SqlType>, string>();
         private int ExecuteUpdate(string tableName, string primaryKeyName, object poco, object primaryKeyValue, IEnumerable<string> columns)
         {
             try {
@@ -1020,23 +963,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = poco.GetType();
                         var pd = PocoData.ForObject(poco, primaryKeyName);
-                        var sql = update.Get(Tuple.Create(type, _sqlHelper._sqlType), () => {
-                            var sb = new StringBuilder();
-                            var index = 0;
-                            foreach (var i in pd.Columns) {
-                                if (String.Compare(i.Value.ColumnName, primaryKeyName, StringComparison.OrdinalIgnoreCase) == 0) continue;
-                                if (i.Value.ResultColumn) continue;
-
-                                // Build the sql
-                                if (index > 0) sb.Append(", ");
-                                sb.AppendFormat("{0} = {1}{2}", _provider.EscapeSqlIdentifier(i.Value.ColumnName), _paramPrefix, index++);
-                            }
-
-                            return string.Format("UPDATE {0} SET {1} WHERE {2} = {3}{4}",
-                                _provider.EscapeTableName(tableName), sb.ToString(), _provider.EscapeSqlIdentifier(primaryKeyName), _paramPrefix, index++);
-                        });
-
-                        cmd.CommandText = sql;
+                        cmd.CommandText = CrudCache.GetUpdateSql(_provider, _paramPrefix, pd, tableName, primaryKeyName);
 
                         foreach (var i in pd.Columns) {
                             if (i.Value.ResultColumn) continue;
@@ -1154,8 +1081,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns>The number of affected rows</returns>
         public int Delete<T>(string sql, params object[] args)
         {
-
-
             var pd = PocoData.ForType(typeof(T));
             return Execute(string.Format("DELETE FROM {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }

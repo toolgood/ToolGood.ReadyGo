@@ -576,15 +576,16 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 .Replace("[", @"\[")
                 .Replace("]", @"\]");
         }
-        /// <summary>
-        /// 格式化 LIKE 内容2，适用于Default
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public string EscapeLikeParam2(string param)
-        {
-            param = param.Replace(@"\\", @"\").Replace("''", "'").Replace(@"\'", "'");
-            return param.Replace(@"\", @"\\").Replace("'", @"\'");
-        }
+        ///// <summary>
+        ///// 格式化 LIKE 内容2，适用于Default
+        ///// </summary>
+        ///// <param name="param"></param>
+        ///// <returns></returns>
+        //public string EscapeLikeParam2(string param)
+        //{
+        //    param = param.Replace(@"\\", @"\").Replace("''", "'").Replace(@"\'", "'");
+        //    return param.Replace(@"\", @"\\").Replace("'", @"\'");
+        //}
+
     }
 }
