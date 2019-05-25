@@ -6,6 +6,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using ToolGood.ReadyGo3.Gadget;
+using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Core
@@ -34,7 +36,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// 列信息
         /// </summary>
         public Dictionary<string, PocoColumn> Columns;
-        public Dictionary<string, PocoColumn> SelectColumns;
+        internal Dictionary<string, PocoColumn> SelectColumns;
 
         internal PocoData()
         {
@@ -383,7 +385,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 }
             } else if (!dstType.IsAssignableFrom(srcType)) {
                 if (dstType.IsEnum && srcType == typeof(string)) {
-                    return delegate (object src) { return EnumMapper.EnumFromString(dstType, (string)src); };
+                    return delegate (object src) { return EnumHelper.EnumFromString(dstType, (string)src); };
                 } else if (dstType == typeof(Guid) && srcType == typeof(string)) {
                     return delegate (object src) { return Guid.Parse((string)src); };
                 } else {

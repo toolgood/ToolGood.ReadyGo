@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using ToolGood.ReadyGo3.Gadget;
+using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Internal

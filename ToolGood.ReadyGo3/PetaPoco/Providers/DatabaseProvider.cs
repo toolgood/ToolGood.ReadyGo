@@ -549,10 +549,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 default: break;
             }
             if (value is string || value is char) {
-                var txt = (value.ToString()).Replace(@"\", @"\\").Replace("'", @"\'")
-                      .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
-                      .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
-                      .Replace("\t", "\\t").Replace("\v", "\\v");
+                var txt = (value.ToString()).ToEscapeParam();
                 return "'" + txt + "'";
             }
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
@@ -563,35 +560,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             }
             return "'" + value.ToString() + "'";
         }
-
-
-        /// <summary>
-        /// 格式化 LIKE 内容，适用于Contains，StartWith，EndWith
-        /// </summary>
-        /// <param name="param"></param>
-        /// <returns></returns>
-        public string EscapeLikeParam(string param)
-        {
-            return param.Replace(@"\", @"\\").Replace("'", @"\'")
-                      .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
-                      .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
-                      .Replace("\t", "\\t").Replace("\v", "\\v")
-                .Replace("_", @"\_")
-                .Replace("%", @"\%")
-                .Replace("'", @"\'")
-                .Replace("[", @"\[")
-                .Replace("]", @"\]");
-        }
-        ///// <summary>
-        ///// 格式化 LIKE 内容2，适用于Default
-        ///// </summary>
-        ///// <param name="param"></param>
-        ///// <returns></returns>
-        //public string EscapeLikeParam2(string param)
-        //{
-        //    param = param.Replace(@"\\", @"\").Replace("''", "'").Replace(@"\'", "'");
-        //    return param.Replace(@"\", @"\\").Replace("'", @"\'");
-        //}
 
     }
 }

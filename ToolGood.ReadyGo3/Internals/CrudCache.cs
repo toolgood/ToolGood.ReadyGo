@@ -6,7 +6,7 @@ using ToolGood.ReadyGo3.Exceptions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 
-namespace ToolGood.ReadyGo3.Gadget
+namespace ToolGood.ReadyGo3.Internals
 {
     internal static class CrudCache
     {

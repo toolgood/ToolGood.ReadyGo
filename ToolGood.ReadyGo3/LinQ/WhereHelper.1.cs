@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.LinQ.Expressions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
@@ -1382,10 +1383,7 @@ namespace ToolGood.ReadyGo3.LinQ
                     sb.Append(h.QuerySql);
                     if (h.UseAsName || asNames.Contains(h.AsName)) {
                         sb.Append(" As '");
-                        sb.Append(h.AsName.Replace(@"\", @"\\").Replace("'", @"\'")
-                              .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
-                              .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
-                              .Replace("\t", "\\t").Replace("\v", "\\v"));
+                        sb.Append(h.AsName.ToEscapeParam());
                         if (asNames.Contains(h.AsName)) {
                             sb.Append("_");
                             sb.Append(asNames.Count(q => q == h.AsName).ToString());
@@ -1406,11 +1404,7 @@ namespace ToolGood.ReadyGo3.LinQ
                         sb.Append(h.QuerySql);
                         if (h.UseAsName) {
                             sb.Append(" As '");
-                            sb.Append(h.AsName.Replace(@"\", @"\\").Replace("'", @"\'")
-                                  .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
-                                  .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
-                                  .Replace("\t", "\\t").Replace("\v", "\\v")
-                                );
+                            sb.Append(h.AsName.ToEscapeParam());
                             sb.Append("'");
                         }
                     }

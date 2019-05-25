@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace ToolGood.ReadyGo3.PetaPoco.Internal
+namespace ToolGood.ReadyGo3.Internals
 {
     internal class Cache<TKey, TValue>
     {

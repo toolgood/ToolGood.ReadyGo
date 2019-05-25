@@ -5,11 +5,10 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
 using ToolGood.ReadyGo3.Enums;
+using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;
-using ToolGood.ReadyGo3.PetaPoco.Internal;
 
 namespace ToolGood.ReadyGo3.LinQ.Expressions
 {
@@ -35,10 +34,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         #region 可重写的方法
         private string GetQuotedValue(string paramValue)
         {
-            var txt = (paramValue.ToString()).Replace(@"\", @"\\").Replace("'", @"\'")
-                       .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
-                       .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
-                       .Replace("\t", "\\t").Replace("\v", "\\v");
+            var txt = (paramValue.ToString()).ToEscapeParam();
             return "'" + txt + "'";
         }
         private string GetQuotedValue(object value, Type fieldType)
@@ -46,11 +42,8 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             if (value == null) return "NULL";
 
             if (fieldType.IsEnum) {
-                if (EnumMapper.UseEnumString(fieldType)) {
-                    var txt = (value.ToString()).Replace(@"\", @"\\").Replace("'", @"\'")
-                               .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
-                               .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
-                               .Replace("\t", "\\t").Replace("\v", "\\v");
+                if (EnumHelper.UseEnumString(fieldType)) {
+                    var txt = (value.ToString()).ToEscapeParam();
                     return "'" + txt + "'";
                 }
                 return $"'{Convert.ToInt64(value)}'";
@@ -163,9 +156,9 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 case "TrimEnd": statement = provider.CreateFunction(SqlFunction.RTrim, quotedColName); break;
                 case "ToUpper": statement = provider.CreateFunction(SqlFunction.Upper, quotedColName); break;
                 case "ToLower": statement = provider.CreateFunction(SqlFunction.Lower, quotedColName); break;
-                case "StartsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, provider.EscapeLikeParam(wildcardArg) + "%"); break;
-                case "EndsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + provider.EscapeLikeParam(wildcardArg)); break;
-                case "Contains": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + provider.EscapeLikeParam(wildcardArg) + "%"); break;
+                case "StartsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE '{1}'", quotedColName, wildcardArg.ToEscapeLikeParam() + "%"); break;
+                case "EndsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE '{1}'", quotedColName, "%" + wildcardArg.ToEscapeLikeParam()); break;
+                case "Contains": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE '{1}'", quotedColName, "%" + wildcardArg.ToEscapeLikeParam() + "%"); break;
                 case "Substring":
                     var startIndex = Int32.Parse(_args[0].ToString()) + 1;
                     if (_args.Count == 1) {

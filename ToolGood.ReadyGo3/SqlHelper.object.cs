@@ -5,8 +5,8 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;
-using ToolGood.ReadyGo3.PetaPoco.Internal;
 
 namespace ToolGood.ReadyGo3
 {
@@ -572,11 +572,8 @@ namespace ToolGood.ReadyGo3
 
             var fieldType = value.GetType();
             if (fieldType.IsEnum) {
-                if (EnumMapper.UseEnumString(fieldType)) {
-                    var txt = (value.ToString()).Replace(@"\", @"\\").Replace("'", @"\'")
-                               .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
-                               .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
-                               .Replace("\t", "\\t").Replace("\v", "\\v") ;
+                if (EnumHelper.UseEnumString(fieldType)) {
+                    var txt = (value.ToString()).ToEscapeParam();
                     return "'" + txt + "'" ;
                 }
                 return $"'{Convert.ToInt64(value)}'";
@@ -606,10 +603,7 @@ namespace ToolGood.ReadyGo3
                 default: break;
             }
             if (value is string || value is char) {
-                var txt = (value.ToString()).Replace(@"\", @"\\").Replace("'", @"\'")
-                      .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
-                      .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
-                      .Replace("\t", "\\t").Replace("\v", "\\v");
+                var txt = (value.ToString()).ToEscapeParam();
                 return "'" + txt + "'";
             }
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";

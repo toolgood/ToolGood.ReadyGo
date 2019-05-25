@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 
-namespace ToolGood.ReadyGo3.Gadget
+namespace ToolGood.ReadyGo3.Internals
 {
     internal class Types
     {

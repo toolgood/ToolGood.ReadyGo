@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using ToolGood.ReadyGo3.Attributes;
 
-namespace ToolGood.ReadyGo3.PetaPoco.Internal
+namespace ToolGood.ReadyGo3.Internals
 {
-    internal static class EnumMapper
+    internal static class EnumHelper
     {
         private static readonly Cache<Type, Dictionary<string, object>> _types = new Cache<Type, Dictionary<string, object>>();
         private static readonly Cache<Type, bool> _useString = new Cache<Type, bool>();

@@ -8,14 +8,11 @@ using ToolGood.ReadyGo3.Exceptions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using System.Data.Common;
-using ToolGood.ReadyGo3.Gadget;
+using ToolGood.ReadyGo3.Internals;
 
 #if !NET40
 using SqlCommand = System.Data.Common.DbCommand;
 using SqlDataReader = System.Data.Common.DbDataReader;
-#else
-using System.Data.Common;
-using System.Data.SqlClient;
 #endif
 
 #if !NET40
