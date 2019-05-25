@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using ToolGood.ReadyGo3.LinQ.Expressions;
-using ToolGood.ReadyGo3.PetaPoco.Core;
-
-namespace ToolGood.ReadyGo3.LinQ
+﻿namespace ToolGood.ReadyGo3.LinQ
 {
     /// <summary>
     /// Select内的表头

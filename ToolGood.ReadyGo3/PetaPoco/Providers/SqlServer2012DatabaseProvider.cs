@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using ToolGood.ReadyGo3.PetaPoco;
-using ToolGood.ReadyGo3.PetaPoco.Providers;
 using ToolGood.ReadyGo3.PetaPoco.Utilities;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Providers

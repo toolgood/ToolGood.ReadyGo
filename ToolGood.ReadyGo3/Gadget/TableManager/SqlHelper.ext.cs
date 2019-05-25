@@ -1,5 +1,4 @@
-﻿
-using ToolGood.ReadyGo3.Gadget.TableManager;
+﻿using ToolGood.ReadyGo3.Gadget.TableManager;
 
 namespace ToolGood.ReadyGo3
 {

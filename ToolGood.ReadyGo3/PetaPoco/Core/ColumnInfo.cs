@@ -1,8 +1,6 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 using ToolGood.ReadyGo3.Attributes;
 using ToolGood.ReadyGo3.Gadget;
-using ToolGood.ReadyGo3.PetaPoco.Internal;
 
 namespace ToolGood.ReadyGo3.PetaPoco
 {

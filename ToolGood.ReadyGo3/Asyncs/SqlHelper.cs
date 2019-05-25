@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo3.Gadget.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;

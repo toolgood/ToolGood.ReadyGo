@@ -549,7 +549,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 default: break;
             }
             if (value is string || value is char) {
-                var txt = (value.ToString()).Replace(@"\", @"\\").Replace("'", @"\'");
+                var txt = (value.ToString()).Replace(@"\", @"\\").Replace("'", @"\'")
+                      .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
+                      .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
+                      .Replace("\t", "\\t").Replace("\v", "\\v");
                 return "'" + txt + "'";
             }
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
@@ -569,7 +572,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <returns></returns>
         public string EscapeLikeParam(string param)
         {
-            return param.Replace(@"\", @"\\")
+            return param.Replace(@"\", @"\\").Replace("'", @"\'")
+                      .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
+                      .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
+                      .Replace("\t", "\\t").Replace("\v", "\\v")
                 .Replace("_", @"\_")
                 .Replace("%", @"\%")
                 .Replace("'", @"\'")

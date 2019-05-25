@@ -1,6 +1,4 @@
-﻿using System.Text;
-using System.Text.RegularExpressions;
-using ToolGood.ReadyGo3.Exceptions;
+﻿using System.Text.RegularExpressions;
 using ToolGood.ReadyGo3.Gadget;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 

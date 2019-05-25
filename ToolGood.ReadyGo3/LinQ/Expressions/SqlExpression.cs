@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Text;
 using ToolGood.ReadyGo3.Enums;
 using ToolGood.ReadyGo3.PetaPoco.Core;
+using ToolGood.ReadyGo3.PetaPoco.Internal;
 
 namespace ToolGood.ReadyGo3.LinQ.Expressions
 {
@@ -35,15 +36,23 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         private string GetQuotedValue(string paramValue)
         {
             var txt = (paramValue.ToString()).Replace(@"\", @"\\").Replace("'", @"\'")
-                    .Replace("\r", @"\\r").Replace("\n", @"\\n").Replace("\t", "\\t").Replace("\a", "\\a").Replace("\b", "\\b");
+                       .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
+                       .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
+                       .Replace("\t", "\\t").Replace("\v", "\\v");
             return "'" + txt + "'";
-            //return "'" + paramValue.Replace(@"\", @"\\").Replace("'", @"\'") + "'";
         }
         private string GetQuotedValue(object value, Type fieldType)
         {
             if (value == null) return "NULL";
 
             if (fieldType.IsEnum) {
+                if (EnumMapper.UseEnumString(fieldType)) {
+                    var txt = (value.ToString()).Replace(@"\", @"\\").Replace("'", @"\'")
+                               .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
+                               .Replace("\f", @"\\f").Replace("\n", @"\\n").Replace("\r", @"\\r")
+                               .Replace("\t", "\\t").Replace("\v", "\\v");
+                    return "'" + txt + "'";
+                }
                 return $"'{Convert.ToInt64(value)}'";
                 //var isEnumFlags = fieldType.IsEnum;
                 //long enumValue;
