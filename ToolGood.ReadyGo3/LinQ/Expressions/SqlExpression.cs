@@ -34,39 +34,35 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         #region 可重写的方法
         private string GetQuotedValue(string paramValue)
         {
-            return "'" + paramValue.Replace(@"\", @"\\").Replace("'", @"\'") + "'";
+            var txt = (paramValue.ToString()).Replace(@"\", @"\\").Replace("'", @"\'")
+                    .Replace("\r", @"\\r").Replace("\n", @"\\n").Replace("\t", "\\t").Replace("\a", "\\a").Replace("\b", "\\b");
+            return "'" + txt + "'";
+            //return "'" + paramValue.Replace(@"\", @"\\").Replace("'", @"\'") + "'";
         }
         private string GetQuotedValue(object value, Type fieldType)
         {
             if (value == null) return "NULL";
 
             if (fieldType.IsEnum) {
-                var isEnumFlags = fieldType.IsEnum;
-                long enumValue;
-                if (!isEnumFlags && Int64.TryParse(value.ToString(), out enumValue)) {
-                    value = Enum.ToObject(fieldType, enumValue).ToString();
-                }
-                var enumString = value.ToString();
+                return $"'{Convert.ToInt64(value)}'";
+                //var isEnumFlags = fieldType.IsEnum;
+                //long enumValue;
+                //if (!isEnumFlags && Int64.TryParse(value.ToString(), out enumValue)) {
+                //    value = Enum.ToObject(fieldType, enumValue).ToString();
+                //}
+                //var enumString = value.ToString();
 
-                return !isEnumFlags
-                    ? GetQuotedValue(enumString.Trim('"'))
-                    : enumString;
+                //return !isEnumFlags
+                //    ? GetQuotedValue(enumString.Trim('"'))
+                //    : enumString;
             }
 
             var typeCode = Type.GetTypeCode(fieldType);
             switch (typeCode) {
-                case TypeCode.Boolean:
-                    return (bool)value ? "1" : "0";
-
-                case TypeCode.Single:
-                    return ((float)value).ToString(CultureInfo.InvariantCulture);
-
-                case TypeCode.Double:
-                    return ((double)value).ToString(CultureInfo.InvariantCulture);
-
-                case TypeCode.Decimal:
-                    return ((decimal)value).ToString(CultureInfo.InvariantCulture);
-
+                case TypeCode.Boolean:return (bool)value ? "1" : "0";
+                case TypeCode.Single:return ((float)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Double:return ((double)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Decimal:return ((decimal)value).ToString(CultureInfo.InvariantCulture);
                 case TypeCode.Byte:
                 case TypeCode.Int16:
                 case TypeCode.Int32:
@@ -79,9 +75,12 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                     return Convert.ChangeType(value, fieldType).ToString();
                     //break;
             }
-
-            if (fieldType == typeof(TimeSpan))
-                return ((TimeSpan)value).Ticks.ToString(CultureInfo.InvariantCulture);
+            if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
+            if (fieldType == typeof(TimeSpan)) return ((TimeSpan)value).Ticks.ToString(CultureInfo.InvariantCulture);
+            if (fieldType == typeof(byte[])) {
+                var txt = Encoding.BigEndianUnicode.GetString((byte[])value);
+                return "X'" + txt + "'";
+            }
             // TO： add 用于sqlite
 
             return GetQuotedValue(value.ToString());

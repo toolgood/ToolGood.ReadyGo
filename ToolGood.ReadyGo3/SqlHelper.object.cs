@@ -571,12 +571,14 @@ namespace ToolGood.ReadyGo3
 
             var fieldType = value.GetType();
             if (fieldType.IsEnum) {
-                var isEnumFlags = fieldType.IsEnum;
-                if (!isEnumFlags && Int64.TryParse(value.ToString(), out long enumValue)) {
-                    value = Enum.ToObject(fieldType, enumValue).ToString();
-                }
-                var enumString = value.ToString();
-                return !isEnumFlags ? "'" + enumString.Trim('"') + "'" : enumString;
+                return $"'{Convert.ToInt64(value)}'";
+
+                //var isEnumFlags = fieldType.IsEnum;
+                //if (!isEnumFlags && Int64.TryParse(value.ToString(), out long enumValue)) {
+                //    value = Enum.ToObject(fieldType, enumValue).ToString();
+                //}
+                //var enumString = value.ToString();
+                //return !isEnumFlags ? "'" + enumString.Trim('"') + "'" : enumString;
             }
 
             var typeCode = Type.GetTypeCode(fieldType);
@@ -596,7 +598,8 @@ namespace ToolGood.ReadyGo3
                 default: break;
             }
             if (value is string || value is char) {
-                var txt = (value.ToString()).Replace(@"\", @"\\").Replace("'", @"\'");
+                var txt = (value.ToString()).Replace(@"\", @"\\").Replace("'", @"\'")
+                    .Replace("\r", @"\\r").Replace("\n", @"\\n").Replace("\t","\\t").Replace("\a", "\\a").Replace("\b", "\\b");
                 return "'" + txt + "'";
             }
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
