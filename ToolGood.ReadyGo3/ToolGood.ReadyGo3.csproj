@@ -67,6 +67,7 @@
     
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net40|AnyCPU'">
         <DocumentationFile>bin\Debug\net40\ToolGood.ReadyGo3.xml</DocumentationFile>
+        <NoWarn>1701;1702;CS1591</NoWarn>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|AnyCPU'">
         <DocumentationFile>bin\Debug\net45\ToolGood.ReadyGo3.xml</DocumentationFile>

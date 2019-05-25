@@ -101,7 +101,7 @@ namespace ToolGood.ReadyGo3
         public string WorkstationID { set { SetValue("Workstation ID" , value); } }
 
 
-        private Dictionary<string , string> _dict = new Dictionary<string , string>();
+        private readonly Dictionary<string , string> _dict = new Dictionary<string , string>();
         /// <summary>
         /// 设置值, value为null时删除值
         /// </summary>

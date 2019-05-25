@@ -63,13 +63,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             if (pi.GetCustomAttributes(typeof(IgnoreAttribute), true).Length > 0) return null;
 
-            var ci = new ColumnInfo();
-            ci.PropertyName = pi.Name;
+            var ci = new ColumnInfo {
+                PropertyName = pi.Name
+            };
 
             if (colAttrs.Length > 0) {
                 var colattr = (ColumnAttribute)colAttrs[0];
 
-                ci.ColumnName = colattr.Name == null ? pi.Name : colattr.Name;
+                ci.ColumnName = colattr.Name ?? pi.Name;
                 if (string.IsNullOrEmpty(ci.ColumnName)) ci.ColumnName = pi.Name;
 
                 ci.ForceToUtc = colattr.ForceToUtc;

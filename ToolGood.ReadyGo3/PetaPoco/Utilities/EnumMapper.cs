@@ -6,8 +6,8 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
 {
     internal static class EnumMapper
     {
-        private static Cache<Type, Dictionary<string, object>> _types = new Cache<Type, Dictionary<string, object>>();
-        private static Cache<Type, bool> _useString = new Cache<Type, bool>();
+        private static readonly Cache<Type, Dictionary<string, object>> _types = new Cache<Type, Dictionary<string, object>>();
+        private static readonly Cache<Type, bool> _useString = new Cache<Type, bool>();
 
         public static object EnumFromString(Type enumType, string value)
         {

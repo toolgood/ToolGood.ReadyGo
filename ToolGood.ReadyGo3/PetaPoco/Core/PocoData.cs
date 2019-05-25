@@ -15,16 +15,16 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
     /// </summary>
     public class PocoData
     {
-        private static Cache<Type, PocoData> _pocoDatas = new Cache<Type, PocoData>();
-        private static List<Func<object, object>> _converters = new List<Func<object, object>>();
-        private static object _converterLock = new object();
-        private static MethodInfo fnGetValue = typeof(IDataRecord).GetMethod("GetValue", new Type[] { typeof(int) });
-        private static MethodInfo fnIsDBNull = typeof(IDataRecord).GetMethod("IsDBNull");
-        private static FieldInfo fldConverters = typeof(PocoData).GetField("_converters", BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
-        private static MethodInfo fnListGetItem = typeof(List<Func<object, object>>).GetProperty("Item").GetGetMethod();
-        private static MethodInfo fnInvoke = typeof(Func<object, object>).GetMethod("Invoke");
-        private Cache<string, Delegate> PocoFactories = new Cache<string, Delegate>();
-        private Type Type;
+        private static readonly Cache<Type, PocoData> _pocoDatas = new Cache<Type, PocoData>();
+        private static readonly List<Func<object, object>> _converters = new List<Func<object, object>>();
+        private static readonly object _converterLock = new object();
+        private static readonly MethodInfo fnGetValue = typeof(IDataRecord).GetMethod("GetValue", new Type[] { typeof(int) });
+        private static readonly MethodInfo fnIsDBNull = typeof(IDataRecord).GetMethod("IsDBNull");
+        private static readonly FieldInfo fldConverters = typeof(PocoData).GetField("_converters", BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+        private static readonly MethodInfo fnListGetItem = typeof(List<Func<object, object>>).GetProperty("Item").GetGetMethod();
+        private static readonly MethodInfo fnInvoke = typeof(Func<object, object>).GetMethod("Invoke");
+        private readonly Cache<string, Delegate> PocoFactories = new Cache<string, Delegate>();
+        private readonly Type Type;
 
         /// <summary>
         /// 表信息
@@ -57,14 +57,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 if (ci == null)
                     continue;
 
-                var pc = new PocoColumn();
-                pc.PropertyInfo = pi;
-                pc.PropertyName = pi.Name;
-                pc.ColumnName = ci.ColumnName;
-                pc.ResultColumn = ci.ResultColumn;
-                pc.ForceToUtc = ci.ForceToUtc;
-                pc.ResultSql = ci.ResultSql;
-
+                var pc = new PocoColumn {
+                    PropertyInfo = pi,
+                    PropertyName = pi.Name,
+                    ColumnName = ci.ColumnName,
+                    ResultColumn = ci.ResultColumn,
+                    ForceToUtc = ci.ForceToUtc,
+                    ResultSql = ci.ResultSql
+                };
                 // Store it
                 Columns.Add(pc.ColumnName, pc);
             }
@@ -98,9 +98,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         {
             var t = obj.GetType();
             if (t == typeof(System.Dynamic.ExpandoObject)) {
-                var pd = new PocoData();
-                pd.TableInfo = new TableInfo();
-                pd.Columns = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase);
+                var pd = new PocoData {
+                    TableInfo = new TableInfo(),
+                    Columns = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase)
+                };
                 pd.Columns.Add(primaryKeyName, new ExpandoColumn() { ColumnName = primaryKeyName });
                 pd.TableInfo.PrimaryKey = primaryKeyName;
                 pd.TableInfo.AutoIncrement = true;
@@ -253,8 +254,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                     // Enumerate all fields generating a set assignment for the column
                     for (int i = firstColumn; i < firstColumn + countColumns; i++) {
                         // Get the PocoColumn for this db column, ignore if not known
-                        PocoColumn pc;
-                        if (!SelectColumns.TryGetValue(reader.GetName(i), out pc))
+                        if (!SelectColumns.TryGetValue(reader.GetName(i), out PocoColumn pc))
                             continue;
 
                         // Get the source type for this column

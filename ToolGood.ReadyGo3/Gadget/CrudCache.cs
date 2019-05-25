@@ -10,9 +10,9 @@ namespace ToolGood.ReadyGo3.Gadget
 {
     internal static class CrudCache
     {
-        private static Cache<string, string> _insert = new Cache<string, string>();
-        private static Cache<string, string> _selectColumns = new Cache<string, string>();
-        private static Cache<string, string> _update = new Cache<string, string>();
+        private static readonly Cache<string, string> _insert = new Cache<string, string>();
+        private static readonly Cache<string, string> _selectColumns = new Cache<string, string>();
+        private static readonly Cache<string, string> _update = new Cache<string, string>();
 
         public static string GetInsertSql(DatabaseProvider _provider, string _paramPrefix, PocoData pd, int size, string tableName, string primaryKeyName, bool autoIncrement)
         {

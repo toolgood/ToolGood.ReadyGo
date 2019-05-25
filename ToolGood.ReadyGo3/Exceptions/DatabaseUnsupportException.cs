@@ -12,15 +12,15 @@ namespace ToolGood.ReadyGo3.Exceptions
         /// </summary>
         public DatabaseUnsupportException() { }
 
-        /// <summary>
-        /// 数据库不支付异常
-        /// </summary>
-        /// <param name="databaseName"></param>
-        /// <param name="type"></param>
-        public DatabaseUnsupportException(string databaseName, string type)
-        {
+        ///// <summary>
+        ///// 数据库不支付异常
+        ///// </summary>
+        ///// <param name="databaseName"></param>
+        ///// <param name="type"></param>
+        //public DatabaseUnsupportException(string databaseName, string type)
+        //{
             
-        }
+        //}
 
 
     }

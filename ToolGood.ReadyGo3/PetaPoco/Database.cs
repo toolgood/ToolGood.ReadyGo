@@ -109,7 +109,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (_sharedConnectionDepth > 0) {
                 _sharedConnectionDepth--;
                 if (_sharedConnectionDepth == 0) {
-                    OnConnectionClosing(_sharedConnection);
+                    OnConnectionClosing();
                     _sharedConnection.Dispose();
                     _sharedConnection = null;
                 }
@@ -305,7 +305,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
 
         // Create a command
-        private static Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
+        private static readonly Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
         /// <summary>
         /// 
         /// </summary>
@@ -398,7 +398,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     Called when DB connection closed
         /// </summary>
         /// <param name="conn">The soon to be closed IDBConnection</param>
-        public void OnConnectionClosing(IDbConnection conn)
+        public void OnConnectionClosing()
         {
             _sqlHelper._sqlMonitor.ConnectionClosing();
         }
@@ -487,7 +487,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         // Handle nullable types
                         Type u = Nullable.GetUnderlyingType(typeof(T));
                         if (u != null && (val == null || val == DBNull.Value))
-                            return default(T);
+                            return default;
 
                         return (T)Convert.ChangeType(val, u ?? typeof(T));
                     }
@@ -497,7 +497,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             } catch (Exception x) {
                 if (OnException(x))
                     throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return default(T);
+                return default;
             }
         }
         /// <summary>
@@ -541,7 +541,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             } catch (Exception x) {
                 if (OnException(x))
                     throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return default(DataTable);
+                return default;
             }
         }
         //#if !NETSTANDARD2_0
@@ -572,7 +572,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             } catch (Exception x) {
                 if (OnException(x))
                     throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return default(DataSet);
+                return default;
             }
         }
         //#endif
@@ -599,8 +599,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
 
             // Split the SQL
-            SQLParts parts;
-            if (!_provider.PagingUtility.SplitSQL(sql, out parts))
+            if (!_provider.PagingUtility.SplitSQL(sql, out SQLParts parts))
                 throw new Exception("Unable to parse SQL statement for paged query");
 
             sqlPage = _provider.BuildPageQuery(skip, take, parts, ref args);
@@ -673,8 +672,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns></returns>
         public IEnumerable<T> Query<T>(long skip, long take, string sql, object[] args)
         {
-            string sqlCount, sqlPage;
-            BuildPageQueries<T>(skip, take, sql, ref args, out sqlCount, out sqlPage);
+            BuildPageQueries<T>(skip, take, sql, ref args, out string sqlCount, out string sqlPage);
             return Query<T>(sqlPage, args);
         }
 
@@ -809,8 +807,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             cmd.ExecuteNonQuery();
                             OnExecutedCommand(cmd);
 
-                            PocoColumn pkColumn;
-                            if (primaryKeyName != null && pd.Columns.TryGetValue(primaryKeyName, out pkColumn))
+                            if (primaryKeyName != null && pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pkColumn))
                                 return pkColumn.GetValue(poco);
                             else
                                 return null;
@@ -820,8 +817,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
                         // Assign the ID back to the primary key property
                         if (primaryKeyName != null && !poco.GetType().Name.Contains("AnonymousType")) {
-                            PocoColumn pc;
-                            if (pd.Columns.TryGetValue(primaryKeyName, out pc)) {
+                            if (pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pc)) {
                                 pc.SetValue(poco, pc.ChangeType(id));
                             }
                         }
@@ -934,7 +930,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 throw new ArgumentNullException("poco");
 
             var pd = PocoData.ForType(poco.GetType());
-            return ExecuteUpdate(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null, null);
+            return ExecuteUpdate(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
 
         /// <summary>
@@ -955,7 +951,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return Execute(string.Format("UPDATE {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
-        private int ExecuteUpdate(string tableName, string primaryKeyName, object poco, object primaryKeyValue, IEnumerable<string> columns)
+        private int ExecuteUpdate(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
         {
             try {
                 OpenSharedConnection();
@@ -1025,8 +1021,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             // If primary key value not specified, pick it up from the object
             if (primaryKeyValue == null) {
                 var pd = PocoData.ForObject(poco, primaryKeyName);
-                PocoColumn pc;
-                if (pd.Columns.TryGetValue(primaryKeyName, out pc)) {
+                if (pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pc)) {
                     primaryKeyValue = pc.GetValue(poco);
                 }
             }
@@ -1107,7 +1102,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (IsNew(primaryKeyName, pd, poco)) {
                 ExecuteInsert(tableName, primaryKeyName, true, poco);
             } else {
-                ExecuteUpdate(tableName, primaryKeyName, poco, null, null);
+                ExecuteUpdate(tableName, primaryKeyName, poco, null);
             }
         }
 
@@ -1117,9 +1112,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 throw new InvalidOperationException("IsNew() and Save() are only supported on tables with identity (inc auto-increment) primary key columns");
 
             object pk;
-            PocoColumn pc;
             PropertyInfo pi;
-            if (pd.Columns.TryGetValue(primaryKeyName, out pc)) {
+            if (pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pc)) {
                 pk = pc.GetValue(poco);
                 pi = pc.PropertyInfo;
             } else {
@@ -1139,15 +1133,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (!pi.PropertyType.IsValueType)
                 return pk == null;
             if (type == typeof(long))
-                return (long)pk == default(long);
+                return (long)pk == default;
             if (type == typeof(int))
-                return (int)pk == default(int);
+                return (int)pk == default;
             if (type == typeof(Guid))
-                return (Guid)pk == default(Guid);
+                return (Guid)pk == default;
             if (type == typeof(ulong))
-                return (ulong)pk == default(ulong);
+                return (ulong)pk == default;
             if (type == typeof(uint))
-                return (uint)pk == default(uint);
+                return (uint)pk == default;
             if (type == typeof(short))
                 return (short)pk == default(short);
             if (type == typeof(ushort))
@@ -1219,15 +1213,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
         #region Member Fields
 
         // Member variables
-        private SqlHelper _sqlHelper;
-        private DatabaseProvider _provider;
+        private readonly SqlHelper _sqlHelper;
+        private readonly DatabaseProvider _provider;
         private IDbConnection _sharedConnection;
         private IDbTransaction _transaction;
         private int _sharedConnectionDepth;
         private int _transactionDepth;
         private bool _transactionCancelled;
-        private string _paramPrefix;
-        private DbProviderFactory _factory;
+        private readonly string _paramPrefix;
+        private readonly DbProviderFactory _factory;
         private bool _isDisposable;
 
         #endregion

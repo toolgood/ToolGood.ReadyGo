@@ -12,8 +12,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
 
         public override object GetValue(object target)
         {
-            object val = null;
-            (target as IDictionary<string, object>).TryGetValue(ColumnName, out val);
+            (target as IDictionary<string, object>).TryGetValue(ColumnName, out object val);
             return val;
         }
 

@@ -130,9 +130,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         // Handle nullable types
                         Type u = Nullable.GetUnderlyingType(typeof(T));
                         if (u != null && val == null)
-                            return default(T);
+                            return default;
 
-                        return (T)Convert.ChangeType(val, u == null ? typeof(T) : u);
+                        return (T)Convert.ChangeType(val, u ?? typeof(T));
                     }
                 } finally {
                     CloseSharedConnection();
@@ -140,7 +140,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             } catch (Exception x) {
                 if (OnException(x))
                     throw;
-                return default(T);
+                return default;
             }
         }
         /// <summary>
@@ -184,7 +184,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             } catch (Exception x) {
                 if (OnException(x))
                     throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return default(DataTable);
+                return default;
             }
         }
 
@@ -202,9 +202,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns></returns>
         public Task<IEnumerable<T>> QueryAsync<T>(long skip, long take, string sql, object[] args)
         {
-            string sqlCount, sqlPage;
+            //string sqlCount, sqlPage;
 
-            BuildPageQueries<T>(skip, take, sql, ref args, out sqlCount, out sqlPage);
+            BuildPageQueries<T>(skip, take, sql, ref args, out string sqlCount, out string sqlPage);
             return QueryAsync<T>(sqlPage, args);
         }
         /// <summary>
@@ -347,8 +347,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);
                             OnExecutedCommand(cmd);
 
-                            PocoColumn pkColumn;
-                            if (primaryKeyName != null && pd.Columns.TryGetValue(primaryKeyName, out pkColumn))
+                            if (primaryKeyName != null && pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pkColumn))
                                 return pkColumn.GetValue(poco);
                             else
                                 return null;
@@ -358,8 +357,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
                         // Assign the ID back to the primary key property
                         if (primaryKeyName != null && !poco.GetType().Name.Contains("AnonymousType")) {
-                            PocoColumn pc;
-                            if (pd.Columns.TryGetValue(primaryKeyName, out pc)) {
+                            if (pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pc)) {
                                 pc.SetValue(poco, pc.ChangeType(id));
                             }
                         }
@@ -471,7 +469,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 throw new ArgumentNullException("poco");
 
             var pd = PocoData.ForType(poco.GetType());
-            return ExecuteUpdateAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null, null);
+            return ExecuteUpdateAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
 
         /// <summary>
@@ -490,7 +488,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return ExecuteAsync(string.Format("UPDATE {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
-        private async Task<int> ExecuteUpdateAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue, IEnumerable<string> columns)
+        private async Task<int> ExecuteUpdateAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
         {
             try {
                 await OpenSharedConnectionAsync().ConfigureAwait(false);
@@ -561,8 +559,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             // If primary key value not specified, pick it up from the object
             if (primaryKeyValue == null) {
                 var pd = PocoData.ForObject(poco, primaryKeyName);
-                PocoColumn pc;
-                if (pd.Columns.TryGetValue(primaryKeyName, out pc)) {
+                if (pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pc)) {
                     primaryKeyValue = pc.GetValue(poco);
                 }
             }
@@ -645,7 +642,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (IsNew(primaryKeyName, pd, poco)) {
                 return ExecuteInsertAsync(tableName, primaryKeyName, true, poco);
             } else {
-                return ExecuteUpdateAsync(tableName, primaryKeyName, poco, null, null);
+                return ExecuteUpdateAsync(tableName, primaryKeyName, poco, null);
             }
         }
 

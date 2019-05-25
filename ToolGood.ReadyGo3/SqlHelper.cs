@@ -410,8 +410,8 @@ namespace ToolGood.ReadyGo3
         {
             if (string.IsNullOrEmpty(txt) == false) {
                 txt = txt.Trim();
-                if (txt.StartsWith(txt, StringComparison.InvariantCultureIgnoreCase)) {
-                    txt = txt.Substring(txt.Length);
+                if (txt.StartsWith(startsText, StringComparison.InvariantCultureIgnoreCase)) {
+                    txt = txt.Substring(startsText.Length);
                 }
             }
             return txt;

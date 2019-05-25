@@ -13,7 +13,7 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
     /// </summary>
     class DefaultValue
     {
-        private static Cache<Type, Delegate> _setDefault = new Cache<Type, Delegate>();
+        private static readonly Cache<Type, Delegate> _setDefault = new Cache<Type, Delegate>();
 
         /// <summary>
         /// 设置默认值

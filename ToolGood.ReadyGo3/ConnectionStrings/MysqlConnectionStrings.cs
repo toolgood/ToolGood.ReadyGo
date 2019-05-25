@@ -217,7 +217,7 @@ namespace ToolGood.ReadyGo3
  
 
 
-        private Dictionary<string , string> _dict = new Dictionary<string , string>();
+        private readonly Dictionary<string , string> _dict = new Dictionary<string , string>();
         /// <summary>
         /// 设置值, value为null时删除值
         /// </summary>

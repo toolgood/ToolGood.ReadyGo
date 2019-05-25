@@ -19,7 +19,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
     public class SqlExpression
     {
         private const string sep = " ";
-        private DatabaseProvider provider;
+        private readonly DatabaseProvider provider;
 
         /// <summary>
         /// SqlExpression
@@ -155,8 +155,8 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         {
             List<Object> _args = this.VisitExpressionList(m.Arguments);
             var quotedColName = Visit(m.Object);
-            var statement = "";
             var wildcardArg = _args.Count > 0 ? _args[0] != null ? _args[0].ToString() : "" : "";
+            string statement;
             switch (m.Method.Name) {
                 case "Trim": statement = provider.CreateFunction(SqlFunction.Trim, quotedColName); break;
                 case "TrimStart": statement = provider.CreateFunction(SqlFunction.LTrim, quotedColName); break;

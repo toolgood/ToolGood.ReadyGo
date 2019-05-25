@@ -86,7 +86,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                         databaseName = setting.DatabaseNamePrefixText + databaseName;
                     }
                     if (string.IsNullOrEmpty(setting.DatabaseNameSuffixText) == false) {
-                        databaseName = databaseName + setting.DatabaseNameNullText;
+                        databaseName += setting.DatabaseNameNullText;
                     }
                 }
 
@@ -99,7 +99,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                         schemaName = setting.SchemaNamePrefixText + schemaName;
                     }
                     if (string.IsNullOrEmpty(setting.SchemaNameSuffixText) == false) {
-                        schemaName = schemaName + setting.SchemaNameSuffixText;
+                        schemaName += setting.SchemaNameSuffixText;
                     }
                 }
 
@@ -107,7 +107,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                     tableName = setting.TableNamePrefixText + tableName;
                 }
                 if (string.IsNullOrEmpty(setting.TableNameSuffixText) == false) {
-                    tableName = tableName + setting.TableNameSuffixText;
+                    tableName += setting.TableNameSuffixText;
                 }
             }
             return GetTableName(databaseName, schemaName, tableName);
@@ -129,7 +129,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                     tableName = setting.TableNamePrefixText + tableName;
                 }
                 if (string.IsNullOrEmpty(setting.TableNameSuffixText) == false) {
-                    tableName = tableName + setting.TableNameSuffixText;
+                    tableName += setting.TableNameSuffixText;
                 }
             }
             return GetTableName(null, null, tableName);
