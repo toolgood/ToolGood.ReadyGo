@@ -50,7 +50,7 @@ namespace ToolGood.ReadyGo3.Internals
                     slim.UseCount++;
                 } finally { _slimLock.ExitWriteLock(); }
             } finally { _slimLock.ExitUpgradeableReadLock(); }
- 
+
 
             slim.EnterWriteLock();
             try {

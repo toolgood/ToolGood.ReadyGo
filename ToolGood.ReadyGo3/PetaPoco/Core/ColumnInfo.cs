@@ -85,6 +85,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
             return ci;
         }
- 
+
     }
 }

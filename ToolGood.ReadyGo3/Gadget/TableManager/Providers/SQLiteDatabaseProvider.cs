@@ -39,7 +39,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             sql = sql.Substring(0, sql.Length - 3);
             sql += "\r\n);\r\n";
             foreach (var item in ti.Indexs) {
-                var txt = "i_"+ ti.TableName+"_" + string.Join("_", item);
+                var txt = "i_" + ti.TableName + "_" + string.Join("_", item);
                 var columns = string.Join(",", item);
                 sql += "CREATE INDEX " + txt + " ON [" + ti.TableName + "](" + columns + ");\r\n";
             }

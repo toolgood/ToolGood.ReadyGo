@@ -61,10 +61,10 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
             var typeCode = Type.GetTypeCode(fieldType);
             switch (typeCode) {
-                case TypeCode.Boolean:return (bool)value ? "1" : "0";
-                case TypeCode.Single:return ((float)value).ToString(CultureInfo.InvariantCulture);
-                case TypeCode.Double:return ((double)value).ToString(CultureInfo.InvariantCulture);
-                case TypeCode.Decimal:return ((decimal)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Boolean: return (bool)value ? "1" : "0";
+                case TypeCode.Single: return ((float)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Double: return ((double)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Decimal: return ((decimal)value).ToString(CultureInfo.InvariantCulture);
                 case TypeCode.Byte:
                 case TypeCode.Int16:
                 case TypeCode.Int32:

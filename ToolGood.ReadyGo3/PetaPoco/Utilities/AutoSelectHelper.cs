@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using ToolGood.ReadyGo3.Gadget;
 using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
@@ -16,18 +15,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
         public static string AddSelectClause<T>(DatabaseProvider provider, string sql)
         {
             sql = sql.Trim();
-            if (sql.StartsWith(";")) return sql.Substring(1);
-
-
-            if (!rxSelect.IsMatch(sql))
-            {
+            //if (sql.StartsWith(";")) return sql.Substring(1);
+            if (!rxSelect.IsMatch(sql)) {
                 var pd = PocoData.ForType(typeof(T));
                 var columns = CrudCache.GetSelectColumnsSql(provider, pd);
                 if (!rxFrom.IsMatch(sql)) {
                     var tableName = provider.EscapeTableName(pd.TableInfo.TableName);
                     sql = $"SELECT {columns} FROM {tableName} {sql}";
-                }
-                else
+                } else
                     sql = $"SELECT {columns} {sql}";
             }
             return sql;

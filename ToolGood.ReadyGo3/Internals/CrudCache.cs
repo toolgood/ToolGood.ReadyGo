@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.Exceptions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
-using ToolGood.ReadyGo3.PetaPoco.Internal;
 
 namespace ToolGood.ReadyGo3.Internals
 {
@@ -83,7 +81,7 @@ namespace ToolGood.ReadyGo3.Internals
             });
         }
 
-        public static string GetSelectColumnsSql(DatabaseProvider _provider,  PocoData pd)
+        public static string GetSelectColumnsSql(DatabaseProvider _provider, PocoData pd)
         {
             return _selectColumns.Get($"{_provider.ToString()}|{pd.ToString()}", () => {
                 var tableName = _provider.EscapeTableName(pd.TableInfo.TableName);

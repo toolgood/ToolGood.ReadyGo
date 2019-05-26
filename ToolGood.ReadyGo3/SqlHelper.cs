@@ -8,6 +8,7 @@ using System.Text;
 using ToolGood.ReadyGo3.Gadget.Events;
 using ToolGood.ReadyGo3.Gadget.Internals;
 using ToolGood.ReadyGo3.Gadget.Monitor;
+using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
@@ -468,7 +469,7 @@ namespace ToolGood.ReadyGo3
             }
             return GetDatabase().Query<T>(0, 2, sql, args).Single();
         }
- 
+
 
         /// <summary>
         /// 获取唯一一个类型，若数量大于1，则抛出异常
@@ -485,7 +486,7 @@ namespace ToolGood.ReadyGo3
             }
             return GetDatabase().Query<T>(0, 2, sql, args).SingleOrDefault();
         }
- 
+
         /// <summary>
         /// 获取第一个类型，若数量为0，则抛出异常
         /// </summary>
@@ -517,7 +518,7 @@ namespace ToolGood.ReadyGo3
             }
             return GetDatabase().Query<T>(0, 1, sql, args).FirstOrDefault();
         }
- 
+
         #endregion Single SingleOrDefault First FirstOrDefault
 
         #region Object  Insert Update Delete DeleteById Save
@@ -570,8 +571,24 @@ namespace ToolGood.ReadyGo3
         public int Update<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            if (_Events.OnBeforeUpdate(poco)) return -1;
 
+            if (poco is IUpdateChange) {
+                var pd = PocoData.ForType(typeof(T));
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.Append("SET ");
+                ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
+                object primaryKeyValue = null;
+                foreach (var i in pd.Columns) {
+                    if (i.Value.ResultColumn) continue;
+                    if (string.Compare(i.Value.ColumnName, pd.TableInfo.PrimaryKey, true) == 0) {
+                        if (primaryKeyValue == null) primaryKeyValue = i.Value.GetValue(poco);
+                    }
+                }
+                stringBuilder.Append($" WHERE [{pd.TableInfo.PrimaryKey}]=@0");
+                return Update<T>(stringBuilder.ToString(), primaryKeyValue);
+            }
+
+            if (_Events.OnBeforeUpdate(poco)) return -1;
             int r = GetDatabase().Update(poco);
             _Events.OnAfterUpdate(poco);
             return r;
@@ -618,9 +635,25 @@ namespace ToolGood.ReadyGo3
         /// 保存
         /// </summary>
         /// <param name="poco"></param>
-        public void Save(object poco)
+        public void Save<T>(T poco)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
+            if (poco is IUpdateChange) {
+                var pd = PocoData.ForType(typeof(T));
+                StringBuilder stringBuilder = new StringBuilder();
+                stringBuilder.Append("SET ");
+                ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
+                object primaryKeyValue = null;
+                foreach (var i in pd.Columns) {
+                    if (i.Value.ResultColumn) continue;
+                    if (string.Compare(i.Value.ColumnName, pd.TableInfo.PrimaryKey, true) == 0) {
+                        if (primaryKeyValue == null) primaryKeyValue = i.Value.GetValue(poco);
+                    }
+                }
+                stringBuilder.Append($" WHERE [{pd.TableInfo.PrimaryKey}]=@0");
+                Update<T>(stringBuilder.ToString(), primaryKeyValue);
+                return;
+            }
             GetDatabase().Save(poco);
         }
         /// <summary>

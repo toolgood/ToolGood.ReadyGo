@@ -16,8 +16,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             escapeSql = '"';
         }
 
-        public override bool HasNativeGuidSupport
-        {
+        public override bool HasNativeGuidSupport {
             get { return true; }
         }
 
@@ -63,13 +62,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
         public override object ExecuteInsert(Database db, System.Data.IDbCommand cmd, string primaryKeyName)
         {
-            if (primaryKeyName != null)
-            {
+            if (primaryKeyName != null) {
                 cmd.CommandText += $"returning {EscapeSqlIdentifier(primaryKeyName)} as NewID";
                 return db.ExecuteScalarHelper(cmd);
-            }
-            else
-            {
+            } else {
                 db.ExecuteNonQueryHelper(cmd);
                 return -1;
             }

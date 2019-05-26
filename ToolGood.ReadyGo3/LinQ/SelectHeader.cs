@@ -9,7 +9,7 @@
         /// AS 信息
         /// </summary>
         public string AsName;
- 
+
         /// <summary>
         /// 查询SQL
         /// </summary>
@@ -25,6 +25,6 @@
         public bool UseAsName;
     }
 
- 
- 
+
+
 }

@@ -19,7 +19,7 @@ namespace ToolGood.ReadyGo3.Exceptions
         ///// <param name="type"></param>
         //public DatabaseUnsupportException(string databaseName, string type)
         //{
-            
+
         //}
 
 

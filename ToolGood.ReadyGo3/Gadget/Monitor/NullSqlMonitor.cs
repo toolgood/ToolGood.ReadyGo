@@ -21,7 +21,7 @@
         /// 
         /// </summary>
         /// <param name="message"></param>
-        public void Exception( string message)
+        public void Exception(string message)
         {
         }
         /// <summary>
@@ -29,7 +29,7 @@
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        public void ExecutedCommand( string sql, object[] args)
+        public void ExecutedCommand(string sql, object[] args)
         {
         }
         /// <summary>
@@ -37,7 +37,7 @@
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        public void ExecutingCommand( string sql, object[] args)
+        public void ExecutingCommand(string sql, object[] args)
         {
         }
         /// <summary>
@@ -52,13 +52,13 @@
         /// <summary>
         /// 
         /// </summary>
-        public void Transactioned( )
+        public void Transactioned()
         {
         }
         /// <summary>
         /// 
         /// </summary>
-        public void Transactioning( )
+        public void Transactioning()
         {
         }
         /// <summary>

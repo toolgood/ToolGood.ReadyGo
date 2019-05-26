@@ -12,8 +12,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 
         /// </summary>
-        public SqlTableHelper _TableHelper
-        {
+        public SqlTableHelper _TableHelper {
             get { return _tableHelper ?? (_tableHelper = new SqlTableHelper(this)); }
         }
     }

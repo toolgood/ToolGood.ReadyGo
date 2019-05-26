@@ -43,8 +43,7 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         /// <summary>
         /// SQL执行监控
         /// </summary>
-        public ISqlMonitor SqlMonitor
-        {
+        public ISqlMonitor SqlMonitor {
             get { return _sqlHelper._sqlMonitor; }
             set {
                 if (_sqlHelper._sqlMonitor != value) {

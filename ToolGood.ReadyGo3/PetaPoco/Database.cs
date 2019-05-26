@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using ToolGood.ReadyGo3.Exceptions;
-using ToolGood.ReadyGo3.Gadget;
 using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
@@ -336,7 +335,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 } else {
                     foreach (var item in args) {
                         var items = item as IList;
-                        if (items!=null) {
+                        if (items != null) {
                             foreach (var obj in items) {
                                 AddParam(cmd, obj, null);
                             }
@@ -398,7 +397,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <summary>
         ///     Called when DB connection closed
         /// </summary>
-        /// <param name="conn">The soon to be closed IDBConnection</param>
         public void OnConnectionClosing()
         {
             _sqlHelper._sqlMonitor.ConnectionClosing();
@@ -802,7 +800,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             }
                             AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
                         }
- 
+
                         if (!autoIncrement) {
                             DoPreExecute(cmd);
                             cmd.ExecuteNonQuery();

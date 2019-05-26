@@ -12,7 +12,7 @@ namespace ToolGood.ReadyGo3.LinQ
     partial class WhereHelper<T1>
     {
         #region UseCancellationToken
- 
+
         /// <summary>
         /// 使用 CancellationToken
         /// </summary>

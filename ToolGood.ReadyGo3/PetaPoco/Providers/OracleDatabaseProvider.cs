@@ -84,8 +84,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
         public override object ExecuteInsert(Database db, IDbCommand cmd, string primaryKeyName)
         {
-            if (primaryKeyName != null)
-            {
+            if (primaryKeyName != null) {
                 cmd.CommandText += $" returning {EscapeSqlIdentifier(primaryKeyName)} into :newid";
                 var param = cmd.CreateParameter();
                 param.ParameterName = ":newid";
@@ -95,9 +94,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 cmd.Parameters.Add(param);
                 db.ExecuteNonQueryHelper(cmd);
                 return param.Value;
-            }
-            else
-            {
+            } else {
                 db.ExecuteNonQueryHelper(cmd);
                 return -1;
             }
