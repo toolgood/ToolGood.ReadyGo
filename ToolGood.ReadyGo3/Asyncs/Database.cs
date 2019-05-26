@@ -9,6 +9,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using System.Data.Common;
 using ToolGood.ReadyGo3.Internals;
+using System.Threading;
 
 #if !NET40
 using SqlCommand = System.Data.Common.DbCommand;
@@ -21,6 +22,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
 {
     partial class Database
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public CancellationToken token = CancellationToken.None;
+
+
         /// <summary>
         /// Open a connection that will be used for all subsequent queries.
         /// </summary>
@@ -39,7 +46,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 if (_sharedConnection.State == ConnectionState.Closed) {
                     var con = _sharedConnection as DbConnection;
                     if (con != null)
-                        await con.OpenAsync().ConfigureAwait(false);
+                        await con.OpenAsync(token).ConfigureAwait(false);
                     else
                         _sharedConnection.Open();
                 }
@@ -55,7 +62,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 if (_sharedConnection.State == ConnectionState.Closed) {
                     var con = _sharedConnection as DbConnection;
                     if (con != null)
-                        await con.OpenAsync().ConfigureAwait(false);
+                        await con.OpenAsync(token).ConfigureAwait(false);
                     else
                         _sharedConnection.Open();
                 }
@@ -64,17 +71,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 
 
-        //internal async Task ExecuteNonQueryHelperAsync(SqlCommand cmd)
-        //{
-        //    DoPreExecute(cmd);
-        //    await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
-        //    OnExecutedCommand(cmd);
-        //}
-
         internal async Task<object> ExecuteScalarHelperAsync(SqlCommand cmd)
         {
             DoPreExecute(cmd);
-            object r = await cmd.ExecuteScalarAsync().ConfigureAwait(false);
+            object r = await cmd.ExecuteScalarAsync(token).ConfigureAwait(false);
             OnExecutedCommand(cmd);
             return r;
         }
@@ -94,12 +94,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
-                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);
+                        DoPreExecute(cmd);
+                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync(token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                         return retv;
                     }
                 } finally {
                     CloseSharedConnection();
+                    token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -121,7 +123,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
-                        object val = await ((SqlCommand)cmd).ExecuteScalarAsync().ConfigureAwait(false);
+                        DoPreExecute(cmd);
+                        object val = await ((SqlCommand)cmd).ExecuteScalarAsync(token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
 
                         // Handle nullable types
@@ -133,6 +136,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 } finally {
                     CloseSharedConnection();
+                    token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -153,7 +157,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
-                        var reader = await ((SqlCommand)cmd).ExecuteReaderAsync().ConfigureAwait(false);
+                        DoPreExecute(cmd);
+                        var reader = await ((SqlCommand)cmd).ExecuteReaderAsync(token).ConfigureAwait(false);
                         DataTable dt = new DataTable();
                         bool init = false;
                         dt.BeginLoadData();
@@ -177,6 +182,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 } finally {
                     CloseSharedConnection();
+                    token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -185,6 +191,39 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <param name="commandType"></param>
+        /// <returns></returns>
+        public async Task<DataSet> ExecuteDataSetAsync(string sql, object[] args, CommandType commandType = CommandType.Text)
+        {
+            try {
+                await OpenSharedConnectionAsync().ConfigureAwait(false);
+                try {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                        using (var adapter = _factory.CreateDataAdapter()) {
+                            DoPreExecute(cmd);
+                            adapter.SelectCommand = (DbCommand)cmd;
+                            DataSet ds = new DataSet();
+                            adapter.Fill(ds);
+                            OnExecutedCommand(cmd);
+                            return ds;
+                        }
+                    }
+                } finally {
+                    CloseSharedConnection();
+                    token = CancellationToken.None;
+                }
+            } catch (Exception x) {
+                if (OnException(x))
+                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
+                return default;
+            }
+        }
         #endregion
 
         #region QueryAsync
@@ -224,7 +263,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     SqlDataReader r = null;
                     var pd = PocoData.ForType(typeof(T));
                     try {
-                        r = await ((SqlCommand)cmd).ExecuteReaderAsync().ConfigureAwait(false);
+                        DoPreExecute(cmd);
+                        r = await ((SqlCommand)cmd).ExecuteReaderAsync(token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                     } catch (Exception x) {
                         if (OnException(x))
@@ -248,6 +288,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return resultList;
             } finally {
                 CloseSharedConnection();
+                token = CancellationToken.None;
             }
         }
 
@@ -285,6 +326,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             // Save the one-time command time out and use it for both queries
             var saveTimeout = OneTimeCommandTimeout;
+            var tokenTemp = token;
 
             // Setup the paged result
             var result = new Page<T> {
@@ -294,6 +336,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             };
             OneTimeCommandTimeout = saveTimeout;
 
+            token = tokenTemp;
             // Get the records
             result.Items = (await QueryAsync<T>(selectSql, args)).ToList();
             // Done
@@ -341,7 +384,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
                         if (!autoIncrement) {
                             DoPreExecute(cmd);
-                            await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);
+                            await ((SqlCommand)cmd).ExecuteNonQueryAsync(token).ConfigureAwait(false);
                             OnExecutedCommand(cmd);
 
                             if (primaryKeyName != null && pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pkColumn))
@@ -363,6 +406,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 } finally {
                     CloseSharedConnection();
+                    token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -382,6 +426,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 } finally {
                     CloseSharedConnection();
+                    token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -438,11 +483,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         }
 
                         DoPreExecute(cmd);
-                        await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);
+                        await ((SqlCommand)cmd).ExecuteNonQueryAsync(token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                     }
                 } finally {
                     CloseSharedConnection();
+                    token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -516,14 +562,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         AddParam(cmd, primaryKeyValue, pkpi);
 
                         DoPreExecute(cmd);
-
-                        // Do it
-                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync().ConfigureAwait(false);
+                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync(token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                         return retv;
                     }
                 } finally {
                     CloseSharedConnection();
+                    token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))

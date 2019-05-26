@@ -1056,7 +1056,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public int SelectCount(string selectSql = null, bool distinct = false)
         {
-            return this._sqlhelper.getDatabase().ExecuteScalar<int>(this.GetCountSql(selectSql, distinct), this._args.ToArray());
+            return this._sqlhelper.GetDatabase().ExecuteScalar<int>(this.GetCountSql(selectSql, distinct), this._args.ToArray());
         }
         /// <summary>
         /// 执行返回DataTable

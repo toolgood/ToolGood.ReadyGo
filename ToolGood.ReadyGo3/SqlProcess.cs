@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.StoredProcedure
@@ -19,6 +21,20 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         /// 存储过程名称
         /// </summary>
         protected abstract string ProcessName { get; set; }
+
+        #region UseCancellationToken
+
+#if !NET40
+        /// <summary>
+        /// 使用 CancellationToken
+        /// </summary>
+        /// <param name="token"></param>
+        public void UseCancellationToken(CancellationToken token)
+        {
+            _sqlhelper.UseCancellationToken(token);
+        }
+#endif
+        #endregion
 
         #region 构造函数
         /// <summary>
@@ -134,7 +150,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public int Execute()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            var db = _sqlhelper.getDatabase();
+            var db = _sqlhelper.GetDatabase();
             return db.Execute(ProcessName, args, CommandType.StoredProcedure);
         }
         /// <summary>
@@ -145,7 +161,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public T ExecuteScalar<T>()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            var db = _sqlhelper.getDatabase();
+            var db = _sqlhelper.GetDatabase();
             return db.ExecuteScalar<T>(ProcessName, args, CommandType.StoredProcedure);
         }
         /// <summary>
@@ -155,10 +171,10 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public DataTable ExecuteDataTable()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            var db = _sqlhelper.getDatabase();
+            var db = _sqlhelper.GetDatabase();
             return db.ExecuteDataTable(ProcessName, args, CommandType.StoredProcedure);
         }
-#if !NETSTANDARD2_0
+
         /// <summary>
         /// 执行
         /// </summary>
@@ -166,10 +182,9 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public DataSet ExecuteDataSet()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            var db = _sqlhelper.getDatabase();
+            var db = _sqlhelper.GetDatabase();
             return db.ExecuteDataSet(ProcessName, args, CommandType.StoredProcedure);
         }
-#endif
 
         /// <summary>
         /// 
@@ -179,7 +194,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public List<T> Select<T>() where T : class
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            var db = _sqlhelper.getDatabase();
+            var db = _sqlhelper.GetDatabase();
             return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).ToList();
         }
         /// <summary>
@@ -190,7 +205,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public T Single<T>()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            var db = _sqlhelper.getDatabase();
+            var db = _sqlhelper.GetDatabase();
             return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).Single();
         }
         /// <summary>
@@ -201,7 +216,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public T SingleOrDefault<T>()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            var db = _sqlhelper.getDatabase();
+            var db = _sqlhelper.GetDatabase();
             return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).SingleOrDefault();
         }
         /// <summary>
@@ -212,7 +227,7 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public T First<T>()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            var db = _sqlhelper.getDatabase();
+            var db = _sqlhelper.GetDatabase();
             return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).First();
         }
         /// <summary>
@@ -223,11 +238,113 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         public T FirstOrDefault<T>()
         {
             var args = _parameters.Select(q => (object)q.Value).ToArray();
-            var db = _sqlhelper.getDatabase();
+            var db = _sqlhelper.GetDatabase();
             return db.Query<T>(ProcessName, args, CommandType.StoredProcedure).FirstOrDefault();
         }
 
+        #endregion 执行
 
+        #region 执行
+#if !NET40
+        /// <summary>
+        /// 执行
+        /// </summary>
+        /// <returns>返回执行的行数</returns>
+        public Task<int> ExecuteAsync()
+        {
+            var args = _parameters.Select(q => (object)q.Value).ToArray();
+            var db = _sqlhelper.GetDatabase();
+            return db.ExecuteAsync(ProcessName, args, CommandType.StoredProcedure);
+        }
+        /// <summary>
+        /// 执行
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public Task<T> ExecuteScalarAsync<T>()
+        {
+            var args = _parameters.Select(q => (object)q.Value).ToArray();
+            var db = _sqlhelper.GetDatabase();
+            return db.ExecuteScalarAsync<T>(ProcessName, args, CommandType.StoredProcedure);
+        }
+        /// <summary>
+        /// 执行
+        /// </summary>
+        /// <returns></returns>
+        public Task<DataTable> ExecuteDataTableAsync()
+        {
+            var args = _parameters.Select(q => (object)q.Value).ToArray();
+            var db = _sqlhelper.GetDatabase();
+            return db.ExecuteDataTableAsync(ProcessName, args, CommandType.StoredProcedure);
+        }
+
+        /// <summary>
+        /// 执行
+        /// </summary>
+        /// <returns></returns>
+        public Task<DataSet> ExecuteDataSetAsync()
+        {
+            var args = _parameters.Select(q => (object)q.Value).ToArray();
+            var db = _sqlhelper.GetDatabase();
+            return db.ExecuteDataSetAsync(ProcessName, args, CommandType.StoredProcedure);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public async Task<List<T>> SelectAsync<T>() where T : class
+        {
+            var args = _parameters.Select(q => (object)q.Value).ToArray();
+            var db = _sqlhelper.GetDatabase();
+            return (await db.QueryAsync<T>(ProcessName, args, CommandType.StoredProcedure)).ToList();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public async Task<T> SingleAsync<T>()
+        {
+            var args = _parameters.Select(q => (object)q.Value).ToArray();
+            var db = _sqlhelper.GetDatabase();
+            return (await db.QueryAsync<T>(ProcessName, args, CommandType.StoredProcedure)).Single();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public async Task<T> SingleOrDefaultAsync<T>()
+        {
+            var args = _parameters.Select(q => (object)q.Value).ToArray();
+            var db = _sqlhelper.GetDatabase();
+            return (await db.QueryAsync<T>(ProcessName, args, CommandType.StoredProcedure)).SingleOrDefault();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public async Task<T> FirstAsync<T>()
+        {
+            var args = _parameters.Select(q => (object)q.Value).ToArray();
+            var db = _sqlhelper.GetDatabase();
+            return (await db.QueryAsync<T>(ProcessName, args, CommandType.StoredProcedure)).First();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public async Task<T> FirstOrDefaultAsync<T>()
+        {
+            var args = _parameters.Select(q => (object)q.Value).ToArray();
+            var db = _sqlhelper.GetDatabase();
+            return (await db.QueryAsync<T>(ProcessName, args, CommandType.StoredProcedure)).FirstOrDefault();
+        }
+#endif
 
         #endregion 执行
     }
