@@ -25,18 +25,18 @@ namespace ToolGood.ReadyGo3.Test.Datas
             AddingTime = DateTime.Now;
         }
 
-        public int Id { get; set; }
-        public int ParentId { get; set; }
-        public string Path { get; set; }
-        public int Level { get; set; }
-        public string Name { get; set; }
-        public string NameEn { get; set; }
-        public string NamePinyin { get; set; }
-        public string Code { get; set; }
-        public DateTime AddingTime { get; set; }
+        public virtual int Id { get; set; }
+        public virtual int ParentId { get; set; }
+        public virtual string Path { get; set; }
+        public virtual int Level { get; set; }
+        public virtual string Name { get; set; }
+        public virtual string NameEn { get; set; }
+        public virtual string NamePinyin { get; set; }
+        public virtual string Code { get; set; }
+        public virtual DateTime AddingTime { get; set; }
 
     }
-  
+
 
     [Table("Area")]
     [Serializable]
@@ -57,15 +57,15 @@ namespace ToolGood.ReadyGo3.Test.Datas
             AddingTime = DateTime.Now;
         }
 
-        public int Id { get; set; }
-        public int ParentId { get; set; }
-        public string Path { get; set; }
-        public int Level { get; set; }
-        public string Name { get; set; }
-        public string NameEn { get; set; }
-        public string NamePinyin { get; set; }
-        public string Code { get; set; }
-        public DateTime? AddingTime { get; set; }
+        public virtual int Id { get; set; }
+        public virtual int ParentId { get; set; }
+        public virtual string Path { get; set; }
+        public virtual int Level { get; set; }
+        public virtual string Name { get; set; }
+        public virtual string NameEn { get; set; }
+        public virtual string NamePinyin { get; set; }
+        public virtual string Code { get; set; }
+        public virtual DateTime? AddingTime { get; set; }
 
     }
 
@@ -91,15 +91,15 @@ namespace ToolGood.ReadyGo3.Test.Datas
             AddingTime = DateTime.Now;
         }
 
-        public int Id { get; set; }
-        public int ParentId { get; set; }
-        public string Path { get; set; }
-        public int Level { get; set; }
-        public string Name { get; set; }
-        public string NameEn { get; set; }
-        public string NamePinyin { get; set; }
-        public string Code { get; set; }
-        public DateTime AddingTime { get; set; }
+        public virtual int Id { get; set; }
+        public virtual int ParentId { get; set; }
+        public virtual string Path { get; set; }
+        public virtual int Level { get; set; }
+        public virtual string Name { get; set; }
+        public virtual string NameEn { get; set; }
+        public virtual string NamePinyin { get; set; }
+        public virtual string Code { get; set; }
+        public virtual DateTime AddingTime { get; set; }
 
     }
 }

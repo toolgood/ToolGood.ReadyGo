@@ -10,7 +10,7 @@ namespace ToolGood.ReadyGo3.Internals
     public interface IUpdateChange
     {
         Dictionary<string, object> __GetChanges__();
-
+        void __ClearChanges__();
     }
 }
 
@@ -21,24 +21,38 @@ namespace ToolGood.ReadyGo3
     /// 属性使用virtual
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public static class SqlUpdate<T> where T : class, new()
+    public static class SqlUpdate 
     {
         private static ModuleBuilder moduleBldr;
         private static readonly Cache<Type, Type> typeDict = new Cache<Type, Type>();
         private static readonly Type typedict = typeof(Dictionary<string, object>);
-        private static readonly MethodInfo setItemMethod = typedict.GetMethod("set_Item");
+        private static readonly MethodInfo _setItemMethod = typedict.GetMethod("set_Item");
+        private static readonly MethodInfo _clearMethod = typedict.GetMethod("Clear");
+
 
         /// <summary>
-        /// 生成一个新对象，该对象继承IUpdateChange &lt;T>
+        /// 生成一个新对象，该对象继承IUpdateChange
         /// </summary>
         /// <returns></returns>
-        public static T New()
+        public static T New<T>() where T : class
         {
             Type type = typeof(T);
             var t = CreateType(type);
             var obj = Activator.CreateInstance(t);
             return obj as T;
         }
+
+        public static object New(Type type)
+        {
+            var t = CreateType(type);
+            return Activator.CreateInstance(t);
+        }
+
+        public static Type GetProxyType(Type type)
+        {
+            return CreateType(type); ;
+        }
+
 
         private static Type CreateType(Type type)
         {
@@ -97,7 +111,7 @@ namespace ToolGood.ReadyGo3
                             il.Emit(OpCodes.Ldstr, item.Value.ColumnName);  // IL_0007: ldstr     "Id"
                             il.Emit(OpCodes.Ldarg_1);                       // IL_000C: ldarg.1
                             il.Emit(OpCodes.Box, pi.PropertyType);          // IL_000D: box[System.Runtime] System.Int32
-                            il.Emit(OpCodes.Callvirt, setItemMethod);       // IL_0012: callvirt instance void class [System.Collections] System.Collections.Generic.Dictionary`2<string, object>::set_Item(!0, !1)
+                            il.Emit(OpCodes.Callvirt, _setItemMethod);       // IL_0012: callvirt instance void class [System.Collections] System.Collections.Generic.Dictionary`2<string, object>::set_Item(!0, !1)
                             il.Emit(OpCodes.Ldarg_0);                       // IL_0018: ldarg.0
                             il.Emit(OpCodes.Ldarg_1);                       // IL_0019: ldarg.1
                             if (pi.PropertyType.IsValueType) {
@@ -111,13 +125,24 @@ namespace ToolGood.ReadyGo3
                     }
 
                 }
-                var getChangesMethod = typeBldr.DefineMethod("__GetChanges__", atts, cc, typedict, new Type[0]);
+                var getChangesMethod = typeBldr.DefineMethod("__GetChanges__", atts, cc, typedict, null);
                 {
                     var il = getChangesMethod.GetILGenerator();
                     il.Emit(OpCodes.Ldarg_0);           // IL_0001: ldarg.0
                     il.Emit(OpCodes.Ldfld, fb);         // IL_0002: ldfld     class [System.Collections] System.Collections.Generic.Dictionary`2<string, object> ToolGood.ReadyGo3.CoreTest.DbMemberUpdateChange::__dict__
                     il.Emit(OpCodes.Ret);               // IL_000B: ret
                 }
+
+                var clearMethod = typeBldr.DefineMethod("__ClearChanges__", atts, cc, null, null);
+                {
+                    var il = clearMethod.GetILGenerator();
+                    il.Emit(OpCodes.Ldarg_0);                       // IL_0000: ldarg.0
+                    il.Emit(OpCodes.Ldfld, fb);                     // IL_0001: ldfld     class [System.Collections] System.Collections.Generic.Dictionary`2<string, object> ToolGood.ReadyGo3.CoreTest.DbMemberUpdateChange2::__dict__
+                    il.Emit(OpCodes.Callvirt, _clearMethod);        // IL_0006: callvirt instance void class [System.Collections] System.Collections.Generic.Dictionary`2<string, object>::Clear()
+                    il.Emit(OpCodes.Ret);                           // IL_000B: ret
+                }
+
+
 #if !NET40
                 return typeBldr.CreateTypeInfo();
 #else
