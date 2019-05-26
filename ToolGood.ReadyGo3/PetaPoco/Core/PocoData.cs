@@ -317,12 +317,16 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                         il.MarkLabel(lblNext);
                     }
 
-                    //var fnOnLoaded = RecurseInheritedTypes<MethodInfo>(Type,
-                    //    (x) => x.GetMethod("OnLoaded", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
-                    //if (fnOnLoaded != null) {
-                    //    il.Emit(OpCodes.Dup);
-                    //    il.Emit(OpCodes.Callvirt, fnOnLoaded);
-                    //}
+                    var fnOnLoaded = RecurseInheritedTypes<MethodInfo>(Type, (x) => x.GetMethod("OnLoaded", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
+                    if (fnOnLoaded != null) {
+                        il.Emit(OpCodes.Dup);
+                        il.Emit(OpCodes.Callvirt, fnOnLoaded);
+                    }
+                    var clearMethod = RecurseInheritedTypes<MethodInfo>(Type, (x) => x.GetMethod("__ClearChanges__", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
+                    if (clearMethod != null) {
+                        il.Emit(OpCodes.Dup);
+                        il.Emit(OpCodes.Callvirt, clearMethod);
+                    }
                 }
 
                 il.Emit(OpCodes.Ret);
@@ -331,6 +335,15 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 return m.CreateDelegate(Expression.GetFuncType(typeof(IDataReader), Type));
             }
                 );
+        }
+        private static T RecurseInheritedTypes<T>(Type t, Func<Type, T> cb)
+        {
+            while (t != null) {
+                T info = cb(t);
+                if (info != null) return info;
+                t = t.BaseType;
+            }
+            return default(T);
         }
 
         private static void AddConverterToStack(ILGenerator il, Func<object, object> converter)
