@@ -21,7 +21,7 @@ namespace ToolGood.ReadyGo3
     /// 属性使用virtual
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public static class SqlUpdate 
+    public static class UpdateData
     {
         private static ModuleBuilder moduleBldr;
         private static readonly Cache<Type, Type> typeDict = new Cache<Type, Type>();
@@ -42,17 +42,13 @@ namespace ToolGood.ReadyGo3
             return obj as T;
         }
 
-        public static object New(Type type)
-        {
-            var t = CreateType(type);
-            return Activator.CreateInstance(t);
-        }
-
         public static Type GetProxyType(Type type)
         {
-            return CreateType(type); ;
+            if (type.IsClass) {
+                return CreateType(type);
+            }
+            return type;
         }
-
 
         private static Type CreateType(Type type)
         {
@@ -152,4 +148,21 @@ namespace ToolGood.ReadyGo3
         }
 
     }
+    /// <summary>
+    /// 代理类用于生成，
+    /// 属性使用virtual
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public sealed class UpdateData<T> where T : class
+    {
+        /// <summary>
+        /// 生成一个新对象，该对象继承IUpdateChange
+        /// </summary>
+        /// <returns></returns>
+        public static T New()
+        {
+            return UpdateData.New<T>();
+        }
+    }
+
 }

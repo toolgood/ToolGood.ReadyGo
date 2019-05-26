@@ -270,7 +270,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         if (OnException(x))
                             throw;
                     }
-                    var factory = pd.GetFactory(0, r.FieldCount, r) as Func<IDataReader, T>;
+                    var factory = pd.GetFactory(0, r.FieldCount, r, _sqlHelper._use_proxyType) as Func<IDataReader, T>;
                     using (r) {
                         while (true) {
                             try {

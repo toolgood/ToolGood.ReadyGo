@@ -41,6 +41,12 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         public bool Select_Single_With_Limit_2 { get { return _sqlHelper._sql_singleWithLimit2; } set { _sqlHelper._sql_singleWithLimit2 = value; } }
 
         /// <summary>
+        /// 使用代理类，更新时，减少sqlj量
+        /// </summary>
+        public bool Use_ProxyType { get { return _sqlHelper._use_proxyType; } set { _sqlHelper._use_proxyType = value; } }
+
+
+        /// <summary>
         /// SQL执行监控
         /// </summary>
         public ISqlMonitor SqlMonitor {

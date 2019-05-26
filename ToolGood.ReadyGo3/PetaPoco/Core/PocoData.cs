@@ -143,8 +143,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="firstColumn"></param>
         /// <param name="countColumns"></param>
         /// <param name="reader"></param>
+        /// <param name="usedProxy"></param>
         /// <returns></returns>
-        public Delegate GetFactory(int firstColumn, int countColumns, IDataReader reader)
+        public Delegate GetFactory(int firstColumn, int countColumns, IDataReader reader, bool usedProxy)
         {
             #region 创建Key
             StringBuilder sb = new StringBuilder();
@@ -152,17 +153,19 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             for (int i = 0; i < countColumns; i++) {
                 sb.AppendFormat("|{0}-{1}", reader.GetName(i), reader.GetFieldType(i).FullName);
             }
+            sb.Append("|" + usedProxy.ToString());
             var key = sb.ToString();
             #endregion 创建Key
 
 
             return PocoFactories.Get(key, () => {
+                var type = usedProxy ? UpdateData.GetProxyType(Type) : Type;
                 // Create the method
-                var m = new DynamicMethod("tg_readygo_" + Guid.NewGuid().ToString().Replace("-", ""), Type, new Type[] { typeof(IDataReader) }, true);
+                var m = new DynamicMethod("tg_readygo_" + Guid.NewGuid().ToString().Replace("-", ""), type, new Type[] { typeof(IDataReader) }, true);
                 var il = m.GetILGenerator();
                 //var mapper = Singleton<StandardMapper>.Instance;
 
-                if (Type == typeof(object)) {
+                if (type == typeof(object)) {
                     // var poco=new T()
                     il.Emit(OpCodes.Newobj, typeof(System.Dynamic.ExpandoObject).GetConstructor(Type.EmptyTypes));          // obj
 
@@ -214,10 +217,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
 
                         il.Emit(OpCodes.Callvirt, fnAdd);
                     }
-                } else if (Type.IsValueType || Type == typeof(string) || Type == typeof(byte[])) {
+                } else if (type.IsValueType || type == typeof(string) || type == typeof(byte[])) {
                     // Do we need to install a converter?
                     var srcType = reader.GetFieldType(0);
-                    var converter = GetConverter(null, srcType, Type);
+                    var converter = GetConverter(null, srcType, type);
 
                     // "if (!rdr.IsDBNull(i))"
                     il.Emit(OpCodes.Ldarg_0); // rdr
@@ -243,12 +246,12 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                         il.Emit(OpCodes.Callvirt, fnInvoke);
 
                     il.MarkLabel(lblFin);
-                    il.Emit(OpCodes.Unbox_Any, Type); // value converted
+                    il.Emit(OpCodes.Unbox_Any, type); // value converted
                 } else {
                     // var poco=new T()
-                    var ctor = Type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null);
+                    var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null);
                     if (ctor == null)
-                        throw new InvalidOperationException($"Type [{Type.FullName}] should have default public or non-public constructor");
+                        throw new InvalidOperationException($"Type [{type.FullName}] should have default public or non-public constructor");
 
                     il.Emit(OpCodes.Newobj, ctor);
 
@@ -317,12 +320,12 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                         il.MarkLabel(lblNext);
                     }
 
-                    var fnOnLoaded = RecurseInheritedTypes<MethodInfo>(Type, (x) => x.GetMethod("OnLoaded", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
+                    var fnOnLoaded = RecurseInheritedTypes<MethodInfo>(type, (x) => x.GetMethod("OnLoaded", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
                     if (fnOnLoaded != null) {
                         il.Emit(OpCodes.Dup);
                         il.Emit(OpCodes.Callvirt, fnOnLoaded);
                     }
-                    var clearMethod = RecurseInheritedTypes<MethodInfo>(Type, (x) => x.GetMethod("__ClearChanges__", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
+                    var clearMethod = RecurseInheritedTypes<MethodInfo>(type, (x) => x.GetMethod("__ClearChanges__", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
                     if (clearMethod != null) {
                         il.Emit(OpCodes.Dup);
                         il.Emit(OpCodes.Callvirt, clearMethod);
@@ -332,7 +335,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 il.Emit(OpCodes.Ret);
 
                 // Cache it, return it
-                return m.CreateDelegate(Expression.GetFuncType(typeof(IDataReader), Type));
+                return m.CreateDelegate(Expression.GetFuncType(typeof(IDataReader), type));
             }
                 );
         }

@@ -706,7 +706,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                         yield break;
                     }
-                    var factory = pd.GetFactory(0, r.FieldCount, r) as Func<IDataReader, T>;
+                    var factory = pd.GetFactory(0, r.FieldCount, r, _sqlHelper._use_proxyType) as Func<IDataReader, T>;
                     using (r) {
                         while (true) {
                             T poco;

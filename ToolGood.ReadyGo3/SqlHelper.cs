@@ -23,6 +23,7 @@ namespace ToolGood.ReadyGo3
         internal bool _setGuidDefaultNew;
         internal bool _sql_firstWithLimit1;
         internal bool _sql_singleWithLimit2;
+        internal bool _use_proxyType;
 
 
         // 读写数据库
@@ -575,8 +576,9 @@ namespace ToolGood.ReadyGo3
             if (poco is IUpdateChange) {
                 var pd = PocoData.ForType(typeof(T));
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.Append("SET ");
                 ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
+                if (stringBuilder.Length == 0) { return 0; }
+                stringBuilder.Insert(0, "SET ");
                 object primaryKeyValue = null;
                 foreach (var i in pd.Columns) {
                     if (i.Value.ResultColumn) continue;
@@ -641,8 +643,9 @@ namespace ToolGood.ReadyGo3
             if (poco is IUpdateChange) {
                 var pd = PocoData.ForType(typeof(T));
                 StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.Append("SET ");
                 ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
+                if (stringBuilder.Length == 0) { return; }
+                stringBuilder.Insert(0, "SET ");
                 object primaryKeyValue = null;
                 foreach (var i in pd.Columns) {
                     if (i.Value.ResultColumn) continue;
