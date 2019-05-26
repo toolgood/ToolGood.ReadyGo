@@ -37,6 +37,17 @@ namespace ToolGood.ReadyGo3.StoredProcedure
         #endregion
 
         #region 构造函数
+        protected SqlProcess(string connectionString, string providerName, SqlType type = SqlType.None)
+        {
+            if (type == SqlType.None) {
+                type = DatabaseProvider.GetSqlType(providerName, connectionString);
+            }
+            var factory = DatabaseProvider.Resolve(type).GetFactory();
+            _sqlhelper = new SqlHelper(connectionString, factory, type);
+            _singleSqlHelper = true;
+        }
+
+
         /// <summary>
         /// SqlProcess构造函数
         /// </summary>
