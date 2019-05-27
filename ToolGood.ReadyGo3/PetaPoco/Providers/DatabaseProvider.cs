@@ -360,14 +360,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         {
             switch (function) {
                 case SqlFunction.Len: return CreateFunction("LEN({0})", args);
-                case SqlFunction.Max: return CreateFunction("MAX({0})", args);
-                case SqlFunction.Min: return CreateFunction("MIN({0})", args);
-                case SqlFunction.Avg: return CreateFunction("AVG({0})", args);
-                case SqlFunction.Sum: return CreateFunction("SUM({0})", args);
-                case SqlFunction.Count: return CreateFunction("COUNT({0})", args);
-                case SqlFunction.CountDistinct: return CreateFunction("COUNT(DISTINCT {0})", args);
-                case SqlFunction.DatePart: return CreateFunction("DATEPART({0},{1})", args);
-                case SqlFunction.DateDiff: return CreateFunction("DATEDIFF({0},{1})", args);
+                //case SqlFunction.Max: return CreateFunction("MAX({0})", args);
+                //case SqlFunction.Min: return CreateFunction("MIN({0})", args);
+                //case SqlFunction.Avg: return CreateFunction("AVG({0})", args);
+                //case SqlFunction.Sum: return CreateFunction("SUM({0})", args);
+                //case SqlFunction.Count: return CreateFunction("COUNT({0})", args);
+                //case SqlFunction.CountDistinct: return CreateFunction("COUNT(DISTINCT {0})", args);
+                //case SqlFunction.DatePart: return CreateFunction("DATEPART({0},{1})", args);
+                //case SqlFunction.DateDiff: return CreateFunction("DATEDIFF({0},{1})", args);
                 case SqlFunction.Year: return CreateFunction("YEAR({0})", args);
                 case SqlFunction.Month: return CreateFunction("MONTH({0})", args);
                 case SqlFunction.Day: return CreateFunction("DAY({0})", args);
@@ -375,27 +375,27 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 case SqlFunction.Minute: return CreateFunction("MINUTE({0})", args);
                 case SqlFunction.Second: return CreateFunction("SECOND({0})", args);
                 case SqlFunction.DayOfYear: return CreateFunction("DAYOFYEAR({0})", args);
-                case SqlFunction.Week: return CreateFunction("WEEK({0})", args);
+                //case SqlFunction.Week: return CreateFunction("WEEK({0})", args);
                 case SqlFunction.WeekDay: return CreateFunction("WEEKDAY({0})", args);
                 case SqlFunction.SubString3: return CreateFunction("SUBSTRING({0},{1},{2})", args);
                 case SqlFunction.SubString2: return CreateFunction("SUBSTRING({0},{1})", args);
-                case SqlFunction.Left: return CreateFunction("LEFT({0},{1})", args);
-                case SqlFunction.Right: return CreateFunction("RIGHT({0},{1})", args);
+                //case SqlFunction.Left: return CreateFunction("LEFT({0},{1})", args);
+                //case SqlFunction.Right: return CreateFunction("RIGHT({0},{1})", args);
                 case SqlFunction.Lower: return CreateFunction("LOWER({0})", args);
                 case SqlFunction.Upper: return CreateFunction("UPPER({0})", args);
-                case SqlFunction.Ascii: return CreateFunction("ASCII({0})", args);
+                //case SqlFunction.Ascii: return CreateFunction("ASCII({0})", args);
                 case SqlFunction.Trim: return CreateFunction("LTRIM(RTRIM({0}))", args);
                 case SqlFunction.LTrim: return CreateFunction("LTRIM({0})", args);
                 case SqlFunction.RTrim: return CreateFunction("RTRIM({0})", args);
-                case SqlFunction.Concat:
-                    StringBuilder stringBuilder = new StringBuilder();
-                    stringBuilder.Append("CONCAT(");
-                    foreach (var item in args) {
-                        stringBuilder.Append(EscapeParam(item));
-                        stringBuilder.Append(',');
-                    }
-                    stringBuilder[stringBuilder.Length - 1] = ')';
-                    return stringBuilder.ToString();
+                //case SqlFunction.Concat:
+                //    StringBuilder stringBuilder = new StringBuilder();
+                //    stringBuilder.Append("CONCAT(");
+                //    foreach (var item in args) {
+                //        stringBuilder.Append(EscapeParam(item));
+                //        stringBuilder.Append(',');
+                //    }
+                //    stringBuilder[stringBuilder.Length - 1] = ')';
+                //    return stringBuilder.ToString();
                 default: break;
             }
             var objs = new object[args.Length - 1];

@@ -115,14 +115,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             switch (function) {
                 case SqlFunction.Fuction: break;
                 case SqlFunction.Len: return CreateFunction("LENGTH({0})", args);
-                case SqlFunction.Max: break;
-                case SqlFunction.Min: break;
-                case SqlFunction.Avg: break;
-                case SqlFunction.Sum: break;
-                case SqlFunction.Count: break;
-                case SqlFunction.CountDistinct: break;
-                case SqlFunction.DatePart: break;
-                case SqlFunction.DateDiff: return CreateFunction("DATEDIFF(DAY,{0},{1})", args);
+                //case SqlFunction.Max: break;
+                //case SqlFunction.Min: break;
+                //case SqlFunction.Avg: break;
+                //case SqlFunction.Sum: break;
+                //case SqlFunction.Count: break;
+                //case SqlFunction.CountDistinct: break;
+                //case SqlFunction.DatePart: break;
+                //case SqlFunction.DateDiff: return CreateFunction("DATEDIFF(DAY,{0},{1})", args);
                 case SqlFunction.Year: return CreateFunction("DATEPART(YEAR,{0})", args);
                 case SqlFunction.Month: return CreateFunction("DATEPART(MONTH,{0})", args);
                 case SqlFunction.Day: return CreateFunction("DATEPART(DAY,{0})", args);
@@ -130,16 +130,16 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 case SqlFunction.Minute: return CreateFunction("DATEPART(MINUTE,{0})", args);
                 case SqlFunction.Second: return CreateFunction("DATEPART(SECOND,{0})", args);
                 case SqlFunction.DayOfYear: return CreateFunction("DATEPART(DAYOFYEAR,{0})", args);
-                case SqlFunction.Week: return CreateFunction("DATEPART(WEEK,{0})", args);
+                //case SqlFunction.Week: return CreateFunction("DATEPART(WEEK,{0})", args);
                 case SqlFunction.WeekDay: return CreateFunction("DATEPART(WEEKDAY,{0})", args);
                 case SqlFunction.SubString3: break;
                 case SqlFunction.SubString2: break;
-                case SqlFunction.Left: break;
-                case SqlFunction.Right: break;
+                //case SqlFunction.Left: break;
+                //case SqlFunction.Right: break;
                 case SqlFunction.Lower: break;
                 case SqlFunction.Upper: break;
-                case SqlFunction.Ascii: break;
-                case SqlFunction.Concat: break;
+                //case SqlFunction.Ascii: break;
+                //case SqlFunction.Concat: break;
                 default: break;
             }
 

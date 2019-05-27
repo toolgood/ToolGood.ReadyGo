@@ -111,14 +111,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             switch (function) {
                 case SqlFunction.Fuction: break;
                 case SqlFunction.Len: return CreateFunction("LENGTH({0})", args);
-                case SqlFunction.Max: break;
-                case SqlFunction.Min: break;
-                case SqlFunction.Avg: break;
-                case SqlFunction.Sum: break;
-                case SqlFunction.Count: break;
-                case SqlFunction.CountDistinct: break;
-                case SqlFunction.DatePart: break;
-                case SqlFunction.DateDiff: return CreateFunction("AGE(TIMESTAMP {0}, TIMESTAMP {1})", args);
+                //case SqlFunction.Max: break;
+                //case SqlFunction.Min: break;
+                //case SqlFunction.Avg: break;
+                //case SqlFunction.Sum: break;
+                //case SqlFunction.Count: break;
+                //case SqlFunction.CountDistinct: break;
+                //case SqlFunction.DatePart: break;
+                //case SqlFunction.DateDiff: return CreateFunction("AGE(TIMESTAMP {0}, TIMESTAMP {1})", args);
                 case SqlFunction.Year: return CreateFunction("EXTRACT(YEAR FROM TIMESTAMP {0})", args);
                 case SqlFunction.Month: return CreateFunction("EXTRACT(MONTH FROM TIMESTAMP {0})", args);
                 case SqlFunction.Day: return CreateFunction("EXTRACT(DAY FROM TIMESTAMP {0})", args);
@@ -126,16 +126,16 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 case SqlFunction.Minute: return CreateFunction("EXTRACT(MINUTE FROM TIMESTAMP {0})", args);
                 case SqlFunction.Second: return CreateFunction("EXTRACT(SECOND FROM TIMESTAMP {0})", args);
                 case SqlFunction.DayOfYear: return CreateFunction("EXTRACT(DAYOFYEAR FROM TIMESTAMP {0})", args);
-                case SqlFunction.Week: return CreateFunction("EXTRACT(WEEK FROM TIMESTAMP {0})", args);
+                //case SqlFunction.Week: return CreateFunction("EXTRACT(WEEK FROM TIMESTAMP {0})", args);
                 case SqlFunction.WeekDay: return CreateFunction("EXTRACT(WEEKDAY FROM TIMESTAMP {0})", args);
                 case SqlFunction.SubString3: return CreateFunction("SUBSTR({0}, {1}, {2})", args);
                 case SqlFunction.SubString2: return CreateFunction("SUBSTR({0}, {1})", args);
-                case SqlFunction.Left: break;
-                case SqlFunction.Right: break;
+                //case SqlFunction.Left: break;
+                //case SqlFunction.Right: break;
                 case SqlFunction.Lower: break;
                 case SqlFunction.Upper: break;
-                case SqlFunction.Ascii: break;
-                case SqlFunction.Concat: break;
+                //case SqlFunction.Ascii: break;
+                //case SqlFunction.Concat: break;
                 default: break;
             }
             return base.CreateFunction(function, args);

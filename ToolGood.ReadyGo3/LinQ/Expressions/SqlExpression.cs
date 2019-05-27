@@ -119,7 +119,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         {
             //if (call.Method.DeclaringType != typeof(SQL)) throw new Exception("无效列！！！");
             var callName = call.Method.Name;
-            if (callName == "CountAll") return "COUNT(*)";
+            //if (callName == "CountAll") return "COUNT(*)";
 
             List<Object> args = new List<object>();
             var original = call.Arguments;
@@ -134,9 +134,9 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 }
             }
 
-            if (callName == "CountOfDistinct") {
-                return string.Format("COUNT(DISTINCT {0})", quotedColName);
-            }
+            //if (callName == "CountOfDistinct") {
+            //    return string.Format("COUNT(DISTINCT {0})", quotedColName);
+            //}
             return string.Format("{0}({1}{2})",
                 callName.ToUpper(), quotedColName,
                 args.Count == 1 ? string.Format(",'{0}'", args[0]) : ""
@@ -466,6 +466,9 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                                 case "Minute": sql = provider.CreateFunction(SqlFunction.Minute, Visit(m1)); break;
                                 case "Second": sql = provider.CreateFunction(SqlFunction.Second, Visit(m1)); break;
                                 case "Value": return Visit(m1);
+                                case "DayOfWeek": sql = provider.CreateFunction(SqlFunction.WeekDay, Visit(m1)); break;
+                                case "DayOfYear": sql = provider.CreateFunction(SqlFunction.DayOfYear, Visit(m1)); break;
+
                                 //case "HasValue": sql = Visit(m1).ToString() + " IS NOT NULL "; break;
                                 default: throw new NotSupportedException("Not Supported " + m.Member.Name);
                             }

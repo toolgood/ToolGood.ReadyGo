@@ -67,14 +67,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             switch (function) {
                 case SqlFunction.Fuction: break;
                 case SqlFunction.Len: break;
-                case SqlFunction.Max: break;
-                case SqlFunction.Min: break;
-                case SqlFunction.Avg: break;
-                case SqlFunction.Sum: break;
-                case SqlFunction.Count: break;
-                case SqlFunction.CountDistinct: break;
-                case SqlFunction.DatePart: break;
-                case SqlFunction.DateDiff: break;
+                //case SqlFunction.Max: break;
+                //case SqlFunction.Min: break;
+                //case SqlFunction.Avg: break;
+                //case SqlFunction.Sum: break;
+                //case SqlFunction.Count: break;
+                //case SqlFunction.CountDistinct: break;
+                //case SqlFunction.DatePart: break;
+                //case SqlFunction.DateDiff: break;
                 case SqlFunction.Year: break;
                 case SqlFunction.Month: break;
                 case SqlFunction.Day: break;
@@ -82,16 +82,16 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 case SqlFunction.Minute: break;
                 case SqlFunction.Second: break;
                 case SqlFunction.DayOfYear: break;
-                case SqlFunction.Week: break;
+                //case SqlFunction.Week: break;
                 case SqlFunction.WeekDay: break;
                 case SqlFunction.SubString3: return CreateFunction("MID({0}, {1}, {2})", args);
                 case SqlFunction.SubString2: return CreateFunction("MID({0}, {1})", args);
-                case SqlFunction.Left: break;
-                case SqlFunction.Right: break;
+                //case SqlFunction.Left: break;
+                //case SqlFunction.Right: break;
                 case SqlFunction.Lower: return CreateFunction("LCASE({0})", args);
                 case SqlFunction.Upper: return CreateFunction("UCASE({0})", args);
-                case SqlFunction.Ascii: return CreateFunction("ASC({0})", args);
-                case SqlFunction.Concat: break;
+                //case SqlFunction.Ascii: return CreateFunction("ASC({0})", args);
+                //case SqlFunction.Concat: break;
                 default: break;
             }
 
