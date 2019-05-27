@@ -140,6 +140,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 case SqlFunction.Upper: break;
                 //case SqlFunction.Ascii: break;
                 //case SqlFunction.Concat: break;
+                case SqlFunction.IndexOf: return CreateFunction("(CHARINDEX({1},{0})-1)", args);
                 default: break;
             }
 

@@ -127,6 +127,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 case SqlFunction.Upper: break;
                 //case SqlFunction.Ascii: break;
                 //case SqlFunction.Concat: break;
+                case SqlFunction.IndexOf:return CreateFunction("(POSITION({1} IN {0})-1)", args);
                 default: break;
             }
             return base.CreateFunction(function, args);

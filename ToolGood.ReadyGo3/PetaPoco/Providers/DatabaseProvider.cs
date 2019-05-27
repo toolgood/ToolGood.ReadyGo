@@ -387,15 +387,17 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 case SqlFunction.Trim: return CreateFunction("LTRIM(RTRIM({0}))", args);
                 case SqlFunction.LTrim: return CreateFunction("LTRIM({0})", args);
                 case SqlFunction.RTrim: return CreateFunction("RTRIM({0})", args);
-                //case SqlFunction.Concat:
-                //    StringBuilder stringBuilder = new StringBuilder();
-                //    stringBuilder.Append("CONCAT(");
-                //    foreach (var item in args) {
-                //        stringBuilder.Append(EscapeParam(item));
-                //        stringBuilder.Append(',');
-                //    }
-                //    stringBuilder[stringBuilder.Length - 1] = ')';
-                //    return stringBuilder.ToString();
+                case SqlFunction.Concat:
+                    StringBuilder stringBuilder = new StringBuilder();
+                    stringBuilder.Append("CONCAT(");
+                    foreach (var item in args) {
+                        stringBuilder.Append(EscapeParam(item));
+                        stringBuilder.Append(',');
+                    }
+                    stringBuilder[stringBuilder.Length - 1] = ')';
+                    return stringBuilder.ToString();
+                case SqlFunction.IndexOf:return CreateFunction("(INSTR({0},{1})-1)", args);
+                case SqlFunction.Replace: return CreateFunction("REPLACE({0},{1},{2])", args);
                 default: break;
             }
             var objs = new object[args.Length - 1];

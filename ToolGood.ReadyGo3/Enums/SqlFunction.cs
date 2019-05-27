@@ -109,10 +109,10 @@
         ///// 求Ascii码
         ///// </summary>
         //Ascii,
-        ///// <summary>
-        ///// 字符串拼接
-        ///// </summary>
-        //Concat,
+        /// <summary>
+        /// 字符串拼接
+        /// </summary>
+        Concat,
         /// <summary>
         /// 删除前导或尾随空格
         /// </summary>
@@ -125,6 +125,13 @@
         /// 删除尾随空格
         /// </summary>
         RTrim,
-
+        /// <summary>
+        /// 索引
+        /// </summary>
+        IndexOf,
+        /// <summary>
+        /// 替换
+        /// </summary>
+        Replace,
     }
 }

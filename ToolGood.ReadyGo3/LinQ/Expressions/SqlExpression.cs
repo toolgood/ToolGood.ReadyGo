@@ -171,7 +171,14 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 case "Equals":
                     wildcardArg = GetQuotedValue(wildcardArg);
                     statement = $"({quotedColName} = {wildcardArg})"; break;
+                case "Concat":
+                    var args =new List<object>();
+                    args.Add(quotedColName);
+                    args.AddRange(_args);
+                    statement = provider.CreateFunction(SqlFunction.Concat, args.ToArray()); break;
                 case "ToString": statement = quotedColName.ToString(); break;
+                case "IndexOf": statement = provider.CreateFunction(SqlFunction.IndexOf, quotedColName, _args[0]); break;
+                case "Replace": statement = provider.CreateFunction(SqlFunction.Replace, quotedColName, _args[0], _args[1]); break;
                 default: throw new NotSupportedException();
             }
             return new PartialSqlString(statement);
