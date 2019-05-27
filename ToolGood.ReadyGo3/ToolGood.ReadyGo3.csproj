@@ -29,6 +29,7 @@
         <DelaySign>false</DelaySign>
         <AssemblyVersion>3.3.0.8</AssemblyVersion>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <LangVersion>7.1</LangVersion>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">

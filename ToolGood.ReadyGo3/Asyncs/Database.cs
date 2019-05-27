@@ -130,7 +130,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         // Handle nullable types
                         Type u = Nullable.GetUnderlyingType(typeof(T));
                         if (u != null && val == null)
-                            return default;
+                            return default(T);
 
                         return (T)Convert.ChangeType(val, u ?? typeof(T));
                     }
@@ -141,7 +141,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             } catch (Exception x) {
                 if (OnException(x))
                     throw;
-                return default;
+                return default(T);
             }
         }
         /// <summary>
@@ -187,7 +187,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             } catch (Exception x) {
                 if (OnException(x))
                     throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return default;
+                return default(DataTable);
             }
         }
 

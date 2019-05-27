@@ -7,7 +7,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.Internals
 {
-    public interface IUpdateChange
+    interface IUpdateChange
     {
         Dictionary<string, object> __GetChanges__();
         void __ClearChanges__();
@@ -20,7 +20,6 @@ namespace ToolGood.ReadyGo3
     /// 代理类用于生成，
     /// 属性使用virtual
     /// </summary>
-    /// <typeparam name="T"></typeparam>
     public static class UpdateData
     {
         private static ModuleBuilder moduleBldr;
