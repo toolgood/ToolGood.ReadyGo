@@ -869,11 +869,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var index = 0;
             while (index < list.Count) {
                 var count = list.Count - index;
-                int size = 1;
+                int size;
                 if (count >= 50) {
                     size = 50;
                 } else if (count >= 10) {
                     size = 10;
+                } else {
+                    size = count;
                 }
                 ExecuteInsert<T>(tableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, size);
                 index += size;
@@ -889,14 +891,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         var pd = PocoData.ForType(type);
                         cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, size, tableName, primaryKeyName, autoIncrement);
 
+                        var cols = pd.Columns.Where(q => q.Value.ResultColumn == false).Select(q=>q.Value).ToList();
+                        if (autoIncrement && primaryKeyName != null) {
+                            cols.RemoveAll(q => string.Compare(q.ColumnName, primaryKeyName, true) == 0);
+                        }
+
                         for (int j = 0; j < size; j++) {
                             var poco = list[index2 + j];
-                            foreach (var i in pd.Columns) {
-                                if (i.Value.ResultColumn) continue;
-                                if (autoIncrement && primaryKeyName != null && string.Compare(i.Value.ColumnName, primaryKeyName, true) == 0) {
-                                    continue;
-                                }
-                                AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
+                            foreach (var c in cols) {
+                                AddParam(cmd, c.GetValue(poco), c.PropertyInfo);
                             }
                         }
 
