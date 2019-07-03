@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using ToolGood.ReadyGo3.Gadget.Caches;
 using ToolGood.ReadyGo3.Gadget.Monitor;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
@@ -42,10 +41,15 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         public bool Select_Single_With_Limit_2 { get { return _sqlHelper._sql_singleWithLimit2; } set { _sqlHelper._sql_singleWithLimit2 = value; } }
 
         /// <summary>
+        /// 使用代理类，更新时，减少sqlj量
+        /// </summary>
+        public bool Use_ProxyType { get { return _sqlHelper._use_proxyType; } set { _sqlHelper._use_proxyType = value; } }
+
+
+        /// <summary>
         /// SQL执行监控
         /// </summary>
-        public ISqlMonitor SqlMonitor
-        {
+        public ISqlMonitor SqlMonitor {
             get { return _sqlHelper._sqlMonitor; }
             set {
                 if (_sqlHelper._sqlMonitor != value) {
@@ -78,11 +82,6 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         /// </summary>
         public IsolationLevel? IsolationLevel { get { return _sqlHelper._isolationLevel; } set { _sqlHelper._isolationLevel = value; } }
 
-        /// <summary>
-        /// 缓存服务
-        /// </summary>
-        public ICacheService CacheService { get { return _sqlHelper._cacheService; } set { _sqlHelper._cacheService = value; } }
-
         #endregion
 
         #region 方法
@@ -105,27 +104,6 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
             this.SqlMonitor = new NullSqlMonitor();
             return this;
         }
-        /// <summary>
-        /// 设置空SQL缓存
-        /// </summary>
-        /// <returns></returns>
-        public SqlConfig SetNullCacheService()
-        {
-            this.CacheService = new NullCacheService();
-            return this;
-        }
-
-#if !NETSTANDARD2_0
-        /// <summary>
-        /// 设置空SQL缓存--名称Md5化
-        /// </summary>
-        /// <returns></returns>
-        public SqlConfig SetMd5MemoryCacheService()
-        {
-            this.CacheService = new Md5MemoryCacheService ();
-            return this;
-        }
-#endif
 
         /// <summary>
         /// 清空缓存

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3
@@ -153,106 +154,10 @@ namespace ToolGood.ReadyGo3
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
                 var args = new object[] { condition };
-                if (_usedCacheServiceOnce) {
-                    return Run(sql, args, () => {
-                        return getDatabase().ExecuteScalar<int>(sql, args) > 0;
-                    }, "Count");
-                }
-                return getDatabase().ExecuteScalar<int>(sql, args) > 0;
+                return GetDatabase().ExecuteScalar<int>(sql, args) > 0;
             }
         }
 
-
-        /// <summary>
-        /// 根据条件查询唯一项
-        /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public T2 Single<T1, T2>(object condition) where T1 : class//
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).Single<T2>();
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).Single<T2>();
-        }
-        /// <summary>
-        /// 根据条件查询唯一项
-        /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public T2 SingleOrDefault<T1, T2>(object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).SingleOrDefault<T2>();
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).SingleOrDefault<T2>();
-        }
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public T2 First<T1, T2>(object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).First<T2>();
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).First<T2>();
-        }
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public T2 FirstOrDefault<T1, T2>(object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).FirstOrDefault<T2>();
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).FirstOrDefault<T2>();
-        }
-
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="offset"></param>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public List<T2> Select<T1, T2>(long limit, long offset, object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).Select<T2>(limit, offset);
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).Select<T2>(limit, offset);
-        }
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public List<T2> Select<T1, T2>(long limit, object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).Select<T2>(limit);
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).Select<T2>(limit);
-        }
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
-        /// <typeparam name="T1"></typeparam>
-        /// <typeparam name="T2"></typeparam>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public List<T2> Select<T1, T2>(object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition, new object[0]).Select<T2>();
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).Select<T2>();
-        }
         #endregion
 
 #if !NET40
@@ -389,110 +294,11 @@ namespace ToolGood.ReadyGo3
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
                 var args = new object[] { condition };
-                if (_usedCacheServiceOnce) {
-                    return await RunAsync(sql, args, async () => {
-                        return await getDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
-                    }, "Exists");
-                }
-                return await getDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
+                return await GetDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
             }
         }
 
-
-
-        /// <summary>
-        /// 根据条件查询唯一项
-        /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public Task<T2> SingleAsync<T1, T2>(object condition) where T1 : class//
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).SingleAsync<T2>();
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).SingleAsync<T2>();
-        }
-        /// <summary>
-        /// 根据条件查询唯一项
-        /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public Task<T2> SingleOrDefaultAsync<T1, T2>(object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).SingleOrDefaultAsync<T2>();
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).SingleOrDefaultAsync<T2>();
-        }
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public Task<T2> FirstAsync<T1, T2>(object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).FirstAsync<T2>();
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).FirstAsync<T2>();
-        }
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public Task<T2> FirstOrDefaultAsync<T1, T2>(object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).FirstOrDefaultAsync<T2>();
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).FirstOrDefaultAsync<T2>();
-        }
-
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="offset"></param>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public Task<List<T2>> SelectAsync<T1, T2>(long limit, long offset, object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).SelectAsync<T2>(limit, offset);
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).SelectAsync<T2>(limit, offset);
-        }
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public Task<List<T2>> SelectAsync<T1, T2>(long limit, object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition).SelectAsync<T2>(limit);
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).SelectAsync<T2>(limit);
-        }
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
-        /// <typeparam name="T1"></typeparam>
-        /// <typeparam name="T2"></typeparam>
-        /// <param name="condition"></param>
-        /// <returns></returns>
-        public Task<List<T2>> SelectAsync<T1, T2>(object condition) where T1 : class
-        {
-            if (null == condition && condition.GetType() == typeof(string)) {
-                return Where<T1>((string)condition, new object[0]).SelectAsync<T2>();
-            }
-            return Where<T1>(ConditionObjectToWhere(condition)).SelectAsync<T2>();
-        }
 #endif
-
-
 
         private string ConditionObjectToWhere(object condition)
         {
@@ -524,10 +330,37 @@ namespace ToolGood.ReadyGo3
         private void ObjectToSql(StringBuilder stringBuilder, object condition, string middelStr, string[] ignoreFields)
         {
             if (condition is IEnumerable) { throw new ArgumentException("condition is IEnumerable object!"); }
+            bool hasColumn = false;
+
+            if (condition is IUpdateChange) {
+                var dict = ((IUpdateChange)condition).__GetChanges__();
+                foreach (var item in dict) {
+                    if (ignoreFields != null) {
+                        if (ignoreFields.Any(q => string.Equals(q, item.Key, StringComparison.CurrentCultureIgnoreCase))) { continue; }
+                    }
+                    if (hasColumn == false) {
+                        hasColumn = true;
+                    } else {
+                        stringBuilder.Append(middelStr);
+                    }
+                    if (middelStr == " AND ") {
+                        if (item.Value == null) {
+                            stringBuilder.Append($"[{item.Key}] is Null");
+                        } else {
+                            stringBuilder.Append($"[{item.Key}]=");
+                            stringBuilder.Append(EscapeParam(item.Value));
+                        }
+                    } else {
+                        stringBuilder.Append($"[{item.Key}]=");
+                        stringBuilder.Append(EscapeParam(item.Value));
+                    }
+                }
+                return;
+            }
+
 
             var type = condition.GetType();
             var pis = type.GetProperties();
-            bool hasColumn = false;
             for (int i = 0; i < pis.Length; i++) {
                 var pi = pis[i];
                 if (ignoreFields != null) {
@@ -581,12 +414,18 @@ namespace ToolGood.ReadyGo3
 
             var fieldType = value.GetType();
             if (fieldType.IsEnum) {
-                var isEnumFlags = fieldType.IsEnum;
-                if (!isEnumFlags && Int64.TryParse(value.ToString(), out long enumValue)) {
-                    value = Enum.ToObject(fieldType, enumValue).ToString();
+                if (EnumHelper.UseEnumString(fieldType)) {
+                    var txt = (value.ToString()).ToEscapeParam();
+                    return "'" + txt + "'";
                 }
-                var enumString = value.ToString();
-                return !isEnumFlags ? "'" + enumString.Trim('"') + "'" : enumString;
+                return $"'{Convert.ToInt64(value)}'";
+
+                //var isEnumFlags = fieldType.IsEnum;
+                //if (!isEnumFlags && Int64.TryParse(value.ToString(), out long enumValue)) {
+                //    value = Enum.ToObject(fieldType, enumValue).ToString();
+                //}
+                //var enumString = value.ToString();
+                //return !isEnumFlags ? "'" + enumString.Trim('"') + "'" : enumString;
             }
 
             var typeCode = Type.GetTypeCode(fieldType);
@@ -606,7 +445,7 @@ namespace ToolGood.ReadyGo3
                 default: break;
             }
             if (value is string || value is char) {
-                var txt = (value.ToString()).Replace(@"\", @"\\").Replace("'", @"\'");
+                var txt = (value.ToString()).ToEscapeParam();
                 return "'" + txt + "'";
             }
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";

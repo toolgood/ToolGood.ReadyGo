@@ -1055,7 +1055,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public int SelectCount(string selectSql = null, bool distinct = false)
         {
-            return this._sqlhelper.getDatabase().ExecuteScalar<int>(this.GetCountSql(selectSql, distinct), this._args.ToArray());
+            return this._sqlhelper.GetDatabase().ExecuteScalar<int>(this.GetCountSql(selectSql, distinct), this._args.ToArray());
         }
         /// <summary>
         /// 执行返回DataTable
@@ -1382,7 +1382,7 @@ namespace ToolGood.ReadyGo3.LinQ
                     sb.Append(h.QuerySql);
                     if (h.UseAsName || asNames.Contains(h.AsName)) {
                         sb.Append(" As '");
-                        sb.Append(h.AsName.Replace(@"\", @"\\").Replace("'", @"\'"));
+                        sb.Append(h.AsName.ToEscapeParam());
                         if (asNames.Contains(h.AsName)) {
                             sb.Append("_");
                             sb.Append(asNames.Count(q => q == h.AsName).ToString());
@@ -1403,7 +1403,7 @@ namespace ToolGood.ReadyGo3.LinQ
                         sb.Append(h.QuerySql);
                         if (h.UseAsName) {
                             sb.Append(" As '");
-                            sb.Append(h.AsName.Replace(@"\", @"\\").Replace("'", @"\'"));
+                            sb.Append(h.AsName.ToEscapeParam());
                             sb.Append("'");
                         }
                     }
@@ -1625,7 +1625,7 @@ namespace ToolGood.ReadyGo3.LinQ
         private string CreateSelectInsertSql(Type type, string insertTableName, string replaceColumns, object[] args)
         {
             Dictionary<string, string> replaceCols = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            var Provider = ToolGood.ReadyGo3.DataCentxt.DatabaseProvider.Resolve(_sqlhelper._sqlType);
+            var Provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
             if (string.IsNullOrEmpty(replaceColumns) == false) {
                 var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (var item in columnSqls) {

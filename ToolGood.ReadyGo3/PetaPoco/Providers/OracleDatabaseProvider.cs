@@ -2,6 +2,7 @@
 using System.Data;
 using System.Data.Common;
 using System.Text;
+using ToolGood.ReadyGo3.Enums;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.PetaPoco.Utilities;
@@ -10,6 +11,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
     public class OracleDatabaseProvider : DatabaseProvider
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        public OracleDatabaseProvider()
+        {
+            usedEscapeSql = true;
+            escapeSql = '"';
+        }
         public override string GetParameterPrefix(string connectionString)
         {
             return ":";
@@ -75,8 +84,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
         public override object ExecuteInsert(Database db, IDbCommand cmd, string primaryKeyName)
         {
-            if (primaryKeyName != null)
-            {
+            if (primaryKeyName != null) {
                 cmd.CommandText += $" returning {EscapeSqlIdentifier(primaryKeyName)} into :newid";
                 var param = cmd.CreateParameter();
                 param.ParameterName = ":newid";
@@ -86,9 +94,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 cmd.Parameters.Add(param);
                 db.ExecuteNonQueryHelper(cmd);
                 return param.Value;
-            }
-            else
-            {
+            } else {
                 db.ExecuteNonQueryHelper(cmd);
                 return -1;
             }
@@ -129,5 +135,51 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return sb.ToString();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="function"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public override string CreateFunction(SqlFunction function, params object[] args)
+        {
+            // http://blog.csdn.net/gccr/article/details/1802740
+            switch (function) {
+                case SqlFunction.Fuction: break;
+                case SqlFunction.Len: return CreateFunction("LENGTH({0})", args);
+                //case SqlFunction.Max: break;
+                //case SqlFunction.Min: break;
+                //case SqlFunction.Avg: break;
+                //case SqlFunction.Sum: break;
+                //case SqlFunction.Count: break;
+                //case SqlFunction.CountDistinct: break;
+                //case SqlFunction.DatePart: break;
+                //case SqlFunction.DateDiff: return CreateFunction("ROUND(TO_NUMBER(TimeStamp {1} - TimeStamp {0}))", args);
+                case SqlFunction.Year: return CreateFunction("EXTRACT(YEAR FROM TIMESTAMP {0})", args);
+                case SqlFunction.Month: return CreateFunction("EXTRACT(MONTH FROM TIMESTAMP {0})", args);
+                case SqlFunction.Day: return CreateFunction("EXTRACT(DAY FROM TIMESTAMP {0})", args);
+                case SqlFunction.Hour: return CreateFunction("EXTRACT(HOUR FROM TIMESTAMP {0})", args);
+                case SqlFunction.Minute: return CreateFunction("EXTRACT(MINUTE FROM TIMESTAMP {0})", args);
+                case SqlFunction.Second: return CreateFunction("EXTRACT(SECOND FROM TIMESTAMP {0})", args);
+                case SqlFunction.DayOfYear: return CreateFunction("EXTRACT(DAYOFYEAR FROM TIMESTAMP {0})", args);
+                //case SqlFunction.Week: return CreateFunction("EXTRACT(WEEK FROM TIMESTAMP {0})", args);
+                case SqlFunction.WeekDay: return CreateFunction("EXTRACT(WEEKDAY FROM TIMESTAMP {0})", args);
+                case SqlFunction.SubString3: break;
+                case SqlFunction.SubString2: break;
+                //case SqlFunction.Left: break;
+                //case SqlFunction.Right: break;
+                case SqlFunction.Lower: break;
+                case SqlFunction.Upper: break;
+                //case SqlFunction.Ascii: break;
+                //case SqlFunction.Concat: break;
+                default: break;
+            }
+            return base.CreateFunction(function, args);
+        }
+
+        public override string ToString()
+        {
+            return "OracleDatabaseProvider";
+        }
     }
 }

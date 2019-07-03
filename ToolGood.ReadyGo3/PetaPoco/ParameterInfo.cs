@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 
 namespace ToolGood.ReadyGo3
 {
@@ -23,13 +19,14 @@ namespace ToolGood.ReadyGo3
         /// <param name="scale"></param>
         public void Add(string parameterName, object value, DbType? dbType = null, int? size = null, ParameterDirection? direction = null, byte? scale = null)
         {
-            SqlParameter parameter = new SqlParameter();
-            parameter.ParameterName = parameterName;
-            parameter.Value = value;
-            parameter.DbType = dbType;
-            parameter.ParameterDirection = direction ?? ParameterDirection.Input;
-            parameter.Size = size;
-            parameter.Scale = scale;
+            SqlParameter parameter = new SqlParameter {
+                ParameterName = parameterName,
+                Value = value,
+                DbType = dbType,
+                ParameterDirection = direction ?? ParameterDirection.Input,
+                Size = size,
+                Scale = scale
+            };
             this.Add(parameter);
         }
     }

@@ -40,8 +40,7 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         /// <returns></returns>
         public TableNameSetting TryGetSetting(string name)
         {
-            TableNameSetting setting;
-            if (Settings.TryGetValue(name, out setting)) {
+            if (Settings.TryGetValue(name, out TableNameSetting setting)) {
                 return setting;
             }
             return DefaultSetting;

@@ -9,48 +9,48 @@ namespace ToolGood.ReadyGo3.Test.Datas
     [Index("ParentID")]
     [Unique("Code")]
     [Serializable]
-    public class DbAdminMenu 
+    public class DbAdminMenu
     {
         /// <summary>
         /// ID
         /// </summary>
-        public int ID { get; set; }
+        public virtual int ID { get; set; }
         /// <summary>
         /// 父ID
         /// </summary>
-        public int ParentID { get; set; }
+        public virtual int ParentID { get; set; }
         /// <summary>
         /// CODE
         /// </summary>
-        public string Code { get; set; }
+        public virtual string Code { get; set; }
         /// <summary>
         /// 名称
         /// </summary>
-        public string Name { get; set; }
+        public virtual string Name { get; set; }
         /// <summary>
         /// 图标
         /// </summary>
-        public string Icon { get; set; }
+        public virtual string Icon { get; set; }
         /// <summary>
         /// 链接地址
         /// </summary>
-        public string Url { get; set; }
+        public virtual string Url { get; set; }
         /// <summary>
         /// 操作
         /// </summary>
-        public string Actions { get; set; }
+        public virtual string Actions { get; set; }
         /// <summary>
         /// 排序
         /// </summary>
-        public int Sort { get; set; }
+        public virtual int Sort { get; set; }
         /// <summary>
         /// 是否删除
         /// </summary>
-        public bool IsDelete { get; set; }
+        public virtual bool IsDelete { get; set; }
         /// <summary>
         /// 添加时间
         /// </summary>
-        public DateTime AddingTime { get; set; }
+        public virtual DateTime AddingTime { get; set; }
 
     }
 }

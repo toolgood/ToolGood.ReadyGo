@@ -25,6 +25,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
 
             helper.Where<DbArea>(q => q.Level == 2).ExecuteDataTable();
 
+
             var db = helper.Where<DbArea>()
                       .Where("Id=@0", 8)
                       .Where("ParentId=@0", 1)

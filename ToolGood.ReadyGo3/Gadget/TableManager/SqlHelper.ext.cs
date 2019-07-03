@@ -1,5 +1,4 @@
-﻿
-using ToolGood.ReadyGo3.Gadget.TableManager;
+﻿using ToolGood.ReadyGo3.Gadget.TableManager;
 
 namespace ToolGood.ReadyGo3
 {
@@ -13,8 +12,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 
         /// </summary>
-        public SqlTableHelper _TableHelper
-        {
+        public SqlTableHelper _TableHelper {
             get { return _tableHelper ?? (_tableHelper = new SqlTableHelper(this)); }
         }
     }

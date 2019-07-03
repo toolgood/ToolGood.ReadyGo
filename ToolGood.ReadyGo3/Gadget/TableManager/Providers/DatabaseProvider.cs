@@ -60,7 +60,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
                         databaseName = setting.DatabaseNamePrefixText + databaseName;
                     }
                     if (string.IsNullOrEmpty(setting.DatabaseNameSuffixText) == false) {
-                        databaseName = databaseName + setting.DatabaseNameNullText;
+                        databaseName += setting.DatabaseNameNullText;
                     }
                 }
 
@@ -73,7 +73,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
                         schemaName = setting.SchemaNamePrefixText + schemaName;
                     }
                     if (string.IsNullOrEmpty(setting.SchemaNameSuffixText) == false) {
-                        schemaName = schemaName + setting.SchemaNameSuffixText;
+                        schemaName += setting.SchemaNameSuffixText;
                     }
                 }
 
@@ -81,7 +81,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
                     tableName = setting.TableNamePrefixText + tableName;
                 }
                 if (string.IsNullOrEmpty(setting.TableNameSuffixText) == false) {
-                    tableName = tableName + setting.TableNameSuffixText;
+                    tableName += setting.TableNameSuffixText;
                 }
             }
             return GetTableName(databaseName, schemaName, tableName);

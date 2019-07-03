@@ -7,7 +7,7 @@ namespace ToolGood.ReadyGo3.Gadget.Events
     /// </summary>
     public class SqlEvents
     {
-        private SqlHelper _sqlHelper;
+        private readonly SqlHelper _sqlHelper;
         /// <summary>
         /// 
         /// </summary>

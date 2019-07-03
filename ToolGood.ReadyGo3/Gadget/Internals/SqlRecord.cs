@@ -28,8 +28,7 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         /// <summary>
         /// 上次Sql语句 带参数 （格式化）
         /// </summary>
-        public string LastCommand
-        {
+        public string LastCommand {
             get { return FormatCommand(LastSQL, LastArgs); }
         }
 

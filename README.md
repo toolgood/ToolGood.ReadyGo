@@ -29,9 +29,7 @@ ToolGood.ReadyGo
 * 支持动态SELECT
   * 支持返回dynamic。
   * 语法类似LINQ。
-* 动态SQL类：QTable
 * 支持存储过程。
-* 支持缓存。
 * 支持SQL执行监控。
 
 
@@ -181,51 +179,10 @@ public User FindUser(int userId,string userName,string nickName)
 * `WhereNotIn`、`WhereIn`、`Where`、`OrderBy`、`GroupBy`、`Having`、`SelectColumn`
 * `Select`、`Page`、`Single`、`SingleOrDefault`、`First`、`FirstOrDefault`、`Count`、`ExecuteDataTable`、`ExecuteDataSet`
 * `Select<T>`、`Page<T>`、`SkipTake<T>`、`Single<T>`、`SingleOrDefault<T>`、`First<T>`、`FirstOrDefault<T>`
+ 
 
-#### 5、QTable使用
+#### 5、存储过程
 ##### 5.1、定义类
-
-````
-    public class TbUser : QTable<User>
-    {
-        private QTableColumn<int> _Id;
-        private QTableColumn<int> _UserType;
-        private QTableColumn<string> _UserName;
-        private QTableColumn<string> _Password;
-        private QTableColumn<string> _NickName;
-
-        public TbUser() : base() { }
-		public TbUser(SqlHelper sqlHelper) : base(sqlHelper) { }
-		public TbUser(string connStringName) : base(connStringName) { }
-
-        protected override void Init()
-        {
-            __SchemaName__ = "";
-            __TableName__ = "";
-
-            _Id = AddColumn<int>("Id", "Id", true);
-            _UserType = AddColumn<int>("UserType", "UserType", false);
-            _UserName = AddColumn<string>("UserName", "UserName", false);
-            _Password = AddColumn<string>("Password", "Password", false);
-            _NickName = AddColumn<string>("NickName", "NickName", false);
-        }
-        public QTableColumn<int> Id { get { return _Id; } set { _Id.NewValue = value; } }
-        public QTableColumn<int> UserType { get { return _UserType; } set { _UserType.NewValue = value; } }
-        public QTableColumn<string> UserName { get { return _UserName; } set { _UserName.NewValue = value; } }
-        public QTableColumn<string> Password { get { return _Password; } set { _Password.NewValue = value; } }
-        public QTableColumn<string> NickName { get { return _NickName; } set { _NickName.NewValue = value; } }
-    }
-````
-注：可以使用*ObjectToQTable.tt*，自动批量生成。
-##### 5.2、使用代码
-```` csharp
-        var t = new TbUser();
-        var users = t.Where(t.NickName == "aadd").Select();
-````
-
-
-#### 6、存储过程
-##### 6.1、定义类
 ```` csharp
     public class Chart_GetDeviceCount : SqlProcess
     {
@@ -249,9 +206,9 @@ public User FindUser(int userId,string userName,string nickName)
     }
 ````
 
-##### 6.2、存储执行
+##### 5.2、存储执行
 ```` csharp
-    var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "wifi86", "root", "123456");
+    var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "wifi", "root", "123456");
     Chart_GetDeviceCount c = new Chart_GetDeviceCount(helper);
     c.AgentId = 0;
     c.IsAll = 0;
@@ -262,29 +219,10 @@ public User FindUser(int userId,string userName,string nickName)
     var dt= c.ExecuteScalar<int> ();
 ````
 
-#### 7、缓存
-##### 7.1、使用缓存
-```` csharp
-    var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "wifi86", "root", "123456");
-    var user = helper.UseCache(20,"tag").SingleById<User>(1);
-````
+ 
+#### 6、SQL执行监控
 
-##### 7.2、替换缓存类
-```` csharp
-using ToolGood.ReadyGo.Caches
-
-    public class NullCacheService : ICacheService
-    {
-        ...
-    }
-    var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "wifi86", "root", "123456");
-    helper._Config.CacheService = new NullCacheService();
-    helper._Config.CacheTime = 20;
-````
-
-#### 8、SQL执行监控
-
-#### 8.1、上一次SQL执行语句
+#### 6.1、上一次SQL执行语句
 
 ```` csharp
     var sql = helper._Sql.LastSQL;
@@ -296,7 +234,7 @@ using ToolGood.ReadyGo.Caches
 
 
 
-#### 8.2、查看监控
+#### 6.2、查看监控
 ```` csharp
 using ToolGood.ReadyGo.Monitor
 
@@ -307,7 +245,7 @@ var text = sqlMonitor.ToText();
 
 
 
-#### 8.3、替换监控类
+#### 6.3、替换监控类
 
 ```` csharp
 using ToolGood.ReadyGo.Monitor

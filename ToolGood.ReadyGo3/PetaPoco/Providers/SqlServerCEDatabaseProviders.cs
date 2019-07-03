@@ -21,14 +21,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             if (string.IsNullOrEmpty(parts.SqlOrderBy))
                 parts.Sql += " ORDER BY ABS(1)";
             var sqlPage = $"{parts.Sql}\nOFFSET @{args.Length} ROWS FETCH NEXT @{args.Length + 1} ROWS ONLY";
-            args = args.Concat(new object[] {skip, take}).ToArray();
+            args = args.Concat(new object[] { skip, take }).ToArray();
             return sqlPage;
         }
 
         public override object ExecuteInsert(Database db, System.Data.IDbCommand cmd, string primaryKeyName)
         {
             db.ExecuteNonQueryHelper(cmd);
-            return db.ExecuteScalar<object>("SELECT @@IDENTITY AS NewID;",new object[0]);
+            return db.ExecuteScalar<object>("SELECT @@IDENTITY AS NewID;", new object[0]);
         }
         public override string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
         {
@@ -49,6 +49,12 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             }
             sb.AppendFormat($" OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY");
             return sb.ToString();
+        }
+
+
+        public override string ToString()
+        {
+            return "SqlServerCEDatabaseProviders";
         }
     }
 }

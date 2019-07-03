@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
+using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Core
@@ -15,16 +16,16 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
     /// </summary>
     public class PocoData
     {
-        private static Cache<Type, PocoData> _pocoDatas = new Cache<Type, PocoData>();
-        private static List<Func<object, object>> _converters = new List<Func<object, object>>();
-        private static object _converterLock = new object();
-        private static MethodInfo fnGetValue = typeof(IDataRecord).GetMethod("GetValue", new Type[] { typeof(int) });
-        private static MethodInfo fnIsDBNull = typeof(IDataRecord).GetMethod("IsDBNull");
-        private static FieldInfo fldConverters = typeof(PocoData).GetField("_converters", BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
-        private static MethodInfo fnListGetItem = typeof(List<Func<object, object>>).GetProperty("Item").GetGetMethod();
-        private static MethodInfo fnInvoke = typeof(Func<object, object>).GetMethod("Invoke");
-        private Cache<string, Delegate> PocoFactories = new Cache<string, Delegate>();
-        private Type Type;
+        private static readonly Cache<Type, PocoData> _pocoDatas = new Cache<Type, PocoData>();
+        private static readonly List<Func<object, object>> _converters = new List<Func<object, object>>();
+        private static readonly object _converterLock = new object();
+        private static readonly MethodInfo fnGetValue = typeof(IDataRecord).GetMethod("GetValue", new Type[] { typeof(int) });
+        private static readonly MethodInfo fnIsDBNull = typeof(IDataRecord).GetMethod("IsDBNull");
+        private static readonly FieldInfo fldConverters = typeof(PocoData).GetField("_converters", BindingFlags.Static | BindingFlags.GetField | BindingFlags.NonPublic);
+        private static readonly MethodInfo fnListGetItem = typeof(List<Func<object, object>>).GetProperty("Item").GetGetMethod();
+        private static readonly MethodInfo fnInvoke = typeof(Func<object, object>).GetMethod("Invoke");
+        private readonly Cache<string, Delegate> PocoFactories = new Cache<string, Delegate>();
+        private readonly Type Type;
 
         /// <summary>
         /// 表信息
@@ -34,6 +35,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// 列信息
         /// </summary>
         public Dictionary<string, PocoColumn> Columns;
+        internal Dictionary<string, PocoColumn> SelectColumns;
 
         internal PocoData()
         {
@@ -56,16 +58,35 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 if (ci == null)
                     continue;
 
-                var pc = new PocoColumn();
-                pc.PropertyInfo = pi;
-                pc.PropertyName = pi.Name;
-                pc.ColumnName = ci.ColumnName;
-                pc.ResultColumn = ci.ResultColumn;
-                pc.ForceToUtc = ci.ForceToUtc;
-                pc.ResultSql = ci.ResultSql;
-
+                var pc = new PocoColumn {
+                    PropertyInfo = pi,
+                    PropertyName = pi.Name,
+                    ColumnName = ci.ColumnName,
+                    ResultColumn = ci.ResultColumn,
+                    ForceToUtc = ci.ForceToUtc,
+                    ResultSql = ci.ResultSql
+                };
                 // Store it
                 Columns.Add(pc.ColumnName, pc);
+            }
+            SelectColumns = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase);
+            foreach (var item in Columns) {
+                SelectColumns[item.Key] = item.Value;
+            }
+
+            // 支持 is_system_object 匹配 IsSystemObject
+            var names = Columns.Keys.ToList();
+            foreach (var name in names) {
+                StringBuilder sb = new StringBuilder();
+                foreach (var c in name) {
+                    if (c >= 'A' && c <= 'Z') { sb.Append("_"); }
+                    sb.Append(c);
+                }
+                if (sb[0] == '_') { sb.Remove(0, 1); }
+                var newName = sb.ToString();
+                if (SelectColumns.ContainsKey(newName) == false) {
+                    SelectColumns.Add(newName, Columns[name]);
+                }
             }
         }
         /// <summary>
@@ -78,15 +99,20 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         {
             var t = obj.GetType();
             if (t == typeof(System.Dynamic.ExpandoObject)) {
-                var pd = new PocoData();
-                pd.TableInfo = new TableInfo();
-                pd.Columns = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase);
+                var pd = new PocoData {
+                    TableInfo = new TableInfo(),
+                    Columns = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase)
+                };
                 pd.Columns.Add(primaryKeyName, new ExpandoColumn() { ColumnName = primaryKeyName });
                 pd.TableInfo.PrimaryKey = primaryKeyName;
                 pd.TableInfo.AutoIncrement = true;
                 foreach (var col in (obj as IDictionary<string, object>).Keys) {
                     if (col != primaryKeyName)
                         pd.Columns.Add(col, new ExpandoColumn() { ColumnName = col });
+                }
+                pd.SelectColumns = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase);
+                foreach (var item in pd.Columns) {
+                    pd.SelectColumns[item.Key] = item.Value;
                 }
                 return pd;
             }
@@ -117,8 +143,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="firstColumn"></param>
         /// <param name="countColumns"></param>
         /// <param name="reader"></param>
+        /// <param name="usedProxy"></param>
         /// <returns></returns>
-        public Delegate GetFactory( int firstColumn, int countColumns, IDataReader reader)
+        public Delegate GetFactory(int firstColumn, int countColumns, IDataReader reader, bool usedProxy)
         {
             #region 创建Key
             StringBuilder sb = new StringBuilder();
@@ -126,17 +153,19 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             for (int i = 0; i < countColumns; i++) {
                 sb.AppendFormat("|{0}-{1}", reader.GetName(i), reader.GetFieldType(i).FullName);
             }
+            sb.Append("|" + usedProxy.ToString());
             var key = sb.ToString();
             #endregion 创建Key
 
 
             return PocoFactories.Get(key, () => {
+                var type = usedProxy ? UpdateData.GetProxyType(Type) : Type;
                 // Create the method
-                var m = new DynamicMethod("tg_readygo_" + Guid.NewGuid().ToString().Replace("-", ""), Type, new Type[] { typeof(IDataReader) }, true);
+                var m = new DynamicMethod("tg_readygo_" + Guid.NewGuid().ToString().Replace("-", ""), type, new Type[] { typeof(IDataReader) }, true);
                 var il = m.GetILGenerator();
                 //var mapper = Singleton<StandardMapper>.Instance;
 
-                if (Type == typeof(object)) {
+                if (type == typeof(object)) {
                     // var poco=new T()
                     il.Emit(OpCodes.Newobj, typeof(System.Dynamic.ExpandoObject).GetConstructor(Type.EmptyTypes));          // obj
 
@@ -188,10 +217,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
 
                         il.Emit(OpCodes.Callvirt, fnAdd);
                     }
-                } else if (Type.IsValueType || Type == typeof(string) || Type == typeof(byte[])) {
+                } else if (type.IsValueType || type == typeof(string) || type == typeof(byte[])) {
                     // Do we need to install a converter?
                     var srcType = reader.GetFieldType(0);
-                    var converter = GetConverter(null, srcType, Type);
+                    var converter = GetConverter(null, srcType, type);
 
                     // "if (!rdr.IsDBNull(i))"
                     il.Emit(OpCodes.Ldarg_0); // rdr
@@ -217,20 +246,19 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                         il.Emit(OpCodes.Callvirt, fnInvoke);
 
                     il.MarkLabel(lblFin);
-                    il.Emit(OpCodes.Unbox_Any, Type); // value converted
+                    il.Emit(OpCodes.Unbox_Any, type); // value converted
                 } else {
                     // var poco=new T()
-                    var ctor = Type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null);
+                    var ctor = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null);
                     if (ctor == null)
-                        throw new InvalidOperationException($"Type [{Type.FullName}] should have default public or non-public constructor");
+                        throw new InvalidOperationException($"Type [{type.FullName}] should have default public or non-public constructor");
 
                     il.Emit(OpCodes.Newobj, ctor);
 
                     // Enumerate all fields generating a set assignment for the column
                     for (int i = firstColumn; i < firstColumn + countColumns; i++) {
                         // Get the PocoColumn for this db column, ignore if not known
-                        PocoColumn pc;
-                        if (!Columns.TryGetValue(reader.GetName(i), out pc))
+                        if (!SelectColumns.TryGetValue(reader.GetName(i), out PocoColumn pc))
                             continue;
 
                         // Get the source type for this column
@@ -292,20 +320,33 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                         il.MarkLabel(lblNext);
                     }
 
-                    //var fnOnLoaded = RecurseInheritedTypes<MethodInfo>(Type,
-                    //    (x) => x.GetMethod("OnLoaded", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
-                    //if (fnOnLoaded != null) {
-                    //    il.Emit(OpCodes.Dup);
-                    //    il.Emit(OpCodes.Callvirt, fnOnLoaded);
-                    //}
+                    var fnOnLoaded = RecurseInheritedTypes<MethodInfo>(type, (x) => x.GetMethod("OnLoaded", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
+                    if (fnOnLoaded != null) {
+                        il.Emit(OpCodes.Dup);
+                        il.Emit(OpCodes.Callvirt, fnOnLoaded);
+                    }
+                    var clearMethod = RecurseInheritedTypes<MethodInfo>(type, (x) => x.GetMethod("__ClearChanges__", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[0], null));
+                    if (clearMethod != null) {
+                        il.Emit(OpCodes.Dup);
+                        il.Emit(OpCodes.Callvirt, clearMethod);
+                    }
                 }
 
                 il.Emit(OpCodes.Ret);
 
                 // Cache it, return it
-                return m.CreateDelegate(Expression.GetFuncType(typeof(IDataReader), Type));
+                return m.CreateDelegate(Expression.GetFuncType(typeof(IDataReader), type));
             }
                 );
+        }
+        private static T RecurseInheritedTypes<T>(Type t, Func<Type, T> cb)
+        {
+            while (t != null) {
+                T info = cb(t);
+                if (info != null) return info;
+                t = t.BaseType;
+            }
+            return default(T);
         }
 
         private static void AddConverterToStack(ILGenerator il, Func<object, object> converter)
@@ -359,7 +400,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 }
             } else if (!dstType.IsAssignableFrom(srcType)) {
                 if (dstType.IsEnum && srcType == typeof(string)) {
-                    return delegate (object src) { return EnumMapper.EnumFromString(dstType, (string)src); };
+                    return delegate (object src) { return EnumHelper.EnumFromString(dstType, (string)src); };
                 } else if (dstType == typeof(Guid) && srcType == typeof(string)) {
                     return delegate (object src) { return Guid.Parse((string)src); };
                 } else {
@@ -370,29 +411,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             return null;
         }
 
-        private static T RecurseInheritedTypes<T>(Type t, Func<Type, T> cb)
-        {
-            while (t != null) {
-                T info = cb(t);
-                if (info != null)
-                    return info;
-                t = t.BaseType;
-            }
-            return default(T);
-        }
-
         internal static void FlushCaches()
         {
             _pocoDatas.Flush();
         }
 
-        //public string GetColumnName(string propertyName)
-        //{
-        //    return Columns.Values.First(c => c.PropertyInfo.Name.Equals(propertyName)).ColumnName;
-        //}
-
-
-
-
+        public override string ToString()
+        {
+            return Type.FullName;
+        }
     }
 }

@@ -1,7 +1,23 @@
-﻿using System;using System.Collections.Generic;using System.Globalization;using System.Linq;using System.Text;using System.Text.RegularExpressions;using ToolGood.ReadyGo3.Mvc.HtmlAgilityPack;using System.Web;namespace ToolGood.ReadyGo3.Mvc.AntiXSS{    public class HtmlSanitizer    {        /// <summary>
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using ToolGood.ReadyGo3.Mvc.HtmlAgilityPack;
+using System.Web;
+
+namespace ToolGood.ReadyGo3.Mvc.AntiXSS
+{
+    public class HtmlSanitizer
+    {
+        /// <summary>
         /// The default allowed URI schemes.
         /// </summary>
-        public static readonly ISet<string> DefaultAllowedSchemes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {            "http", "https","mailto" };        /// <summary>
+        public static readonly ISet<string> DefaultAllowedSchemes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+            "http", "https","mailto" };
+
+        /// <summary>
         /// The default allowed HTML tag names.
         /// </summary>
         public static readonly ISet<string> DefaultAllowedTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
@@ -28,14 +44,17 @@
             "details", "summary", "menuitem",
             // document elements
             "html", /*"head",*/ "body"
-        };        /// <summary>
+        };
+
+        /// <summary>
         /// The default allowed HTML attributes.
         /// </summary>
         public static readonly ISet<string> DefaultAllowedAttributes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
             // https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes
             "abbr", "accept", "accept-charset", "accesskey",
             "action", "align", "alt", "axis", "bgcolor", "border", "cellpadding",
-            "cellspacing", "char", "charoff", "charset", "checked", "cite",  "class",            "clear", "cols", "colspan", "color", "compact", "coords", "datetime",
+            "cellspacing", "char", "charoff", "charset", "checked", "cite",  "class",
+            "clear", "cols", "colspan", "color", "compact", "coords", "datetime",
             "dir", "disabled", "enctype", "for", "frame", "headers", "height",
             "href", "hreflang", "hspace", /* "id", */ "ismap", "label", "lang",
             "longdesc", "maxlength", "media", "method", "multiple", "name",
@@ -69,10 +88,15 @@
             "autocomplete", // <form>, <input>
             "autosave", // <input>
             "action", "background", "dynsrc", "href", "lowsrc", "src"
-        };        /// <summary>
+        };
+
+        /// <summary>
         /// The default URI attributes.
         /// </summary>
-        public static readonly ISet<string> DefaultUriAttributes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {            "action", "background", "dynsrc", "href", "lowsrc", "src" };        /// <summary>
+        public static readonly ISet<string> DefaultUriAttributes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+            "action", "background", "dynsrc", "href", "lowsrc", "src" };
+
+        /// <summary>
         /// The default allowed CSS properties.
         /// </summary>
         public static readonly ISet<string> DefaultAllowedCssProperties = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
@@ -100,15 +124,166 @@
             "page-break-inside", "quotes", "right", "table-layout",
             "text-align", "text-decoration", "text-indent", "text-transform",
             "top", "unicode-bidi", "vertical-align", "visibility", "white-space",
-            "widows", "width", "word-spacing", "z-index" };        // from http://genshi.edgewall.org/        private static readonly Regex CssUnicodeEscapes = new Regex(@"\\([0-9a-fA-F]{1,6})\s?|\\([^\r\n\f0-9a-fA-F'""{};:()#*])", RegexOptions.Compiled);
+            "widows", "width", "word-spacing", "z-index" };
+
+        // from http://genshi.edgewall.org/
+        private static readonly Regex CssUnicodeEscapes = new Regex(@"\\([0-9a-fA-F]{1,6})\s?|\\([^\r\n\f0-9a-fA-F'""{};:()#*])", RegexOptions.Compiled);
         private static readonly Regex CssComments = new Regex(@"/\*.*?\*/", RegexOptions.Compiled);
         // IE6 <http://heideri.ch/jso/#80>
         private static readonly Regex CssExpression = new Regex(@"[eE\uFF25\uFF45][xX\uFF38\uFF58][pP\uFF30\uFF50][rR\u0280\uFF32\uFF52][eE\uFF25\uFF45][sS\uFF33\uFF53]{2}[iI\u026A\uFF29\uFF49][oO\uFF2F\uFF4F][nN\u0274\uFF2E\uFF4E]", RegexOptions.Compiled);
         private static readonly Regex CssUrl = new Regex(@"[Uu][Rr\u0280][Ll\u029F]\s*\(\s*(['""]?)\s*([^'"")\s]+)\s*(['""]?)\s*", RegexOptions.Compiled);
-        public static string Sanitize(string html)        {            HtmlDocument document = new HtmlDocument();            document.OptionFixNestedTags = true;            document.OptionUseIdAttribute = false;            document.LoadHtml(html);            TryRemoveTag(document.DocumentNode);            html = GetBody(document.DocumentNode);            document = null;            return html;        }        private static string GetBody(HtmlNode node)        {            if (node.HasChildNodes) {                if (node.FirstChild.Name == "html") {                    foreach (var nd in node.FirstChild.ChildNodes) {                        if (nd.Name == "body") {                            return nd.InnerHtml;                        }                    }                    return "";                }            }            return node.InnerHtml;        }        private static void TryRemoveTag(HtmlNode node)        {            if (node.NodeType == HtmlNodeType.Comment) { node.Remove(); return; }            if (node.NodeType == HtmlNodeType.Element) {                if (DefaultAllowedTags.Contains(node.Name) == false) { node.Remove(); return; }                TryRemoveTagAttribute(node.Attributes);                for (int i = node.ChildNodes.Count - 1; i >= 0; i--) {                    var cn = node.ChildNodes[i];                    TryRemoveTag(cn);                }            }            if (node.NodeType == HtmlNodeType.Text) {                var s = HttpUtility.HtmlDecode(node.InnerHtml);                var temp = new StringBuilder();                for (var i = 0; i < s.Length; i++) {                    switch (s[i]) {                        case '&': temp.Append("&amp;"); break;                        case '\u00a0': temp.Append("&nbsp;"); break;                        //case '"': temp.Append("&quot;"); break;                        case '<': temp.Append("&lt;"); break;                        case '>': temp.Append("&gt;"); break;                        default: temp.Append(s[i]); break;                    }                }                node.InnerHtml = temp.ToString();            }            if (node.NodeType == HtmlNodeType.Document) {                for (int i = node.ChildNodes.Count - 1; i >= 0; i--) {                    var cn = node.ChildNodes[i];                    TryRemoveTag(cn);                }            }        }        private static void TryRemoveTagAttribute(HtmlAttributeCollection atts)        {            for (int i = atts.Count - 1; i >= 0; i--) {                var item = atts[i];                if (DefaultAllowedAttributes.Contains(item.Name) == false) { item.Remove(); continue; }                if (item.Value.Contains("&{")) { item.Remove(); continue; }                if (DefaultUriAttributes.Contains(item.Name)) {                    if (TryRemoveSchemes(item)) continue;                }                if (item.Name.ToLower() == "style") {                    TryRemoveStyle(item);                }            }        }        private static bool TryRemoveSchemes(HtmlAttribute attribute)        {            var v = attribute.Value;            if (string.IsNullOrEmpty(v) == false) {                v = HttpUtility.HtmlDecode(v);                if (v.Contains("&#") == false) {                    var url = SanitizeUrl(v);                    if (string.IsNullOrEmpty(url) == false) {                        attribute.Value = url;                        return false;                    }                }            }            attribute.Remove();            return true;        }        private static void TryRemoveStyle(HtmlAttribute attribute)        {            var css = attribute.Value;            if (string.IsNullOrWhiteSpace(css)) {                attribute.Remove();                return;            }            var isChange = false;            Dictionary<string, string> dictionary = new Dictionary<string, string>();            css = HttpUtility.HtmlDecode(css);            var sp = css.Split(';');            foreach (var s in sp) {                var index = s.IndexOf(':');                if (index == -1) { isChange = true; continue; }                var key = DecodeCss(s.Substring(0, index)).Trim();                var val = DecodeCss(s.Substring(index + 1)).Trim();                if (val.Contains("<")) { isChange = true; continue; }                if (!DefaultAllowedCssProperties.Contains(key)) { isChange = true; continue; }                if (CssExpression.IsMatch(val)) { isChange = true; continue; }                var urls = CssUrl.Matches(val);
+
+
+        public static string Sanitize(string html)
+        {
+            HtmlDocument document = new HtmlDocument();
+            document.OptionFixNestedTags = true;
+            document.OptionUseIdAttribute = false;
+
+            document.LoadHtml(html);
+            TryRemoveTag(document.DocumentNode);
+            html = GetBody(document.DocumentNode);
+            document = null;
+            return html;
+        }
+        private static string GetBody(HtmlNode node)
+        {
+            if (node.HasChildNodes) {
+                if (node.FirstChild.Name == "html") {
+                    foreach (var nd in node.FirstChild.ChildNodes) {
+                        if (nd.Name == "body") {
+                            return nd.InnerHtml;
+                        }
+                    }
+                    return "";
+                }
+            }
+            return node.InnerHtml;
+        }
+
+        private static void TryRemoveTag(HtmlNode node)
+        {
+            if (node.NodeType == HtmlNodeType.Comment) { node.Remove(); return; }
+            if (node.NodeType == HtmlNodeType.Element) {
+                if (DefaultAllowedTags.Contains(node.Name) == false) { node.Remove(); return; }
+                TryRemoveTagAttribute(node.Attributes);
+
+                for (int i = node.ChildNodes.Count - 1; i >= 0; i--) {
+                    var cn = node.ChildNodes[i];
+                    TryRemoveTag(cn);
+                }
+            }
+            if (node.NodeType == HtmlNodeType.Text) {
+                var s = HttpUtility.HtmlDecode(node.InnerHtml);
+                var temp = new StringBuilder();
+                for (var i = 0; i < s.Length; i++) {
+                    switch (s[i]) {
+                        case '&': temp.Append("&amp;"); break;
+                        case '\u00a0': temp.Append("&nbsp;"); break;
+                        //case '"': temp.Append("&quot;"); break;
+                        case '<': temp.Append("&lt;"); break;
+                        case '>': temp.Append("&gt;"); break;
+                        default: temp.Append(s[i]); break;
+                    }
+                }
+                node.InnerHtml = temp.ToString();
+            }
+            if (node.NodeType == HtmlNodeType.Document) {
+                for (int i = node.ChildNodes.Count - 1; i >= 0; i--) {
+                    var cn = node.ChildNodes[i];
+                    TryRemoveTag(cn);
+                }
+            }
+
+
+        }
+        private static void TryRemoveTagAttribute(HtmlAttributeCollection atts)
+        {
+            for (int i = atts.Count - 1; i >= 0; i--) {
+                var item = atts[i];
+                if (DefaultAllowedAttributes.Contains(item.Name) == false) { item.Remove(); continue; }
+                if (item.Value.Contains("&{")) { item.Remove(); continue; }
+                if (DefaultUriAttributes.Contains(item.Name)) {
+                    if (TryRemoveSchemes(item)) continue;
+                }
+                if (item.Name.ToLower() == "style") {
+                    TryRemoveStyle(item);
+                }
+            }
+        }
+        private static bool TryRemoveSchemes(HtmlAttribute attribute)
+        {
+            var v = attribute.Value;
+            if (string.IsNullOrEmpty(v) == false) {
+                v = HttpUtility.HtmlDecode(v);
+                if (v.Contains("&#") == false) {
+                    var url = SanitizeUrl(v);
+                    if (string.IsNullOrEmpty(url) == false) {
+                        attribute.Value = url;
+                        return false;
+                    }
+                }
+            }
+            attribute.Remove();
+            return true;
+        }
+
+
+        private static void TryRemoveStyle(HtmlAttribute attribute)
+        {
+            var css = attribute.Value;
+            if (string.IsNullOrWhiteSpace(css)) {
+                attribute.Remove();
+                return;
+            }
+            var isChange = false;
+            Dictionary<string, string> dictionary = new Dictionary<string, string>();
+            css = HttpUtility.HtmlDecode(css);
+
+            var sp = css.Split(';');
+
+
+            foreach (var s in sp) {
+                var index = s.IndexOf(':');
+                if (index == -1) { isChange = true; continue; }
+                var key = DecodeCss(s.Substring(0, index)).Trim();
+                var val = DecodeCss(s.Substring(index + 1)).Trim();
+                if (val.Contains("<")) { isChange = true; continue; }
+                if (!DefaultAllowedCssProperties.Contains(key)) { isChange = true; continue; }
+                if (CssExpression.IsMatch(val)) { isChange = true; continue; }
+
+                var urls = CssUrl.Matches(val);
 
                 if (urls.Count > 0) {
-                    if (urls.Cast<Match>().Any(m => SanitizeUrl(m.Groups[2].Value) == null)) { isChange = true; continue; }                    var t = CssUrl.Replace(val, m => ("url(&quot;" + SanitizeUrl(m.Groups[2].Value) + "&quot;"));                    isChange = true;                    dictionary[key] = t;                } else {                    if (val.Contains("\\")) { isChange = true; continue; }                    if (val.Contains("/")) { isChange = true; continue; }                    dictionary[key] = val;                }            }            if (isChange == false) return;            if (dictionary.Count == 0) {                attribute.Remove();                return;            }            StringBuilder sb = new StringBuilder();            foreach (var item in dictionary) {                sb.Append(item.Key);                sb.Append(":");                sb.Append(item.Value);                sb.Append(";");            }            sb.Remove(sb.Length - 1, 1);            attribute.Value = sb.ToString();        }        protected static string DecodeCss(string css)
+                    if (urls.Cast<Match>().Any(m => SanitizeUrl(m.Groups[2].Value) == null)) { isChange = true; continue; }
+                    var t = CssUrl.Replace(val, m => ("url(&quot;" + SanitizeUrl(m.Groups[2].Value) + "&quot;"));
+                    isChange = true;
+                    dictionary[key] = t;
+                } else {
+                    if (val.Contains("\\")) { isChange = true; continue; }
+                    if (val.Contains("/")) { isChange = true; continue; }
+                    dictionary[key] = val;
+                }
+            }
+
+            if (isChange == false) return;
+            if (dictionary.Count == 0) {
+                attribute.Remove();
+                return;
+            }
+
+            StringBuilder sb = new StringBuilder();
+            foreach (var item in dictionary) {
+                sb.Append(item.Key);
+                sb.Append(":");
+                sb.Append(item.Value);
+                sb.Append(";");
+            }
+            sb.Remove(sb.Length - 1, 1);
+            attribute.Value = sb.ToString();
+        }
+
+        protected static string DecodeCss(string css)
         {
             var r = CssUnicodeEscapes.Replace(css, m => {
                 if (m.Groups[1].Success)
@@ -120,7 +295,12 @@
             r = CssComments.Replace(r, m => "");
 
             return r;
-        }        #region SanitizeUrl        /// <summary>
+        }
+
+
+
+        #region SanitizeUrl
+        /// <summary>
         /// Sanitizes a URL.
         /// </summary>
         /// <param name="url">The URL.</param>
@@ -144,7 +324,52 @@
             }
 
             return EncodeUrl(iri.Value);
-        }        private static string EncodeUrl(string url)        {            url = url.Replace("&quot;", "");            var hasHash = url.Contains('#');            if (url.Contains('?') == false && hasHash == false) return url;            string sharp = null;            if (hasHash) {                var index = url.LastIndexOf("#");                if (url.Length > index) {                    sharp = url.Substring(index + 1);                }                url = url.Substring(0, index);            }            if (url.Contains('?')) {                var sb = new StringBuilder();                var index = url.IndexOf('?');                sb.Append(url.Substring(0, index + 1));                var sp = url.Substring(index + 1).Split('&');                foreach (var item in sp) {                    if (string.IsNullOrEmpty(item)) continue;                    index = item.IndexOf('=');                    if (index == -1) {                        sb.Append(HttpUtility.UrlEncode(item));                        sb.Append('=');                    } else {                        sb.Append(HttpUtility.UrlEncode(item.Substring(0, index)));                        sb.Append('=');                        sb.Append(HttpUtility.UrlEncode(item.Substring(index + 1)));                    }                    sb.Append('&');                }                sb.Remove(sb.Length - 1, 1);                url = sb.ToString();            }            if (hasHash) {                return url + "#" + sharp;            }            return url;        }        private static readonly Regex SchemeRegex = new Regex(@"^\s*([^\/#]*?)(?:\:|&#0*58|&#x0*3a)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        }
+        private static string EncodeUrl(string url)
+        {
+            url = url.Replace("&quot;", "");
+            var hasHash = url.Contains('#');
+            if (url.Contains('?') == false && hasHash == false) return url;
+            string sharp = null;
+            if (hasHash) {
+                var index = url.LastIndexOf("#");
+                if (url.Length > index) {
+                    sharp = url.Substring(index + 1);
+                }
+                url = url.Substring(0, index);
+            }
+
+            if (url.Contains('?')) {
+                var sb = new StringBuilder();
+                var index = url.IndexOf('?');
+                sb.Append(url.Substring(0, index + 1));
+                var sp = url.Substring(index + 1).Split('&');
+                foreach (var item in sp) {
+                    if (string.IsNullOrEmpty(item)) continue;
+                    index = item.IndexOf('=');
+                    if (index == -1) {
+                        sb.Append(HttpUtility.UrlEncode(item));
+                        sb.Append('=');
+                    } else {
+                        sb.Append(HttpUtility.UrlEncode(item.Substring(0, index)));
+                        sb.Append('=');
+                        sb.Append(HttpUtility.UrlEncode(item.Substring(index + 1)));
+                    }
+                    sb.Append('&');
+                }
+                sb.Remove(sb.Length - 1, 1);
+                url = sb.ToString();
+            }
+
+            if (hasHash) {
+                return url + "#" + sharp;
+            }
+            return url;
+        }
+
+
+
+        private static readonly Regex SchemeRegex = new Regex(@"^\s*([^\/#]*?)(?:\:|&#0*58|&#x0*3a)", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
         /// <summary>
         /// Tries to create a safe <see cref="Iri"/> object from a string.
@@ -161,4 +386,9 @@
             }
 
             return new Iri { Value = url };
-        }        #endregion    }}
+        }
+        #endregion
+
+
+    }
+}

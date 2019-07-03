@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 #if !NET40
 
@@ -10,6 +11,18 @@ namespace ToolGood.ReadyGo3.LinQ
 {
     partial class WhereHelper<T1>
     {
+        #region UseCancellationToken
+
+        /// <summary>
+        /// 使用 CancellationToken
+        /// </summary>
+        /// <param name="token"></param>
+        public WhereHelper<T1> UseCancellationToken(CancellationToken token)
+        {
+            _sqlhelper.UseCancellationToken(token);
+            return this;
+        }
+        #endregion
 
         #region 06 查询 Select Page SkipTake Single SingleOrDefault First FirstOrDefault
 
@@ -206,7 +219,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public Task<int> SelectCountAsync(string selectSql = null, bool distinct = false)
         {
-            return _sqlhelper.getDatabase().ExecuteScalarAsync<int>(GetCountSql(selectSql, distinct), _args.ToArray());
+            return _sqlhelper.GetDatabase().ExecuteScalarAsync<int>(GetCountSql(selectSql, distinct), _args.ToArray());
         }
         /// <summary>
         /// 执行返回DataTable

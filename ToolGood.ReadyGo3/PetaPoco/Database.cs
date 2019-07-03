@@ -8,7 +8,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using ToolGood.ReadyGo3.DataCentxt.Exceptions;
+using ToolGood.ReadyGo3.Exceptions;
+using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.PetaPoco.Utilities;
@@ -108,7 +109,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (_sharedConnectionDepth > 0) {
                 _sharedConnectionDepth--;
                 if (_sharedConnectionDepth == 0) {
-                    OnConnectionClosing(_sharedConnection);
+                    OnConnectionClosing();
                     _sharedConnection.Dispose();
                     _sharedConnection = null;
                 }
@@ -304,7 +305,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
 
         // Create a command
-        private static Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
+        private static readonly Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
         /// <summary>
         /// 
         /// </summary>
@@ -334,7 +335,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 } else {
                     foreach (var item in args) {
                         var items = item as IList;
-                        if (items!=null) {
+                        if (items != null) {
                             foreach (var obj in items) {
                                 AddParam(cmd, obj, null);
                             }
@@ -396,8 +397,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <summary>
         ///     Called when DB connection closed
         /// </summary>
-        /// <param name="conn">The soon to be closed IDBConnection</param>
-        public void OnConnectionClosing(IDbConnection conn)
+        public void OnConnectionClosing()
         {
             _sqlHelper._sqlMonitor.ConnectionClosing();
         }
@@ -486,7 +486,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         // Handle nullable types
                         Type u = Nullable.GetUnderlyingType(typeof(T));
                         if (u != null && (val == null || val == DBNull.Value))
-                            return default(T);
+                            return default;
 
                         return (T)Convert.ChangeType(val, u ?? typeof(T));
                     }
@@ -496,7 +496,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             } catch (Exception x) {
                 if (OnException(x))
                     throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return default(T);
+                return default;
             }
         }
         /// <summary>
@@ -540,7 +540,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             } catch (Exception x) {
                 if (OnException(x))
                     throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return default(DataTable);
+                return default;
             }
         }
         //#if !NETSTANDARD2_0
@@ -571,7 +571,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             } catch (Exception x) {
                 if (OnException(x))
                     throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return default(DataSet);
+                return default;
             }
         }
         //#endif
@@ -598,8 +598,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
 
             // Split the SQL
-            SQLParts parts;
-            if (!_provider.PagingUtility.SplitSQL(sql, out parts))
+            if (!_provider.PagingUtility.SplitSQL(sql, out SQLParts parts))
                 throw new Exception("Unable to parse SQL statement for paged query");
 
             sqlPage = _provider.BuildPageQuery(skip, take, parts, ref args);
@@ -672,8 +671,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns></returns>
         public IEnumerable<T> Query<T>(long skip, long take, string sql, object[] args)
         {
-            string sqlCount, sqlPage;
-            BuildPageQueries<T>(skip, take, sql, ref args, out sqlCount, out sqlPage);
+            BuildPageQueries<T>(skip, take, sql, ref args, out string sqlCount, out string sqlPage);
             return Query<T>(sqlPage, args);
         }
 
@@ -708,7 +706,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                         yield break;
                     }
-                    var factory = pd.GetFactory(0, r.FieldCount, r) as Func<IDataReader, T>;
+                    var factory = pd.GetFactory(0, r.FieldCount, r, _sqlHelper._use_proxyType) as Func<IDataReader, T>;
                     using (r) {
                         while (true) {
                             T poco;
@@ -793,9 +791,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var pd = PocoData.ForObject(poco, primaryKeyName);
                         var type = poco.GetType();
-                        var sql = insert.Get(Tuple.Create(type, _sqlHelper._sqlType, 1), () => {
-                            return CteateInsertSql(pd, 1, tableName, primaryKeyName, autoIncrement);
-                        });
+                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, 1, tableName, primaryKeyName, autoIncrement);
 
                         foreach (var i in pd.Columns) {
                             if (i.Value.ResultColumn) continue;
@@ -804,15 +800,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
                             }
                             AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
                         }
-                        cmd.CommandText = sql;
 
                         if (!autoIncrement) {
                             DoPreExecute(cmd);
                             cmd.ExecuteNonQuery();
                             OnExecutedCommand(cmd);
 
-                            PocoColumn pkColumn;
-                            if (primaryKeyName != null && pd.Columns.TryGetValue(primaryKeyName, out pkColumn))
+                            if (primaryKeyName != null && pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pkColumn))
                                 return pkColumn.GetValue(poco);
                             else
                                 return null;
@@ -822,8 +816,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
                         // Assign the ID back to the primary key property
                         if (primaryKeyName != null && !poco.GetType().Name.Contains("AnonymousType")) {
-                            PocoColumn pc;
-                            if (pd.Columns.TryGetValue(primaryKeyName, out pc)) {
+                            if (pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pc)) {
                                 pc.SetValue(poco, pc.ChangeType(id));
                             }
                         }
@@ -860,7 +853,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 
 
-        private static Cache<Tuple<Type, SqlType, int>, string> insert = new Cache<Tuple<Type, SqlType, int>, string>();
         /// <summary>
         /// 插入列表
         /// </summary>
@@ -877,11 +869,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var index = 0;
             while (index < list.Count) {
                 var count = list.Count - index;
-                int size = 1;
+                int size;
                 if (count >= 50) {
                     size = 50;
                 } else if (count >= 10) {
                     size = 10;
+                } else {
+                    size = count;
                 }
                 ExecuteInsert<T>(tableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, size);
                 index += size;
@@ -895,21 +889,19 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0], CommandType.Text)) {
                         var type = typeof(T);
                         var pd = PocoData.ForType(type);
-                        var sql = insert.Get(Tuple.Create(type, _sqlHelper._sqlType, size), () => {
-                            return CteateInsertSql(pd, size, tableName, primaryKeyName, autoIncrement);
-                        });
+                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, size, tableName, primaryKeyName, autoIncrement);
+
+                        var cols = pd.Columns.Where(q => q.Value.ResultColumn == false).Select(q=>q.Value).ToList();
+                        if (autoIncrement && primaryKeyName != null) {
+                            cols.RemoveAll(q => string.Compare(q.ColumnName, primaryKeyName, true) == 0);
+                        }
 
                         for (int j = 0; j < size; j++) {
                             var poco = list[index2 + j];
-                            foreach (var i in pd.Columns) {
-                                if (i.Value.ResultColumn) continue;
-                                if (autoIncrement && primaryKeyName != null && string.Compare(i.Value.ColumnName, primaryKeyName, true) == 0) {
-                                    continue;
-                                }
-                                AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
+                            foreach (var c in cols) {
+                                AddParam(cmd, c.GetValue(poco), c.PropertyInfo);
                             }
                         }
-                        cmd.CommandText = sql;
 
                         DoPreExecute(cmd);
                         cmd.ExecuteNonQuery();
@@ -924,56 +916,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        private string CteateInsertSql(PocoData pd, int size, string tableName, string primaryKeyName, bool autoIncrement)
-        {
-            var names = new List<string>();
-            var values = new List<string>();
-            var index = 0;
-            foreach (var i in pd.Columns) {
-                if (i.Value.ResultColumn) continue;
-
-                // Don't insert the primary key (except under oracle where we need bring in the next sequence value)
-                if (autoIncrement && primaryKeyName != null && string.Compare(i.Value.ColumnName, primaryKeyName, true) == 0) {
-                    // Setup auto increment expression
-                    string autoIncExpression = _provider.GetAutoIncrementExpression(pd.TableInfo);
-                    if (autoIncExpression != null) {
-                        names.Add(i.Value.ColumnName);
-                        values.Add(autoIncExpression);
-                    }
-                    continue;
-                }
-
-                names.Add(_provider.EscapeSqlIdentifier(i.Value.ColumnName));
-                values.Add(_paramPrefix + index.ToString());
-                index++;
-            }
-
-            string outputClause = String.Empty;
-            if (autoIncrement) {
-                outputClause = _provider.GetInsertOutputClause(primaryKeyName);
-            }
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("INSERT INTO {0} ({1}){2} VALUES ({3})",
-                _provider.EscapeTableName(tableName),
-                string.Join(",", names.ToArray()),
-                outputClause,
-                string.Join(",", values.ToArray())
-                );
-
-            var k = index;
-            for (int i = 1; i < size; i++) {
-                sb.Append(",(");
-                for (int j = 0; j < k; j++) {
-                    if (j > 0) { sb.Append(","); }
-                    sb.Append(_paramPrefix);
-                    sb.Append(index.ToString());
-                    index++;
-                }
-                sb.Append(")");
-            }
-            return sb.ToString();
-        }
 
         #endregion
 
@@ -990,7 +932,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 throw new ArgumentNullException("poco");
 
             var pd = PocoData.ForType(poco.GetType());
-            return ExecuteUpdate(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null, null);
+            return ExecuteUpdate(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
 
         /// <summary>
@@ -1011,8 +953,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return Execute(string.Format("UPDATE {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
 
-        private static Cache<Tuple<Type, SqlType>, string> update = new Cache<Tuple<Type, SqlType>, string>();
-        private int ExecuteUpdate(string tableName, string primaryKeyName, object poco, object primaryKeyValue, IEnumerable<string> columns)
+        private int ExecuteUpdate(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
         {
             try {
                 OpenSharedConnection();
@@ -1020,23 +961,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = poco.GetType();
                         var pd = PocoData.ForObject(poco, primaryKeyName);
-                        var sql = update.Get(Tuple.Create(type, _sqlHelper._sqlType), () => {
-                            var sb = new StringBuilder();
-                            var index = 0;
-                            foreach (var i in pd.Columns) {
-                                if (String.Compare(i.Value.ColumnName, primaryKeyName, StringComparison.OrdinalIgnoreCase) == 0) continue;
-                                if (i.Value.ResultColumn) continue;
-
-                                // Build the sql
-                                if (index > 0) sb.Append(", ");
-                                sb.AppendFormat("{0} = {1}{2}", _provider.EscapeSqlIdentifier(i.Value.ColumnName), _paramPrefix, index++);
-                            }
-
-                            return string.Format("UPDATE {0} SET {1} WHERE {2} = {3}{4}",
-                                _provider.EscapeTableName(tableName), sb.ToString(), _provider.EscapeSqlIdentifier(primaryKeyName), _paramPrefix, index++);
-                        });
-
-                        cmd.CommandText = sql;
+                        cmd.CommandText = CrudCache.GetUpdateSql(_provider, _paramPrefix, pd, tableName, primaryKeyName);
 
                         foreach (var i in pd.Columns) {
                             if (i.Value.ResultColumn) continue;
@@ -1098,8 +1023,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             // If primary key value not specified, pick it up from the object
             if (primaryKeyValue == null) {
                 var pd = PocoData.ForObject(poco, primaryKeyName);
-                PocoColumn pc;
-                if (pd.Columns.TryGetValue(primaryKeyName, out pc)) {
+                if (pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pc)) {
                     primaryKeyValue = pc.GetValue(poco);
                 }
             }
@@ -1154,8 +1078,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns>The number of affected rows</returns>
         public int Delete<T>(string sql, params object[] args)
         {
-
-
             var pd = PocoData.ForType(typeof(T));
             return Execute(string.Format("DELETE FROM {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
         }
@@ -1182,7 +1104,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (IsNew(primaryKeyName, pd, poco)) {
                 ExecuteInsert(tableName, primaryKeyName, true, poco);
             } else {
-                ExecuteUpdate(tableName, primaryKeyName, poco, null, null);
+                ExecuteUpdate(tableName, primaryKeyName, poco, null);
             }
         }
 
@@ -1192,9 +1114,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 throw new InvalidOperationException("IsNew() and Save() are only supported on tables with identity (inc auto-increment) primary key columns");
 
             object pk;
-            PocoColumn pc;
             PropertyInfo pi;
-            if (pd.Columns.TryGetValue(primaryKeyName, out pc)) {
+            if (pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pc)) {
                 pk = pc.GetValue(poco);
                 pi = pc.PropertyInfo;
             } else {
@@ -1214,15 +1135,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (!pi.PropertyType.IsValueType)
                 return pk == null;
             if (type == typeof(long))
-                return (long)pk == default(long);
+                return (long)pk == default;
             if (type == typeof(int))
-                return (int)pk == default(int);
+                return (int)pk == default;
             if (type == typeof(Guid))
-                return (Guid)pk == default(Guid);
+                return (Guid)pk == default;
             if (type == typeof(ulong))
-                return (ulong)pk == default(ulong);
+                return (ulong)pk == default;
             if (type == typeof(uint))
-                return (uint)pk == default(uint);
+                return (uint)pk == default;
             if (type == typeof(short))
                 return (short)pk == default(short);
             if (type == typeof(ushort))
@@ -1294,15 +1215,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
         #region Member Fields
 
         // Member variables
-        private SqlHelper _sqlHelper;
-        private DatabaseProvider _provider;
+        private readonly SqlHelper _sqlHelper;
+        private readonly DatabaseProvider _provider;
         private IDbConnection _sharedConnection;
         private IDbTransaction _transaction;
         private int _sharedConnectionDepth;
         private int _transactionDepth;
         private bool _transactionCancelled;
-        private string _paramPrefix;
-        private DbProviderFactory _factory;
+        private readonly string _paramPrefix;
+        private readonly DbProviderFactory _factory;
         private bool _isDisposable;
 
         #endregion

@@ -4,7 +4,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
 {
     public class SqlTableHelper
     {
-        private SqlHelper _sqlHelper;
+        private readonly SqlHelper _sqlHelper;
 
         public SqlTableHelper(SqlHelper sqlhelper)
         {

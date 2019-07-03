@@ -5,10 +5,10 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
+using ToolGood.ReadyGo3.Enums;
+using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;
-using ToolGood.ReadyGo3.DataCentxt.Enums;
 
 namespace ToolGood.ReadyGo3.LinQ.Expressions
 {
@@ -18,7 +18,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
     public class SqlExpression
     {
         private const string sep = " ";
-        private DataCentxt.DatabaseProvider provider;
+        private readonly DatabaseProvider provider;
 
         /// <summary>
         /// SqlExpression
@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         /// <param name="type"></param>
         public SqlExpression(SqlType type)
         {
-            this.provider = DataCentxt.DatabaseProvider.Resolve(type);
+            this.provider = DatabaseProvider.Resolve(type);
         }
 
 
@@ -34,39 +34,37 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         #region 可重写的方法
         private string GetQuotedValue(string paramValue)
         {
-            return "'" + paramValue.Replace(@"\", @"\\").Replace("'", @"\'") + "'";
+            var txt = (paramValue.ToString()).ToEscapeParam();
+            return "'" + txt + "'";
         }
         private string GetQuotedValue(object value, Type fieldType)
         {
             if (value == null) return "NULL";
 
             if (fieldType.IsEnum) {
-                var isEnumFlags = fieldType.IsEnum;
-                long enumValue;
-                if (!isEnumFlags && Int64.TryParse(value.ToString(), out enumValue)) {
-                    value = Enum.ToObject(fieldType, enumValue).ToString();
+                if (EnumHelper.UseEnumString(fieldType)) {
+                    var txt = (value.ToString()).ToEscapeParam();
+                    return "'" + txt + "'";
                 }
-                var enumString = value.ToString();
+                return $"'{Convert.ToInt64(value)}'";
+                //var isEnumFlags = fieldType.IsEnum;
+                //long enumValue;
+                //if (!isEnumFlags && Int64.TryParse(value.ToString(), out enumValue)) {
+                //    value = Enum.ToObject(fieldType, enumValue).ToString();
+                //}
+                //var enumString = value.ToString();
 
-                return !isEnumFlags
-                    ? GetQuotedValue(enumString.Trim('"'))
-                    : enumString;
+                //return !isEnumFlags
+                //    ? GetQuotedValue(enumString.Trim('"'))
+                //    : enumString;
             }
 
             var typeCode = Type.GetTypeCode(fieldType);
             switch (typeCode) {
-                case TypeCode.Boolean:
-                    return (bool)value ? "1" : "0";
-
-                case TypeCode.Single:
-                    return ((float)value).ToString(CultureInfo.InvariantCulture);
-
-                case TypeCode.Double:
-                    return ((double)value).ToString(CultureInfo.InvariantCulture);
-
-                case TypeCode.Decimal:
-                    return ((decimal)value).ToString(CultureInfo.InvariantCulture);
-
+                case TypeCode.Boolean: return (bool)value ? "1" : "0";
+                case TypeCode.Single: return ((float)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Double: return ((double)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Decimal: return ((decimal)value).ToString(CultureInfo.InvariantCulture);
                 case TypeCode.Byte:
                 case TypeCode.Int16:
                 case TypeCode.Int32:
@@ -79,9 +77,12 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                     return Convert.ChangeType(value, fieldType).ToString();
                     //break;
             }
-
-            if (fieldType == typeof(TimeSpan))
-                return ((TimeSpan)value).Ticks.ToString(CultureInfo.InvariantCulture);
+            if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
+            if (fieldType == typeof(TimeSpan)) return ((TimeSpan)value).Ticks.ToString(CultureInfo.InvariantCulture);
+            if (fieldType == typeof(byte[])) {
+                var txt = Encoding.BigEndianUnicode.GetString((byte[])value);
+                return "X'" + txt + "'";
+            }
             // TO： add 用于sqlite
 
             return GetQuotedValue(value.ToString());
@@ -118,7 +119,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         {
             //if (call.Method.DeclaringType != typeof(SQL)) throw new Exception("无效列！！！");
             var callName = call.Method.Name;
-            if (callName == "CountAll") return "COUNT(*)";
+            //if (callName == "CountAll") return "COUNT(*)";
 
             List<Object> args = new List<object>();
             var original = call.Arguments;
@@ -133,9 +134,9 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 }
             }
 
-            if (callName == "CountOfDistinct") {
-                return string.Format("COUNT(DISTINCT {0})", quotedColName);
-            }
+            //if (callName == "CountOfDistinct") {
+            //    return string.Format("COUNT(DISTINCT {0})", quotedColName);
+            //}
             return string.Format("{0}({1}{2})",
                 callName.ToUpper(), quotedColName,
                 args.Count == 1 ? string.Format(",'{0}'", args[0]) : ""
@@ -147,17 +148,17 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         {
             List<Object> _args = this.VisitExpressionList(m.Arguments);
             var quotedColName = Visit(m.Object);
-            var statement = "";
             var wildcardArg = _args.Count > 0 ? _args[0] != null ? _args[0].ToString() : "" : "";
+            string statement;
             switch (m.Method.Name) {
                 case "Trim": statement = provider.CreateFunction(SqlFunction.Trim, quotedColName); break;
                 case "TrimStart": statement = provider.CreateFunction(SqlFunction.LTrim, quotedColName); break;
                 case "TrimEnd": statement = provider.CreateFunction(SqlFunction.RTrim, quotedColName); break;
                 case "ToUpper": statement = provider.CreateFunction(SqlFunction.Upper, quotedColName); break;
                 case "ToLower": statement = provider.CreateFunction(SqlFunction.Lower, quotedColName); break;
-                case "StartsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, provider.EscapeLikeParam(wildcardArg) + "%"); break;
-                case "EndsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + provider.EscapeLikeParam(wildcardArg)); break;
-                case "Contains": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + provider.EscapeLikeParam(wildcardArg) + "%"); break;
+                case "StartsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE '{1}'", quotedColName, wildcardArg.ToEscapeLikeParam() + "%"); break;
+                case "EndsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE '{1}'", quotedColName, "%" + wildcardArg.ToEscapeLikeParam()); break;
+                case "Contains": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE '{1}'", quotedColName, "%" + wildcardArg.ToEscapeLikeParam() + "%"); break;
                 case "Substring":
                     var startIndex = Int32.Parse(_args[0].ToString()) + 1;
                     if (_args.Count == 1) {
@@ -170,7 +171,14 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 case "Equals":
                     wildcardArg = GetQuotedValue(wildcardArg);
                     statement = $"({quotedColName} = {wildcardArg})"; break;
+                case "Concat":
+                    var args =new List<object>();
+                    args.Add(quotedColName);
+                    args.AddRange(_args);
+                    statement = provider.CreateFunction(SqlFunction.Concat, args.ToArray()); break;
                 case "ToString": statement = quotedColName.ToString(); break;
+                case "IndexOf": statement = provider.CreateFunction(SqlFunction.IndexOf, quotedColName, _args[0]); break;
+                case "Replace": statement = provider.CreateFunction(SqlFunction.Replace, quotedColName, _args[0], _args[1]); break;
                 default: throw new NotSupportedException();
             }
             return new PartialSqlString(statement);
@@ -252,7 +260,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             }
             return provider.EscapeSqlIdentifier(colName);
         }
-
 
         #endregion getColumnName
 
@@ -466,6 +473,9 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                                 case "Minute": sql = provider.CreateFunction(SqlFunction.Minute, Visit(m1)); break;
                                 case "Second": sql = provider.CreateFunction(SqlFunction.Second, Visit(m1)); break;
                                 case "Value": return Visit(m1);
+                                case "DayOfWeek": sql = provider.CreateFunction(SqlFunction.WeekDay, Visit(m1)); break;
+                                case "DayOfYear": sql = provider.CreateFunction(SqlFunction.DayOfYear, Visit(m1)); break;
+
                                 //case "HasValue": sql = Visit(m1).ToString() + " IS NOT NULL "; break;
                                 default: throw new NotSupportedException("Not Supported " + m.Member.Name);
                             }
@@ -565,16 +575,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             }
         }
 
-        private string RemoveQuoteFromAlias(string exp)
-        {
-            if ((exp.StartsWith("\"") || exp.StartsWith("`") || exp.StartsWith("'"))
-                &&
-                (exp.EndsWith("\"") || exp.EndsWith("`") || exp.EndsWith("'"))) {
-                exp = exp.Remove(0, 1);
-                exp = exp.Remove(exp.Length - 1, 1);
-            }
-            return exp;
-        }
 
         #endregion Expression Visit
 
