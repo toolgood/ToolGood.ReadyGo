@@ -178,7 +178,7 @@ public User FindUser(int userId,string userName,string nickName)
 * `IfTrue`、`IfFalse`、`IfSet`、`IfNotSet`、`IfNull`、`IfNotNull`
 * `WhereNotIn`、`WhereIn`、`Where`、`OrderBy`、`GroupBy`、`Having`、`SelectColumn`
 * `Select`、`Page`、`Single`、`SingleOrDefault`、`First`、`FirstOrDefault`、`Count`、`ExecuteDataTable`、`ExecuteDataSet`
-* `Select<T>`、`Page<T>`、`SkipTake<T>`、`Single<T>`、`SingleOrDefault<T>`、`First<T>`、`FirstOrDefault<T>`
+* `Select<T>`、`Page<T>`、`Single<T>`、`SingleOrDefault<T>`、`First<T>`、`FirstOrDefault<T>`
  
 
 #### 5、存储过程
