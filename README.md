@@ -233,30 +233,5 @@ public User FindUser(int userId,string userName,string nickName)
 ````
 
 
-
-#### 6.2、查看监控
-```` csharp
-using ToolGood.ReadyGo.Monitor
-
-var sqlMonitor = helper.Sql.SqlMonitor;
-var html = sqlMonitor.ToHtml();
-var text = sqlMonitor.ToText();
-````
-
-
-
-#### 6.3、替换监控类
-
-```` csharp
-using ToolGood.ReadyGo.Monitor
-
-public class NullSqlMonitor : ISqlMonitor
-{
-    ...
-}
-helper._Config.SqlMonitor = new NullSqlMonitor();
-````
-
-
-
+ 
  
