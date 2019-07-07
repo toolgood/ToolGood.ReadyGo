@@ -51,8 +51,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         _sharedConnection.Open();
                 }
 
-                _sharedConnection = OnConnectionOpened(_sharedConnection);
-
                 if (KeepConnectionAlive)
                     _sharedConnectionDepth++; // Make sure you call Dispose
             } else {

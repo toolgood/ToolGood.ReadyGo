@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.Gadget.Events;
 using ToolGood.ReadyGo3.Gadget.Internals;
-using ToolGood.ReadyGo3.Gadget.Monitor;
 using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco;
 using ToolGood.ReadyGo3.PetaPoco.Core;
@@ -41,7 +40,6 @@ namespace ToolGood.ReadyGo3
         private readonly SqlConfig _sqlConfig;
         internal readonly SqlType _sqlType;
         internal readonly SqlRecord _sql = new SqlRecord();
-        internal ISqlMonitor _sqlMonitor = new NullSqlMonitor();
         private readonly DatabaseProvider _provider;
         internal bool _isDisposable;
 

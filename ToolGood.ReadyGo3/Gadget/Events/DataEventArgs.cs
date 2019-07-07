@@ -1,4 +1,6 @@
-﻿namespace ToolGood.ReadyGo3.Gadget.Events
+﻿using System;
+
+namespace ToolGood.ReadyGo3.Gadget.Events
 {
     /// <summary>
     /// 数据事件参数
@@ -91,4 +93,19 @@
     /// <param name="sender"></param>
     /// <param name="args"></param>
     public delegate void AfterDeleteEventHandler(object sender, Data2EventArgs args);
+
+    /// <summary>
+    /// 事务之前
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    public delegate void BeforeTransactionEventHandler(object sender,  EventArgs args);
+
+    /// <summary>
+    /// 事务之后
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="args"></param>
+    public delegate void AfterTransactionEventHandler(object sender, EventArgs args);
+
 }

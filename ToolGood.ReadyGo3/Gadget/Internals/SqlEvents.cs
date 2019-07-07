@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 
 namespace ToolGood.ReadyGo3.Gadget.Events
 {
@@ -61,6 +62,17 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         /// 事件：出错
         /// </summary>
         public event SqlErrorEventHandler ExecuteException;
+
+        /// <summary>
+        /// 事件：执行事务之前
+        /// </summary>
+        public event BeforeTransactionEventHandler BeforeTransaction;
+
+        /// <summary>
+        /// 事件：执行事务之后
+        /// </summary>
+        public event AfterTransactionEventHandler AfterTransaction;
+
 
         internal bool OnBeforeInsert(object obj)
         {
@@ -132,10 +144,10 @@ namespace ToolGood.ReadyGo3.Gadget.Events
             }
         }
 
-        internal bool OnException(string message, string sql, params object[] args)
+        internal bool OnException(Exception exception, string sql, params object[] args)
         {
             if (ExecuteException != null) {
-                SqlErrorEventArgs e = new SqlErrorEventArgs(sql, args, FormatCommand(sql, args), message);
+                SqlErrorEventArgs e = new SqlErrorEventArgs(sql, args, FormatCommand(sql, args), exception);
                 ExecuteException(this, e);
                 if (e.Handle) {
                     return false;
@@ -143,6 +155,23 @@ namespace ToolGood.ReadyGo3.Gadget.Events
             }
             return true;
         }
+
+
+        internal void OnBeforeTransaction()
+        {
+            if (BeforeTransaction != null) {
+                BeforeTransaction(this, System.EventArgs.Empty);
+            }
+        }
+        internal void OnAfterTransaction()
+        {
+            if (AfterTransaction != null) {
+                AfterTransaction(this, System.EventArgs.Empty);
+            }
+        }
+
+
+
         internal static string FormatCommand(string sql, object[] args)
         {
             if (string.IsNullOrEmpty(sql)) return "";

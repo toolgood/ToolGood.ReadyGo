@@ -87,8 +87,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 if (_sharedConnection.State == ConnectionState.Closed)
                     _sharedConnection.Open();
 
-                _sharedConnection = OnConnectionOpened(_sharedConnection);
-
                 if (KeepConnectionAlive)
                     _sharedConnectionDepth++; // Make sure you call Dispose
             } else {
@@ -109,7 +107,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (_sharedConnectionDepth > 0) {
                 _sharedConnectionDepth--;
                 if (_sharedConnectionDepth == 0) {
-                    OnConnectionClosing();
                     _sharedConnection.Dispose();
                     _sharedConnection = null;
                 }
@@ -126,7 +123,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         internal void OnBeginTransaction()
         {
-            _sqlHelper._sqlMonitor.Transactioning();
+            _sqlHelper._events.OnAfterTransaction();
         }
 
         /// <summary>
@@ -134,7 +131,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         public void OnEndTransaction()
         {
-            _sqlHelper._sqlMonitor.Transactioned();
+            _sqlHelper._events.OnBeforeTransaction();
         }
 
         /// <summary>
@@ -369,37 +366,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns>True to re-throw the exception, false to suppress it</returns>
         public bool OnException(Exception x)
         {
-            System.Diagnostics.Debug.WriteLine(x.ToString());
-            System.Diagnostics.Debug.WriteLine(_sqlHelper._sql.LastCommand);
-
-            _sqlHelper._sqlMonitor.Exception(x.Message);
             _sqlHelper._sql.LastErrorMessage = x.Message;
-
-            return true;
-        }
-
-        /// <summary>
-        ///     Called when DB connection opened
-        /// </summary>
-        /// <param name="conn">The newly opened IDbConnection</param>
-        /// <returns>The same or a replacement IDbConnection</returns>
-        /// <remarks>
-        ///     Override this method to provide custom logging of opening connection, or
-        ///     to provide a proxy IDbConnection.
-        /// </remarks>
-        public IDbConnection OnConnectionOpened(IDbConnection conn)
-        {
-            _sqlHelper._sqlMonitor.ConnectionOpened();
-
-            return conn;
-        }
-
-        /// <summary>
-        ///     Called when DB connection closed
-        /// </summary>
-        public void OnConnectionClosing()
-        {
-            _sqlHelper._sqlMonitor.ConnectionClosing();
+            return _sqlHelper._events.OnException(x, _sqlHelper._sql.LastSQL, _sqlHelper._sql.LastArgs);
         }
 
         /// <summary>
@@ -416,9 +384,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             _sqlHelper._sql.LastSQL = cmd.CommandText;
             _sqlHelper._sql.LastArgs = objs;
             _sqlHelper._events.OnExecutingCommand(cmd.CommandText, objs);
-
-            var objs2 = (from IDataParameter parameter in cmd.Parameters select parameter).ToArray();
-            _sqlHelper._sqlMonitor.ExecutingCommand(cmd.CommandText, objs2);
         }
 
         /// <summary>
@@ -430,8 +395,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var objs = (from IDataParameter parameter in cmd.Parameters select parameter.Value).ToArray();
             _sqlHelper._sql.LastSQL = cmd.CommandText;
             _sqlHelper._sql.LastArgs = objs;
-            _sqlHelper._sqlMonitor.ExecutedCommand(cmd.CommandText, objs);
-
             _sqlHelper._events.OnExecutedCommand(cmd.CommandText, objs);
         }
 
@@ -891,7 +854,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         var pd = PocoData.ForType(type);
                         cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, size, tableName, primaryKeyName, autoIncrement);
 
-                        var cols = pd.Columns.Where(q => q.Value.ResultColumn == false).Select(q=>q.Value).ToList();
+                        var cols = pd.Columns.Where(q => q.Value.ResultColumn == false).Select(q => q.Value).ToList();
                         if (autoIncrement && primaryKeyName != null) {
                             cols.RemoveAll(q => string.Compare(q.ColumnName, primaryKeyName, true) == 0);
                         }
