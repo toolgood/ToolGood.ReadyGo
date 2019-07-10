@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using ToolGood.ReadyGo3.Gadget.Monitor;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.Gadget.Internals
@@ -47,23 +46,6 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
 
 
         /// <summary>
-        /// SQL执行监控
-        /// </summary>
-        public ISqlMonitor SqlMonitor {
-            get { return _sqlHelper._sqlMonitor; }
-            set {
-                if (_sqlHelper._sqlMonitor != value) {
-                    if (_sqlHelper._database != null) {
-                        _sqlHelper._database.Dispose();
-                        _sqlHelper._database = null;
-                    }
-
-                    _sqlHelper._sqlMonitor = value;
-                }
-            }
-        }
-
-        /// <summary>
         /// SQL语言类型
         /// </summary>
         public SqlType SqlType { get { return _sqlHelper._sqlType; } }
@@ -84,27 +66,6 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
 
         #endregion
 
-        #region 方法
-        /// <summary>
-        /// 设置SQL监控
-        /// </summary>
-        /// <returns></returns>
-        public SqlConfig SetSqlMonitor()
-        {
-            this.SqlMonitor = new SqlMonitor();
-            return this;
-        }
-
-        /// <summary>
-        /// 设置空SQL监控
-        /// </summary>
-        /// <returns></returns>
-        public SqlConfig SetNullSqlMonitor()
-        {
-            this.SqlMonitor = new NullSqlMonitor();
-            return this;
-        }
-
         /// <summary>
         /// 清空缓存
         /// </summary>
@@ -112,8 +73,6 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         {
             PocoData.FlushCaches();
         }
-
-        #endregion
 
     }
 }

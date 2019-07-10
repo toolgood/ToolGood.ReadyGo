@@ -1,4 +1,6 @@
-﻿namespace ToolGood.ReadyGo3.Gadget.Events
+﻿using System;
+
+namespace ToolGood.ReadyGo3.Gadget.Events
 {
     /// <summary>
     /// sql错误事件事件参数 
@@ -12,14 +14,20 @@
         /// <param name="args"></param>
         /// <param name="sqlWithArgs"></param>
         /// <param name="errorMsg"></param>
-        public SqlErrorEventArgs(string sql, object[] args, string sqlWithArgs, string errorMsg)
+        public SqlErrorEventArgs(string sql, object[] args, string sqlWithArgs, Exception exception)
         {
             SqlWithArgs = sqlWithArgs;
-            ErrorMsg = errorMsg;
+            Exception = exception;
+            ErrorMsg = exception.Message;
             Sql = sql;
             Args = args;
             Handle = false;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        public Exception Exception;
+
         /// <summary>
         /// Sql语句
         /// </summary>

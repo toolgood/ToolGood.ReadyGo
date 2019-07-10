@@ -7,7 +7,6 @@ using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.Gadget.Events;
 using ToolGood.ReadyGo3.Gadget.Internals;
-using ToolGood.ReadyGo3.Gadget.Monitor;
 using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco;
 using ToolGood.ReadyGo3.PetaPoco.Core;
@@ -41,7 +40,6 @@ namespace ToolGood.ReadyGo3
         private readonly SqlConfig _sqlConfig;
         internal readonly SqlType _sqlType;
         internal readonly SqlRecord _sql = new SqlRecord();
-        internal ISqlMonitor _sqlMonitor = new NullSqlMonitor();
         private readonly DatabaseProvider _provider;
         internal bool _isDisposable;
 
@@ -334,6 +332,26 @@ namespace ToolGood.ReadyGo3
             sql = formatSql(sql);
             return GetDatabase().Query<T>(offset, limit, sql, args).ToList();
         }
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public List<T> SelectPage<T>(long page, long itemsPerPage, string sql = "", params object[] args)
+        {
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
+
+            sql = formatSql(sql);
+            return GetDatabase().Query<T>((page - 1) * itemsPerPage, itemsPerPage, sql, args).ToList();
+        }
+
+
         /// <summary>
         /// 执行SQL 查询,返回Page类型
         /// </summary>
