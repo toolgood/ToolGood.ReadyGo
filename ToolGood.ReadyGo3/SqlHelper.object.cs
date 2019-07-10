@@ -58,7 +58,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="offset"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public List<T1> Select<T1>(long limit, long offset, object condition)
+        public List<T1> Select<T1>(int limit, int offset, object condition)
         {
             if (null == condition && condition.GetType() == typeof(string)) {
                 return Select<T1>(limit, offset, (string)condition);
@@ -71,7 +71,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="limit"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public List<T1> Select<T1>(long limit, object condition)
+        public List<T1> Select<T1>(int limit, object condition)
         {
             if (null == condition && condition.GetType() == typeof(string)) {
                 return Select<T1>(limit, (string)condition);
@@ -98,7 +98,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Page<T> Page<T>(long page, long itemsPerPage, object condition)
+        public Page<T> Page<T>(int page, int itemsPerPage, object condition)
         {
             if (null != condition && typeof(string) == condition.GetType()) {
                 return Page<T>(page, itemsPerPage, (string)condition, new object[0]);
@@ -209,7 +209,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="offset"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(long limit, long offset, object condition)
+        public Task<List<T>> SelectAsync<T>(int limit, int offset, object condition)
         {
             return SelectAsync<T>(limit, offset, ConditionObjectToWhere(condition));
         }
@@ -219,7 +219,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="limit"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(long limit, object condition)
+        public Task<List<T>> SelectAsync<T>(int limit, object condition)
         {
             return SelectAsync<T>(limit, ConditionObjectToWhere(condition));
         }
@@ -239,7 +239,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, object condition)
+        public Task<Page<T>> PageAsync<T>(int page, int itemsPerPage, object condition)
         {
             if (null != condition && typeof(string) == condition.GetType()) {
                 return PageAsync<T>(page, itemsPerPage, (string)condition, new object[0]);

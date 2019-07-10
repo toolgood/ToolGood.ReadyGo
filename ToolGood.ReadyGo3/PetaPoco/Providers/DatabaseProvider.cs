@@ -197,7 +197,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="parts">The original SQL query after being parsed into it's component parts</param>
         /// <param name="args">Arguments to any embedded parameters in the SQL query</param>
         /// <returns>The final SQL query that should be executed.</returns>
-        public virtual string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)
+        public virtual string BuildPageQuery(int skip, int take, SQLParts parts, ref object[] args)
         {
             string sql;
             if (skip > 0) {

@@ -22,7 +22,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         protected static readonly Regex SelectTopRegex = new Regex(@"^SELECT +TOP(\d+)", RegexOptions.IgnoreCase);
 
 
-        public override string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)
+        public override string BuildPageQuery(int skip, int take, SQLParts parts, ref object[] args)
         {
             if (SelectTopRegex.IsMatch(parts.Sql)) return parts.Sql;
             if (skip == 0) {

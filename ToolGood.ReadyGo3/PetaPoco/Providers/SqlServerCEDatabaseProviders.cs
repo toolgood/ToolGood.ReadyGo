@@ -16,7 +16,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 );
         }
 
-        public override string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)
+        public override string BuildPageQuery(int skip, int take, SQLParts parts, ref object[] args)
         {
             if (string.IsNullOrEmpty(parts.SqlOrderBy))
                 parts.Sql += " ORDER BY ABS(1)";

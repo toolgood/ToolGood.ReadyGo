@@ -880,7 +880,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="limit"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public List<T1> Select(long limit, string selectSql = null)
+        public List<T1> Select(int limit, string selectSql = null)
         {
             return _sqlhelper.Select<T1>(limit, 0, GetFullSelectSql(selectSql), _args.ToArray());
         }
@@ -891,10 +891,26 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="take"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public List<T1> Select(long skip, long take, string selectSql = null)
+        public List<T1> Select(int skip, int take, string selectSql = null)
         {
             return _sqlhelper.Select<T1>(skip, take, GetFullSelectSql(selectSql), _args.ToArray());
         }
+
+        /// <summary>
+        /// 查询 返回列表
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public List<T1> SelectPage(int page, int itemsPerPage, string selectSql = null)
+        {
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
+
+            return _sqlhelper.Select<T1>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
+        }
+
         /// <summary>
         /// 查询 返回Page
         /// </summary>
@@ -902,7 +918,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Page<T1> Page(long page, long itemsPerPage, string selectSql = null)
+        public Page<T1> Page(int page, int itemsPerPage, string selectSql = null)
         {
             return _sqlhelper.Page<T1>(page, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
         }
@@ -965,7 +981,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="limit"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public List<T> Select<T>(long limit, Expression<Func<T1, T>> columns)
+        public List<T> Select<T>(int limit, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>(limit, GetFullSelectSql(sql), _args.ToArray());
@@ -978,11 +994,29 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="take"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public List<T> Select<T>(long skip, long take, Expression<Func<T1, T>> columns)
+        public List<T> Select<T>(int skip, int take, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
         }
+
+        /// <summary>
+        /// 查询 返回列表
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="columns"></param>
+        /// <returns></returns>
+        public List<T> SelectPage<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns)
+        {
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
+
+            _sqlExpression.GetColumns(columns, out string sql);
+            return _sqlhelper.Select<T>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
+        }
+
 
         /// <summary>
         /// 返回唯一列
@@ -1037,7 +1071,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Page<T> Page<T>(long page, long itemsPerPage, Expression<Func<T1, T>> columns)
+        public Page<T> Page<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Page<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
@@ -1093,7 +1127,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="limit"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public List<T> Select<T>(long limit, string selectSql = null)
+        public List<T> Select<T>(int limit, string selectSql = null)
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Select<T>(limit, 0, this.GetFullSelectSql(sql), this._args.ToArray());
@@ -1106,11 +1140,30 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="take"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public List<T> Select<T>(long skip, long take, string selectSql = null)
+        public List<T> Select<T>(int skip, int take, string selectSql = null)
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Select<T>(skip, take, this.GetFullSelectSql(sql), this._args.ToArray());
         }
+
+        /// <summary>
+        /// 执行返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="selectSql"></param>
+        /// <returns></returns>
+        public List<T> SelectPage<T>(int page, int itemsPerPage, string selectSql = null)
+        {
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
+
+            var sql = getSelect<T>(selectSql);
+            return this._sqlhelper.Select<T>((page-1)* itemsPerPage, itemsPerPage, this.GetFullSelectSql(sql), this._args.ToArray());
+        }
+
+
 
         /// <summary>
         /// 返回唯一列
@@ -1160,7 +1213,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Page<T> Page<T>(long page, long itemsPerPage, string selectSql = null)
+        public Page<T> Page<T>(int page, int itemsPerPage, string selectSql = null)
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Page<T>(page, itemsPerPage, this.GetFullSelectSql(sql), this._args.ToArray());

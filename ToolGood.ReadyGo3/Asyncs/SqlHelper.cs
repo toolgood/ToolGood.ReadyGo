@@ -141,7 +141,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> SelectAsync<T>(long limit, string sql = "", params object[] args)
+        public async Task<List<T>> SelectAsync<T>(int limit, string sql = "", params object[] args)
         {
             sql = formatSql(sql);
             return (await GetDatabase().QueryAsync<T>(0, limit, sql, args)).ToList();
@@ -155,7 +155,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> SelectAsync<T>(long limit, long offset, string sql = "", params object[] args)
+        public async Task<List<T>> SelectAsync<T>(int limit, int offset, string sql = "", params object[] args)
         {
             sql = formatSql(sql);
             return (await GetDatabase().QueryAsync<T>(offset, limit, sql, args)).ToList();
@@ -170,7 +170,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> SelectPageAsync<T>(long page, long itemsPerPage, string sql = "", params object[] args)
+        public async Task<List<T>> SelectPageAsync<T>(int page, int itemsPerPage, string sql = "", params object[] args)
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -189,7 +189,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, string sql = "", params object[] args)
+        public Task<Page<T>> PageAsync<T>(int page, int itemsPerPage, string sql = "", params object[] args)
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -210,7 +210,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> SelectSqlAsync<T>(long page, long itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        public async Task<List<T>> SelectSqlAsync<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
@@ -238,7 +238,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<Page<T>> PageSqlAsync<T>(long page, long itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        public Task<Page<T>> PageSqlAsync<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }

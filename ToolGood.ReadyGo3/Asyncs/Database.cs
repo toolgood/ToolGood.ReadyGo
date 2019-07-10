@@ -234,7 +234,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<IEnumerable<T>> QueryAsync<T>(long skip, long take, string sql, object[] args)
+        public Task<IEnumerable<T>> QueryAsync<T>(int skip, int take, string sql, object[] args)
         {
             //string sqlCount, sqlPage;
 
@@ -303,7 +303,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, string sql, object[] args)
+        public Task<Page<T>> PageAsync<T>(int page, int itemsPerPage, string sql, object[] args)
         {
             BuildPageQueries<T>((page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
 
@@ -320,7 +320,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="countSql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public async Task<Page<T>> PageSqlAsync<T>(long page, long itemsPerPage, string selectSql, string countSql, object[] args)
+        public async Task<Page<T>> PageSqlAsync<T>(int page, int itemsPerPage, string selectSql, string countSql, object[] args)
         {
             // Save the one-time command time out and use it for both queries
             var saveTimeout = OneTimeCommandTimeout;
@@ -330,7 +330,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var result = new Page<T> {
                 CurrentPage = page,
                 PageSize = itemsPerPage,
-                TotalItems = await ExecuteScalarAsync<long>(countSql, args).ConfigureAwait(false)
+                TotalItems = await ExecuteScalarAsync<int>(countSql, args).ConfigureAwait(false)
             };
             OneTimeCommandTimeout = saveTimeout;
 

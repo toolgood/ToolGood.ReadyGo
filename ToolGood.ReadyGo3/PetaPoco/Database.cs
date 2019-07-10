@@ -554,7 +554,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="args">Arguments to any embedded parameters in the SQL</param>
         /// <param name="sqlCount">Outputs the SQL statement to query for the total number of matching rows</param>
         /// <param name="sqlPage">Outputs the SQL statement to retrieve a single page of matching rows</param>
-        private void BuildPageQueries<T>(long skip, long take, string sql, ref object[] args, out string sqlCount, out string sqlPage)
+        private void BuildPageQueries<T>(int skip, int take, string sql, ref object[] args, out string sqlCount, out string sqlPage)
         {
             // Add auto select clause
             if (EnableAutoSelect)
@@ -582,7 +582,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     records for the specified page.  It will also execute a second query to retrieve the
         ///     total number of records in the result set.
         /// </remarks>
-        public Page<T> Page<T>(long page, long itemsPerPage, string sql, object[] args)
+        public Page<T> Page<T>(int page, int itemsPerPage, string sql, object[] args)
         {
             BuildPageQueries<T>((page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
             return PageSql<T>(page, itemsPerPage, sqlPage, sqlCount, args);
@@ -598,7 +598,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="countSql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Page<T> PageSql<T>(long page, long itemsPerPage, string selectSql, string countSql, object[] args)
+        public Page<T> PageSql<T>(int page, int itemsPerPage, string selectSql, string countSql, object[] args)
         {
             // Save the one-time command time out and use it for both queries
             var saveTimeout = OneTimeCommandTimeout;
@@ -607,7 +607,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var result = new Page<T> {
                 CurrentPage = page,
                 PageSize = itemsPerPage,
-                TotalItems = ExecuteScalar<long>(countSql, args)
+                TotalItems = ExecuteScalar<int>(countSql, args)
             };
             OneTimeCommandTimeout = saveTimeout;
 
@@ -632,7 +632,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public IEnumerable<T> Query<T>(long skip, long take, string sql, object[] args)
+        public IEnumerable<T> Query<T>(int skip, int take, string sql, object[] args)
         {
             BuildPageQueries<T>(skip, take, sql, ref args, out string sqlCount, out string sqlPage);
             return Query<T>(sqlPage, args);

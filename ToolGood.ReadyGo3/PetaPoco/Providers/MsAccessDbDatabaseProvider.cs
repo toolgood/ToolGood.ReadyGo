@@ -27,7 +27,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return database.ExecuteScalarHelper(cmd);
         }
 
-        public override string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)
+        public override string BuildPageQuery(int skip, int take, SQLParts parts, ref object[] args)
         {
             throw new NotSupportedException("The Access provider does not support paging.");
         }

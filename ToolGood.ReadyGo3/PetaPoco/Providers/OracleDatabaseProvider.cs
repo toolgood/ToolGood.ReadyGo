@@ -30,7 +30,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             cmd.GetType().GetProperty("InitialLONGFetchSize").SetValue(cmd, -1, null);
         }
 
-        public override string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args)
+        public override string BuildPageQuery(int skip, int take, SQLParts parts, ref object[] args)
         {
             if (parts.SqlSelectRemoved.StartsWith("*"))
                 throw new Exception("Query must alias '*' when performing a paged query.\neg. select t.* from table t order by t.id");

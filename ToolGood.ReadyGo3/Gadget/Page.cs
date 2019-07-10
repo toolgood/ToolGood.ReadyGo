@@ -10,41 +10,41 @@ namespace ToolGood.ReadyGo3
     public abstract class Page
     {
         private bool _hasComplete;
-        private long _pageStart = -1;
-        private long _pageEnd = -1;
-        private long _currentPage = 0;
-        private long _totalItems = 0;
-        private long _pageSize = 0;
+        private int _pageStart = -1;
+        private int _pageEnd = -1;
+        private int _currentPage = 0;
+        private int _totalItems = 0;
+        private int _pageSize = 0;
 
         /// <summary>
         /// 当前页数
         /// </summary>
-        public long CurrentPage { get => _currentPage; set { _hasComplete = false; _currentPage = value; } }
+        public int CurrentPage { get => _currentPage; set { _hasComplete = false; _currentPage = value; } }
 
         /// <summary>
         /// 总页数
         /// </summary>
-        public long TotalPages => (long)Math.Ceiling(TotalItems / (double)PageSize);
+        public int TotalPages => (int)Math.Ceiling(TotalItems / (double)PageSize);
 
         /// <summary>
         /// 总数
         /// </summary>
-        public long TotalItems { get => _totalItems; set { _hasComplete = false; _totalItems = value; } }
+        public int TotalItems { get => _totalItems; set { _hasComplete = false; _totalItems = value; } }
 
         /// <summary>
         /// 每一页数量
         /// </summary>
-        public long PageSize { get => _pageSize; set { _hasComplete = false; _pageSize = value; } }
+        public int PageSize { get => _pageSize; set { _hasComplete = false; _pageSize = value; } }
 
         /// <summary>
         /// 从1开始
         /// </summary>
-        public long PageStart { get { if (_hasComplete == false) { SetShowPage(7); } return _pageStart; } }
+        public int PageStart { get { if (_hasComplete == false) { SetShowPage(7); } return _pageStart; } }
 
         /// <summary>
         /// 结束 包含TotalPages
         /// </summary>
-        public long PageEnd { get { if (_hasComplete == false) { SetShowPage(7); } return _pageEnd; } }
+        public int PageEnd { get { if (_hasComplete == false) { SetShowPage(7); } return _pageEnd; } }
 
         /// <summary>
         /// 用于上下文传输

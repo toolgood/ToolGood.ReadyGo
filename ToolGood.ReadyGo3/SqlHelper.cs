@@ -313,7 +313,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> Select<T>(long limit, string sql = "", params object[] args)
+        public List<T> Select<T>(int limit, string sql = "", params object[] args)
         {
             sql = formatSql(sql);
             return GetDatabase().Query<T>(0, limit, sql, args).ToList();
@@ -327,7 +327,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> Select<T>(long limit, long offset, string sql = "", params object[] args)
+        public List<T> Select<T>(int limit, int offset, string sql = "", params object[] args)
         {
             sql = formatSql(sql);
             return GetDatabase().Query<T>(offset, limit, sql, args).ToList();
@@ -342,7 +342,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public List<T> SelectPage<T>(long page, long itemsPerPage, string sql = "", params object[] args)
+        public List<T> SelectPage<T>(int page, int itemsPerPage, string sql = "", params object[] args)
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -361,7 +361,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Page<T> Page<T>(long page, long itemsPerPage, string sql = "", params object[] args)
+        public Page<T> Page<T>(int page, int itemsPerPage, string sql = "", params object[] args)
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -382,7 +382,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> SelectSql<T>(long page, long itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        public List<T> SelectSql<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
@@ -410,7 +410,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Page<T> PageSql<T>(long page, long itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        public Page<T> PageSql<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
