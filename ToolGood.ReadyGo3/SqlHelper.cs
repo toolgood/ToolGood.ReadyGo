@@ -332,6 +332,26 @@ namespace ToolGood.ReadyGo3
             sql = formatSql(sql);
             return GetDatabase().Query<T>(offset, limit, sql, args).ToList();
         }
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public List<T> SelectPage<T>(long page, long itemsPerPage, string sql = "", params object[] args)
+        {
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
+
+            sql = formatSql(sql);
+            return GetDatabase().Query<T>((page - 1) * itemsPerPage, itemsPerPage, sql, args).ToList();
+        }
+
+
         /// <summary>
         /// 执行SQL 查询,返回Page类型
         /// </summary>
