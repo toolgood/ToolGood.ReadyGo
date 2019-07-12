@@ -608,6 +608,48 @@ namespace ToolGood.ReadyGo3.LinQ
             this.ifTrue(txt != null);
             return this;
         }
+        /// <summary>
+        /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfPositiveInteger(int txt)
+        {
+            this.ifTrue(txt > 0);
+            return this;
+        }
+        /// <summary>
+        /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfPositiveInteger(long txt)
+        {
+            this.ifTrue(txt > 0);
+            return this;
+        }
+
+        /// <summary>
+        /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfPositiveInteger(int? txt)
+        {
+            this.ifTrue(null != txt && txt > 0);
+            return this;
+        }
+        /// <summary>
+        /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfPositiveInteger(long? txt)
+        {
+            this.ifTrue(null != txt && txt > 0);
+            return this;
+        }
+
 
         #endregion 判断
 
@@ -675,6 +717,24 @@ namespace ToolGood.ReadyGo3.LinQ
             this.orderBySql(order);
             return this;
         }
+
+        /// <summary>
+        /// 添加 Order By SQL语句
+        /// </summary>
+        /// <param name="order"></param>
+        /// <param name="ascORdesc"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> OrderBy(string order, string ascORdesc)
+        {
+            if (string.IsNullOrEmpty(order)) throw new ArgumentNullException("order");
+            if (string.IsNullOrWhiteSpace(ascORdesc)) {
+                this.orderBySql(order);
+            } else {
+                this.orderBySql(order + " " + ascORdesc);
+            }
+            return this;
+        }
+
         /// <summary>
         /// 添加 Group By SQL语句
         /// </summary>
@@ -908,7 +968,7 @@ namespace ToolGood.ReadyGo3.LinQ
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            return _sqlhelper.Select<T1>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.Select<T1>((page - 1) * itemsPerPage, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
         }
 
         /// <summary>
@@ -1014,7 +1074,7 @@ namespace ToolGood.ReadyGo3.LinQ
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.Select<T>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Select<T>((page - 1) * itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
 
@@ -1160,7 +1220,7 @@ namespace ToolGood.ReadyGo3.LinQ
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             var sql = getSelect<T>(selectSql);
-            return this._sqlhelper.Select<T>((page-1)* itemsPerPage, itemsPerPage, this.GetFullSelectSql(sql), this._args.ToArray());
+            return this._sqlhelper.Select<T>((page - 1) * itemsPerPage, itemsPerPage, this.GetFullSelectSql(sql), this._args.ToArray());
         }
 
 

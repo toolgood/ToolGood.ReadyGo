@@ -29,13 +29,13 @@
         <Product>ToolGood.ReadyGo3</Product>
         <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
-        <FileVersion>3.3.0.13</FileVersion>
-        <Version>3.3.0.13</Version>
+        <FileVersion>3.3.0.14</FileVersion>
+        <Version>3.3.0.14</Version>
         <PackageReleaseNotes></PackageReleaseNotes>
         <Product>ToolGood.ReadyGo3</Product>
         <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
         <DelaySign>false</DelaySign>
-        <AssemblyVersion>3.3.0.13</AssemblyVersion>
+        <AssemblyVersion>3.3.0.14</AssemblyVersion>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <LangVersion>7.1</LangVersion>
     </PropertyGroup>
