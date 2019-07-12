@@ -13,7 +13,7 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <param name="sqlWithArgs"></param>
-        /// <param name="errorMsg"></param>
+        /// <param name="exception"></param>
         public SqlErrorEventArgs(string sql, object[] args, string sqlWithArgs, Exception exception)
         {
             SqlWithArgs = sqlWithArgs;
