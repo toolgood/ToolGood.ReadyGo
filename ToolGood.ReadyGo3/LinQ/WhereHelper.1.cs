@@ -634,6 +634,27 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="txt"></param>
         /// <returns></returns>
+        public WhereHelper<T1> IfPositiveInteger(uint txt)
+        {
+            this.ifTrue(txt > 0);
+            return this;
+        }
+        /// <summary>
+        /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfPositiveInteger(ulong txt)
+        {
+            this.ifTrue(txt > 0);
+            return this;
+        }
+
+        /// <summary>
+        /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
         public WhereHelper<T1> IfPositiveInteger(int? txt)
         {
             this.ifTrue(null != txt && txt > 0);
@@ -650,6 +671,26 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
 
+        /// <summary>
+        /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfPositiveInteger(uint? txt)
+        {
+            this.ifTrue(null != txt && txt > 0);
+            return this;
+        }
+        /// <summary>
+        /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> IfPositiveInteger(ulong? txt)
+        {
+            this.ifTrue(null != txt && txt > 0);
+            return this;
+        }
 
         #endregion 判断
 
