@@ -156,9 +156,9 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 case "TrimEnd": statement = provider.CreateFunction(SqlFunction.RTrim, quotedColName); break;
                 case "ToUpper": statement = provider.CreateFunction(SqlFunction.Upper, quotedColName); break;
                 case "ToLower": statement = provider.CreateFunction(SqlFunction.Lower, quotedColName); break;
-                case "StartsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE '{1}'", quotedColName, wildcardArg.ToEscapeLikeParam() + "%"); break;
-                case "EndsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE '{1}'", quotedColName, "%" + wildcardArg.ToEscapeLikeParam()); break;
-                case "Contains": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE '{1}'", quotedColName, "%" + wildcardArg.ToEscapeLikeParam() + "%"); break;
+                case "StartsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, wildcardArg.ToEscapeLikeParam() + "%"); break;
+                case "EndsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + wildcardArg.ToEscapeLikeParam()); break;
+                case "Contains": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + wildcardArg.ToEscapeLikeParam() + "%"); break;
                 case "Substring":
                     var startIndex = Int32.Parse(_args[0].ToString()) + 1;
                     if (_args.Count == 1) {

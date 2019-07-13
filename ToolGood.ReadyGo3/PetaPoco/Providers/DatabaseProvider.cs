@@ -397,7 +397,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                     stringBuilder[stringBuilder.Length - 1] = ')';
                     return stringBuilder.ToString();
                 case SqlFunction.IndexOf:return CreateFunction("(INSTR({0},{1})-1)", args);
-                case SqlFunction.Replace: return CreateFunction("REPLACE({0},{1},{2])", args);
+                case SqlFunction.Replace: return CreateFunction("REPLACE({0},{1},{2})", args);
                 default: break;
             }
             var objs = new object[args.Length - 1];
