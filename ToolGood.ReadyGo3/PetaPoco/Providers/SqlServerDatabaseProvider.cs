@@ -9,7 +9,7 @@ using ToolGood.ReadyGo3.PetaPoco.Utilities;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
-    public class SqlServerDatabaseProvider : DatabaseProvider
+    public partial class SqlServerDatabaseProvider : DatabaseProvider
     {
         public override DbProviderFactory GetFactory()
         {

@@ -68,6 +68,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
             _sharedConnectionDepth++;
         }
 
+        internal async Task ExecuteNonQueryHelperAsync(SqlCommand cmd)
+        {
+            DoPreExecute(cmd);
+            await cmd.ExecuteNonQueryAsync().ConfigureAwait(false); ;
+            OnExecutedCommand(cmd);
+        }
+
 
         internal async Task<object> ExecuteScalarHelperAsync(SqlCommand cmd)
         {
@@ -449,7 +456,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var index = 0;
             while (index < list.Count) {
                 var count = list.Count - index;
-                int size; 
+                int size;
                 if (count >= 50) {
                     size = 50;
                 } else if (count >= 10) {

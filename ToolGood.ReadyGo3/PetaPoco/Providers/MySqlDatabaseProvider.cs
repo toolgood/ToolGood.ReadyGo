@@ -4,7 +4,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
-    public class MySqlDatabaseProvider : DatabaseProvider
+    public partial class MySqlDatabaseProvider : DatabaseProvider
     {
         /// <summary>
         /// 

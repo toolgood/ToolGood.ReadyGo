@@ -8,7 +8,7 @@ using ToolGood.ReadyGo3.PetaPoco.Utilities;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
-    public class FirebirdDbDatabaseProvider : DatabaseProvider
+    public partial class FirebirdDbDatabaseProvider : DatabaseProvider
     {
         /// <summary>
         /// Firebird

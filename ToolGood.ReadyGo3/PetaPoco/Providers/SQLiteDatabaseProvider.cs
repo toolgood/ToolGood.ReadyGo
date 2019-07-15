@@ -5,7 +5,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
-    public class SQLiteDatabaseProvider : DatabaseProvider
+    public partial class SQLiteDatabaseProvider : DatabaseProvider
     {
         public override DbProviderFactory GetFactory()
         {

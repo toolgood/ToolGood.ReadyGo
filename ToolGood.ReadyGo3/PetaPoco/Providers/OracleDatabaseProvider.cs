@@ -9,7 +9,7 @@ using ToolGood.ReadyGo3.PetaPoco.Utilities;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
-    public class OracleDatabaseProvider : DatabaseProvider
+    public partial class OracleDatabaseProvider : DatabaseProvider
     {
         /// <summary>
         /// 

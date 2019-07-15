@@ -5,7 +5,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
-    public class PostgreSQLDatabaseProvider : DatabaseProvider
+    public partial class PostgreSQLDatabaseProvider : DatabaseProvider
     {
         /// <summary>
         /// 

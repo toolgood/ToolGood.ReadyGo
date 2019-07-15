@@ -4,7 +4,7 @@ using ToolGood.ReadyGo3.PetaPoco.Utilities;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
-    public class SqlServer2012DatabaseProvider : SqlServerDatabaseProvider
+    public partial class SqlServer2012DatabaseProvider : SqlServerDatabaseProvider
     {
 
         //private static readonly Regex SelectTopRegex = new Regex(@"^SELECT +TOP(\d+)", RegexOptions.IgnoreCase);
