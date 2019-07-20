@@ -380,7 +380,7 @@ namespace ToolGood.ReadyGo3
                     if (value == null) {
                         stringBuilder.Append($"[{pi.Name}] is Null");
                     } else {
-                        if (value is IEnumerable) {
+                        if (value is IEnumerable && !(value is string)) {
                             List<object> objs = new List<object>();
                             foreach (var item in (IEnumerable)value) { objs.Add(item); }
 
