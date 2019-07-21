@@ -347,11 +347,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             // Notify the DB type
             _provider.PreExecute(cmd);
-
-            //// Call logging
-            //if (!String.IsNullOrEmpty(sql))
-            //    DoPreExecute(cmd);
-
+ 
             return cmd;
         }
 
