@@ -348,9 +348,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
             // Notify the DB type
             _provider.PreExecute(cmd);
 
-            // Call logging
-            if (!String.IsNullOrEmpty(sql))
-                DoPreExecute(cmd);
+            //// Call logging
+            //if (!String.IsNullOrEmpty(sql))
+            //    DoPreExecute(cmd);
 
             return cmd;
         }
@@ -415,6 +415,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 OpenSharedConnection();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                        DoPreExecute(cmd);
                         var retv = cmd.ExecuteNonQuery();
                         OnExecutedCommand(cmd);
                         return retv;
@@ -443,6 +444,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 OpenSharedConnection();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                        DoPreExecute(cmd);
                         object val = cmd.ExecuteScalar();
                         OnExecutedCommand(cmd);
 
@@ -475,7 +477,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 OpenSharedConnection();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                        DoPreExecute(cmd);
                         var reader = cmd.ExecuteReader();
+                        OnExecutedCommand(cmd);
+
                         DataTable dt = new DataTable();
                         bool init = false;
                         dt.BeginLoadData();
@@ -494,7 +499,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         }
                         reader.Close();
                         dt.EndLoadData();
-                        OnExecutedCommand(cmd);
                         return dt;
                     }
                 } finally {
@@ -521,6 +525,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                         using (var adapter = _factory.CreateDataAdapter()) {
+                            DoPreExecute(cmd);
                             adapter.SelectCommand = (DbCommand)cmd;
                             DataSet ds = new DataSet();
                             adapter.Fill(ds);
@@ -655,42 +660,49 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             if (EnableAutoSelect)
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
-
-            OpenSharedConnection();
             try {
-                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
-                    IDataReader r;
-                    var pd = PocoData.ForType(typeof(T));
-                    try {
-                        r = cmd.ExecuteReader();
+                OpenSharedConnection();
+                try {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                        DoPreExecute(cmd);
+                        IDataReader r = cmd.ExecuteReader();
                         OnExecutedCommand(cmd);
+
+                        return Query<T>(r);
+                    }
+                } finally {
+                    CloseSharedConnection();
+                }
+            } catch (Exception x) {
+                if (OnException(x))
+                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
+                return default;
+            }
+
+        }
+        private IEnumerable<T> Query<T>(IDataReader r)
+        {
+            var pd = PocoData.ForType(typeof(T));
+
+            var factory = pd.GetFactory(0, r.FieldCount, r, _sqlHelper._use_proxyType) as Func<IDataReader, T>;
+            using (r) {
+                while (true) {
+                    T poco;
+                    try {
+                        if (!r.Read())
+                            yield break;
+                        poco = factory(r);
                     } catch (Exception x) {
                         if (OnException(x))
                             throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                         yield break;
                     }
-                    var factory = pd.GetFactory(0, r.FieldCount, r, _sqlHelper._use_proxyType) as Func<IDataReader, T>;
-                    using (r) {
-                        while (true) {
-                            T poco;
-                            try {
-                                if (!r.Read())
-                                    yield break;
-                                poco = factory(r);
-                            } catch (Exception x) {
-                                if (OnException(x))
-                                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                                yield break;
-                            }
-
-                            yield return poco;
-                        }
-                    }
+                    yield return poco;
                 }
-            } finally {
-                CloseSharedConnection();
             }
         }
+
+
 
         #endregion
 
@@ -946,9 +958,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         }
                         AddParam(cmd, primaryKeyValue, pkpi);
 
-                        DoPreExecute(cmd);
 
-                        // Do it
+                        DoPreExecute(cmd);
                         var retv = cmd.ExecuteNonQuery();
                         OnExecutedCommand(cmd);
                         return retv;
