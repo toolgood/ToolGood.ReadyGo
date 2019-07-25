@@ -462,7 +462,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0], CommandType.Text)) {
                         var type = typeof(T);
                         var pd = PocoData.ForType(type);
-                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, 1, tableName, primaryKeyName, autoIncrement);
+                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, size, tableName, primaryKeyName, autoIncrement);
 
                         var cols = pd.Columns.Where(q => q.Value.ResultColumn == false).Select(q => q.Value).ToList();
                         if (autoIncrement && primaryKeyName != null) {
