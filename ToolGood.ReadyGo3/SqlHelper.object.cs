@@ -149,7 +149,7 @@ namespace ToolGood.ReadyGo3
                 return Exists<T>(ConditionObjectToWhere(condition));
             } else {
                 var pd = PocoData.ForType(typeof(T));
-                var table = _provider.GetTableName(pd, _tableNameManager);
+                var table = _provider.GetTableName(pd);
                 var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
@@ -289,7 +289,7 @@ namespace ToolGood.ReadyGo3
                 return await ExistsAsync<T>(ConditionObjectToWhere(condition));
             } else {
                 var pd = PocoData.ForType(typeof(T));
-                var table = _provider.GetTableName(pd, _tableNameManager);
+                var table = _provider.GetTableName(pd);
                 var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 

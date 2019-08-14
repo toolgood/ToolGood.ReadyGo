@@ -35,7 +35,6 @@ namespace ToolGood.ReadyGo3
         internal int _oneTimeCommandTimeout;
         internal IsolationLevel? _isolationLevel;
 
-        internal readonly TableNameManager _tableNameManager = new TableNameManager();
         internal readonly SqlEvents _events;
         private readonly SqlConfig _sqlConfig;
         internal readonly SqlType _sqlType;
@@ -56,15 +55,16 @@ namespace ToolGood.ReadyGo3
         /// 数据库配置
         /// </summary>
         public SqlConfig _Config { get { return _sqlConfig; } }
+
         /// <summary>
         /// SQL设置
         /// </summary>
         public SqlRecord _Sql { get { return _sql; } }
 
         /// <summary>
-        /// 表名设置
+        /// SQL语言类型
         /// </summary>
-        public TableNameManager _TableNameManager { get { return _tableNameManager; } }
+        public SqlType SqlType { get { return _sqlType; } }
 
         /// <summary>
         /// 是否释放
@@ -271,7 +271,7 @@ namespace ToolGood.ReadyGo3
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 var pd = PocoData.ForType(typeof(T));
-                var table = _provider.GetTableName(pd, _tableNameManager);
+                var table = _provider.GetTableName(pd);
                 sql = formatSql(sql);
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }

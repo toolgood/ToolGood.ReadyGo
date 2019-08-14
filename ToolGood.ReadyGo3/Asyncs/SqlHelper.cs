@@ -99,7 +99,7 @@ namespace ToolGood.ReadyGo3
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 var pd = PocoData.ForType(typeof(T));
-                var table = _provider.GetTableName(pd, _tableNameManager);
+                var table = _provider.GetTableName(pd);
                 sql = formatSql(sql);
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
