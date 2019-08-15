@@ -163,7 +163,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                         DoPreExecute(cmd);
-                        var reader = await ((SqlCommand)cmd).ExecuteReaderAsync(token).ConfigureAwait(false);
+                        var reader = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult,token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                         DataTable dt = new DataTable();
                         bool init = false;
@@ -266,7 +266,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                         DoPreExecute(cmd);
-                        SqlDataReader r = await ((SqlCommand)cmd).ExecuteReaderAsync(token).ConfigureAwait(false);
+                        SqlDataReader r = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
 
                         return Query<T>(r);
