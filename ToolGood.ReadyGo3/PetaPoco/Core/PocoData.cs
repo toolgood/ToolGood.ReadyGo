@@ -145,7 +145,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="reader"></param>
         /// <param name="usedProxy"></param>
         /// <returns></returns>
-        public Delegate GetFactory(int firstColumn, int countColumns, IDataReader reader, bool usedProxy)
+        public Delegate GetFactory(int firstColumn, int countColumns, IDataReader reader/*, bool usedProxy*/)
         {
             #region 创建Key
             StringBuilder sb = new StringBuilder();
@@ -153,13 +153,13 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             for (int i = 0; i < countColumns; i++) {
                 sb.AppendFormat("|{0}-{1}", reader.GetName(i), reader.GetFieldType(i).FullName);
             }
-            sb.Append("|" + usedProxy.ToString());
+            //sb.Append("|" + usedProxy.ToString());
             var key = sb.ToString();
             #endregion 创建Key
 
 
             return PocoFactories.Get(key, () => {
-                var type = usedProxy ? UpdateData.GetProxyType(Type) : Type;
+                var type = /*usedProxy ? UpdateData.GetProxyType(Type) : */Type;
                 // Create the method
                 var m = new DynamicMethod("tg_readygo_" + Guid.NewGuid().ToString().Replace("-", ""), type, new Type[] { typeof(IDataReader) }, true);
                 var il = m.GetILGenerator();

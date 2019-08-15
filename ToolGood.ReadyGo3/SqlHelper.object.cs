@@ -332,31 +332,31 @@ namespace ToolGood.ReadyGo3
             if (condition is IEnumerable) { throw new ArgumentException("condition is IEnumerable object!"); }
             bool hasColumn = false;
 
-            if (condition is IUpdateChange) {
-                var dict = ((IUpdateChange)condition).__GetChanges__();
-                foreach (var item in dict) {
-                    if (ignoreFields != null) {
-                        if (ignoreFields.Any(q => string.Equals(q, item.Key, StringComparison.CurrentCultureIgnoreCase))) { continue; }
-                    }
-                    if (hasColumn == false) {
-                        hasColumn = true;
-                    } else {
-                        stringBuilder.Append(middelStr);
-                    }
-                    if (middelStr == " AND ") {
-                        if (item.Value == null) {
-                            stringBuilder.Append($"[{item.Key}] is Null");
-                        } else {
-                            stringBuilder.Append($"[{item.Key}]=");
-                            stringBuilder.Append(EscapeParam(item.Value));
-                        }
-                    } else {
-                        stringBuilder.Append($"[{item.Key}]=");
-                        stringBuilder.Append(EscapeParam(item.Value));
-                    }
-                }
-                return;
-            }
+            //if (condition is IUpdateChange) {
+            //    var dict = ((IUpdateChange)condition).__GetChanges__();
+            //    foreach (var item in dict) {
+            //        if (ignoreFields != null) {
+            //            if (ignoreFields.Any(q => string.Equals(q, item.Key, StringComparison.CurrentCultureIgnoreCase))) { continue; }
+            //        }
+            //        if (hasColumn == false) {
+            //            hasColumn = true;
+            //        } else {
+            //            stringBuilder.Append(middelStr);
+            //        }
+            //        if (middelStr == " AND ") {
+            //            if (item.Value == null) {
+            //                stringBuilder.Append($"[{item.Key}] is Null");
+            //            } else {
+            //                stringBuilder.Append($"[{item.Key}]=");
+            //                stringBuilder.Append(EscapeParam(item.Value));
+            //            }
+            //        } else {
+            //            stringBuilder.Append($"[{item.Key}]=");
+            //            stringBuilder.Append(EscapeParam(item.Value));
+            //        }
+            //    }
+            //    return;
+            //}
 
 
             var type = condition.GetType();

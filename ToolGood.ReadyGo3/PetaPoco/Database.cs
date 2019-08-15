@@ -680,7 +680,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             var pd = PocoData.ForType(typeof(T));
 
-            var factory = pd.GetFactory(0, r.FieldCount, r, _sqlHelper._use_proxyType) as Func<IDataReader, T>;
+            var factory = pd.GetFactory(0, r.FieldCount, r/*, _sqlHelper._use_proxyType*/) as Func<IDataReader, T>;
             using (r) {
                 while (true) {
                     T poco;

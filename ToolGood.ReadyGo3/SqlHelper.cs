@@ -22,7 +22,7 @@ namespace ToolGood.ReadyGo3
         internal bool _setGuidDefaultNew;
         internal bool _sql_firstWithLimit1;
         internal bool _sql_singleWithLimit2;
-        internal bool _use_proxyType;
+        //internal bool _use_proxyType;
 
 
         // 读写数据库
@@ -591,22 +591,22 @@ namespace ToolGood.ReadyGo3
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
 
-            if (poco is IUpdateChange) {
-                var pd = PocoData.ForType(typeof(T));
-                StringBuilder stringBuilder = new StringBuilder();
-                ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
-                if (stringBuilder.Length == 0) { return 0; }
-                stringBuilder.Insert(0, "SET ");
-                object primaryKeyValue = null;
-                foreach (var i in pd.Columns) {
-                    if (i.Value.ResultColumn) continue;
-                    if (string.Compare(i.Value.ColumnName, pd.TableInfo.PrimaryKey, true) == 0) {
-                        if (primaryKeyValue == null) primaryKeyValue = i.Value.GetValue(poco);
-                    }
-                }
-                stringBuilder.Append($" WHERE [{pd.TableInfo.PrimaryKey}]=@0");
-                return Update<T>(stringBuilder.ToString(), primaryKeyValue);
-            }
+            //if (poco is IUpdateChange) {
+            //    var pd = PocoData.ForType(typeof(T));
+            //    StringBuilder stringBuilder = new StringBuilder();
+            //    ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
+            //    if (stringBuilder.Length == 0) { return 0; }
+            //    stringBuilder.Insert(0, "SET ");
+            //    object primaryKeyValue = null;
+            //    foreach (var i in pd.Columns) {
+            //        if (i.Value.ResultColumn) continue;
+            //        if (string.Compare(i.Value.ColumnName, pd.TableInfo.PrimaryKey, true) == 0) {
+            //            if (primaryKeyValue == null) primaryKeyValue = i.Value.GetValue(poco);
+            //        }
+            //    }
+            //    stringBuilder.Append($" WHERE [{pd.TableInfo.PrimaryKey}]=@0");
+            //    return Update<T>(stringBuilder.ToString(), primaryKeyValue);
+            //}
 
             if (_Events.OnBeforeUpdate(poco)) return -1;
             int r = GetDatabase().Update(poco);
@@ -658,23 +658,23 @@ namespace ToolGood.ReadyGo3
         public void Save<T>(T poco)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            if (poco is IUpdateChange) {
-                var pd = PocoData.ForType(typeof(T));
-                StringBuilder stringBuilder = new StringBuilder();
-                ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
-                if (stringBuilder.Length == 0) { return; }
-                stringBuilder.Insert(0, "SET ");
-                object primaryKeyValue = null;
-                foreach (var i in pd.Columns) {
-                    if (i.Value.ResultColumn) continue;
-                    if (string.Compare(i.Value.ColumnName, pd.TableInfo.PrimaryKey, true) == 0) {
-                        if (primaryKeyValue == null) primaryKeyValue = i.Value.GetValue(poco);
-                    }
-                }
-                stringBuilder.Append($" WHERE [{pd.TableInfo.PrimaryKey}]=@0");
-                Update<T>(stringBuilder.ToString(), primaryKeyValue);
-                return;
-            }
+            //if (poco is IUpdateChange) {
+            //    var pd = PocoData.ForType(typeof(T));
+            //    StringBuilder stringBuilder = new StringBuilder();
+            //    ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
+            //    if (stringBuilder.Length == 0) { return; }
+            //    stringBuilder.Insert(0, "SET ");
+            //    object primaryKeyValue = null;
+            //    foreach (var i in pd.Columns) {
+            //        if (i.Value.ResultColumn) continue;
+            //        if (string.Compare(i.Value.ColumnName, pd.TableInfo.PrimaryKey, true) == 0) {
+            //            if (primaryKeyValue == null) primaryKeyValue = i.Value.GetValue(poco);
+            //        }
+            //    }
+            //    stringBuilder.Append($" WHERE [{pd.TableInfo.PrimaryKey}]=@0");
+            //    Update<T>(stringBuilder.ToString(), primaryKeyValue);
+            //    return;
+            //}
             GetDatabase().Save(poco);
         }
         /// <summary>
