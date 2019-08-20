@@ -60,9 +60,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T1> Select<T1>(int limit, int offset, object condition) where T1 : class
         {
-            if (null == condition || condition.GetType() == typeof(string)) {
-                return Select<T1>(limit, offset, (string)condition);
-            }
             return Select<T1>(limit, offset, ConditionObjectToWhere(condition));
         }
 
@@ -74,9 +71,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T1> Select<T1>(int limit, object condition) where T1 : class
         {
-            if (null == condition || condition.GetType() == typeof(string)) {
-                return Select<T1>(limit, (string)condition);
-            }
             return Select<T1>(limit, ConditionObjectToWhere(condition));
         }
 
@@ -88,9 +82,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T1> Select<T1>(object condition) where T1 : class
         {
-            if (null == condition || condition.GetType() == typeof(string)) {
-                return Select<T1>((string)condition);
-            }
             return Select<T1>(ConditionObjectToWhere(condition));
         }
 
@@ -106,10 +97,7 @@ namespace ToolGood.ReadyGo3
         public List<T1> SelectWithOrderBy<T1>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T1 : class
         {
-            if (string.IsNullOrWhiteSpace(orderField)) {
-                return Select<T1>(limit, offset, ConditionObjectToWhere(condition));
-            }
-            return Select<T1>(limit, offset, ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+            return Select<T1>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
 
         /// <summary>
@@ -123,10 +111,7 @@ namespace ToolGood.ReadyGo3
         public List<T1> SelectWithOrderBy<T1>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T1 : class
         {
-            if (string.IsNullOrWhiteSpace(orderField)) {
-                return Select<T1>(limit, ConditionObjectToWhere(condition));
-            }
-            return Select<T1>(limit, ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+            return Select<T1>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
 
         /// <summary>
@@ -140,10 +125,7 @@ namespace ToolGood.ReadyGo3
         public List<T1> SelectWithOrderBy<T1>(object condition, string orderField = null, string ascOrDesc = "ASC")
              where T1 : class
         {
-            if (string.IsNullOrWhiteSpace(orderField)) {
-                return Select<T1>(ConditionObjectToWhere(condition));
-            }
-            return Select<T1>(ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+            return Select<T1>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
 
         /// <summary>
@@ -156,9 +138,6 @@ namespace ToolGood.ReadyGo3
         public Page<T1> Page<T1>(int page, int itemsPerPage, object condition)
             where T1 : class
         {
-            if (null == condition || typeof(string) == condition.GetType()) {
-                return Page<T1>(page, itemsPerPage, (string)condition, new object[0]);
-            }
             return Page<T1>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
 
@@ -175,7 +154,7 @@ namespace ToolGood.ReadyGo3
             where T1 : class
         {
             return this.Where<T1>().Where(ConditionObjectToWhere(condition))
-                   .IfSet(orderField).OrderBy(orderField, ascOrDesc)
+                   .IfSet(orderField).OrderBy(BuildOrderBy(orderField, ascOrDesc))
                    .Page(page, itemsPerPage);
         }
 
@@ -285,9 +264,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<List<T1>> SelectAsync<T1>(int limit, int offset, object condition) where T1 : class
         {
-            if (null == condition || condition.GetType() == typeof(string)) {
-                return SelectAsync<T1>(limit, offset, (string)condition);
-            }
             return SelectAsync<T1>(limit, offset, ConditionObjectToWhere(condition));
         }
         /// <summary>
@@ -298,9 +274,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<List<T1>> SelectAsync<T1>(int limit, object condition) where T1 : class
         {
-            if (null == condition || condition.GetType() == typeof(string)) {
-                return SelectAsync<T1>(limit, (string)condition);
-            }
             return SelectAsync<T1>(limit, ConditionObjectToWhere(condition));
         }
         /// <summary>
@@ -310,9 +283,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<List<T1>> SelectAsync<T1>(object condition) where T1 : class
         {
-            if (null == condition || condition.GetType() == typeof(string)) {
-                return SelectAsync<T1>((string)condition);
-            }
             return SelectAsync<T1>(ConditionObjectToWhere(condition));
         }
 
@@ -327,10 +297,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<List<T1>> SelectWithOrderByAsync<T1>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
         {
-            if (string.IsNullOrWhiteSpace(orderField)) {
-                return SelectAsync<T1>(limit, offset, ConditionObjectToWhere(condition));
-            }
-            return SelectAsync<T1>(limit, offset, ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+            return SelectAsync<T1>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
         /// <summary>
         /// 根据条件查询
@@ -342,10 +309,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<List<T1>> SelectWithOrderByAsync<T1>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
         {
-            if (string.IsNullOrWhiteSpace(orderField)) {
-                return SelectAsync<T1>(limit, ConditionObjectToWhere(condition));
-            }
-            return SelectAsync<T1>(limit, ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+            return SelectAsync<T1>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
         /// <summary>
         /// 根据条件查询，异步操作
@@ -356,10 +320,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<List<T1>> SelectWithOrderByAsync<T1>(object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
         {
-            if (string.IsNullOrWhiteSpace(orderField)) {
-                return SelectAsync<T1>(ConditionObjectToWhere(condition));
-            }
-            return SelectAsync<T1>(ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+            return SelectAsync<T1>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
 
         /// <summary>
@@ -372,9 +333,6 @@ namespace ToolGood.ReadyGo3
         public Task<Page<T1>> PageAsync<T1>(int page, int itemsPerPage, object condition)
             where T1 : class
         {
-            if (null == condition || typeof(string) == condition.GetType()) {
-                return PageAsync<T1>(page, itemsPerPage, (string)condition, new object[0]);
-            }
             return PageAsync<T1>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
 
@@ -389,7 +347,7 @@ namespace ToolGood.ReadyGo3
              where T1 : class
         {
             return this.Where<T1>().Where(ConditionObjectToWhere(condition))
-                       .IfSet(orderField).OrderBy(orderField, ascOrDesc)
+                       .IfSet(orderField).OrderBy(BuildOrderBy(orderField, ascOrDesc))
                        .PageAsync(page, itemsPerPage);
         }
 
@@ -447,11 +405,24 @@ namespace ToolGood.ReadyGo3
 
 #endif
 
-        private string ConditionObjectToWhere(object condition)
+        private string BuildOrderBy(string orderField, string ascOrDesc)
         {
-            if (condition == null) {
+            if (orderField == null) {
                 return "";
             }
+            ascOrDesc = ascOrDesc.ToUpper();
+            if (ascOrDesc != "DESC") {
+                ascOrDesc = "ASC";
+            }
+            return " ORDER BY " + orderField + " " + ascOrDesc;
+        }
+
+        private string ConditionObjectToWhere(object condition)
+        {
+            if (condition == null) { return ""; }
+            if (condition.GetType() == typeof(string)) { return (string)condition; }
+
+
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("WHERE ");
             ObjectToSql(stringBuilder, condition, " AND ", null);
@@ -460,15 +431,22 @@ namespace ToolGood.ReadyGo3
 
         private string ConditionObjectToUpdateSetWhere(object set, object condition, string[] ignoreFields)
         {
-            if (set == null) {
-                throw new ArgumentException("set is  null object!");
-            }
+            if (set == null) {throw new ArgumentException("set is  null object!");}
+
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("SET ");
             ObjectToSql(stringBuilder, set, ",", ignoreFields);
             if (condition != null) {
+                if (condition.GetType() == typeof(string)) {
+                    var str = ((string)condition).Trim();
+                    if (str.StartsWith("WHERE ", StringComparison.CurrentCultureIgnoreCase)==false) {
+                        stringBuilder.Append(" WHERE");
+                    }
+                    stringBuilder.Append(" ");
+                    stringBuilder.Append(str);
+                    return stringBuilder.ToString();
+                }
                 stringBuilder.Append(" WHERE ");
-
                 ObjectToSql(stringBuilder, condition, " AND ", null);
             }
             return stringBuilder.ToString();
