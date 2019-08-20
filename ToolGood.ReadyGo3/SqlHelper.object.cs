@@ -18,36 +18,36 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public T Single<T>(object condition)
+        public T1 Single<T1>(object condition) where T1 : class
         {
-            return Single<T>(ConditionObjectToWhere(condition));
+            return Single<T1>(ConditionObjectToWhere(condition));
         }
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public T SingleOrDefault<T>(object condition)
+        public T1 SingleOrDefault<T1>(object condition) where T1 : class
         {
-            return SingleOrDefault<T>(ConditionObjectToWhere(condition));
+            return SingleOrDefault<T1>(ConditionObjectToWhere(condition));
         }
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public T First<T>(object condition)
+        public T1 First<T1>(object condition) where T1 : class
         {
-            return First<T>(ConditionObjectToWhere(condition));
+            return First<T1>(ConditionObjectToWhere(condition));
         }
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public T FirstOrDefault<T>(object condition)
+        public T1 FirstOrDefault<T1>(object condition) where T1 : class
         {
-            return FirstOrDefault<T>(ConditionObjectToWhere(condition));
+            return FirstOrDefault<T1>(ConditionObjectToWhere(condition));
         }
 
 
@@ -58,39 +58,94 @@ namespace ToolGood.ReadyGo3
         /// <param name="offset"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public List<T1> Select<T1>(int limit, int offset, object condition)
+        public List<T1> Select<T1>(int limit, int offset, object condition) where T1 : class
         {
             if (null == condition || condition.GetType() == typeof(string)) {
                 return Select<T1>(limit, offset, (string)condition);
             }
             return Select<T1>(limit, offset, ConditionObjectToWhere(condition));
         }
+
         /// <summary>
         /// 根据条件查询
         /// </summary>
         /// <param name="limit"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public List<T1> Select<T1>(int limit, object condition)
+        public List<T1> Select<T1>(int limit, object condition) where T1 : class
         {
             if (null == condition || condition.GetType() == typeof(string)) {
                 return Select<T1>(limit, (string)condition);
             }
             return Select<T1>(limit, ConditionObjectToWhere(condition));
         }
+
         /// <summary>
         /// 根据条件查询
         /// </summary>
         /// <typeparam name="T1"></typeparam>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public List<T1> Select<T1>(object condition)
+        public List<T1> Select<T1>(object condition) where T1 : class
         {
             if (null == condition || condition.GetType() == typeof(string)) {
                 return Select<T1>((string)condition);
             }
             return Select<T1>(ConditionObjectToWhere(condition));
         }
+
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <param name="condition"></param>
+        /// <param name="orderField"></param>
+        /// <param name="ascOrDesc"></param>
+        /// <returns></returns>
+        public List<T1> SelectWithOrderBy<T1>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC")
+             where T1 : class
+        {
+            if (string.IsNullOrWhiteSpace(orderField)) {
+                return Select<T1>(limit, offset, ConditionObjectToWhere(condition));
+            }
+            return Select<T1>(limit, offset, ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+        }
+
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="condition"></param>
+        /// <param name="orderField"></param>
+        /// <param name="ascOrDesc"></param>
+        /// <returns></returns>
+        public List<T1> SelectWithOrderBy<T1>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC")
+             where T1 : class
+        {
+            if (string.IsNullOrWhiteSpace(orderField)) {
+                return Select<T1>(limit, ConditionObjectToWhere(condition));
+            }
+            return Select<T1>(limit, ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+        }
+
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <typeparam name="T1"></typeparam>
+        /// <param name="condition"></param>
+        /// <param name="orderField"></param>
+        /// <param name="ascOrDesc"></param>
+        /// <returns></returns>
+        public List<T1> SelectWithOrderBy<T1>(object condition, string orderField = null, string ascOrDesc = "ASC")
+             where T1 : class
+        {
+            if (string.IsNullOrWhiteSpace(orderField)) {
+                return Select<T1>(ConditionObjectToWhere(condition));
+            }
+            return Select<T1>(ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+        }
+
         /// <summary>
         /// 根据条件查询页
         /// </summary>
@@ -98,13 +153,32 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Page<T> Page<T>(int page, int itemsPerPage, object condition)
+        public Page<T1> Page<T1>(int page, int itemsPerPage, object condition)
+            where T1 : class
         {
             if (null == condition || typeof(string) == condition.GetType()) {
-                return Page<T>(page, itemsPerPage, (string)condition, new object[0]);
+                return Page<T1>(page, itemsPerPage, (string)condition, new object[0]);
             }
-            return Page<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
+            return Page<T1>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
+
+        /// <summary>
+        /// 根据条件查询页
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="condition"></param>
+        /// <param name="orderField"></param>
+        /// <param name="ascOrDesc"></param>
+        /// <returns></returns>
+        public Page<T1> PageWithOrderBy<T1>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+            where T1 : class
+        {
+            return this.Where<T1>().Where(ConditionObjectToWhere(condition))
+                   .IfSet(orderField).OrderBy(orderField, ascOrDesc)
+                   .Page(page, itemsPerPage);
+        }
+
 
         /// <summary>
         /// 根据条件更新对象
@@ -113,7 +187,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition"></param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        public int Update<T1>(object set, object condition, params string[] ignoreFields)
+        public int Update<T1>(object set, object condition, params string[] ignoreFields) where T1 : class
         {
             return Update<T1>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
         }
@@ -123,9 +197,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public int Delete<T>(object condition)
+        public int Delete<T1>(object condition) where T1 : class
         {
-            return Delete<T>(ConditionObjectToWhere(condition));
+            return Delete<T1>(ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -133,9 +207,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public int Count<T>(object condition)
+        public int Count<T1>(object condition) where T1 : class
         {
-            return Count<T>(ConditionObjectToWhere(condition));
+            return Count<T1>(ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -143,12 +217,12 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public bool Exists<T>(object condition)
+        public bool Exists<T1>(object condition) where T1 : class
         {
             if (condition.GetType().IsClass) {
-                return Exists<T>(ConditionObjectToWhere(condition));
+                return Exists<T1>(ConditionObjectToWhere(condition));
             } else {
-                var pd = PocoData.ForType(typeof(T));
+                var pd = PocoData.ForType(typeof(T1));
                 var table = _provider.GetTableName(pd);
                 var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
@@ -167,9 +241,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<T> FirstAsync<T>(object condition)
+        public Task<T1> FirstAsync<T1>(object condition) where T1 : class
         {
-            return FirstAsync<T>(ConditionObjectToWhere(condition));
+            return FirstAsync<T1>(ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -177,9 +251,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<T> FirstOrDefaultAsync<T>(object condition)
+        public Task<T1> FirstOrDefaultAsync<T1>(object condition) where T1 : class
         {
-            return FirstOrDefaultAsync<T>(ConditionObjectToWhere(condition));
+            return FirstOrDefaultAsync<T1>(ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -187,9 +261,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<T> SingleAsync<T>(object condition)
+        public Task<T1> SingleAsync<T1>(object condition) where T1 : class
         {
-            return SingleAsync<T>(ConditionObjectToWhere(condition));
+            return SingleAsync<T1>(ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -197,9 +271,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<T> SingleOrDefaultAsync<T>(object condition)
+        public Task<T1> SingleOrDefaultAsync<T1>(object condition) where T1 : class
         {
-            return SingleOrDefaultAsync<T>(ConditionObjectToWhere(condition));
+            return SingleOrDefaultAsync<T1>(ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -209,9 +283,12 @@ namespace ToolGood.ReadyGo3
         /// <param name="offset"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(int limit, int offset, object condition)
+        public Task<List<T1>> SelectAsync<T1>(int limit, int offset, object condition) where T1 : class
         {
-            return SelectAsync<T>(limit, offset, ConditionObjectToWhere(condition));
+            if (null == condition || condition.GetType() == typeof(string)) {
+                return SelectAsync<T1>(limit, offset, (string)condition);
+            }
+            return SelectAsync<T1>(limit, offset, ConditionObjectToWhere(condition));
         }
         /// <summary>
         /// 根据条件查询
@@ -219,19 +296,72 @@ namespace ToolGood.ReadyGo3
         /// <param name="limit"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(int limit, object condition)
+        public Task<List<T1>> SelectAsync<T1>(int limit, object condition) where T1 : class
         {
-            return SelectAsync<T>(limit, ConditionObjectToWhere(condition));
+            if (null == condition || condition.GetType() == typeof(string)) {
+                return SelectAsync<T1>(limit, (string)condition);
+            }
+            return SelectAsync<T1>(limit, ConditionObjectToWhere(condition));
         }
         /// <summary>
         /// 根据条件查询，异步操作
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(object condition)
+        public Task<List<T1>> SelectAsync<T1>(object condition) where T1 : class
         {
-            return SelectAsync<T>(ConditionObjectToWhere(condition));
+            if (null == condition || condition.GetType() == typeof(string)) {
+                return SelectAsync<T1>((string)condition);
+            }
+            return SelectAsync<T1>(ConditionObjectToWhere(condition));
         }
+
+        /// <summary>
+        /// 根据条件查询，异步操作
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <param name="condition"></param>
+        /// <param name="orderField"></param>
+        /// <param name="ascOrDesc"></param>
+        /// <returns></returns>
+        public Task<List<T1>> SelectWithOrderByAsync<T1>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
+        {
+            if (string.IsNullOrWhiteSpace(orderField)) {
+                return SelectAsync<T1>(limit, offset, ConditionObjectToWhere(condition));
+            }
+            return SelectAsync<T1>(limit, offset, ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+        }
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="condition"></param>
+        /// <param name="orderField"></param>
+        /// <param name="ascOrDesc"></param>
+        /// <returns></returns>
+        public Task<List<T1>> SelectWithOrderByAsync<T1>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
+        {
+            if (string.IsNullOrWhiteSpace(orderField)) {
+                return SelectAsync<T1>(limit, ConditionObjectToWhere(condition));
+            }
+            return SelectAsync<T1>(limit, ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+        }
+        /// <summary>
+        /// 根据条件查询，异步操作
+        /// </summary>
+        /// <param name="condition"></param>
+        /// <param name="orderField"></param>
+        /// <param name="ascOrDesc"></param>
+        /// <returns></returns>
+        public Task<List<T1>> SelectWithOrderByAsync<T1>(object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
+        {
+            if (string.IsNullOrWhiteSpace(orderField)) {
+                return SelectAsync<T1>(ConditionObjectToWhere(condition));
+            }
+            return SelectAsync<T1>(ConditionObjectToWhere(condition) + " ORDER BY " + orderField + " " + ascOrDesc);
+        }
+
         /// <summary>
         ///  根据条件查询页，异步操作
         /// </summary>
@@ -239,13 +369,30 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<Page<T>> PageAsync<T>(int page, int itemsPerPage, object condition)
+        public Task<Page<T1>> PageAsync<T1>(int page, int itemsPerPage, object condition)
+            where T1 : class
         {
             if (null == condition || typeof(string) == condition.GetType()) {
-                return PageAsync<T>(page, itemsPerPage, (string)condition, new object[0]);
+                return PageAsync<T1>(page, itemsPerPage, (string)condition, new object[0]);
             }
-            return PageAsync<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
+            return PageAsync<T1>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
+
+        /// <summary>
+        ///  根据条件查询页，异步操作
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public Task<Page<T1>> PageWithOrderByAsync<T1>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+             where T1 : class
+        {
+            return this.Where<T1>().Where(ConditionObjectToWhere(condition))
+                       .IfSet(orderField).OrderBy(orderField, ascOrDesc)
+                       .PageAsync(page, itemsPerPage);
+        }
+
 
         /// <summary>
         /// 根据条件更新对象
@@ -254,7 +401,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition"></param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        public Task<int> UpdateAsync<T1>(object set, object condition, params string[] ignoreFields)
+        public Task<int> UpdateAsync<T1>(object set, object condition, params string[] ignoreFields) where T1 : class
         {
             return UpdateAsync<T1>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
         }
@@ -264,9 +411,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<int> DeleteAsync<T>(object condition)
+        public Task<int> DeleteAsync<T1>(object condition) where T1 : class
         {
-            return DeleteAsync<T>(ConditionObjectToWhere(condition));
+            return DeleteAsync<T1>(ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -274,21 +421,21 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<int> CountAsync<T>(object condition)
+        public Task<int> CountAsync<T1>(object condition) where T1 : class
         {
-            return CountAsync<T>(ConditionObjectToWhere(condition));
+            return CountAsync<T1>(ConditionObjectToWhere(condition));
         }
         /// <summary>
         /// 根据条件是判断否存在，异步操作
         /// </summary>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public async Task<bool> ExistsAsync<T>(object condition)
+        public async Task<bool> ExistsAsync<T1>(object condition) where T1 : class
         {
             if (condition.GetType().IsClass) {
-                return await ExistsAsync<T>(ConditionObjectToWhere(condition));
+                return await ExistsAsync<T1>(ConditionObjectToWhere(condition));
             } else {
-                var pd = PocoData.ForType(typeof(T));
+                var pd = PocoData.ForType(typeof(T1));
                 var table = _provider.GetTableName(pd);
                 var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
@@ -331,7 +478,7 @@ namespace ToolGood.ReadyGo3
         {
             if (condition is IEnumerable) { throw new ArgumentException("condition is IEnumerable object!"); }
             bool hasColumn = false;
- 
+
             var type = condition.GetType();
             var pis = type.GetProperties();
             for (int i = 0; i < pis.Length; i++) {
