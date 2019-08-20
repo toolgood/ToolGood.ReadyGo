@@ -16,7 +16,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public T1 Single<T1>(object condition) where T1 : class
         {
@@ -25,7 +25,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public T1 SingleOrDefault<T1>(object condition) where T1 : class
         {
@@ -34,7 +34,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public T1 First<T1>(object condition) where T1 : class
         {
@@ -43,7 +43,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public T1 FirstOrDefault<T1>(object condition) where T1 : class
         {
@@ -54,9 +54,9 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询
         /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="offset"></param>
-        /// <param name="condition"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="offset">位移</param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public List<T1> Select<T1>(int limit, int offset, object condition) where T1 : class
         {
@@ -66,8 +66,8 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询
         /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="condition"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public List<T1> Select<T1>(int limit, object condition) where T1 : class
         {
@@ -78,21 +78,22 @@ namespace ToolGood.ReadyGo3
         /// 根据条件查询
         /// </summary>
         /// <typeparam name="T1"></typeparam>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public List<T1> Select<T1>(object condition) where T1 : class
         {
             return Select<T1>(ConditionObjectToWhere(condition));
         }
 
+
         /// <summary>
         /// 根据条件查询
         /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="offset"></param>
-        /// <param name="condition"></param>
-        /// <param name="orderField"></param>
-        /// <param name="ascOrDesc"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="offset">位移</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
         public List<T1> SelectWithOrderBy<T1>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T1 : class
@@ -103,10 +104,10 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询
         /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="condition"></param>
-        /// <param name="orderField"></param>
-        /// <param name="ascOrDesc"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
         public List<T1> SelectWithOrderBy<T1>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T1 : class
@@ -118,9 +119,9 @@ namespace ToolGood.ReadyGo3
         /// 根据条件查询
         /// </summary>
         /// <typeparam name="T1"></typeparam>
-        /// <param name="condition"></param>
-        /// <param name="orderField"></param>
-        /// <param name="ascOrDesc"></param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
         public List<T1> SelectWithOrderBy<T1>(object condition, string orderField = null, string ascOrDesc = "ASC")
              where T1 : class
@@ -131,9 +132,38 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询页
         /// </summary>
-        /// <param name="page"></param>
-        /// <param name="itemsPerPage"></param>
-        /// <param name="condition"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public List<T1> SelectPage<T1>(int page, int itemsPerPage, object condition)
+            where T1 : class
+        {
+            return SelectPage<T1>(page, itemsPerPage, ConditionObjectToWhere(condition));
+        }
+
+        /// <summary>
+        /// 根据条件查询页
+        /// </summary>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
+        /// <returns></returns>
+        public List<T1> SelectPageWithOrderBy<T1>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+            where T1 : class
+        {
+            return SelectPage<T1>(page, itemsPerPage, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+        }
+
+
+        /// <summary>
+        /// 根据条件查询页
+        /// </summary>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Page<T1> Page<T1>(int page, int itemsPerPage, object condition)
             where T1 : class
@@ -144,11 +174,11 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询页
         /// </summary>
-        /// <param name="page"></param>
-        /// <param name="itemsPerPage"></param>
-        /// <param name="condition"></param>
-        /// <param name="orderField"></param>
-        /// <param name="ascOrDesc"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
         public Page<T1> PageWithOrderBy<T1>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
             where T1 : class
@@ -163,7 +193,7 @@ namespace ToolGood.ReadyGo3
         /// 根据条件更新对象
         /// </summary>
         /// <param name="set"></param>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
         public int Update<T1>(object set, object condition, params string[] ignoreFields) where T1 : class
@@ -174,7 +204,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件从数据库中删除对象
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public int Delete<T1>(object condition) where T1 : class
         {
@@ -184,7 +214,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询个数
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public int Count<T1>(object condition) where T1 : class
         {
@@ -194,7 +224,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件判断是否存在
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public bool Exists<T1>(object condition) where T1 : class
         {
@@ -218,7 +248,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<T1> FirstAsync<T1>(object condition) where T1 : class
         {
@@ -228,7 +258,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<T1> FirstOrDefaultAsync<T1>(object condition) where T1 : class
         {
@@ -238,7 +268,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询唯一项，异步操作
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<T1> SingleAsync<T1>(object condition) where T1 : class
         {
@@ -248,7 +278,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询唯一项，异步操作
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<T1> SingleOrDefaultAsync<T1>(object condition) where T1 : class
         {
@@ -258,9 +288,9 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询，异步操作
         /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="offset"></param>
-        /// <param name="condition"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="offset">位移</param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<List<T1>> SelectAsync<T1>(int limit, int offset, object condition) where T1 : class
         {
@@ -269,8 +299,8 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询
         /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="condition"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<List<T1>> SelectAsync<T1>(int limit, object condition) where T1 : class
         {
@@ -279,7 +309,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询，异步操作
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<List<T1>> SelectAsync<T1>(object condition) where T1 : class
         {
@@ -289,11 +319,11 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询，异步操作
         /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="offset"></param>
-        /// <param name="condition"></param>
-        /// <param name="orderField"></param>
-        /// <param name="ascOrDesc"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="offset">位移</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
         public Task<List<T1>> SelectWithOrderByAsync<T1>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
         {
@@ -302,10 +332,10 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询
         /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="condition"></param>
-        /// <param name="orderField"></param>
-        /// <param name="ascOrDesc"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
         public Task<List<T1>> SelectWithOrderByAsync<T1>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
         {
@@ -314,9 +344,9 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询，异步操作
         /// </summary>
-        /// <param name="condition"></param>
-        /// <param name="orderField"></param>
-        /// <param name="ascOrDesc"></param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
         public Task<List<T1>> SelectWithOrderByAsync<T1>(object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
         {
@@ -326,9 +356,40 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         ///  根据条件查询页，异步操作
         /// </summary>
-        /// <param name="page"></param>
-        /// <param name="itemsPerPage"></param>
-        /// <param name="condition"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<List<T1>> SelectPageAsync<T1>(int page, int itemsPerPage, object condition)
+            where T1 : class
+        {
+            return SelectPageAsync<T1>(page, itemsPerPage, ConditionObjectToWhere(condition));
+        }
+
+        /// <summary>
+        ///  根据条件查询页，异步操作
+        /// </summary>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
+        /// <returns></returns>
+        public Task<List<T1>> SelectPageWithOrderByAsync<T1>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+            where T1 : class
+        {
+            return this.Where<T1>().Where(ConditionObjectToWhere(condition))
+                   .IfSet(orderField).OrderBy(BuildOrderBy(orderField, ascOrDesc))
+                   .SelectPageAsync(page, itemsPerPage);
+        }
+
+
+        /// <summary>
+        ///  根据条件查询页，异步操作
+        /// </summary>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<Page<T1>> PageAsync<T1>(int page, int itemsPerPage, object condition)
             where T1 : class
@@ -339,9 +400,11 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         ///  根据条件查询页，异步操作
         /// </summary>
-        /// <param name="page"></param>
-        /// <param name="itemsPerPage"></param>
-        /// <param name="condition"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
         public Task<Page<T1>> PageWithOrderByAsync<T1>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T1 : class
@@ -356,7 +419,7 @@ namespace ToolGood.ReadyGo3
         /// 根据条件更新对象
         /// </summary>
         /// <param name="set"></param>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
         public Task<int> UpdateAsync<T1>(object set, object condition, params string[] ignoreFields) where T1 : class
@@ -367,7 +430,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件从数据库中删除对象 
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<int> DeleteAsync<T1>(object condition) where T1 : class
         {
@@ -377,7 +440,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询个数，异步操作
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<int> CountAsync<T1>(object condition) where T1 : class
         {
@@ -386,7 +449,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件是判断否存在，异步操作
         /// </summary>
-        /// <param name="condition"></param>
+        /// <param name="condition">条件</param>
         /// <returns></returns>
         public async Task<bool> ExistsAsync<T1>(object condition) where T1 : class
         {
@@ -506,6 +569,11 @@ namespace ToolGood.ReadyGo3
                 }
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="value"></param>
+        /// <returns></returns>
         protected string EscapeParam(object value)
         {
             if (object.Equals(value, null)) return "NULL";
