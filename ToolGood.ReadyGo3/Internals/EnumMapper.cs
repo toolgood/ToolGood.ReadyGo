@@ -25,7 +25,7 @@ namespace ToolGood.ReadyGo3.Internals
         public static bool UseEnumString(Type enumType)
         {
             return _useString.Get(enumType, () => {
-                var atts = enumType.GetCustomAttributes(typeof(ExplicitColumnsAttribute), true);
+                var atts = enumType.GetCustomAttributes(typeof(EnumStringAttribute), true);
                 return atts.Length > 0;
             });
         }
