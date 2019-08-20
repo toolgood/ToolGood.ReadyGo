@@ -60,7 +60,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T1> Select<T1>(int limit, int offset, object condition)
         {
-            if (null == condition && condition.GetType() == typeof(string)) {
+            if (null == condition || condition.GetType() == typeof(string)) {
                 return Select<T1>(limit, offset, (string)condition);
             }
             return Select<T1>(limit, offset, ConditionObjectToWhere(condition));
@@ -73,7 +73,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T1> Select<T1>(int limit, object condition)
         {
-            if (null == condition && condition.GetType() == typeof(string)) {
+            if (null == condition || condition.GetType() == typeof(string)) {
                 return Select<T1>(limit, (string)condition);
             }
             return Select<T1>(limit, ConditionObjectToWhere(condition));
@@ -86,7 +86,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T1> Select<T1>(object condition)
         {
-            if (null == condition && condition.GetType() == typeof(string)) {
+            if (null == condition || condition.GetType() == typeof(string)) {
                 return Select<T1>((string)condition);
             }
             return Select<T1>(ConditionObjectToWhere(condition));
@@ -100,7 +100,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Page<T> Page<T>(int page, int itemsPerPage, object condition)
         {
-            if (null != condition && typeof(string) == condition.GetType()) {
+            if (null == condition || typeof(string) == condition.GetType()) {
                 return Page<T>(page, itemsPerPage, (string)condition, new object[0]);
             }
             return Page<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
@@ -241,7 +241,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<Page<T>> PageAsync<T>(int page, int itemsPerPage, object condition)
         {
-            if (null != condition && typeof(string) == condition.GetType()) {
+            if (null == condition || typeof(string) == condition.GetType()) {
                 return PageAsync<T>(page, itemsPerPage, (string)condition, new object[0]);
             }
             return PageAsync<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
@@ -331,34 +331,7 @@ namespace ToolGood.ReadyGo3
         {
             if (condition is IEnumerable) { throw new ArgumentException("condition is IEnumerable object!"); }
             bool hasColumn = false;
-
-            //if (condition is IUpdateChange) {
-            //    var dict = ((IUpdateChange)condition).__GetChanges__();
-            //    foreach (var item in dict) {
-            //        if (ignoreFields != null) {
-            //            if (ignoreFields.Any(q => string.Equals(q, item.Key, StringComparison.CurrentCultureIgnoreCase))) { continue; }
-            //        }
-            //        if (hasColumn == false) {
-            //            hasColumn = true;
-            //        } else {
-            //            stringBuilder.Append(middelStr);
-            //        }
-            //        if (middelStr == " AND ") {
-            //            if (item.Value == null) {
-            //                stringBuilder.Append($"[{item.Key}] is Null");
-            //            } else {
-            //                stringBuilder.Append($"[{item.Key}]=");
-            //                stringBuilder.Append(EscapeParam(item.Value));
-            //            }
-            //        } else {
-            //            stringBuilder.Append($"[{item.Key}]=");
-            //            stringBuilder.Append(EscapeParam(item.Value));
-            //        }
-            //    }
-            //    return;
-            //}
-
-
+ 
             var type = condition.GetType();
             var pis = type.GetProperties();
             for (int i = 0; i < pis.Length; i++) {

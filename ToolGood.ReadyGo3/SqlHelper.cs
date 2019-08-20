@@ -133,6 +133,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         internal string formatSql(string sql)
         {
+            if (sql == null) { return ""; }
             bool usedEscapeSql = false;
             char escapeSql = '`';
             if (_sqlType == SqlType.MySql || _sqlType == SqlType.MariaDb) {
