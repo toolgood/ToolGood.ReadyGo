@@ -81,9 +81,9 @@ namespace ToolGood.ReadyGo3.Internals
             });
         }
 
-        public static string GetSelectColumnsSql(DatabaseProvider _provider, PocoData pd)
+        public static string GetSelectColumnsSql(DatabaseProvider _provider, PocoData pd, string from = null)
         {
-            return _selectColumns.Get($"{_provider.ToString()}|{pd.ToString()}", () => {
+            return _selectColumns.Get($"{_provider.ToString()}|{pd.ToString()}|{from}", () => {
                 var tableName = _provider.EscapeTableName(pd.TableInfo.TableName);
                 StringBuilder stringBuilder = new StringBuilder();
                 foreach (var item in pd.Columns) {
@@ -92,14 +92,16 @@ namespace ToolGood.ReadyGo3.Internals
                     if (col.ResultColumn) {
                         if (string.IsNullOrEmpty(col.ResultSql) == false) {
                             stringBuilder.Append(",");
-                            stringBuilder.AppendFormat(col.ResultSql, tableName + ".");
+                            stringBuilder.AppendFormat(col.ResultSql, (from ?? tableName) + ".");
                             stringBuilder.Append(" AS '");
                             stringBuilder.Append(col.ColumnName);
                             stringBuilder.Append("'");
                         }
                     } else {
                         stringBuilder.Append(",");
-                        stringBuilder.AppendFormat("{0}.{1}", tableName, _provider.EscapeSqlIdentifier(col.ColumnName));
+                        stringBuilder.Append(from ?? tableName);
+                        stringBuilder.Append(".");
+                        stringBuilder.Append(_provider.EscapeSqlIdentifier(col.ColumnName));
                     }
                 }
                 if (stringBuilder.Length == 0) throw new NoColumnException();
