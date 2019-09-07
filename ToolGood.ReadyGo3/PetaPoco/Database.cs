@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using ToolGood.ReadyGo3.Exceptions;
 using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;
@@ -656,50 +657,44 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             if (EnableAutoSelect)
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
+
+            OpenSharedConnection();
             try {
-                OpenSharedConnection();
-                try {
-                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
-                        DoPreExecute(cmd);
-                        IDataReader r = cmd.ExecuteReader();
-                        OnExecutedCommand(cmd);
-
-                        return Query<T>(r);
-                    }
-                } finally {
-                    CloseSharedConnection();
-                }
-            } catch (Exception x) {
-                if (OnException(x))
-                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return default;
-            }
-
-        }
-        private IEnumerable<T> Query<T>(IDataReader r)
-        {
-            var pd = PocoData.ForType(typeof(T));
-
-            var factory = pd.GetFactory(0, r.FieldCount, r/*, _sqlHelper._use_proxyType*/) as Func<IDataReader, T>;
-            using (r) {
-                while (true) {
-                    T poco;
+                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                    IDataReader r;
+                    var pd = PocoData.ForType(typeof(T));
                     try {
-                        if (!r.Read())
-                            yield break;
-                        poco = factory(r);
+                        DoPreExecute(cmd);
+                        r = cmd.ExecuteReader();
+                        OnExecutedCommand(cmd);
                     } catch (Exception x) {
                         if (OnException(x))
                             throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                         yield break;
                     }
-                    yield return poco;
+                    var factory = pd.GetFactory(0, r.FieldCount, r/*, _sqlHelper._use_proxyType*/) as Func<IDataReader, T>;
+                    using (r) {
+                        while (true) {
+                            T poco;
+                            try {
+                                if (!r.Read())
+                                    yield break;
+                                poco = factory(r);
+                            } catch (Exception x) {
+                                if (OnException(x))
+                                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
+                                yield break;
+                            }
+
+                            yield return poco;
+                        }
+                    }
                 }
+            } finally {
+                CloseSharedConnection();
             }
         }
-
-
-
+ 
         #endregion
 
         #region operation: Exists

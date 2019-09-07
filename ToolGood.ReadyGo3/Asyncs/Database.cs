@@ -163,7 +163,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                         DoPreExecute(cmd);
-                        var reader = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult,token).ConfigureAwait(false);
+                        var reader = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                         DataTable dt = new DataTable();
                         bool init = false;
@@ -261,24 +261,39 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (EnableAutoSelect)
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
 
+            var resultList = new List<T>();
+            await OpenSharedConnectionAsync().ConfigureAwait(false);
             try {
-                await OpenSharedConnectionAsync().ConfigureAwait(false);
-                try {
-                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                    SqlDataReader r = null;
+                    var pd = PocoData.ForType(typeof(T));
+                    try {
                         DoPreExecute(cmd);
-                        SqlDataReader r = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, token).ConfigureAwait(false);
+                        r = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
-
-                        return Query<T>(r);
+                    } catch (Exception x) {
+                        if (OnException(x))
+                            throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                     }
-                } finally {
-                    CloseSharedConnection();
-                    token = CancellationToken.None;
+                    var factory = pd.GetFactory(0, r.FieldCount, r/*, _sqlHelper._use_proxyType*/) as Func<IDataReader, T>;
+                    using (r) {
+                        while (true) {
+                            try {
+                                if (!r.Read())
+                                    break;
+                                T poco = factory(r);
+                                resultList.Add(poco);
+                            } catch (Exception x) {
+                                if (OnException(x))
+                                    throw;
+                            }
+                        }
+                    }
                 }
-            } catch (Exception x) {
-                if (OnException(x))
-                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return default;
+                return resultList;
+            } finally {
+                CloseSharedConnection();
+                token = CancellationToken.None;
             }
         }
 
