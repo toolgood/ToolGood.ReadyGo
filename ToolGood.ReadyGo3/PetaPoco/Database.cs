@@ -348,7 +348,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             // Notify the DB type
             _provider.PreExecute(cmd);
- 
+
             return cmd;
         }
 
@@ -694,7 +694,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 CloseSharedConnection();
             }
         }
- 
+
         #endregion
 
         #region operation: Exists
@@ -831,15 +831,21 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             var pd = PocoData.ForType(typeof(T));
             var tableName = pd.TableInfo.TableName;
+            var columns = pd.Columns.Where(q => q.Value.ResultColumn == false).Count();
+            var count1 = Math.Min(50, 1000 / columns);
+            var count2 = Math.Min(25, 500 / columns);
+            var count3 = Math.Min(10, 200 / columns);
 
             var index = 0;
             while (index < list.Count) {
                 var count = list.Count - index;
                 int size;
-                if (count >= 50) {
-                    size = 50;
-                } else if (count >= 10) {
-                    size = 10;
+                if (count >= count1) {
+                    size = count1;
+                } else if (count >= count2) {
+                    size = count2;
+                } else if (count >= count3) {
+                    size = count3;
                 } else {
                     size = count;
                 }
