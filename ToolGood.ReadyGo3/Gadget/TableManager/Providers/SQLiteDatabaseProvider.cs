@@ -42,13 +42,13 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             sql += "\r\n);\r\n";
             if (withIndex) {
                 foreach (var item in ti.Indexs) {
-                    var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                    var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = string.Join(",", item);
                     sql += "CREATE INDEX " + txt + " ON [" + ti.TableName + "](" + columns + ");\r\n";
                 }
 
                 foreach (var item in ti.Uniques) {
-                    var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                    var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = string.Join(",", item);
                     sql += "CREATE UNIQUE INDEX " + txt + " ON [" + ti.TableName + "]( " + columns + ");\r\n";
                 }
@@ -63,12 +63,12 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             string sql = "";
             var ti = TableInfo.FromType(type);
             foreach (var item in ti.Indexs) {
-                var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = string.Join(",", item);
                 sql += $"CREATE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
             }
             foreach (var item in ti.Uniques) {
-                var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = string.Join(",", item);
                 sql += $"CREATE UNIQUE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
             }
