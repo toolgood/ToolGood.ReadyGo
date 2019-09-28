@@ -8,49 +8,72 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
     }
     public class MySqlDatabaseProvider : DatabaseProvider
     {
-        public override string GetTryCreateTable(Type type)
+        public override string GetTryCreateTable(Type type, bool withIndex = true)
         {
             var ti = TableInfo.FromType(type);
             var sql = "CREATE TABLE IF NOT EXISTS " + GetTableName(ti) + "(\r\n";
             foreach (var item in ti.Columns) {
                 sql += "    " + CreateColumn(ti, item) + ",\r\n";
             }
-            foreach (var item in ti.Indexs) {
-                var txt = "i_" + string.Join("_", item);
-                var columns = string.Join(",", item);
-                sql += "    INDEX " + txt + "(" + columns + "),\r\n";
-            }
-            foreach (var item in ti.Uniques) {
-                var txt = "u_" + string.Join("_", item);
-                var columns = string.Join(",", item);
-                sql += "    UNIQUE INDEX " + txt + " ( " + columns + "),\r\n";
+            if (withIndex) {
+                foreach (var item in ti.Indexs) {
+                    var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                    var columns = string.Join(",", item).Replace("[", "`").Replace("]", "`");
+                    sql += "    INDEX " + txt + "(" + columns + "),\r\n";
+                }
+                foreach (var item in ti.Uniques) {
+                    var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                    var columns = string.Join(",", item).Replace("[", "`").Replace("]", "`");
+                    sql += "    UNIQUE INDEX " + txt + " ( " + columns + "),\r\n";
+                }
             }
             sql = sql.Substring(0, sql.Length - 3);
             sql += "\r\n);";
             return sql;
         }
 
-        public override string GetCreateTable(Type type)
+        public override string GetCreateTable(Type type, bool withIndex = true)
         {
             var ti = TableInfo.FromType(type);
             var sql = "CREATE TABLE " + GetTableName(ti) + "(\r\n";
             foreach (var item in ti.Columns) {
                 sql += "    " + CreateColumn(ti, item) + ",\r\n";
             }
-            foreach (var item in ti.Indexs) {
-                var txt = "i_" + string.Join("_", item);
-                var columns = string.Join(",", item);
-                sql += "    INDEX " + txt + "(" + columns + "),\r\n";
-            }
-            foreach (var item in ti.Uniques) {
-                var txt = "u_" + string.Join("_", item);
-                var columns = string.Join(",", item);
-                sql += "    UNIQUE INDEX " + txt + " ( " + columns + "),\r\n";
+            if (withIndex) {
+                foreach (var item in ti.Indexs) {
+                    var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                    var columns = string.Join(",", item).Replace("[", "`").Replace("]", "`");
+                    sql += "    INDEX " + txt + "(" + columns + "),\r\n";
+                }
+                foreach (var item in ti.Uniques) {
+                    var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                    var columns = string.Join(",", item).Replace("[", "`").Replace("]", "`");
+                    sql += "    UNIQUE INDEX " + txt + " ( " + columns + "),\r\n";
+                }
             }
             sql = sql.Substring(0, sql.Length - 3);
             sql += "\r\n);";
             return sql;
         }
+
+        public override string GetCreateIndex(Type type)
+        {
+            //CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX 索引名 ON 表名（字段名[(长度)][ASC | DESC]）;
+            string sql = "";
+            var ti = TableInfo.FromType(type);
+            foreach (var item in ti.Indexs) {
+                var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                var columns = string.Join(",", item).Replace("[", "`").Replace("]", "`");
+                sql += $"CREATE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+            }
+            foreach (var item in ti.Uniques) {
+                var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                var columns = string.Join(",", item).Replace("[", "`").Replace("]", "`");
+                sql += $"CREATE UNIQUE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+            }
+            return sql;
+        }
+
 
         public override string GetDropTable(Type type)
         {

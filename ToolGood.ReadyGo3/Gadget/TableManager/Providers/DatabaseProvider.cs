@@ -7,16 +7,21 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
 {
     public abstract class DatabaseProvider
     {
-        public virtual string GetTryCreateTable(Type type)
+        public virtual string GetTryCreateTable(Type type, bool withIndex = true)
         {
             return null;
         }
 
-        public virtual string GetCreateTable(Type type)
+        public virtual string GetCreateTable(Type type, bool withIndex = true)
         {
             return null;
-
         }
+
+        public virtual string GetCreateIndex(Type type)
+        {
+            return null;
+        }
+
 
         public virtual string GetDropTable(Type type)
         {
@@ -32,10 +37,10 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
 
 
 
-        protected virtual string EscapeSqlIdentifier(string name)
-        {
-            return "[" + name + "]";
-        }
+        //protected virtual string EscapeSqlIdentifier(string name)
+        //{
+        //    return "[" + name + "]";
+        //}
 
         /// <summary>
         /// 获取表名

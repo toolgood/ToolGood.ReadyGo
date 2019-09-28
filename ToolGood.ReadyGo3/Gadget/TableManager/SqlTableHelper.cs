@@ -11,16 +11,23 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             _sqlHelper = sqlhelper;
         }
 
-        public string GetTryCreateTable(Type type)
+        public string GetTryCreateTable(Type type, bool withIndex = true)
         {
             var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
-            return dp.GetTryCreateTable(type);
+            return dp.GetTryCreateTable(type, withIndex);
         }
-        public string GetCreateTable(Type type)
+        public string GetCreateTable(Type type, bool withIndex = true)
         {
             var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
-            return dp.GetCreateTable(type);
+            return dp.GetCreateTable(type, withIndex);
         }
+
+        public string GetCreateTableIndex(Type type)
+        {
+            var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
+            return dp.GetCreateIndex(type);
+        }
+
         public string GetDropTable(Type type)
         {
             var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
@@ -34,15 +41,23 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
 
 
 
-        public void TryCreateTable(Type type)
+        public void TryCreateTable(Type type, bool withIndex = true)
         {
-            var sql = GetTryCreateTable(type);
+            var sql = GetTryCreateTable(type, withIndex);
             _sqlHelper.Execute(sql);
         }
 
-        public void CreateTable(Type type)
+        public void CreateTable(Type type, bool withIndex = true)
         {
-            var sql = GetCreateTable(type);
+            var sql = GetCreateTable(type, withIndex);
+            _sqlHelper.Execute(sql);
+        }
+
+
+        public void CreateTableIndex(Type type)
+        {
+            var sql = GetTryCreateTable(type);
+            if (string.IsNullOrEmpty(sql)) { return; }
             _sqlHelper.Execute(sql);
         }
 
