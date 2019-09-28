@@ -146,17 +146,24 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
-        /// 打开Mysql数据库
+        /// 打开Mysql数据库,SslMode默认none
         /// </summary>
         /// <param name="connectionString"></param>
         /// <returns></returns>
         public static SqlHelper OpenMysql(MysqlConnectionString connectionString)
         {
             var connstr = connectionString.ToString();
+            if (connstr.IndexOf("SslMode", System.StringComparison.CurrentCultureIgnoreCase) == -1) {
+                var factory = DatabaseProvider.Resolve(SqlType.MySql).GetFactory();
+                if (factory.GetType().Assembly.GetName().Version.Major >= 8) {
+                    connstr += ";SslMode=none;";
+                    connstr = connstr.Replace(";;", ";");
+                }
+            }
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
         /// <summary>
-        /// 打开Mysql数据库
+        /// 打开Mysql数据库,SslMode默认none
         /// </summary>
         /// <param name="server">服务器</param>
         /// <param name="database">活动数据库</param>
@@ -166,11 +173,15 @@ namespace ToolGood.ReadyGo3
         public static SqlHelper OpenMysql(string server, string database, string user, string pwd)
         {
             var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd};charset=utf8;Allow User Variables=True;";
+            var factory = DatabaseProvider.Resolve(SqlType.MySql).GetFactory();
+            if (factory.GetType().Assembly.GetName().Version.Major >= 8) {
+                connstr += "SslMode=none;";
+            }
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
 
         /// <summary>
-        /// 打开Mysql数据库
+        /// 打开Mysql数据库,SslMode默认none
         /// </summary>
         /// <param name="server">服务器</param>
         /// <param name="port">端口号</param>
@@ -181,6 +192,10 @@ namespace ToolGood.ReadyGo3
         public static SqlHelper OpenMysql(string server, int port, string database, string user, string pwd)
         {
             var connstr = $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};charset=utf8;Allow User Variables=True;";
+            var factory = DatabaseProvider.Resolve(SqlType.MySql).GetFactory();
+            if (factory.GetType().Assembly.GetName().Version.Major >= 8) {
+                connstr += "SslMode=none;";
+            }
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
 
