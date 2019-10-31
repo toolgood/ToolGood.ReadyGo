@@ -484,6 +484,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> WhereNotExists(string where, params object[] args)
         {
+            if (_doNext==false) return this;
             if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
             where = where.TrimStart();
             if (where.StartsWith("NOT EXISTS ", StringComparison.CurrentCultureIgnoreCase) == false) {
@@ -504,6 +505,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> WhereExists(string where, params object[] args)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
             where = where.TrimStart();
             if (where.StartsWith("EXISTS ", StringComparison.CurrentCultureIgnoreCase) == false) {
@@ -524,6 +526,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> Where(string where, params object[] args)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
             this.where(where, args);
             return this;
@@ -535,6 +538,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> OrderBy(string order)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(order)) throw new ArgumentNullException("order");
             this.orderBySql(order);
             return this;
@@ -548,6 +552,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> OrderBy(string order, string ascORdesc)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(order)) throw new ArgumentNullException("order");
             if (string.IsNullOrWhiteSpace(ascORdesc)) {
                 this.orderBySql(order);
@@ -564,6 +569,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> GroupBy(string groupby)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(groupby)) throw new ArgumentNullException("groupby");
             this.groupBy(groupby);
             return this;
@@ -575,6 +581,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> Having(string having)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(having)) throw new ArgumentNullException("having");
             this.having(having);
             return this;
@@ -586,6 +593,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> JoinOn(string joinWithOn)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(joinWithOn)) throw new ArgumentNullException("joinWithOn");
             this.join(joinWithOn);
             return this;
@@ -599,6 +607,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> WhereNotIn(string field, ICollection args)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
             this.whereNotIn(field, args);
             return this;
@@ -612,6 +621,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> WhereNotIn(string field, params object[] args)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
             this.whereNotIn(field, args);
             return this;
@@ -625,6 +635,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> WhereIn(string field, ICollection args)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
             this.whereIn(field, args);
             return this;
@@ -638,6 +649,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> WhereIn(string field, params object[] args)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
             this.whereIn(field, args);
             return this;
@@ -1159,6 +1171,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> AddColumn(string columnSql, string asName)
         {
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(columnSql)) throw new ArgumentException(nameof(columnSql));
             if (string.IsNullOrEmpty(asName)) throw new ArgumentException(nameof(asName));
             if (jump()) { return this; }
