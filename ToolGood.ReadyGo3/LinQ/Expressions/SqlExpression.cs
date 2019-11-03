@@ -101,9 +101,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             if (m.Method.DeclaringType == typeof(ObjectExtend))
                 return VisitObjectExtendMethodCall(m);
 
-            //if (m.Method.DeclaringType == typeof(SQL))
-            //    return VisitSqlMethodCall( m);
-
             if (IsStaticArrayMethod(m))
                 return VisitStaticArrayMethodCall(m);
 
@@ -117,9 +114,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         }
         private string VisitSqlMethodCall(MethodCallExpression call)
         {
-            //if (call.Method.DeclaringType != typeof(SQL)) throw new Exception("无效列！！！");
             var callName = call.Method.Name;
-            //if (callName == "CountAll") return "COUNT(*)";
 
             List<Object> args = new List<object>();
             var original = call.Arguments;
@@ -134,9 +129,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 }
             }
 
-            //if (callName == "CountOfDistinct") {
-            //    return string.Format("COUNT(DISTINCT {0})", quotedColName);
-            //}
             return string.Format("{0}({1}{2})",
                 callName.ToUpper(), quotedColName,
                 args.Count == 1 ? string.Format(",'{0}'", args[0]) : ""
@@ -172,7 +164,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                     wildcardArg = GetQuotedValue(wildcardArg);
                     statement = $"({quotedColName} = {wildcardArg})"; break;
                 case "Concat":
-                    var args =new List<object>();
+                    var args = new List<object>();
                     args.Add(quotedColName);
                     args.AddRange(_args);
                     statement = provider.CreateFunction(SqlFunction.Concat, args.ToArray()); break;
@@ -196,12 +188,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         /// <param name="sql"></param>
         public void GetColumns(LambdaExpression exp, out string sql)
         {
-            Dictionary<ParameterExpression, string> paramDicts = new Dictionary<ParameterExpression, string>();
-            for (int i = 0; i < exp.Parameters.Count; i++) {
-                var item = exp.Parameters[i];
-                paramDicts[item] = "t" + (i + 1).ToString();
-            }
-
             if (exp.Body.NodeType == ExpressionType.New) {
                 sql = Visit(exp).ToString();
             } else if (exp.Body.NodeType == ExpressionType.MemberAccess) {
@@ -222,13 +208,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         /// <param name="sql"></param>
         public void Analysis(LambdaExpression exp, out string sql)
         {
-            Dictionary<ParameterExpression, string> paramDicts = new Dictionary<ParameterExpression, string>();
-            for (int i = 0; i < exp.Parameters.Count; i++) {
-                var item = exp.Parameters[i];
-                paramDicts[item] = "t" + (i + 1).ToString();
-            }
             sql = Visit(exp).ToString();
-
         }
         /// <summary>
         /// 获取列名
@@ -431,10 +411,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
         private object VisitMemberAccess(MemberExpression m)
         {
-            //if (IsNullableMember(m)) {
-            //    m = m.Expression as MemberExpression;
-            //}
-
             if (m.Expression != null
                 && (m.Expression.NodeType == ExpressionType.Parameter || m.Expression.NodeType == ExpressionType.Convert)) {
                 var me = m;
@@ -491,13 +467,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             return getter();
         }
 
-        //private bool IsNullableMember(MemberExpression m)
-        //{
-        //    var member = m.Expression as MemberExpression;
-        //    return member != null
-        //        && member.Type.GetType().IsGenericType && member.Type.GetGenericTypeDefinition() == typeof(Nullable<>);
-        //}
-
         private object VisitMemberInit(MemberInitExpression exp)
         {
             return Expression.Lambda(exp).Compile().DynamicInvoke();
@@ -525,7 +494,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         private object VisitParameter(ParameterExpression p)
         {
             return "";
-            //return paramDicts[p];
         }
 
         private object VisitConstant(ConstantExpression c)

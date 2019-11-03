@@ -14,8 +14,7 @@ namespace ToolGood.ReadyGo3.LinQ
     /// 
     /// </summary>
     /// <typeparam name="T1"></typeparam>
-    public partial class WhereHelper<T1>
-        where T1 : class
+    public partial class WhereHelper<T1> where T1 : class
     {
         internal WhereHelper(SqlHelper helper)
         {
@@ -37,6 +36,9 @@ namespace ToolGood.ReadyGo3.LinQ
         private string _groupby = "";
         private string _having = "";
         private bool _useDistinct = false;
+        //private bool _useTableName = false;
+        private string _tableName = "t1";
+
         #endregion
 
         #region 02 SQL拼接 基础方法
@@ -484,7 +486,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> WhereNotExists(string where, params object[] args)
         {
-            if (_doNext==false) return this;
+            if (_doNext == false) return this;
             if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
             where = where.TrimStart();
             if (where.StartsWith("NOT EXISTS ", StringComparison.CurrentCultureIgnoreCase) == false) {
@@ -1178,7 +1180,7 @@ namespace ToolGood.ReadyGo3.LinQ
 
             _includeColumns.Insert(0, new SelectHeader() {
                 AsName = asName,
-                Table = "t1",
+                Table = _tableName,
                 QuerySql = columnSql,
                 UseAsName = true
             });
@@ -1301,7 +1303,7 @@ namespace ToolGood.ReadyGo3.LinQ
                 sb.Append(h.QuerySql);
                 if (h.UseAsName) {
                     sb.Append(" As '");
-                    if (h.Table != "t1") {
+                    if (h.Table != _tableName) {
                         sb.Append(h.Table);
                         sb.Append("_");
                     }
@@ -1372,7 +1374,7 @@ namespace ToolGood.ReadyGo3.LinQ
                 if (_excludeColumns.Contains(col.Value.ColumnName)) continue;
 
                 SelectHeader header = new SelectHeader {
-                    Table = "t1",
+                    Table = _tableName,
                     AsName = col.Value.ColumnName
                 };
 
@@ -1407,7 +1409,7 @@ namespace ToolGood.ReadyGo3.LinQ
             sb.Append("FROM ");
             sb.Append(dp.GetTableName(pd1));
 
-            sb.Append(" AS t1 ");
+            sb.Append(" AS " + _tableName + " ");
             sb.Append(_joinOnString);
             return sb.ToString();
         }
@@ -1604,7 +1606,7 @@ namespace ToolGood.ReadyGo3.LinQ
                     selectColumns[Provider.EscapeSqlIdentifier(colName)] = sql;
                 } else if (pocoData.Columns.ContainsKey(colName)) {
                     var ci = pocoData.Columns[colName];
-                    selectColumns[Provider.EscapeSqlIdentifier(colName)] = "t1." + ci.ColumnName;
+                    selectColumns[Provider.EscapeSqlIdentifier(colName)] = _tableName + "." + ci.ColumnName;
                 }
             }
             sb.Append(string.Join(",", selectColumns.Keys));
