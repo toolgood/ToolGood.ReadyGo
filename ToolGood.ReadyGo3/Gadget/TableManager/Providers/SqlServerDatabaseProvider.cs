@@ -107,9 +107,9 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (type == typeof(byte)) return CreateField(ti, ci, "tinyint", "1", isRequired);
             if (type == typeof(char)) return CreateField(ti, ci, "tinyint", "1", isRequired);
 
-            if (type == typeof(UInt16)) return CreateField(ti, ci, "UNSIGNED smallint", ci.FieldLength, isRequired);
-            if (type == typeof(UInt32)) return CreateField(ti, ci, "UNSIGNED int", ci.FieldLength, isRequired);
-            if (type == typeof(UInt64)) return CreateField(ti, ci, "UNSIGNED bigint", ci.FieldLength, isRequired);
+            if (type == typeof(UInt16)) return CreateField(ti, ci, "smallint", ci.FieldLength, isRequired);
+            if (type == typeof(UInt32)) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
+            if (type == typeof(UInt64)) return CreateField(ti, ci, "bigint", ci.FieldLength, isRequired);
             if (type == typeof(Int16)) return CreateField(ti, ci, "smallint", ci.FieldLength, isRequired);
             if (type == typeof(Int32)) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
             if (type == typeof(Int64)) return CreateField(ti, ci, "bigint", ci.FieldLength, isRequired);
