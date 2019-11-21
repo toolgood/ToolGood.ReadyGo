@@ -28,6 +28,21 @@ namespace ToolGood.ReadyGo3
         /// 打开数据据库
         /// </summary>
         /// <param name="connectionString">链接字符串</param>
+        /// <param name="type">SqlType类型</param>
+        /// <returns></returns>
+        public static SqlHelper OpenDatabase(string connectionString, SqlType type = SqlType.SqlServer)
+        {
+            if (type == SqlType.None) {
+                type = SqlType.SqlServer;
+            }
+            var factory = DatabaseProvider.Resolve(type).GetFactory();
+            return new SqlHelper(connectionString, factory, type);
+        }
+
+        /// <summary>
+        /// 打开数据据库
+        /// </summary>
+        /// <param name="connectionString">链接字符串</param>
         /// <param name="providerName">适配器名称</param>
         /// <param name="type">SqlType类型</param>
         /// <returns></returns>
