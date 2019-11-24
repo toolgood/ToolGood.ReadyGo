@@ -2,7 +2,7 @@
 using System.Data;
 using System.Threading.Tasks;
 
-#if !NETSTANDARD2_0
+#if NET40 || NET45
 using System.Data.SqlClient;
 #endif
 

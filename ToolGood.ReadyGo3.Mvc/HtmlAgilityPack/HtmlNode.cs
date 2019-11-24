@@ -86,9 +86,9 @@ namespace ToolGood.ReadyGo3.Mvc.HtmlAgilityPack
 
         #region Constructors
 
-        /// <summary>
-        /// Initialize HtmlNode. Builds a list of all tags that have special allowances
-        /// </summary>
+        ///// <summary>
+        ///// Initialize HtmlNode. Builds a list of all tags that have special allowances
+        ///// </summary>
         //static HtmlNode()
         //{
         //    // tags whose content may be anything
@@ -2075,8 +2075,9 @@ namespace ToolGood.ReadyGo3.Mvc.HtmlAgilityPack
             }
         }
 
-        /// <summary>Check if the node class has the parameter class.</summary>
-        /// <param name="class">The class.</param>
+        /// <summary>Check if the node class has the parameter class.
+        /// </summary>
+        /// <param name="className">The class.</param>
         /// <returns>True if node class has the parameter class, false if not.</returns>
         public bool HasClass(string className)
         {

@@ -46,7 +46,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
         /// 获取表名
         /// </summary>
         /// <param name="data"></param>
-        /// <param name="manager"></param>
         /// <returns></returns>
         public string GetTableName(TableInfo data)
         {

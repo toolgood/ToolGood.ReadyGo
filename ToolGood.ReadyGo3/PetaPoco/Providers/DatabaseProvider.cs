@@ -67,7 +67,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// 获取表名
         /// </summary>
         /// <param name="data"></param>
-        /// <param name="manager"></param>
         /// <returns></returns>
         public string GetTableName(PocoData data)
         {
@@ -82,7 +81,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// 获取表名 ,不带databaseName ， schemaName
         /// </summary>
         /// <param name="data"></param>
-        /// <param name="manager"></param>
         /// <returns></returns>
         public string GetMiniTableName(PocoData data)
         {

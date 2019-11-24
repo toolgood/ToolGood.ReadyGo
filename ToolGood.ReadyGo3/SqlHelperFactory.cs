@@ -10,7 +10,7 @@ namespace ToolGood.ReadyGo3
     /// </summary>
     public static class SqlHelperFactory
     {
-#if !NETSTANDARD2_0
+#if NET40 || NET45
         /// <summary>
         /// 根据config配置名打开数据据库
         /// </summary>

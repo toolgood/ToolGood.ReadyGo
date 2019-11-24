@@ -17,11 +17,8 @@ namespace ToolGood.ReadyGo3.DataCentxt
 {
 
     /// <summary>
-
     /// 适用于MVC 中间值的转值类
-
     /// 前端传值 =》 转成MVC Tb类（基类：QTableModel） =》 通过GetChange方法 传值给 QTable =》 转成SQL语句 =》 保存到数据库
-
     /// </summary>
 
     public abstract class QTableModel

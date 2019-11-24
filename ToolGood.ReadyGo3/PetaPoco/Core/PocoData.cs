@@ -143,9 +143,8 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="firstColumn"></param>
         /// <param name="countColumns"></param>
         /// <param name="reader"></param>
-        /// <param name="usedProxy"></param>
         /// <returns></returns>
-        public Delegate GetFactory(int firstColumn, int countColumns, IDataReader reader/*, bool usedProxy*/)
+        public Delegate GetFactory(int firstColumn, int countColumns, IDataReader reader)
         {
             #region 创建Key
             StringBuilder sb = new StringBuilder();
