@@ -196,7 +196,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition">条件</param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        public int Update<T1>(object set, object condition, params string[] ignoreFields) where T1 : class
+        public int Update<T1>(object set, object condition, IEnumerable<string> ignoreFields = null) where T1 : class
         {
             return Update<T1>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
         }
@@ -415,6 +415,7 @@ namespace ToolGood.ReadyGo3
         }
 
 
+
         /// <summary>
         /// 根据条件更新对象
         /// </summary>
@@ -422,7 +423,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition">条件</param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        public Task<int> UpdateAsync<T1>(object set, object condition, params string[] ignoreFields) where T1 : class
+        public Task<int> UpdateAsync<T1>(object set, object condition, IEnumerable<string> ignoreFields = null) where T1 : class
         {
             return UpdateAsync<T1>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
         }
@@ -492,9 +493,9 @@ namespace ToolGood.ReadyGo3
             return stringBuilder.ToString();
         }
 
-        private string ConditionObjectToUpdateSetWhere(object set, object condition, string[] ignoreFields)
+        private string ConditionObjectToUpdateSetWhere(object set, object condition, IEnumerable<string> ignoreFields)
         {
-            if (set == null) {throw new ArgumentException("set is  null object!");}
+            if (set == null) { throw new ArgumentException("set is  null object!"); }
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("SET ");
@@ -502,7 +503,7 @@ namespace ToolGood.ReadyGo3
             if (condition != null) {
                 if (condition.GetType() == typeof(string)) {
                     var str = ((string)condition).Trim();
-                    if (str.StartsWith("WHERE ", StringComparison.CurrentCultureIgnoreCase)==false) {
+                    if (str.StartsWith("WHERE ", StringComparison.CurrentCultureIgnoreCase) == false) {
                         stringBuilder.Append(" WHERE");
                     }
                     stringBuilder.Append(" ");
@@ -515,7 +516,7 @@ namespace ToolGood.ReadyGo3
             return stringBuilder.ToString();
         }
 
-        private void ObjectToSql(StringBuilder stringBuilder, object condition, string middelStr, string[] ignoreFields)
+        private void ObjectToSql(StringBuilder stringBuilder, object condition, string middelStr, IEnumerable<string> ignoreFields)
         {
             if (condition is IEnumerable) { throw new ArgumentException("condition is IEnumerable object!"); }
             bool hasColumn = false;
