@@ -143,11 +143,11 @@ namespace ToolGood.ReadyGo3.Attributes
     }
 
     /// <summary>
-    /// Ip地址长度 50位
+    /// Ip地址长度 46位
     /// </summary>
     public class IpLengthAttribute : FieldLengthAttribute
     {
-        public IpLengthAttribute() : base(50)
+        public IpLengthAttribute() : base(46)
         {
         }
     }
@@ -181,4 +181,26 @@ namespace ToolGood.ReadyGo3.Attributes
         {
         }
     }
+
+    /// <summary>
+    /// MAC 地址 18位
+    /// </summary>
+    public class MacAddressLengthAttribute : FieldLengthAttribute
+    {
+        public MacAddressLengthAttribute() : base(18)
+        {
+        }
+    }
+
+    /// <summary>
+    /// 错误信息长度 200位
+    /// </summary>
+    public class ErrorMessageLengthAttribute : FieldLengthAttribute
+    {
+        public ErrorMessageLengthAttribute() : base(200)
+        {
+        }
+    }
+
+
 }
