@@ -77,6 +77,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class UserNameLengthAttribute: FieldLengthAttribute
     {
+        /// <summary>
+        /// 用户名长度 20位
+        /// </summary>
         public UserNameLengthAttribute() : base(20)
         {
         }
@@ -87,6 +90,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class PasswrodLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// 密码长度 32位
+        /// </summary>
         public PasswrodLengthAttribute() : base(32)
         {
         }
@@ -97,6 +103,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class CommentLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// 注释长度 500位
+        /// </summary>
         public CommentLengthAttribute() : base(500)
         {
         }
@@ -107,6 +116,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class GuidLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// GUID长度 40位
+        /// </summary>
         public GuidLengthAttribute() : base(40)
         {
         }
@@ -117,6 +129,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class UrlLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// Url长度 200位
+        /// </summary>
         public UrlLengthAttribute() : base(200)
         {
         }
@@ -127,6 +142,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class TitleNameLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// 标题长度 100位
+        /// </summary>
         public TitleNameLengthAttribute() : base(100)
         {
         }
@@ -137,6 +155,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class ShortNameLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// 短名称 50位
+        /// </summary>
         public ShortNameLengthAttribute() : base(50)
         {
         }
@@ -147,6 +168,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class IpLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// Ip地址长度 46位
+        /// </summary>
         public IpLengthAttribute() : base(46)
         {
         }
@@ -157,6 +181,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class UserAgentLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// UserAgent长度 250位
+        /// </summary>
         public UserAgentLengthAttribute() : base(250)
         {
         }
@@ -167,6 +194,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class EmailLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// Email地址长度 50位
+        /// </summary>
         public EmailLengthAttribute() : base(50)
         {
         }
@@ -177,6 +207,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class TagsLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// 标签 长度 500位
+        /// </summary>
         public TagsLengthAttribute() : base(500)
         {
         }
@@ -187,6 +220,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class MacAddressLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// MAC 地址 18位
+        /// </summary>
         public MacAddressLengthAttribute() : base(18)
         {
         }
@@ -197,6 +233,9 @@ namespace ToolGood.ReadyGo3.Attributes
     /// </summary>
     public class ErrorMessageLengthAttribute : FieldLengthAttribute
     {
+        /// <summary>
+        /// 错误信息长度 200位
+        /// </summary>
         public ErrorMessageLengthAttribute() : base(200)
         {
         }
