@@ -75,7 +75,7 @@ namespace ToolGood.ReadyGo3.Attributes
     /// <summary>
     /// 用户名长度 20位
     /// </summary>
-    public class UserNameLengthAttribute: FieldLengthAttribute
+    public class UserNameLengthAttribute : FieldLengthAttribute
     {
         /// <summary>
         /// 用户名长度 20位
@@ -241,5 +241,17 @@ namespace ToolGood.ReadyGo3.Attributes
         }
     }
 
+    /// <summary>
+    /// ParentIds 长度 250位
+    /// </summary>
+    public class ParentIdsLengthAttribute : FieldLengthAttribute
+    {
+        /// <summary>
+        /// ParentIds 长度 250位
+        /// </summary>
+        public ParentIdsLengthAttribute() : base(250)
+        {
+        }
+    }
 
 }
