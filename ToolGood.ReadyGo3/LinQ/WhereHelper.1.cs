@@ -1148,6 +1148,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> RemoveColumn<T>(Expression<Func<T1, T>> column)
         {
+            if (jump()) return this;
             excludeColumn(column);
             return this;
         }
@@ -1158,6 +1159,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> RemoveColumn(string columns)
         {
+            if (jump()) return this;
             var cols = columns.Split(',');
             foreach (var col in cols) {
                 excludeColumn(col);
@@ -1173,6 +1175,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <returns></returns>
         public WhereHelper<T1> AddColumn<T>(Expression<Func<T1, T>> column, string asName = null)
         {
+            if (jump()) return this;
             includeColumn(column, asName);
             return this;
         }
@@ -1186,7 +1189,6 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> AddColumn(string columnSql, string asName)
         {
             if (jump()) return this;
-            
             if (string.IsNullOrEmpty(columnSql)) throw new ArgumentException(nameof(columnSql));
             if (string.IsNullOrEmpty(asName)) throw new ArgumentException(nameof(asName));
             if (jump()) { return this; }
