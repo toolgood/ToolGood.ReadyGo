@@ -58,18 +58,17 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 
         public override string GetCreateIndex(Type type)
         {
-            //CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX 索引名 ON 表名（字段名[(长度)][ASC | DESC]）;
             string sql = "";
             var ti = TableInfo.FromType(type);
             foreach (var item in ti.Indexs) {
                 var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = string.Join(",", item).Replace("[", "`").Replace("]", "`");
-                sql += $"CREATE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+                sql += $"ALTER TABLE {GetTableName(ti)} ADD INDEX {txt} ({columns});\r\n";
             }
             foreach (var item in ti.Uniques) {
                 var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = string.Join(",", item).Replace("[", "`").Replace("]", "`");
-                sql += $"CREATE UNIQUE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+                sql += $"ALTER TABLE {GetTableName(ti)} ADD UNIQUE INDEX {txt} ({columns});\r\n";
             }
             return sql;
         }

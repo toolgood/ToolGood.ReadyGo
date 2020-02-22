@@ -56,7 +56,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
 
         public void CreateTableIndex(Type type)
         {
-            var sql = GetTryCreateTable(type);
+            var sql = GetCreateTableIndex(type);
             if (string.IsNullOrEmpty(sql)) { return; }
             _sqlHelper.Execute(sql);
         }
