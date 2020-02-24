@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
@@ -17,13 +18,13 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (withIndex) {
                 foreach (var item in ti.Indexs) {
                     var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
-                    var columns = string.Join(",", item);
+                    var columns = BuildColumns(item);
                     sql += "CREATE INDEX IF NOT EXISTS " + txt + " ON [" + ti.TableName + "](" + columns + ");\r\n";
                 }
 
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
-                    var columns = string.Join(",", item);
+                    var columns = BuildColumns(item);
                     sql += "CREATE UNIQUE INDEX IF NOT EXISTS " + txt + " ON [" + ti.TableName + "]( " + columns + ");\r\n";
                 }
             }
@@ -43,13 +44,13 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (withIndex) {
                 foreach (var item in ti.Indexs) {
                     var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
-                    var columns = string.Join(",", item);
+                    var columns = BuildColumns(item);
                     sql += "CREATE INDEX " + txt + " ON [" + ti.TableName + "](" + columns + ");\r\n";
                 }
 
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
-                    var columns = string.Join(",", item);
+                    var columns = BuildColumns(item);
                     sql += "CREATE UNIQUE INDEX " + txt + " ON [" + ti.TableName + "]( " + columns + ");\r\n";
                 }
             }
@@ -64,17 +65,25 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             var ti = TableInfo.FromType(type);
             foreach (var item in ti.Indexs) {
                 var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
-                var columns = string.Join(",", item);
+                var columns = BuildColumns(item);
                 sql += $"CREATE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
             }
             foreach (var item in ti.Uniques) {
                 var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
-                var columns = string.Join(",", item);
+                var columns = BuildColumns(item);
                 sql += $"CREATE UNIQUE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
             }
             return sql;
         }
 
+        private string BuildColumns(List<string> columnList)
+        {
+            var columns = "";
+            foreach (var col in columnList) {
+                columns += $"[{col}],";
+            }
+            return columns.Replace("[[", "[").Replace("]]", "]").Trim(',');
+        }
 
 
 
