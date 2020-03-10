@@ -101,8 +101,21 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             var isRequired = ci.Required;
             if (type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, true);
             if (type == typeof(string)) return CreateField(ti, ci, ci.IsText ? "Text" : "varchar", ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), isRequired);
-            if (type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(SByte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(Byte[]) || type == typeof(SByte[])) {
+                if (int.TryParse(ci.FieldLength, out int fieldLength)) {
+                    if (fieldLength <= 255) {
+                        return CreateField(ti, ci, "tinyblob", "", isRequired);
+                    } else if (fieldLength <= 65535) {
+                        return CreateField(ti, ci, "blob", "", isRequired);
+                    } else if (fieldLength <= 16777215) {
+                        return CreateField(ti, ci, "mediumblob", "", isRequired);
+                    } else {
+                        return CreateField(ti, ci, "longBlob", "", isRequired);
+                    }
+                } else {
+                    return CreateField(ti, ci, "tinyblob", "", isRequired);
+                }
+            }
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "varchar", ci.FieldLength, isRequired);
 
             //var isRequired = ColumnType.IsNullType(type) == false;
