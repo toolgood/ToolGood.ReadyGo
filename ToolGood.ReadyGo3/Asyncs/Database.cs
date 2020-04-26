@@ -245,7 +245,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             //string sqlCount, sqlPage;
 
-            BuildPageQueries<T>(skip, take, sql, ref args, out string sqlCount, out string sqlPage);
+            BuildPageQueries<T>(skip, take, sql, ref args, out _, out string sqlPage);
             return QueryAsync<T>(sqlPage, args);
         }
         /// <summary>

@@ -110,6 +110,18 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             return $"[{tableName}]";
         }
 
+        public virtual string GetTableName(string tableName)
+        {
+            tableName = tableName.Replace("[", "").Replace("]", "").Replace("`", "").Replace("\"", "");
+            var ts = tableName.Split('.');
+            if (ts.Length >= 3) {
+                return GetTableName(ts[0], ts[1], ts[2]);
+            }
+            if (ts.Length == 2) {
+                return GetTableName(null, ts[0], ts[1]);
+            }
+            return GetTableName(null, null, ts[0]);
+        }
 
         /// <summary>
         ///     Returns the prefix used to delimit parameters in SQL query strings.
@@ -280,21 +292,21 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             return SqlType.SqlServer;
         }
 
-        /// <summary>
-        ///     Unwraps a wrapped <see cref="DbProviderFactory"/>.
-        /// </summary>
-        /// <param name="factory">The factory to unwrap.</param>
-        /// <returns>The unwrapped factory or the original factory if no wrapping occurred.</returns>
-        internal static DbProviderFactory Unwrap(DbProviderFactory factory)
-        {
-            var sp = factory as IServiceProvider;
+        ///// <summary>
+        /////     Unwraps a wrapped <see cref="DbProviderFactory"/>.
+        ///// </summary>
+        ///// <param name="factory">The factory to unwrap.</param>
+        ///// <returns>The unwrapped factory or the original factory if no wrapping occurred.</returns>
+        //internal static DbProviderFactory Unwrap(DbProviderFactory factory)
+        //{
+        //    var sp = factory as IServiceProvider;
 
-            if (sp == null)
-                return factory;
+        //    if (sp == null)
+        //        return factory;
 
-            var unwrapped = sp.GetService(factory.GetType()) as DbProviderFactory;
-            return unwrapped == null ? factory : Unwrap(unwrapped);
-        }
+        //    var unwrapped = sp.GetService(factory.GetType()) as DbProviderFactory;
+        //    return unwrapped == null ? factory : Unwrap(unwrapped);
+        //}
 
 
         public virtual string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
@@ -350,7 +362,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                     }
                     stringBuilder[stringBuilder.Length - 1] = ')';
                     return stringBuilder.ToString();
-                case SqlFunction.IndexOf:return CreateFunction("(INSTR({0},{1})-1)", args);
+                case SqlFunction.IndexOf: return CreateFunction("(INSTR({0},{1})-1)", args);
                 case SqlFunction.Replace: return CreateFunction("REPLACE({0},{1},{2})", args);
                 default: break;
             }
@@ -436,16 +448,16 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                     text += t;
                     continue;
                 } else {
-                    whereTranslate(_where, text, args);
+                    WhereTranslate(_where, text, args);
                     isStart = false;
                 }
                 _where.Append(t);
             }
-            if (isStart) whereTranslate(_where, text, args);
+            if (isStart) WhereTranslate(_where, text, args);
 
             return _where.ToString();
         }
-        private void whereTranslate(StringBuilder where, string text, object[] args)
+        private void WhereTranslate(StringBuilder where, string text, object[] args)
         {
             int p = int.Parse(text.Replace("@", ""));
             var value = args[p];

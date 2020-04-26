@@ -12,7 +12,38 @@ namespace ToolGood.ReadyGo3
 {
     partial class SqlHelper
     {
+        /// <summary>
+        /// 更新表
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="set"></param>
+        /// <param name="condition"></param>
+        /// <param name="ignoreFields"></param>
+        /// <returns></returns>
+        public int Update(string table, object set, object condition, IEnumerable<string> ignoreFields = null)
+        {
+            var tbn = _provider.GetTableName(table);
+            return Update("UPDATE " + tbn + " " + ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
+        }
+
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public int Delete(string table, object condition)
+        {
+            if (null == condition) {
+                throw new ArgumentNullException(nameof(condition));
+            }
+            var tbn = _provider.GetTableName(table);
+            return Delete("DELETE FROM " + tbn + " " + ConditionObjectToWhere(condition));
+        }
+
+
         #region Select Update
+        #region Single PK
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
@@ -22,7 +53,15 @@ namespace ToolGood.ReadyGo3
         {
             return SingleById<T1>(condition);
         }
-
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T1 Single<T1>(uint condition) where T1 : class
+        {
+            return SingleById<T1>(condition);
+        }
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
@@ -32,7 +71,14 @@ namespace ToolGood.ReadyGo3
         {
             return SingleById<T1>(condition);
         }
-
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        public T1 Single<T1>(ulong condition) where T1 : class
+        {
+            return SingleById<T1>(condition);
+        }
+        #endregion
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
@@ -42,6 +88,7 @@ namespace ToolGood.ReadyGo3
         {
             return Single<T1>(ConditionObjectToWhere(condition));
         }
+        #region SingleOrDefault PK
 
         /// <summary>
         /// 根据条件查询唯一项
@@ -57,10 +104,28 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">主键</param>
         /// <returns></returns>
+        public T1 SingleOrDefault<T1>(uint condition) where T1 : class
+        {
+            return SingleOrDefaultById<T1>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
         public T1 SingleOrDefault<T1>(long condition) where T1 : class
         {
             return SingleOrDefaultById<T1>(condition);
         }
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        public T1 SingleOrDefault<T1>(ulong condition) where T1 : class
+        {
+            return SingleOrDefaultById<T1>(condition);
+        }
+        #endregion
 
         /// <summary>
         /// 根据条件查询唯一项
@@ -71,6 +136,7 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefault<T1>(ConditionObjectToWhere(condition));
         }
+        #region First PK
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -85,11 +151,30 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">主键</param>
         /// <returns></returns>
+        public T1 First<T1>(uint condition) where T1 : class
+        {
+            return SingleById<T1>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
         public T1 First<T1>(long condition) where T1 : class
         {
             return SingleById<T1>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T1 First<T1>(ulong condition) where T1 : class
+        {
+            return SingleById<T1>(condition);
+        }
 
+        #endregion
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -100,6 +185,7 @@ namespace ToolGood.ReadyGo3
             return First<T1>(ConditionObjectToWhere(condition));
         }
 
+        #region FirstOrDefault PK
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -109,7 +195,15 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultById<T1>(condition);
         }
-
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T1 FirstOrDefault<T1>(uint condition) where T1 : class
+        {
+            return SingleOrDefaultById<T1>(condition);
+        }
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -119,7 +213,17 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultById<T1>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T1 FirstOrDefault<T1>(ulong condition) where T1 : class
+        {
+            return SingleOrDefaultById<T1>(condition);
+        }
 
+        #endregion
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -268,7 +372,6 @@ namespace ToolGood.ReadyGo3
                    .Page(page, itemsPerPage);
         }
 
-
         /// <summary>
         /// 根据条件更新对象
         /// </summary>
@@ -324,6 +427,38 @@ namespace ToolGood.ReadyGo3
         #endregion
 
 #if !NET40
+
+        /// <summary>
+        /// 更新表
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="set"></param>
+        /// <param name="condition"></param>
+        /// <param name="ignoreFields"></param>
+        /// <returns></returns>
+        public Task<int> UpdateAsync(string table, object set, object condition, IEnumerable<string> ignoreFields = null)
+        {
+            var tbn = _provider.GetTableName(table);
+            return UpdateAsync("UPDATE " + tbn + " " + ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
+        }
+
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition"></param>
+        /// <returns></returns>
+        public Task<int> UpdateAsync(string table, object condition)
+        {
+            if (null == condition) {
+                throw new ArgumentNullException(nameof(condition));
+            }
+            var tbn = _provider.GetTableName(table);
+            return UpdateAsync("DELETE FROM " + tbn + " " + ConditionObjectToWhere(condition));
+        }
+
+
+        #region FirstAsync PK
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
@@ -333,7 +468,15 @@ namespace ToolGood.ReadyGo3
         {
             return SingleByIdAsync<T1>(condition);
         }
-
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> FirstAsync<T1>(uint condition) where T1 : class
+        {
+            return SingleByIdAsync<T1>(condition);
+        }
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
@@ -343,7 +486,16 @@ namespace ToolGood.ReadyGo3
         {
             return SingleByIdAsync<T1>(condition);
         }
-
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> FirstAsync<T1>(ulong condition) where T1 : class
+        {
+            return SingleByIdAsync<T1>(condition);
+        }
+        #endregion
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -355,6 +507,7 @@ namespace ToolGood.ReadyGo3
             return FirstAsync<T1>(ConditionObjectToWhere(condition));
         }
 
+        #region FirstOrDefaultAsync PK
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
@@ -364,7 +517,15 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultByIdAsync<T1>(condition);
         }
-
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> FirstOrDefaultAsync<T1>(uint condition) where T1 : class
+        {
+            return SingleOrDefaultByIdAsync<T1>(condition);
+        }
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
@@ -374,6 +535,16 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultByIdAsync<T1>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> FirstOrDefaultAsync<T1>(ulong condition) where T1 : class
+        {
+            return SingleOrDefaultByIdAsync<T1>(condition);
+        }
+        #endregion
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -385,12 +556,22 @@ namespace ToolGood.ReadyGo3
             return FirstOrDefaultAsync<T1>(ConditionObjectToWhere(condition));
         }
 
+        #region SingleAsync PK
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<T1> SingleAsync<T1>(int condition) where T1 : class
+        {
+            return SingleByIdAsync<T1>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> SingleAsync<T1>(uint condition) where T1 : class
         {
             return SingleByIdAsync<T1>(condition);
         }
@@ -404,7 +585,16 @@ namespace ToolGood.ReadyGo3
         {
             return SingleByIdAsync<T1>(condition);
         }
-
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> SingleAsync<T1>(ulong condition) where T1 : class
+        {
+            return SingleByIdAsync<T1>(condition);
+        }
+        #endregion
 
         /// <summary>
         /// 根据条件查询唯一项，异步操作
@@ -416,12 +606,22 @@ namespace ToolGood.ReadyGo3
             return SingleAsync<T1>(ConditionObjectToWhere(condition));
         }
 
+        #region SingleOrDefaultAsync PK
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<T1> SingleOrDefaultAsync<T1>(int condition) where T1 : class
+        {
+            return SingleOrDefaultByIdAsync<T1>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> SingleOrDefaultAsync<T1>(uint condition) where T1 : class
         {
             return SingleOrDefaultByIdAsync<T1>(condition);
         }
@@ -435,6 +635,16 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultByIdAsync<T1>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> SingleOrDefaultAsync<T1>(ulong condition) where T1 : class
+        {
+            return SingleOrDefaultByIdAsync<T1>(condition);
+        }
+        #endregion
 
         /// <summary>
         /// 根据条件查询唯一项，异步操作
@@ -629,12 +839,22 @@ namespace ToolGood.ReadyGo3
         }
 
 #endif
+        /// <summary>
+        /// 获取表名
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public string GetTableName(Type type)
         {
             var pd = PetaPoco.Core.PocoData.ForType(type);
             return this._provider.GetTableName(pd);
         }
-        public string GetTableName<T>() where T:class
+        /// <summary>
+        /// 获取表名
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public string GetTableName<T>() where T : class
         {
             return GetTableName(typeof(T));
         }

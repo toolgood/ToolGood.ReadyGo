@@ -636,7 +636,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <returns></returns>
         public IEnumerable<T> Query<T>(int skip, int take, string sql, object[] args)
         {
-            BuildPageQueries<T>(skip, take, sql, ref args, out string sqlCount, out string sqlPage);
+            BuildPageQueries<T>(skip, take, sql, ref args, out _, out string sqlPage);
             return Query<T>(sqlPage, args);
         }
 

@@ -11,18 +11,6 @@ namespace ToolGood.ReadyGo3.LinQ
 {
     partial class WhereHelper<T1>
     {
-        #region UseCancellationToken
-
-        /// <summary>
-        /// 使用 CancellationToken
-        /// </summary>
-        /// <param name="token"></param>
-        public WhereHelper<T1> UseCancellationToken(CancellationToken token)
-        {
-            _sqlhelper.UseCancellationToken(token);
-            return this;
-        }
-        #endregion
 
         #region 06 查询 Select Page SkipTake Single SingleOrDefault First FirstOrDefault
 
