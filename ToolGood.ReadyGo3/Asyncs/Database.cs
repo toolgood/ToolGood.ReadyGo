@@ -369,6 +369,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(poco.GetType());
             return ExecuteInsertAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
+        public Task<object> InsertAsync(string table, object poco, bool autoIncrement)
+        {
+            if (poco == null)
+                throw new ArgumentNullException("poco");
+            return ExecuteInsertAsync(table, null, autoIncrement, poco);
+        }
 
         private async Task<object> ExecuteInsertAsync(string tableName, string primaryKeyName, bool autoIncrement, object poco)
         {
@@ -537,7 +543,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 throw new ArgumentNullException("sql");
 
             var pd = PocoData.ForType(typeof(T));
-            return ExecuteAsync(string.Format("UPDATE {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
+            return ExecuteAsync(string.Format("UPDATE {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
         }
 
         private async Task<int> ExecuteUpdateAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
@@ -616,7 +622,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
 
             // Do it
-            var sql = string.Format("DELETE FROM {0} WHERE {1}=@0", _provider.EscapeTableName(tableName), _provider.EscapeSqlIdentifier(primaryKeyName));
+            var sql = string.Format("DELETE FROM {0} WHERE {1}=@0", _provider.GetTableName(tableName), _provider.EscapeSqlIdentifier(primaryKeyName));
             return ExecuteAsync(sql, new object[] { primaryKeyValue });
         }
 
@@ -667,7 +673,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
 
             var pd = PocoData.ForType(typeof(T));
-            return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
+            return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
         }
 
         #endregion

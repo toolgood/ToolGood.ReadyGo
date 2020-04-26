@@ -28,12 +28,12 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
                         sql = $"SELECT {columns} {sql}";
                     } else {
                         var columns = CrudCache.GetSelectColumnsSql(provider, pd);
-                        var tableName = provider.EscapeTableName(pd.TableInfo.TableName);
+                        var tableName = provider.GetTableName(pd.TableInfo.TableName);
                         sql = $"SELECT {columns} FROM {tableName} {sql}";
                     }
                 } else {
                     var columns = CrudCache.GetSelectColumnsSql(provider, pd);
-                    var tableName = provider.EscapeTableName(pd.TableInfo.TableName);
+                    var tableName = provider.GetTableName(pd.TableInfo.TableName);
                     sql = $"SELECT {columns} FROM {tableName} {sql}";
                 }
             }

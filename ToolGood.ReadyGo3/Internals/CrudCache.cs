@@ -14,7 +14,7 @@ namespace ToolGood.ReadyGo3.Internals
 
         public static string GetInsertSql(DatabaseProvider _provider, string _paramPrefix, PocoData pd, int size, string tableName, string primaryKeyName, bool autoIncrement)
         {
-            return _insert.Get($"{_provider.ToString()}|{_paramPrefix}|{size}|{pd.ToString()}", () => {
+            return _insert.Get($"{_provider.ToString()}|{_paramPrefix}|{size}|{pd.ToString()}|{tableName}|{primaryKeyName}|{(autoIncrement?"1":"0")}", () => {
                 var names = new List<string>();
                 var values = new List<string>();
                 var index = 0;
@@ -42,7 +42,7 @@ namespace ToolGood.ReadyGo3.Internals
 
                 StringBuilder sb = new StringBuilder();
                 sb.AppendFormat("INSERT INTO {0} ({1}){2} VALUES ({3})",
-                    _provider.EscapeTableName(tableName),
+                    _provider.GetTableName(tableName),
                     string.Join(",", names.ToArray()),
                     outputClause,
                     string.Join(",", values.ToArray())
@@ -66,7 +66,7 @@ namespace ToolGood.ReadyGo3.Internals
 
         public static string GetUpdateSql(DatabaseProvider _provider, string _paramPrefix, PocoData pd, string tableName, string primaryKeyName)
         {
-            return _update.Get($"{_provider.ToString()}|{_paramPrefix}|{pd.ToString()}", () => {
+            return _update.Get($"{_provider.ToString()}|{_paramPrefix}|{pd.ToString()}|{tableName}|{primaryKeyName}", () => {
                 var sb = new StringBuilder();
                 var index = 0;
                 foreach (var i in pd.Columns) {
@@ -77,14 +77,14 @@ namespace ToolGood.ReadyGo3.Internals
                     if (index > 0) sb.Append(", ");
                     sb.AppendFormat("{0} = {1}{2}", _provider.EscapeSqlIdentifier(i.Value.ColumnName), _paramPrefix, index++);
                 }
-                return $"UPDATE {_provider.EscapeTableName(tableName)} SET {sb.ToString()} WHERE { _provider.EscapeSqlIdentifier(primaryKeyName)} = { _paramPrefix}{ index++}";
+                return $"UPDATE {_provider.GetTableName(tableName)} SET {sb.ToString()} WHERE { _provider.EscapeSqlIdentifier(primaryKeyName)} = { _paramPrefix}{ index++}";
             });
         }
 
         public static string GetSelectColumnsSql(DatabaseProvider _provider, PocoData pd, string from = null)
         {
             return _selectColumns.Get($"{_provider.ToString()}|{pd.ToString()}|{from}", () => {
-                var tableName = _provider.EscapeTableName(pd.TableInfo.TableName);
+                var tableName = _provider.GetTableName(pd.TableInfo.TableName);
                 StringBuilder stringBuilder = new StringBuilder();
                 foreach (var item in pd.Columns) {
                     var col = item.Value;

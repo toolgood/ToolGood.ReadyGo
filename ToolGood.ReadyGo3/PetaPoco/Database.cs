@@ -713,7 +713,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (sqlCondition.TrimStart().StartsWith("where", StringComparison.OrdinalIgnoreCase))
                 sqlCondition = sqlCondition.TrimStart().Substring(5);
 
-            return ExecuteScalar<int>(string.Format(_provider.GetExistsSql(), _provider.EscapeTableName(poco.TableName), sqlCondition), args) != 0;
+            return ExecuteScalar<int>(string.Format(_provider.GetExistsSql(), _provider.GetTableName(poco.TableName), sqlCondition), args) != 0;
         }
 
         /// <summary>
@@ -748,6 +748,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(poco.GetType());
             return ExecuteInsert(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
+
+        public object Insert(string table, object poco, bool autoIncrement = false)
+        {
+            if (poco == null)
+                throw new ArgumentNullException("poco");
+            return ExecuteInsert(table, null, autoIncrement, poco);
+        }
+
 
         private object ExecuteInsert(string tableName, string primaryKeyName, bool autoIncrement, object poco)
         {
@@ -922,7 +930,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return Execute(sql, args);
             }
             var pd = PocoData.ForType(typeof(T));
-            return Execute(string.Format("UPDATE {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
+            return Execute(string.Format("UPDATE {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
         }
 
         private int ExecuteUpdate(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
@@ -1000,7 +1008,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
 
             // Do it
-            var sql = string.Format("DELETE FROM {0} WHERE {1}=@0", _provider.EscapeTableName(tableName), _provider.EscapeSqlIdentifier(primaryKeyName));
+            var sql = string.Format("DELETE FROM {0} WHERE {1}=@0", _provider.GetTableName(tableName), _provider.EscapeSqlIdentifier(primaryKeyName));
             return Execute(sql, new object[] { primaryKeyValue });
         }
 
@@ -1050,7 +1058,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public int Delete<T>(string sql, params object[] args)
         {
             var pd = PocoData.ForType(typeof(T));
-            return Execute(string.Format("DELETE FROM {0} {1}", _provider.EscapeTableName(pd.TableInfo.TableName), sql), args);
+            return Execute(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
         }
 
         #endregion

@@ -39,19 +39,19 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             get { return PagingHelper.Instance; }
         }
 
-        /// <summary>
-        ///     Escape a tablename into a suitable format for the associated database provider.
-        /// </summary>
-        /// <param name="tableName">
-        ///     The name of the table (as specified by the client program, or as attributes on the associated
-        ///     POCO class.
-        /// </param>
-        /// <returns>The escaped table name</returns>
-        public virtual string EscapeTableName(string tableName)
-        {
-            // Assume table names with "dot" are already escaped
-            return tableName.IndexOf('.') >= 0 ? tableName : EscapeSqlIdentifier(tableName);
-        }
+        ///// <summary>
+        /////     Escape a tablename into a suitable format for the associated database provider.
+        ///// </summary>
+        ///// <param name="tableName">
+        /////     The name of the table (as specified by the client program, or as attributes on the associated
+        /////     POCO class.
+        ///// </param>
+        ///// <returns>The escaped table name</returns>
+        //public virtual string GetTableName(string tableName)
+        //{
+        //    // Assume table names with "dot" are already escaped
+        //    return tableName.IndexOf('.') >= 0 ? tableName : EscapeSqlIdentifier(tableName);
+        //}
 
         /// <summary>
         ///     Escape and arbitary SQL identifier into a format suitable for the associated database provider

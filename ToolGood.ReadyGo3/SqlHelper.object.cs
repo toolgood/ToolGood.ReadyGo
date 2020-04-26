@@ -41,7 +41,6 @@ namespace ToolGood.ReadyGo3
             return Delete("DELETE FROM " + tbn + " " + ConditionObjectToWhere(condition));
         }
 
-
         #region Select Update
         #region Single PK
         /// <summary>
@@ -448,13 +447,13 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<int> UpdateAsync(string table, object condition)
+        public Task<int> DeleteAsync(string table, object condition)
         {
             if (null == condition) {
                 throw new ArgumentNullException(nameof(condition));
             }
             var tbn = _provider.GetTableName(table);
-            return UpdateAsync("DELETE FROM " + tbn + " " + ConditionObjectToWhere(condition));
+            return DeleteAsync("DELETE FROM " + tbn + " " + ConditionObjectToWhere(condition));
         }
 
 
