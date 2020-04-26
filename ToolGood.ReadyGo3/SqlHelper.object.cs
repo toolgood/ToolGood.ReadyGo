@@ -18,10 +18,50 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
+        public T1 Single<T1>(int condition) where T1 : class
+        {
+            return SingleById<T1>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T1 Single<T1>(long condition) where T1 : class
+        {
+            return SingleById<T1>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
         public T1 Single<T1>(object condition) where T1 : class
         {
             return Single<T1>(ConditionObjectToWhere(condition));
         }
+
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T1 SingleOrDefault<T1>(int condition) where T1 : class
+        {
+            return SingleOrDefaultById<T1>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T1 SingleOrDefault<T1>(long condition) where T1 : class
+        {
+            return SingleOrDefaultById<T1>(condition);
+        }
+
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
@@ -34,12 +74,52 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T1 First<T1>(int condition) where T1 : class
+        {
+            return SingleById<T1>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T1 First<T1>(long condition) where T1 : class
+        {
+            return SingleById<T1>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
         public T1 First<T1>(object condition) where T1 : class
         {
             return First<T1>(ConditionObjectToWhere(condition));
         }
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T1 FirstOrDefault<T1>(int condition) where T1 : class
+        {
+            return SingleOrDefaultById<T1>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T1 FirstOrDefault<T1>(long condition) where T1 : class
+        {
+            return SingleOrDefaultById<T1>(condition);
+        }
+
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -244,6 +324,26 @@ namespace ToolGood.ReadyGo3
         #endregion
 
 #if !NET40
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> FirstAsync<T1>(int condition) where T1 : class
+        {
+            return SingleByIdAsync<T1>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> FirstAsync<T1>(long condition) where T1 : class
+        {
+            return SingleByIdAsync<T1>(condition);
+        }
+
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -260,10 +360,51 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
+        public Task<T1> FirstOrDefaultAsync<T1>(int condition) where T1 : class
+        {
+            return SingleOrDefaultByIdAsync<T1>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> FirstOrDefaultAsync<T1>(long condition) where T1 : class
+        {
+            return SingleOrDefaultByIdAsync<T1>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
         public Task<T1> FirstOrDefaultAsync<T1>(object condition) where T1 : class
         {
             return FirstOrDefaultAsync<T1>(ConditionObjectToWhere(condition));
         }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> SingleAsync<T1>(int condition) where T1 : class
+        {
+            return SingleByIdAsync<T1>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> SingleAsync<T1>(long condition) where T1 : class
+        {
+            return SingleByIdAsync<T1>(condition);
+        }
+
 
         /// <summary>
         /// 根据条件查询唯一项，异步操作
@@ -273,6 +414,26 @@ namespace ToolGood.ReadyGo3
         public Task<T1> SingleAsync<T1>(object condition) where T1 : class
         {
             return SingleAsync<T1>(ConditionObjectToWhere(condition));
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> SingleOrDefaultAsync<T1>(int condition) where T1 : class
+        {
+            return SingleOrDefaultByIdAsync<T1>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T1> SingleOrDefaultAsync<T1>(long condition) where T1 : class
+        {
+            return SingleOrDefaultByIdAsync<T1>(condition);
         }
 
         /// <summary>

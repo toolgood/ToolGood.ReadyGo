@@ -279,7 +279,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (r) {
                         while (true) {
                             try {
-                                if (!r.Read())
+                                if (!await r.ReadAsync().ConfigureAwait(false))
                                     break;
                                 T poco = factory(r);
                                 resultList.Add(poco);
