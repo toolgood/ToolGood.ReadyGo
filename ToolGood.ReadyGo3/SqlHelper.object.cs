@@ -629,6 +629,15 @@ namespace ToolGood.ReadyGo3
         }
 
 #endif
+        public string GetTableName(Type type)
+        {
+            var pd = PetaPoco.Core.PocoData.ForType(type);
+            return this._provider.GetTableName(pd);
+        }
+        public string GetTableName<T>() where T:class
+        {
+            return GetTableName(typeof(T));
+        }
 
         private string BuildOrderBy(string orderField, string ascOrDesc)
         {

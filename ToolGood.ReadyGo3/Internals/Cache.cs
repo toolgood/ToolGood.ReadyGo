@@ -6,7 +6,7 @@ namespace ToolGood.ReadyGo3.Internals
 {
     internal class Cache<TKey, TValue>
     {
-        private long _lastTicks;//最后Ticks
+        private int _lastTicks=0;//最后Ticks
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private readonly ReaderWriterLockSlim _slimLock = new ReaderWriterLockSlim();
         private readonly Dictionary<TKey, TValue> _map = new Dictionary<TKey, TValue>();
@@ -62,7 +62,7 @@ namespace ToolGood.ReadyGo3.Internals
                 val = factory();
                 _lock.EnterWriteLock();
                 try {
-                    _lastTicks = DateTime.Now.Ticks;
+                    _lastTicks++;
                     _map[key] = val;
                 } finally { _lock.ExitWriteLock(); }
                 return val;
