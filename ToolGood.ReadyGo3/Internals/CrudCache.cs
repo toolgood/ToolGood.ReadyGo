@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.Exceptions;
 using ToolGood.ReadyGo3.PetaPoco.Core;
@@ -12,9 +13,10 @@ namespace ToolGood.ReadyGo3.Internals
         private static readonly Cache<string, string> _selectColumns = new Cache<string, string>();
         private static readonly Cache<string, string> _update = new Cache<string, string>();
 
-        public static string GetInsertSql(DatabaseProvider _provider, string _paramPrefix, PocoData pd, int size, string tableName, string primaryKeyName, bool autoIncrement)
+        public static string GetInsertSql(DatabaseProvider _provider, string _paramPrefix, PocoData pd, int size, string tableName, string primaryKeyName, bool autoIncrement, IEnumerable<string> ignoreFields = null)
         {
-            return _insert.Get($"{_provider.ToString()}|{_paramPrefix}|{size}|{pd.ToString()}|{tableName}|{primaryKeyName}|{(autoIncrement?"1":"0")}", () => {
+            var ignore = ignoreFields == null ? "" : string.Join(",", ignoreFields);
+            return _insert.Get($"{_provider.ToString()}|{_paramPrefix}|{size}|{pd.ToString()}|{tableName}|{primaryKeyName}|{(autoIncrement?"1":"0")}|{ignore}", () => {
                 var names = new List<string>();
                 var values = new List<string>();
                 var index = 0;
@@ -30,6 +32,7 @@ namespace ToolGood.ReadyGo3.Internals
                         }
                         continue;
                     }
+                    if (ignoreFields != null && ignoreFields.Contains(i.Key, StringComparer.OrdinalIgnoreCase)) continue;
                     names.Add(_provider.EscapeSqlIdentifier(i.Value.ColumnName));
                     values.Add(_paramPrefix + index.ToString());
                     index++;

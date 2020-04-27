@@ -749,15 +749,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return ExecuteInsert(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
 
-        public object Insert(string table, object poco, bool autoIncrement = false)
+        public object Insert(string table, object poco, bool autoIncrement , IEnumerable<string> ignoreFields)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
-            return ExecuteInsert(table, null, autoIncrement, poco);
+            return ExecuteInsert(table, null, autoIncrement, poco, ignoreFields);
         }
 
-
-        private object ExecuteInsert(string tableName, string primaryKeyName, bool autoIncrement, object poco)
+        private object ExecuteInsert(string tableName, string primaryKeyName, bool autoIncrement, object poco, IEnumerable<string> ignoreFields = null)
         {
             try {
                 OpenSharedConnection();
@@ -765,13 +764,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var pd = PocoData.ForObject(poco, primaryKeyName);
                         var type = poco.GetType();
-                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, 1, tableName, primaryKeyName, autoIncrement);
+                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, 1, tableName, primaryKeyName, autoIncrement, ignoreFields);
 
                         foreach (var i in pd.Columns) {
                             if (i.Value.ResultColumn) continue;
-                            if (autoIncrement && primaryKeyName != null && string.Compare(i.Value.ColumnName, primaryKeyName, true) == 0) {
-                                continue;
-                            }
+                            if (autoIncrement && primaryKeyName != null && string.Compare(i.Value.ColumnName, primaryKeyName, true) == 0) { continue; }
+                            if (ignoreFields!=null && ignoreFields.Contains(i.Key, StringComparer.OrdinalIgnoreCase)) continue;
                             AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
                         }
 

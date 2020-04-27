@@ -25,7 +25,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <summary>
         /// 
         /// </summary>
-        public CancellationToken token = CancellationToken.None;
+        public CancellationToken _Token = CancellationToken.None;
 
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 if (_sharedConnection.State == ConnectionState.Closed) {
                     var con = _sharedConnection as DbConnection;
                     if (con != null)
-                        await con.OpenAsync(token).ConfigureAwait(false);
+                        await con.OpenAsync(_Token).ConfigureAwait(false);
                     else
                         _sharedConnection.Open();
                 }
@@ -60,7 +60,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 if (_sharedConnection.State == ConnectionState.Closed) {
                     var con = _sharedConnection as DbConnection;
                     if (con != null)
-                        await con.OpenAsync(token).ConfigureAwait(false);
+                        await con.OpenAsync(_Token).ConfigureAwait(false);
                     else
                         _sharedConnection.Open();
                 }
@@ -79,7 +79,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         internal async Task<object> ExecuteScalarHelperAsync(SqlCommand cmd)
         {
             DoPreExecute(cmd);
-            object r = await cmd.ExecuteScalarAsync(token).ConfigureAwait(false);
+            object r = await cmd.ExecuteScalarAsync(_Token).ConfigureAwait(false);
             OnExecutedCommand(cmd);
             return r;
         }
@@ -100,13 +100,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                         DoPreExecute(cmd);
-                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync(token).ConfigureAwait(false);
+                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync(_Token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                         return retv;
                     }
                 } finally {
                     CloseSharedConnection();
-                    token = CancellationToken.None;
+                    _Token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -129,7 +129,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                         DoPreExecute(cmd);
-                        object val = await ((SqlCommand)cmd).ExecuteScalarAsync(token).ConfigureAwait(false);
+                        object val = await ((SqlCommand)cmd).ExecuteScalarAsync(_Token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
 
                         // Handle nullable types
@@ -141,7 +141,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 } finally {
                     CloseSharedConnection();
-                    token = CancellationToken.None;
+                    _Token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -163,7 +163,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                         DoPreExecute(cmd);
-                        var reader = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, token).ConfigureAwait(false);
+                        var reader = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, _Token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                         DataTable dt = new DataTable();
                         bool init = false;
@@ -187,7 +187,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 } finally {
                     CloseSharedConnection();
-                    token = CancellationToken.None;
+                    _Token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -221,7 +221,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 } finally {
                     CloseSharedConnection();
-                    token = CancellationToken.None;
+                    _Token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -269,7 +269,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     var pd = PocoData.ForType(typeof(T));
                     try {
                         DoPreExecute(cmd);
-                        r = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, token).ConfigureAwait(false);
+                        r = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, _Token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                     } catch (Exception x) {
                         if (OnException(x))
@@ -279,7 +279,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (r) {
                         while (true) {
                             try {
-                                if (!await r.ReadAsync().ConfigureAwait(false))
+                                if (!await r.ReadAsync(_Token).ConfigureAwait(false))
                                     break;
                                 T poco = factory(r);
                                 resultList.Add(poco);
@@ -293,7 +293,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return resultList;
             } finally {
                 CloseSharedConnection();
-                token = CancellationToken.None;
+                _Token = CancellationToken.None;
             }
         }
 
@@ -332,7 +332,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             // Save the one-time command time out and use it for both queries
             var saveTimeout = OneTimeCommandTimeout;
-            var tokenTemp = token;
+            var tokenTemp = _Token;
 
             // Setup the paged result
             var result = new Page<T> {
@@ -342,7 +342,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             };
             OneTimeCommandTimeout = saveTimeout;
 
-            token = tokenTemp;
+            _Token = tokenTemp;
             // Get the records
             result.Items = (await QueryAsync<T>(selectSql, args)).ToList();
             // Done
@@ -369,14 +369,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(poco.GetType());
             return ExecuteInsertAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
-        public Task<object> InsertAsync(string table, object poco, bool autoIncrement)
+        public Task<object> InsertAsync(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
-            return ExecuteInsertAsync(table, null, autoIncrement, poco);
+            return ExecuteInsertAsync(table, null, autoIncrement, poco, ignoreFields);
         }
 
-        private async Task<object> ExecuteInsertAsync(string tableName, string primaryKeyName, bool autoIncrement, object poco)
+
+        private async Task<object> ExecuteInsertAsync(string tableName, string primaryKeyName, bool autoIncrement, object poco, IEnumerable<string> ignoreFields = null)
         {
             try {
                 await OpenSharedConnectionAsync().ConfigureAwait(false);
@@ -384,19 +385,18 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var pd = PocoData.ForObject(poco, primaryKeyName);
                         var type = poco.GetType();
-                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, 1, tableName, primaryKeyName, autoIncrement);
+                        cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, 1, tableName, primaryKeyName, autoIncrement, ignoreFields);
 
                         foreach (var i in pd.Columns) {
                             if (i.Value.ResultColumn) continue;
-                            if (autoIncrement && primaryKeyName != null && string.Compare(i.Value.ColumnName, primaryKeyName, true) == 0) {
-                                continue;
-                            }
+                            if (autoIncrement && primaryKeyName != null && string.Compare(i.Value.ColumnName, primaryKeyName, true) == 0) { continue; }
+                            if (ignoreFields != null && ignoreFields.Contains(i.Key, StringComparer.OrdinalIgnoreCase)) continue;
                             AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
                         }
 
                         if (!autoIncrement) {
                             DoPreExecute(cmd);
-                            await ((SqlCommand)cmd).ExecuteNonQueryAsync(token).ConfigureAwait(false);
+                            await ((SqlCommand)cmd).ExecuteNonQueryAsync(_Token).ConfigureAwait(false);
                             OnExecutedCommand(cmd);
 
                             if (primaryKeyName != null && pd.Columns.TryGetValue(primaryKeyName, out PocoColumn pkColumn))
@@ -418,7 +418,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 } finally {
                     CloseSharedConnection();
-                    token = CancellationToken.None;
+                    _Token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -438,7 +438,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 } finally {
                     CloseSharedConnection();
-                    token = CancellationToken.None;
+                    _Token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -498,12 +498,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         }
 
                         DoPreExecute(cmd);
-                        await ((SqlCommand)cmd).ExecuteNonQueryAsync(token).ConfigureAwait(false);
+                        await ((SqlCommand)cmd).ExecuteNonQueryAsync(_Token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                     }
                 } finally {
                     CloseSharedConnection();
-                    token = CancellationToken.None;
+                    _Token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))
@@ -577,13 +577,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         AddParam(cmd, primaryKeyValue, pkpi);
 
                         DoPreExecute(cmd);
-                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync(token).ConfigureAwait(false);
+                        var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync(_Token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
                         return retv;
                     }
                 } finally {
                     CloseSharedConnection();
-                    token = CancellationToken.None;
+                    _Token = CancellationToken.None;
                 }
             } catch (Exception x) {
                 if (OnException(x))

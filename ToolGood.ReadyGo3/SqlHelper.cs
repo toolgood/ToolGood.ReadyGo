@@ -580,13 +580,13 @@ namespace ToolGood.ReadyGo3
             return obj;
         }
         /// <summary>
-        /// 插入，支持主键自动获取。
+        /// 插入
         /// </summary>
         /// <param name="table"></param>
         /// <param name="poco"></param>
         /// <param name="autoIncrement"></param>
         /// <returns></returns>
-        public object Insert(string table, object poco, bool autoIncrement)
+        public object Insert(string table, object poco, bool autoIncrement=false)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
@@ -596,11 +596,40 @@ namespace ToolGood.ReadyGo3
             }
             if (_Events.OnBeforeInsert(poco)) return null;
 
-            var obj = GetDatabase().Insert(table, poco, autoIncrement);
+            var obj = GetDatabase().Insert(table, poco, autoIncrement,null);
             _Events.OnAfterInsert(poco);
             return obj;
         }
+        public object Insert(string table, object poco, IEnumerable<string> ignoreFields)
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
 
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew)
+            {
+                DefaultValue.SetDefaultValue(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
+            }
+            if (_Events.OnBeforeInsert(poco)) return null;
+
+            var obj = GetDatabase().Insert(table, poco, false, ignoreFields);
+            _Events.OnAfterInsert(poco);
+            return obj;
+        }
+        public object Insert(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields)
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
+
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew)
+            {
+                DefaultValue.SetDefaultValue(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
+            }
+            if (_Events.OnBeforeInsert(poco)) return null;
+
+            var obj = GetDatabase().Insert(table, poco, autoIncrement, ignoreFields);
+            _Events.OnAfterInsert(poco);
+            return obj;
+        }
 
         /// <summary>
         /// 更新
