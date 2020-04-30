@@ -743,64 +743,22 @@ namespace ToolGood.ReadyGo3
 
 
         /// <summary>
-        /// 获取表名
+        /// 获取表名，
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        public string GetTableName(Type type)
+        public dynamic GetTableName(Type type)
         {
-            var pd = PetaPoco.Core.PocoData.ForType(type);
-            return this._provider.GetTableName(pd);
+            return new TableName(type, _provider);
         }
         /// <summary>
         /// 获取表名
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public string GetTableName<T>() where T : class
+        public dynamic GetTableName<T>() where T : class
         {
             return GetTableName(typeof(T));
-        }
-
-        /// <summary>
-        /// 获取列名
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <param name="fieldName"></param>
-        /// <returns></returns>
-        public string GetColumnName(object obj, string fieldName)
-        {
-            return GetColumnName(obj.GetType(), fieldName);
-        }
-        /// <summary>
-        /// 获取列名
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="fieldName"></param>
-        /// <returns></returns>
-        public string GetColumnName<T>(string fieldName)
-        {
-            return GetColumnName(typeof(T), fieldName);
-        }
-        /// <summary>
-        /// 获取列名
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="fieldName"></param>
-        /// <returns></returns>
-        public string GetColumnName(Type type, string fieldName)
-        {
-            var pd = PetaPoco.Core.PocoData.ForType(type);
-            if (pd.Columns.ContainsKey(fieldName)) {
-                return _provider.EscapeSqlIdentifier(pd.Columns[fieldName].ColumnName);
-            }
-            fieldName = fieldName.Replace("_", "").ToLower();
-            foreach (var item in pd.Columns) {
-                if (item.Key.Replace("_","").ToLower() == fieldName) {
-                    return item.Value.ColumnName;
-                }
-            }
-            throw new Exception("Can find columnName of fieldName.");
         }
 
 
