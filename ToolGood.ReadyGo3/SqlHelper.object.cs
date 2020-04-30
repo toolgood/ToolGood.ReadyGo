@@ -838,25 +838,7 @@ namespace ToolGood.ReadyGo3
         }
 
 #endif
-        /// <summary>
-        /// 获取表名
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        public string GetTableName(Type type)
-        {
-            var pd = PetaPoco.Core.PocoData.ForType(type);
-            return this._provider.GetTableName(pd);
-        }
-        /// <summary>
-        /// 获取表名
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
-        public string GetTableName<T>() where T : class
-        {
-            return GetTableName(typeof(T));
-        }
+
 
         private string BuildOrderBy(string orderField, string ascOrDesc)
         {

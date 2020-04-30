@@ -586,7 +586,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="poco"></param>
         /// <param name="autoIncrement"></param>
         /// <returns></returns>
-        public object Insert(string table, object poco, bool autoIncrement=false)
+        public object Insert(string table, object poco, bool autoIncrement = false)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
@@ -596,7 +596,7 @@ namespace ToolGood.ReadyGo3
             }
             if (_Events.OnBeforeInsert(poco)) return null;
 
-            var obj = GetDatabase().Insert(table, poco, autoIncrement,null);
+            var obj = GetDatabase().Insert(table, poco, autoIncrement, null);
             _Events.OnAfterInsert(poco);
             return obj;
         }
@@ -605,8 +605,7 @@ namespace ToolGood.ReadyGo3
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
 
-            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew)
-            {
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
                 DefaultValue.SetDefaultValue(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
             }
             if (_Events.OnBeforeInsert(poco)) return null;
@@ -620,8 +619,7 @@ namespace ToolGood.ReadyGo3
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
 
-            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew)
-            {
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
                 DefaultValue.SetDefaultValue(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
             }
             if (_Events.OnBeforeInsert(poco)) return null;
@@ -742,6 +740,70 @@ namespace ToolGood.ReadyGo3
         }
 
         #endregion Object  Insert Update Delete DeleteById Save
+
+
+        /// <summary>
+        /// 获取表名
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public string GetTableName(Type type)
+        {
+            var pd = PetaPoco.Core.PocoData.ForType(type);
+            return this._provider.GetTableName(pd);
+        }
+        /// <summary>
+        /// 获取表名
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public string GetTableName<T>() where T : class
+        {
+            return GetTableName(typeof(T));
+        }
+
+        /// <summary>
+        /// 获取列名
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
+        public string GetColumnName(object obj, string fieldName)
+        {
+            return GetColumnName(obj.GetType(), fieldName);
+        }
+        /// <summary>
+        /// 获取列名
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
+        public string GetColumnName<T>(string fieldName)
+        {
+            return GetColumnName(typeof(T), fieldName);
+        }
+        /// <summary>
+        /// 获取列名
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="fieldName"></param>
+        /// <returns></returns>
+        public string GetColumnName(Type type, string fieldName)
+        {
+            var pd = PetaPoco.Core.PocoData.ForType(type);
+            if (pd.Columns.ContainsKey(fieldName)) {
+                return _provider.EscapeSqlIdentifier(pd.Columns[fieldName].ColumnName);
+            }
+            fieldName = fieldName.Replace("_", "").ToLower();
+            foreach (var item in pd.Columns) {
+                if (item.Key.Replace("_","").ToLower() == fieldName) {
+                    return item.Value.ColumnName;
+                }
+            }
+            throw new Exception("Can find columnName of fieldName.");
+        }
+
+
 
     }
 }
