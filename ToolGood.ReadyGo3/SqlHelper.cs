@@ -743,7 +743,9 @@ namespace ToolGood.ReadyGo3
 
 
         /// <summary>
-        /// 获取表名，
+        /// 获取动态表名，适合绑定数据表列名
+        /// <para>var so = helper.GetTableName(typeof(DbSaleOrder), "so");</para>
+        /// <para>var select = $"select {so.Code} from {so} where {so.Id}='123'";</para>
         /// </summary>
         /// <param name="type"></param>
         /// <param name="asName"></param>
@@ -753,7 +755,9 @@ namespace ToolGood.ReadyGo3
             return new TableName(type, _provider, asName);
         }
         /// <summary>
-        /// 获取表名
+        /// 获取动态表名，适合绑定数据表列名
+        /// <para>var so = helper.GetTableName(typeof(DbSaleOrder), "so");</para>
+        /// <para>var select = $"select {so.Code} from {so} where {so.Id}='123'";</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="asName"></param>

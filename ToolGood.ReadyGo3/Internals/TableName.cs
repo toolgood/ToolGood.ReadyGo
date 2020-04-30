@@ -72,5 +72,6 @@ namespace ToolGood.ReadyGo3.Internals
             }
             return _pocoData.TableInfo.TableName;
         }
+
     }
 }
