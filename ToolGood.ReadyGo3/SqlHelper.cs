@@ -746,19 +746,21 @@ namespace ToolGood.ReadyGo3
         /// 获取表名，
         /// </summary>
         /// <param name="type"></param>
+        /// <param name="asName"></param>
         /// <returns></returns>
-        public dynamic GetTableName(Type type)
+        public dynamic GetTableName(Type type, string asName = null)
         {
-            return new TableName(type, _provider);
+            return new TableName(type, _provider, asName);
         }
         /// <summary>
         /// 获取表名
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="asName"></param>
         /// <returns></returns>
-        public dynamic GetTableName<T>() where T : class
+        public dynamic GetTableName<T>(string asName = null) where T : class
         {
-            return GetTableName(typeof(T));
+            return GetTableName(typeof(T), asName);
         }
 
 
