@@ -68,9 +68,16 @@ namespace ToolGood.ReadyGo3.Internals
         public override string ToString()
         {
             if (_provider != null) {
-                return _provider.EscapeSqlIdentifier(_pocoData.TableInfo.TableName);
+                if (string.IsNullOrEmpty(_asName)) {
+                    return _provider.EscapeSqlIdentifier(_pocoData.TableInfo.TableName);
+                } else {
+                    return _provider.EscapeSqlIdentifier(_pocoData.TableInfo.TableName) + " " + _asName;
+                }
             }
-            return _pocoData.TableInfo.TableName;
+            if (string.IsNullOrEmpty(_asName)) {
+                return _pocoData.TableInfo.TableName;
+            }
+            return _pocoData.TableInfo.TableName + " " + _asName;
         }
 
     }
