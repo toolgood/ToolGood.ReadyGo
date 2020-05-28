@@ -989,7 +989,7 @@ namespace ToolGood.ReadyGo3
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
             if (fieldType == typeof(TimeSpan)) return ((TimeSpan)value).Ticks.ToString(CultureInfo.InvariantCulture);
             if (fieldType == typeof(byte[])) {
-                var txt = Encoding.BigEndianUnicode.GetString((byte[])value);
+                var txt =  BitConverter.ToString((byte[])value).Replace("-","");
                 return "X'" + txt + "'";
             }
             return "'" + value.ToString() + "'";
