@@ -845,8 +845,7 @@ namespace ToolGood.ReadyGo3
             if (orderField == null) {
                 return "";
             }
-            ascOrDesc = ascOrDesc.ToUpper();
-            if (ascOrDesc != "DESC") {
+            if (!ascOrDesc.Equals("DESC",StringComparison.OrdinalIgnoreCase)) {
                 ascOrDesc = "ASC";
             }
             return " ORDER BY " + orderField + " " + ascOrDesc;

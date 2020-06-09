@@ -11,7 +11,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
         public override string BuildPageQuery(int skip, int take, SQLParts parts, ref object[] args)
         {
-            if (!parts.Sql.ToLower().Contains("order by")) {
+            if (parts.Sql.IndexOf("order by",0, StringComparison.OrdinalIgnoreCase)==-1) {
                 return base.BuildPageQuery(skip, take, parts, ref args);
             }
 

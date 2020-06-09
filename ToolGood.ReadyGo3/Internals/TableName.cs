@@ -43,9 +43,9 @@ namespace ToolGood.ReadyGo3.Internals
                 }
                 return true;
             }
-            fieldName = fieldName.Replace("_", "").ToLower();
+            fieldName = fieldName.Replace("_", "");
             foreach (var item in _pocoData.Columns) {
-                if (item.Value.PropertyName.Replace("_", "").ToLower() == fieldName) {
+                if (item.Value.PropertyName.Replace("_", "").Equals(fieldName, StringComparison.OrdinalIgnoreCase)) {
                     if (_provider != null) {
                         if (string.IsNullOrEmpty(_asName)) {
                             result = _provider.EscapeSqlIdentifier(item.Value.ColumnName);
