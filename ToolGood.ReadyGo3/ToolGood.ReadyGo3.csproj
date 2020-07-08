@@ -36,6 +36,7 @@
         <DelaySign>false</DelaySign>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <LangVersion>7.1</LangVersion>
+        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\ToolGood.ReadyGo3.xml</DocumentationFile>
     </PropertyGroup>
 
     <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
@@ -58,37 +59,6 @@
       </None>
     </ItemGroup>
  
-    
-    <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-        <DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net40|AnyCPU'">
-        <DocumentationFile>bin\Release\net40\ToolGood.ReadyGo3.xml</DocumentationFile>
-        <NoWarn>1701;1702;1705:1591</NoWarn>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
-        <DocumentationFile>bin\Release\net45\ToolGood.ReadyGo3.xml</DocumentationFile>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
-        <DocumentationFile>bin\Release\netstandard2.0\ToolGood.ReadyGo3.xml</DocumentationFile>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.1|AnyCPU'">
-      <DocumentationFile>bin\Release\netstandard2.1\ToolGood.ReadyGo3.xml</DocumentationFile>
-    </PropertyGroup>
-  
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net40|AnyCPU'">
-        <DocumentationFile>bin\Debug\net40\ToolGood.ReadyGo3.xml</DocumentationFile>
-        <NoWarn>1701;1702;CS1591</NoWarn>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|AnyCPU'">
-        <DocumentationFile>bin\Debug\net45\ToolGood.ReadyGo3.xml</DocumentationFile>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-        <DocumentationFile>bin\Debug\netstandard2.0\ToolGood.ReadyGo3.xml</DocumentationFile>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.1|AnyCPU'">
-      <DocumentationFile>bin\Debug\netstandard2.1\ToolGood.ReadyGo3.xml</DocumentationFile>
-    </PropertyGroup>
+     
 
 </Project>
