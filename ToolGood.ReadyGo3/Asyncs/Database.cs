@@ -241,12 +241,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<IEnumerable<T>> QueryAsync<T>(int skip, int take, string sql, object[] args)
+        public async Task<IEnumerable<T>> QueryAsync<T>(int skip, int take, string sql, object[] args)
         {
             //string sqlCount, sqlPage;
 
             BuildPageQueries<T>(skip, take, sql, ref args, out _, out string sqlPage);
-            return QueryAsync<T>(sqlPage, args);
+
+            List<T> list = new List<T>(take);
+            await QueryAsync<T>(sqlPage, args, list);
+            return list;
         }
         /// <summary>
         /// 
@@ -296,7 +299,65 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 _Token = CancellationToken.None;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <param name="resultList"></param>
+        /// <param name="commandType"></param>
+        /// <returns></returns>
+        public async Task  QueryAsync<T>(string sql, object[] args,IList<T> resultList, CommandType commandType = CommandType.Text)
+        {
+            if (EnableAutoSelect)
+                sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
 
+            await OpenSharedConnectionAsync().ConfigureAwait(false);
+            try
+            {
+                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType))
+                {
+                    SqlDataReader r = null;
+                    var pd = PocoData.ForType(typeof(T));
+                    try
+                    {
+                        DoPreExecute(cmd);
+                        r = await ((SqlCommand) cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, _Token).ConfigureAwait(false);
+                        OnExecutedCommand(cmd);
+                    }
+                    catch (Exception x)
+                    {
+                        if (OnException(x))
+                            throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
+                    }
+                    var factory = pd.GetFactory(0, r.FieldCount, r/*, _sqlHelper._use_proxyType*/) as Func<IDataReader, T>;
+                    using (r)
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                if (!await r.ReadAsync(_Token).ConfigureAwait(false))
+                                    break;
+                                T poco = factory(r);
+                                resultList.Add(poco);
+                            }
+                            catch (Exception x)
+                            {
+                                if (OnException(x))
+                                    throw;
+                            }
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                CloseSharedConnection();
+                _Token = CancellationToken.None;
+            }
+        }
 
         #endregion
 
@@ -343,8 +404,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
             OneTimeCommandTimeout = saveTimeout;
 
             _Token = tokenTemp;
+
+            List<T> list = new List<T>();
+            await QueryAsync<T>(selectSql, args, list);
             // Get the records
-            result.Items = (await QueryAsync<T>(selectSql, args)).ToList();
+            result.Items = list;
             // Done
             return result;
         }
