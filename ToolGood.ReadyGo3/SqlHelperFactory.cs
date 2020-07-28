@@ -214,29 +214,34 @@ namespace ToolGood.ReadyGo3
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
 
-
         /// <summary> 
         /// 打开Sqlite数据库 使用System.Data.SQLite类库
         /// </summary>
         /// <param name="filePath">文件目录</param>
-        /// <param name="pwd">密码，新版本dll不支持</param>
+        /// <param name="pwd">密码, 新版本dll不支持密码</param>
         /// <param name="useSynchronous">使用同步，为False则更快</param>
         /// <param name="journalMode">Journal模式</param>
         /// <returns></returns>
-        public static SqlHelper OpenSqliteFile(string filePath, string pwd = "", bool useSynchronous = true, JournalMode journalMode = JournalMode.Delete)
+        public static SqlHelper OpenSqliteFile(string filePath, string pwd = "", bool useSynchronous = true, JournalMode journalMode = JournalMode.None)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Data Source={0};", filePath);
-            //sb.AppendFormat("Data Source={0};", filePath);
-            if (string.IsNullOrEmpty(pwd) == false) {
-                sb.AppendFormat("Password={0};", pwd);
-            }
+          
             if (useSynchronous == false) {
                 sb.Append("synchronous=OFF;");
             }
-            sb.Append("Page Size=4096;");
-            sb.AppendFormat("Journal Mode={0};", journalMode.ToString());
-            return OpenDatabase(sb.ToString(), "System.Data.SQLite", SqlType.SQLite);
+            if (journalMode!= JournalMode.None)
+            {
+                sb.AppendFormat("Journal Mode={0};", journalMode.ToString());
+            }
+            var helper= OpenDatabase(sb.ToString(), "System.Data.SQLite", SqlType.SQLite);
+
+            // 新版sqlite不支持password参数，解决方案： https://stackoverflow.com/questions/37860933/cannot-provide-password-in-connection-string-for-sqlite
+            if (string.IsNullOrEmpty(pwd) == false)
+            {
+                helper.Execute($"PRAGMA key = '{pwd}';");
+            }
+            return helper;
         }
 
 

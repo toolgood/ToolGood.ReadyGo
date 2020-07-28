@@ -8,6 +8,11 @@
     public enum JournalMode
     {
         /// <summary>
+        /// 不启用
+        /// </summary>
+        None,
+
+        /// <summary>
         /// 在此模式下，每次事务终止的时候，journal文件会被删除，它会导致事务提交。
         /// </summary>
         Delete,
