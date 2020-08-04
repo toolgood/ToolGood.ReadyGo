@@ -28,7 +28,10 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         {
             this.provider = DatabaseProvider.Resolve(type);
         }
-
+        public SqlExpression(DatabaseProvider provider)
+        {
+            this.provider = provider;
+        }
 
 
         #region 可重写的方法

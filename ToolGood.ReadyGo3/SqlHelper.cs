@@ -754,18 +754,31 @@ namespace ToolGood.ReadyGo3
         {
             return new TableName(type, _provider, asName);
         }
+
+
         /// <summary>
         /// 获取动态表名，适合绑定数据表列名
-        /// <para>var so = helper.GetTableName(typeof(DbSaleOrder), "so");</para>
-        /// <para>var select = $"select {so.Code} from {so} where {so.Id}='123'";</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="asName"></param>
         /// <returns></returns>
-        public dynamic GetTableName<T>(string asName = null) where T : class
+        public TableName<T> GetTableName<T>(string asName = null) where T:class,new()
         {
-            return GetTableName(typeof(T), asName);
+            return new TableName<T>(typeof(T), _provider, asName);
         }
+
+        ///// <summary>
+        ///// 获取动态表名，适合绑定数据表列名
+        ///// <para>var so = helper.GetTableName(typeof(DbSaleOrder), "so");</para>
+        ///// <para>var select = $"select {so.Code} from {so} where {so.Id}='123'";</para>
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="asName"></param>
+        ///// <returns></returns>
+        //public dynamic GetTableName<T>(string asName = null) where T : class
+        //{
+        //    return GetTableName(typeof(T), asName);
+        //}
 
 
 
