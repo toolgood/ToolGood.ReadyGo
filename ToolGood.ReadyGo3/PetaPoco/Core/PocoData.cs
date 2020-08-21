@@ -69,6 +69,18 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 // Store it
                 Columns.Add(pc.ColumnName, pc);
             }
+            //排除 主键为String
+            if (TableInfo.AutoIncrement) {
+                PocoColumn pc;
+                if (Columns.TryGetValue(TableInfo.PrimaryKey, out pc)) {
+                    TableInfo.AutoIncrement = pc.PropertyInfo.PropertyType.IsValueType;
+                } else {
+                    TableInfo.PrimaryKey = null;
+                    TableInfo.AutoIncrement = false;
+                }
+            }
+
+
             SelectColumns = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase);
             foreach (var item in Columns) {
                 SelectColumns[item.Key] = item.Value;
