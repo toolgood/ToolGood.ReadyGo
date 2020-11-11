@@ -1,47 +1,51 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <Description>A high performance Micro-ORM supporting SQL Server, MySQL, Sqlite, SqlCE, PostgreSQL, Firebird etc..</Description>
-        <Copyright>Copyright 2016-2020 ToolGood</Copyright>
-        <AssemblyTitle>ToolGood.ReadyGo</AssemblyTitle>
-        <Authors>ToolGood</Authors>
-        <TargetFrameworks>net40;net45;netstandard2.0;netstandard2.1;</TargetFrameworks>
-        <AssemblyName>ToolGood.ReadyGo3</AssemblyName>
-        <SignAssembly>true</SignAssembly>
-        <PackageId>ToolGood.ReadyGo3</PackageId>
-        <PackageProjectUrl>https://github.com/toolgood/ToolGood.ReadyGo</PackageProjectUrl>
-        <RepositoryType>git</RepositoryType>
-        <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-        <Product>ToolGood.ReadyGo3</Product>
-        <DelaySign>false</DelaySign>
-        <Version>3.3.0.37</Version>
-        <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\ToolGood.ReadyGo3.xml</DocumentationFile>
-    </PropertyGroup>
+  <PropertyGroup>
+    <Description>A high performance Micro-ORM supporting SQL Server, MySQL, Sqlite, SqlCE, PostgreSQL, Firebird etc..</Description>
+    <Copyright>Copyright 2016-2020 ToolGood</Copyright>
+    <AssemblyTitle>ToolGood.ReadyGo</AssemblyTitle>
+    <Authors>ToolGood</Authors>
+    <TargetFrameworks>net40;net45;netstandard2.0;netstandard2.1;net5.0</TargetFrameworks>
+    <AssemblyName>ToolGood.ReadyGo3</AssemblyName>
+    <SignAssembly>true</SignAssembly>
+    <PackageId>ToolGood.ReadyGo3</PackageId>
+    <PackageProjectUrl>https://github.com/toolgood/ToolGood.ReadyGo</PackageProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <RootNamespace>ToolGood.ReadyGo3</RootNamespace>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Product>ToolGood.ReadyGo3</Product>
+    <DelaySign>false</DelaySign>
+    <Version>3.3.0.38</Version>
+    <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\ToolGood.ReadyGo3.xml</DocumentationFile>
+  </PropertyGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
-        <Reference Include="System.Runtime.Caching" />
-        <Reference Include="System.Configuration" />
-    </ItemGroup>
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
 
-    <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
-        <Reference Include="System.Runtime.Caching" />
-        <Reference Include="System.Configuration" />
-    </ItemGroup>
-    <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-      <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
-    </ItemGroup>
-  
-    <ItemGroup>
-      <None Include="..\LICENSE">
-        <Pack>True</Pack>
-        <PackagePath></PackagePath>
-      </None>
-    </ItemGroup>
- 
-     
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Configuration" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.7.0" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+
 
 </Project>

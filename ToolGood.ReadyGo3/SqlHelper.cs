@@ -229,7 +229,6 @@ namespace ToolGood.ReadyGo3
 
         }
 
-        //#if !NETSTANDARD2_0
         /// <summary>
         /// 执行SQL 查询,返回 DataSet
         /// </summary>
@@ -242,7 +241,6 @@ namespace ToolGood.ReadyGo3
             sql = FormatSql(sql);
             return GetDatabase().ExecuteDataSet(sql, args);
         }
-        //#endif
 
         /// <summary>
         /// 执行SQL 查询,判断是否存在，返回bool类型
@@ -255,6 +253,37 @@ namespace ToolGood.ReadyGo3
         {
             sql = FormatSql(sql);
             return Count<T>(sql, args) > 0;
+        }
+        /// <summary>
+        /// 执行SQL 查询,判断是否存在，返回bool类型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public bool ExistsTable<T>(string table, string sql, params object[] args)
+        {
+            sql = FormatSql(sql);
+            return Count<T>(table, sql, args) > 0;
+        }
+
+        /// <summary>
+        /// 执行SQL 查询,返回数量
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public int Count<T>(string table, string sql, params object[] args)
+        {
+            sql = sql.Trim();
+            if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
+                sql = FormatSql(sql);
+                sql = $"SELECT COUNT(*) FROM {table} {sql}";
+            }
+            return GetDatabase().ExecuteScalar<int>(sql, args);
         }
 
         /// <summary>
@@ -303,6 +332,21 @@ namespace ToolGood.ReadyGo3
             sql = FormatSql(sql);
             return GetDatabase().Query<T>(sql, args).ToList();
         }
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> SelectTable<T>(string table, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            return GetDatabase().QueryTable<T>(table, sql, args).ToList();
+        }
+
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -320,6 +364,22 @@ namespace ToolGood.ReadyGo3
         /// 执行SQL 查询,返回集合
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="limit">获取个数</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> SelectTable<T>(string table, int limit, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            return GetDatabase().QueryTable<T>(table, 0, limit, sql, args).ToList();
+        }
+
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="offset">跳过</param>
         /// <param name="limit">获取个数</param>
         /// <param name="sql">SQL 语句</param>
@@ -329,6 +389,21 @@ namespace ToolGood.ReadyGo3
         {
             sql = FormatSql(sql);
             return GetDatabase().Query<T>(offset, limit, sql, args).ToList();
+        }
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="offset">跳过</param>
+        /// <param name="limit">获取个数</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> SelectTable<T>(string table, int limit, int offset, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            return GetDatabase().QueryTable<T>(table, offset, limit, sql, args).ToList();
         }
 
         /// <summary>
@@ -348,7 +423,24 @@ namespace ToolGood.ReadyGo3
             sql = FormatSql(sql);
             return GetDatabase().Query<T>((page - 1) * itemsPerPage, itemsPerPage, sql, args).ToList();
         }
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public List<T> SelectPageTable<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args)
+        {
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
+            sql = FormatSql(sql);
+            return GetDatabase().QueryTable<T>(table, (page - 1) * itemsPerPage, itemsPerPage, sql, args).ToList();
+        }
 
         /// <summary>
         /// 执行SQL 查询,返回Page类型
@@ -367,6 +459,25 @@ namespace ToolGood.ReadyGo3
             sql = FormatSql(sql);
             return GetDatabase().Page<T>(page, itemsPerPage, sql, args);
         }
+        /// <summary>
+        /// 执行SQL 查询,返回Page类型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public Page<T> PageTable<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args)
+        {
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
+
+            sql = FormatSql(sql);
+            return GetDatabase().PageTable<T>(table, page, itemsPerPage, sql, args);
+        }
+
 
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -559,6 +670,27 @@ namespace ToolGood.ReadyGo3
             GetDatabase().Insert(list);
             _Events.OnAfterInsert(list);
         }
+        /// <summary>
+        /// 插入集合，不返回主键
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="list"></param>
+        public void InsertList<T>(string table, List<T> list) where T : class
+        {
+            if (list == null) throw new ArgumentNullException("list is null.");
+            if (list.Count == 0) return;
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
+                foreach (var item in list) {
+                    DefaultValue.SetDefaultValue<T>(item, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
+                }
+            }
+            if (_Events.OnBeforeInsert(list)) return;
+
+            GetDatabase().InsertTable(table, list);
+            _Events.OnAfterInsert(list);
+        }
+
 
         /// <summary>
         /// 插入，支持主键自动获取。
@@ -580,13 +712,36 @@ namespace ToolGood.ReadyGo3
             return obj;
         }
         /// <summary>
+        /// 插入，支持主键自动获取。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="poco">对象</param>
+        /// <returns></returns>
+        public object InsertTable<T>(string table, T poco) where T : class
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
+
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
+                DefaultValue.SetDefaultValue<T>(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
+            }
+            if (_Events.OnBeforeInsert(poco)) return null;
+
+            var obj = GetDatabase().InsertTable(table, poco);
+            _Events.OnAfterInsert(poco);
+            return obj;
+        }
+
+
+        /// <summary>
         /// 插入
         /// </summary>
         /// <param name="table"></param>
         /// <param name="poco"></param>
         /// <param name="autoIncrement"></param>
         /// <returns></returns>
-        public object Insert(string table, object poco, bool autoIncrement = false)
+        public object InsertTable(string table, object poco, bool autoIncrement = false)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
@@ -600,7 +755,14 @@ namespace ToolGood.ReadyGo3
             _Events.OnAfterInsert(poco);
             return obj;
         }
-        public object Insert(string table, object poco, IEnumerable<string> ignoreFields)
+        /// <summary>
+        /// 插入
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="poco"></param>
+        /// <param name="ignoreFields"></param>
+        /// <returns></returns>
+        public object InsertTable(string table, object poco, IEnumerable<string> ignoreFields)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
@@ -614,7 +776,15 @@ namespace ToolGood.ReadyGo3
             _Events.OnAfterInsert(poco);
             return obj;
         }
-        public object Insert(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields)
+        /// <summary>
+        /// 插入
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="poco"></param>
+        /// <param name="autoIncrement"></param>
+        /// <param name="ignoreFields"></param>
+        /// <returns></returns>
+        public object InsertTable(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
@@ -637,26 +807,23 @@ namespace ToolGood.ReadyGo3
         public int Update<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-
-            //if (poco is IUpdateChange) {
-            //    var pd = PocoData.ForType(typeof(T));
-            //    StringBuilder stringBuilder = new StringBuilder();
-            //    ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
-            //    if (stringBuilder.Length == 0) { return 0; }
-            //    stringBuilder.Insert(0, "SET ");
-            //    object primaryKeyValue = null;
-            //    foreach (var i in pd.Columns) {
-            //        if (i.Value.ResultColumn) continue;
-            //        if (string.Compare(i.Value.ColumnName, pd.TableInfo.PrimaryKey, true) == 0) {
-            //            if (primaryKeyValue == null) primaryKeyValue = i.Value.GetValue(poco);
-            //        }
-            //    }
-            //    stringBuilder.Append($" WHERE [{pd.TableInfo.PrimaryKey}]=@0");
-            //    return Update<T>(stringBuilder.ToString(), primaryKeyValue);
-            //}
-
             if (_Events.OnBeforeUpdate(poco)) return -1;
             int r = GetDatabase().Update(poco);
+            _Events.OnAfterUpdate(poco);
+            return r;
+        }
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="poco"></param>
+        /// <returns></returns>
+        public int UpdateTable<T>(string table, T poco) where T : class
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            if (_Events.OnBeforeUpdate(poco)) return -1;
+            int r = GetDatabase().UpdateTable(table, poco);
             _Events.OnAfterUpdate(poco);
             return r;
         }
@@ -680,6 +847,25 @@ namespace ToolGood.ReadyGo3
         /// 删除
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="poco">对象</param>
+        /// <returns></returns>
+        public int DeleteTable<T>(string table, T poco) where T : class
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            if (_Events.OnBeforeDelete(poco)) return -1;
+
+            var t = GetDatabase().DeleteTable(table, poco);
+
+            _Events.OnAfterDelete(poco);
+            return t;
+        }
+
+
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
@@ -692,6 +878,35 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 删除
         /// </summary>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public int DeleteTable(string table, string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
+            sql = FormatSql(sql);
+            return GetDatabase().DeleteTable(table, sql, args);
+        }
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public int DeleteTable<T>(string table, string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
+            sql = FormatSql(sql);
+            return GetDatabase().DeleteTable(table, sql, args);
+        }
+
+
+        /// <summary>
+        /// 删除
+        /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="primaryKey">主键</param>
         /// <returns></returns>
@@ -700,31 +915,40 @@ namespace ToolGood.ReadyGo3
             return GetDatabase().Delete<T>(primaryKey);
         }
         /// <summary>
+        /// 删除
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="primaryKey">主键</param>
+        /// <returns></returns>
+        public int DeleteTableById<T>(string table, object primaryKey)
+        {
+            return GetDatabase().Delete<T>(table, primaryKey);
+        }
+
+
+        /// <summary>
         /// 保存
         /// </summary>
         /// <param name="poco"></param>
         public void Save<T>(T poco)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            //if (poco is IUpdateChange) {
-            //    var pd = PocoData.ForType(typeof(T));
-            //    StringBuilder stringBuilder = new StringBuilder();
-            //    ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
-            //    if (stringBuilder.Length == 0) { return; }
-            //    stringBuilder.Insert(0, "SET ");
-            //    object primaryKeyValue = null;
-            //    foreach (var i in pd.Columns) {
-            //        if (i.Value.ResultColumn) continue;
-            //        if (string.Compare(i.Value.ColumnName, pd.TableInfo.PrimaryKey, true) == 0) {
-            //            if (primaryKeyValue == null) primaryKeyValue = i.Value.GetValue(poco);
-            //        }
-            //    }
-            //    stringBuilder.Append($" WHERE [{pd.TableInfo.PrimaryKey}]=@0");
-            //    Update<T>(stringBuilder.ToString(), primaryKeyValue);
-            //    return;
-            //}
             GetDatabase().Save(poco);
         }
+        /// <summary>
+        /// 保存
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="poco"></param>
+        public void SaveTable<T>(string table, T poco)
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            GetDatabase().SaveTable(table, poco);
+        }
+
+
         /// <summary>
         /// 更新
         /// </summary>
@@ -737,6 +961,33 @@ namespace ToolGood.ReadyGo3
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = FormatSql(sql);
             return GetDatabase().Update<T>(sql, args);
+        }
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public int UpdateTable<T>(string table, string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
+            sql = FormatSql(sql);
+            return GetDatabase().UpdateTable(table, sql, args);
+        }
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public int UpdateTable(string table, string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
+            sql = FormatSql(sql);
+            return GetDatabase().UpdateTable(table, sql, args);
         }
 
         #endregion Object  Insert Update Delete DeleteById Save
@@ -762,7 +1013,7 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T"></typeparam>
         /// <param name="asName"></param>
         /// <returns></returns>
-        public TableName<T> GetTableName<T>(string asName = null) where T:class,new()
+        public TableName<T> GetTableName<T>(string asName = null) where T : class, new()
         {
             return new TableName<T>(typeof(T), _provider, asName);
         }

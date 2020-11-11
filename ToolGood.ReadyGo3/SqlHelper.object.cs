@@ -20,7 +20,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition"></param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        public int Update(string table, object set, object condition, IEnumerable<string> ignoreFields = null)
+        public int UpdateTable(string table, object set, object condition, IEnumerable<string> ignoreFields = null)
         {
             var tbn = _provider.GetTableName(table);
             return Update("UPDATE " + tbn + " " + ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
@@ -32,7 +32,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public int Delete(string table, object condition)
+        public int DeleteTable(string table, object condition)
         {
             if (null == condition) {
                 throw new ArgumentNullException(nameof(condition));
@@ -435,7 +435,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition"></param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        public Task<int> UpdateAsync(string table, object set, object condition, IEnumerable<string> ignoreFields = null)
+        public Task<int> UpdateTableAsync(string table, object set, object condition, IEnumerable<string> ignoreFields = null)
         {
             var tbn = _provider.GetTableName(table);
             return UpdateAsync("UPDATE " + tbn + " " + ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
@@ -447,7 +447,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        public Task<int> DeleteAsync(string table, object condition)
+        public Task<int> DeleteTableAsync(string table, object condition)
         {
             if (null == condition) {
                 throw new ArgumentNullException(nameof(condition));

@@ -513,7 +513,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return default;
             }
         }
-        //#if !NETSTANDARD2_0
+
         /// <summary>
         /// 
         /// </summary>
@@ -545,28 +545,20 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return default;
             }
         }
-        //#endif
 
         #endregion
 
         #region operation: Page
 
-        /// <summary>
-        ///     Starting with a regular SELECT statement, derives the SQL statements required to query a
-        ///     DB for a page of records and the total number of records
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="skip">The number of rows to skip before the start of the page</param>
-        /// <param name="take">The number of rows in the page</param>
-        /// <param name="sql">The original SQL select statement</param>
-        /// <param name="args">Arguments to any embedded parameters in the SQL</param>
-        /// <param name="sqlCount">Outputs the SQL statement to query for the total number of matching rows</param>
-        /// <param name="sqlPage">Outputs the SQL statement to retrieve a single page of matching rows</param>
         private void BuildPageQueries<T>(int skip, int take, string sql, ref object[] args, out string sqlCount, out string sqlPage)
+        {
+            BuildPageQueriesTable<T>(null, skip, take, sql, ref args, out sqlCount, out sqlPage);
+        }
+        private void BuildPageQueriesTable<T>(string table, int skip, int take, string sql, ref object[] args, out string sqlCount, out string sqlPage)
         {
             // Add auto select clause
             if (EnableAutoSelect)
-                sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
+                sql = AutoSelectHelper.AddSelectClause<T>(_provider, table, sql);
 
             // Split the SQL
             if (!_provider.PagingUtility.SplitSQL(sql, out SQLParts parts))
@@ -576,42 +568,20 @@ namespace ToolGood.ReadyGo3.PetaPoco
             sqlCount = parts.SqlCount;
         }
 
-        /// <summary>
-        ///     Retrieves a page of records	and the total number of available records
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="page">The 1 based page number to retrieve</param>
-        /// <param name="itemsPerPage">The number of records per page</param>
-        /// <param name="sql">The base SQL query</param>
-        /// <param name="args">Arguments to any embedded parameters in the SQL statement</param>
-        /// <returns>A Page of results</returns>
-        /// <remarks>
-        ///     ToolGood.ReadyGo3.PetaPoco will automatically modify the supplied SELECT statement to only retrieve the
-        ///     records for the specified page.  It will also execute a second query to retrieve the
-        ///     total number of records in the result set.
-        /// </remarks>
+
         public Page<T> Page<T>(int page, int itemsPerPage, string sql, object[] args)
         {
-            BuildPageQueries<T>((page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
+            return PageTable<T>(null, page, itemsPerPage, sql, args);
+        }
+        public Page<T> PageTable<T>(string table, int page, int itemsPerPage, string sql, object[] args)
+        {
+            BuildPageQueriesTable<T>(table, (page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
             return PageSql<T>(page, itemsPerPage, sqlPage, sqlCount, args);
         }
 
-        /// <summary>
-        /// Retrieves a page of records	and the total number of available records
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="page">The 1 based page number to retrieve</param>
-        /// <param name="itemsPerPage">The number of records per page</param>
-        /// <param name="selectSql"></param>
-        /// <param name="countSql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
         public Page<T> PageSql<T>(int page, int itemsPerPage, string selectSql, string countSql, object[] args)
         {
-            // Save the one-time command time out and use it for both queries
             var saveTimeout = OneTimeCommandTimeout;
-
-            // Setup the paged result
             var result = new Page<T> {
                 CurrentPage = page,
                 PageSize = itemsPerPage,
@@ -619,50 +589,33 @@ namespace ToolGood.ReadyGo3.PetaPoco
             };
             OneTimeCommandTimeout = saveTimeout;
 
-            // Get the records
             result.Items = Query<T>(selectSql, args).ToList();
-            // Done
             return result;
         }
-
-
-
 
         #endregion
 
         #region operation: Query
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="skip"></param>
-        /// <param name="take"></param>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
         public IEnumerable<T> Query<T>(int skip, int take, string sql, object[] args)
         {
-            BuildPageQueries<T>(skip, take, sql, ref args, out _, out string sqlPage);
+            return QueryTable<T>(null, skip, take, sql, args);
+        }
+        public IEnumerable<T> QueryTable<T>(string table, int skip, int take, string sql, object[] args)
+        {
+            BuildPageQueriesTable<T>(table, skip, take, sql, ref args, out _, out string sqlPage);
             return Query<T>(sqlPage, args);
         }
 
-        /// <summary>
-        ///     Runs an SQL query, returning the results as an IEnumerable collection
-        /// </summary>
-        /// <typeparam name="T">The Type representing a row in the result set</typeparam>
-        /// <param name="sql">The SQL query</param>
-        /// <param name="args">Arguments to any embedded parameters in the SQL statement</param>
-        /// <param name="commandType"></param>
-        /// <returns>An enumerable collection of result records</returns>
-        /// <remarks>
-        ///     For some DB providers, care should be taken to not start a new Query before finishing with
-        ///     and disposing the previous one. In cases where this is an issue, consider using Fetch which
-        ///     returns the results as a List rather than an IEnumerable.
-        /// </remarks>
+
         public IEnumerable<T> Query<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
+            return QueryTable<T>(null, sql, args, commandType);
+        }
+
+        public IEnumerable<T> QueryTable<T>(string table, string sql, object[] args, CommandType commandType = CommandType.Text)
+        {
             if (EnableAutoSelect)
-                sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
+                sql = AutoSelectHelper.AddSelectClause<T>(_provider, table, sql);
 
             OpenSharedConnection();
             try {
@@ -705,13 +658,17 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         #region operation: Exists
 
-        /// <summary>
-        ///     Checks for the existence of a row matching the specified condition
-        /// </summary>
-        /// <typeparam name="T">The Type representing the table being queried</typeparam>
-        /// <param name="sqlCondition">The SQL expression to be tested for (ie: the WHERE expression)</param>
-        /// <param name="args">Arguments to any embedded parameters in the SQL statement</param>
-        /// <returns>True if a record matching the condition is found.</returns>
+        public bool ExistsTable<T>(string table, string sqlCondition, params object[] args)
+        {
+            var poco = PocoData.ForType(typeof(T)).TableInfo;
+
+            if (sqlCondition.TrimStart().StartsWith("where", StringComparison.OrdinalIgnoreCase))
+                sqlCondition = sqlCondition.TrimStart().Substring(5);
+
+            return ExecuteScalar<int>(string.Format(_provider.GetExistsSql(), _provider.GetTableName(table), sqlCondition), args) != 0;
+        }
+
+
         public bool Exists<T>(string sqlCondition, params object[] args)
         {
             var poco = PocoData.ForType(typeof(T)).TableInfo;
@@ -722,30 +679,29 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return ExecuteScalar<int>(string.Format(_provider.GetExistsSql(), _provider.GetTableName(poco.TableName), sqlCondition), args) != 0;
         }
 
-        /// <summary>
-        ///     Checks for the existence of a row with the specified primary key value.
-        /// </summary>
-        /// <typeparam name="T">The Type representing the table being queried</typeparam>
-        /// <param name="primaryKey">The primary key value to look for</param>
-        /// <returns>True if a record with the specified primary key value exists.</returns>
-        public bool Exists<T>(object primaryKey)
-        {
-            return Exists<T>(string.Format("{0}=@0", _provider.EscapeSqlIdentifier(PocoData.ForType(typeof(T)).TableInfo.PrimaryKey)), primaryKey);
-        }
+
+        //public bool ExistsTable<T>(string table, object primaryKey)
+        //{
+        //    return ExistsTable<T>(table, string.Format("{0}=@0", _provider.EscapeSqlIdentifier(PocoData.ForType(typeof(T)).TableInfo.PrimaryKey)), primaryKey);
+        //}
+
+        //public bool Exists<T>(object primaryKey)
+        //{
+        //    return Exists<T>(string.Format("{0}=@0", _provider.EscapeSqlIdentifier(PocoData.ForType(typeof(T)).TableInfo.PrimaryKey)), primaryKey);
+        //}
 
         #endregion
 
         #region operation: Insert
 
-        /// <summary>
-        ///     Performs an SQL Insert
-        /// </summary>
-        /// <param name="poco">The POCO object that specifies the column values to be inserted</param>
-        /// <returns>The auto allocated primary key of the new record, or null for non-auto-increment tables</returns>
-        /// <remarks>
-        ///     The name of the table, it's primary key and whether it's an auto-allocated primary key are retrieved
-        ///     from the POCO's attributes
-        /// </remarks>
+        public object InsertTable(string table, object poco)
+        {
+            if (poco == null)
+                throw new ArgumentNullException("poco");
+
+            var pd = PocoData.ForType(poco.GetType());
+            return ExecuteInsert(table, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
+        }
         public object Insert(object poco)
         {
             if (poco == null)
@@ -755,7 +711,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return ExecuteInsert(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
 
-        public object Insert(string table, object poco, bool autoIncrement , IEnumerable<string> ignoreFields)
+        public object Insert(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
@@ -775,7 +731,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         foreach (var i in pd.Columns) {
                             if (i.Value.ResultColumn) continue;
                             if (autoIncrement && primaryKeyName != null && string.Compare(i.Value.ColumnName, primaryKeyName, true) == 0) { continue; }
-                            if (ignoreFields!=null && ignoreFields.Contains(i.Key, StringComparer.OrdinalIgnoreCase)) continue;
+                            if (ignoreFields != null && ignoreFields.Contains(i.Key, StringComparer.OrdinalIgnoreCase)) continue;
                             AddParam(cmd, i.Value.GetValue(poco), i.Value.PropertyInfo);
                         }
 
@@ -811,31 +767,55 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        internal object ExecuteInsert(string sql, string primaryKeyName)
+        //internal object ExecuteInsert(string sql, string primaryKeyName)
+        //{
+        //    try {
+        //        OpenSharedConnection();
+        //        try {
+        //            using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
+        //                cmd.CommandText = sql;
+        //                return _provider.ExecuteInsert(this, cmd, primaryKeyName);
+        //            }
+        //        } finally {
+        //            CloseSharedConnection();
+        //        }
+        //    } catch (Exception x) {
+        //        if (OnException(x))
+        //            throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
+        //        return null;
+        //    }
+        //}
+
+        public void InsertTable<T>(string tableName, List<T> list)
         {
-            try {
-                OpenSharedConnection();
-                try {
-                    using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
-                        cmd.CommandText = sql;
-                        return _provider.ExecuteInsert(this, cmd, primaryKeyName);
-                    }
-                } finally {
-                    CloseSharedConnection();
+            if (list == null) throw new ArgumentNullException("poco");
+            if (list.Count == 0) return;
+
+            var pd = PocoData.ForType(typeof(T));
+            //var tableName = pd.TableInfo.TableName;
+            var columns = pd.Columns.Where(q => q.Value.ResultColumn == false).Count();
+            var count1 = Math.Min(50, 1000 / columns);
+            var count2 = Math.Min(25, 500 / columns);
+            var count3 = Math.Min(10, 200 / columns);
+
+            var index = 0;
+            while (index < list.Count) {
+                var count = list.Count - index;
+                int size;
+                if (count >= count1) {
+                    size = count1;
+                } else if (count >= count2) {
+                    size = count2;
+                } else if (count >= count3) {
+                    size = count3;
+                } else {
+                    size = count;
                 }
-            } catch (Exception x) {
-                if (OnException(x))
-                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return null;
+                ExecuteInsert<T>(tableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, size);
+                index += size;
             }
         }
 
-
-        /// <summary>
-        /// 插入列表
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
         public void Insert<T>(List<T> list)
         {
             if (list == null) throw new ArgumentNullException("poco");
@@ -865,6 +845,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 index += size;
             }
         }
+
         private void ExecuteInsert<T>(string tableName, string primaryKeyName, bool autoIncrement, List<T> list, int index2, int size)
         {
             try {
@@ -919,13 +900,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return ExecuteUpdate(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
 
-        /// <summary>
-        ///     Performs an SQL update
-        /// </summary>
-        /// <typeparam name="T">The POCO class who's attributes specify the name of the table to update</typeparam>
-        /// <param name="sql">The SQL update and condition clause (ie: everything after "UPDATE tablename"</param>
-        /// <param name="args">Arguments to any embedded parameters in the SQL</param>
-        /// <returns>The number of affected rows</returns>
+        public int UpdateTable(string table, object poco)
+        {
+            if (poco == null)
+                throw new ArgumentNullException("poco");
+
+            var pd = PocoData.ForType(poco.GetType());
+            return ExecuteUpdate(table, pd.TableInfo.PrimaryKey, poco, null);
+        }
+
         public int Update<T>(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql))
@@ -935,6 +918,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
             var pd = PocoData.ForType(typeof(T));
             return Execute(string.Format("UPDATE {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
+        }
+        public int UpdateTable(string table, string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql))
+                throw new ArgumentNullException("sql");
+            if (sql.StartsWith("UPDATE ", StringComparison.CurrentCultureIgnoreCase)) {
+                return Execute(sql, args);
+            }
+            return Execute(string.Format("UPDATE {0} {1}", _provider.GetTableName(table), sql), args);
         }
 
         private int ExecuteUpdate(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
@@ -1026,6 +1018,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(poco.GetType());
             return Delete(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
+        public int DeleteTable(string table, object poco)
+        {
+            var pd = PocoData.ForType(poco.GetType());
+            return Delete(table, pd.TableInfo.PrimaryKey, poco, null);
+        }
+
+
 
         /// <summary>
         ///     Performs an SQL Delete
@@ -1051,18 +1050,35 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             return Delete(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
         }
+        public int DeleteTable<T>(string table, object pocoOrPrimaryKey)
+        {
+            if (pocoOrPrimaryKey.GetType() == typeof(T))
+                return Delete(pocoOrPrimaryKey);
 
-        /// <summary>
-        ///     Performs an SQL Delete
-        /// </summary>
-        /// <typeparam name="T">The POCO class who's attributes specify the name of the table to delete from</typeparam>
-        /// <param name="sql">The SQL condition clause identifying the row to delete (ie: everything after "DELETE FROM tablename"</param>
-        /// <param name="args">Arguments to any embedded parameters in the SQL</param>
-        /// <returns>The number of affected rows</returns>
+            var pd = PocoData.ForType(typeof(T));
+
+            if (pocoOrPrimaryKey.GetType().Name.Contains("AnonymousType")) {
+                var pi = pocoOrPrimaryKey.GetType().GetProperty(pd.TableInfo.PrimaryKey);
+
+                if (pi == null)
+                    throw new InvalidOperationException(string.Format("Anonymous type does not contain an id for PK column `{0}`.", pd.TableInfo.PrimaryKey));
+
+                pocoOrPrimaryKey = pi.GetValue(pocoOrPrimaryKey, new object[0]);
+            }
+
+            return Delete(table, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
+        }
+
+
+
         public int Delete<T>(string sql, params object[] args)
         {
             var pd = PocoData.ForType(typeof(T));
             return Execute(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
+        }
+        public int DeleteTable(string table, string sql, params object[] args)
+        {
+            return Execute(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(table), sql), args);
         }
 
         #endregion
@@ -1079,6 +1095,24 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             var pd = PocoData.ForType(poco.GetType());
             var tableName = pd.TableInfo.TableName;
+            var primaryKeyName = pd.TableInfo.PrimaryKey;
+
+            if (string.IsNullOrEmpty(primaryKeyName))
+                throw new ArgumentException("primaryKeyName");
+
+            if (IsNew(primaryKeyName, pd, poco)) {
+                ExecuteInsert(tableName, primaryKeyName, true, poco);
+            } else {
+                ExecuteUpdate(tableName, primaryKeyName, poco, null);
+            }
+        }
+        public void SaveTable(string tableName, object poco)
+        {
+            if (poco == null)
+                throw new ArgumentNullException("poco");
+
+            var pd = PocoData.ForType(poco.GetType());
+            //var tableName = pd.TableInfo.TableName;
             var primaryKeyName = pd.TableInfo.PrimaryKey;
 
             if (string.IsNullOrEmpty(primaryKeyName))

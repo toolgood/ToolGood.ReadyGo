@@ -251,6 +251,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             await QueryAsync<T>(sqlPage, args, list);
             return list;
         }
+
         /// <summary>
         /// 
         /// </summary>
@@ -262,7 +263,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             if (EnableAutoSelect)
-                sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
+                sql = AutoSelectHelper.AddSelectClause<T>(_provider, null, sql);
 
             var resultList = new List<T>();
             await OpenSharedConnectionAsync().ConfigureAwait(false);
@@ -308,52 +309,40 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="resultList"></param>
         /// <param name="commandType"></param>
         /// <returns></returns>
-        public async Task  QueryAsync<T>(string sql, object[] args,IList<T> resultList, CommandType commandType = CommandType.Text)
+        public async Task QueryAsync<T>(string sql, object[] args, IList<T> resultList, CommandType commandType = CommandType.Text)
         {
             if (EnableAutoSelect)
-                sql = AutoSelectHelper.AddSelectClause<T>(_provider, sql);
+                sql = AutoSelectHelper.AddSelectClause<T>(_provider, null, sql);
 
             await OpenSharedConnectionAsync().ConfigureAwait(false);
-            try
-            {
-                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType))
-                {
+            try {
+                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
                     SqlDataReader r = null;
                     var pd = PocoData.ForType(typeof(T));
-                    try
-                    {
+                    try {
                         DoPreExecute(cmd);
-                        r = await ((SqlCommand) cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, _Token).ConfigureAwait(false);
+                        r = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, _Token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
-                    }
-                    catch (Exception x)
-                    {
+                    } catch (Exception x) {
                         if (OnException(x))
                             throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
                     }
                     var factory = pd.GetFactory(0, r.FieldCount, r/*, _sqlHelper._use_proxyType*/) as Func<IDataReader, T>;
-                    using (r)
-                    {
-                        while (true)
-                        {
-                            try
-                            {
+                    using (r) {
+                        while (true) {
+                            try {
                                 if (!await r.ReadAsync(_Token).ConfigureAwait(false))
                                     break;
                                 T poco = factory(r);
                                 resultList.Add(poco);
-                            }
-                            catch (Exception x)
-                            {
+                            } catch (Exception x) {
                                 if (OnException(x))
                                     throw;
                             }
                         }
                     }
                 }
-            }
-            finally
-            {
+            } finally {
                 CloseSharedConnection();
                 _Token = CancellationToken.None;
             }
@@ -416,15 +405,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         #endregion
 
         #region InsertAsync
-        /// <summary>
-        ///     Performs an SQL Insert
-        /// </summary>
-        /// <param name="poco">The POCO object that specifies the column values to be inserted</param>
-        /// <returns>The auto allocated primary key of the new record, or null for non-auto-increment tables</returns>
-        /// <remarks>
-        ///     The name of the table, it's primary key and whether it's an auto-allocated primary key are retrieved
-        ///     from the POCO's attributes
-        /// </remarks>
         public Task<object> InsertAsync(object poco)
         {
             if (poco == null)
@@ -433,6 +413,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(poco.GetType());
             return ExecuteInsertAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
+        public Task<object> InsertTableAsync(string table, object poco)
+        {
+            if (poco == null)
+                throw new ArgumentNullException("poco");
+
+            var pd = PocoData.ForType(poco.GetType());
+            return ExecuteInsertAsync(table, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
+        }
+
         public Task<object> InsertAsync(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields)
         {
             if (poco == null)
@@ -491,31 +480,30 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        internal async Task<object> ExecuteInsertAsync(string sql, string primaryKeyName)
+        public async Task InsertTableAsync<T>(string table, List<T> list)
         {
-            try {
-                await OpenSharedConnectionAsync().ConfigureAwait(false);
-                try {
-                    using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
-                        cmd.CommandText = sql;
-                        return await _provider.ExecuteInsertAsync(this, (SqlCommand)cmd, primaryKeyName);
-                    }
-                } finally {
-                    CloseSharedConnection();
-                    _Token = CancellationToken.None;
+            if (string.IsNullOrEmpty(table)) throw new ArgumentNullException("table");
+            if (list == null) throw new ArgumentNullException("poco");
+            if (list.Count == 0) return;
+
+            var pd = PocoData.ForType(typeof(T));
+
+            var index = 0;
+            while (index < list.Count) {
+                var count = list.Count - index;
+                int size;
+                if (count >= 50) {
+                    size = 50;
+                } else if (count >= 10) {
+                    size = 10;
+                } else {
+                    size = count;
                 }
-            } catch (Exception x) {
-                if (OnException(x))
-                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return null;
+                await ExecuteInsertAsync<T>(table, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, size);
+                index += size;
             }
         }
 
-        /// <summary>
-        /// 插入列表
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
         public async Task InsertAsync<T>(List<T> list)
         {
             if (list == null) throw new ArgumentNullException("poco");
@@ -539,6 +527,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 index += size;
             }
         }
+
         private async Task ExecuteInsertAsync<T>(string tableName, string primaryKeyName, bool autoIncrement, List<T> list, int index2, int size)
         {
             try {
@@ -579,12 +568,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         #endregion
 
         #region UpdateAsync
-
-        /// <summary>
-        ///     Performs an SQL update
-        /// </summary>
-        /// <param name="poco">The POCO object that specifies the column values to be updated</param>
-        /// <returns>The number of affected rows</returns>
         public Task<int> UpdateAsync(object poco)
         {
             if (poco == null)
@@ -593,14 +576,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(poco.GetType());
             return ExecuteUpdateAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
+        public Task<int> UpdateTableAsync(string table, object poco)
+        {
+            if (poco == null)
+                throw new ArgumentNullException("poco");
 
-        /// <summary>
-        ///     Performs an SQL update
-        /// </summary>
-        /// <typeparam name="T">The POCO class who's attributes specify the name of the table to update</typeparam>
-        /// <param name="sql">The SQL update and condition clause (ie: everything after "UPDATE tablename"</param>
-        /// <param name="args">Arguments to any embedded parameters in the SQL</param>
-        /// <returns>The number of affected rows</returns>
+            var pd = PocoData.ForType(poco.GetType());
+            return ExecuteUpdateAsync(table, pd.TableInfo.PrimaryKey, poco, null);
+        }
+
         public Task<int> UpdateAsync<T>(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql))
@@ -609,6 +593,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(typeof(T));
             return ExecuteAsync(string.Format("UPDATE {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
         }
+        public Task<int> UpdateTableAsync<T>(string table, string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql))
+                throw new ArgumentNullException("sql");
+
+            return ExecuteAsync(string.Format("UPDATE {0} {1}", _provider.GetTableName(table), sql), args);
+        }
+
 
         private async Task<int> ExecuteUpdateAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
         {
@@ -690,23 +682,37 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return ExecuteAsync(sql, new object[] { primaryKeyValue });
         }
 
-        /// <summary>
-        ///     Performs an SQL Delete
-        /// </summary>
-        /// <param name="poco">The POCO object specifying the table name and primary key value of the row to be deleted</param>
-        /// <returns>The number of rows affected</returns>
         public Task<int> DeleteAsync(object poco)
         {
             var pd = PocoData.ForType(poco.GetType());
             return DeleteAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
 
-        /// <summary>
-        ///     Performs an SQL Delete
-        /// </summary>
-        /// <typeparam name="T">The POCO class whose attributes identify the table and primary key to be used in the delete</typeparam>
-        /// <param name="pocoOrPrimaryKey">The value of the primary key of the row to delete</param>
-        /// <returns></returns>
+        public Task<int> DeleteTableAsync(string table, object poco)
+        {
+            var pd = PocoData.ForType(poco.GetType());
+            return DeleteAsync(table, pd.TableInfo.PrimaryKey, poco, null);
+        }
+
+
+        public Task<int> DeleteTableAsync<T>(string table, object pocoOrPrimaryKey)
+        {
+            if (pocoOrPrimaryKey.GetType() == typeof(T))
+                return DeleteAsync(pocoOrPrimaryKey);
+
+            var pd = PocoData.ForType(typeof(T));
+
+            if (pocoOrPrimaryKey.GetType().Name.Contains("AnonymousType")) {
+                var pi = pocoOrPrimaryKey.GetType().GetProperty(pd.TableInfo.PrimaryKey);
+
+                if (pi == null)
+                    throw new InvalidOperationException(string.Format("Anonymous type does not contain an id for PK column `{0}`.", pd.TableInfo.PrimaryKey));
+
+                pocoOrPrimaryKey = pi.GetValue(pocoOrPrimaryKey, new object[0]);
+            }
+
+            return DeleteAsync(table, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
+        }
         public Task<int> DeleteAsync<T>(object pocoOrPrimaryKey)
         {
             if (pocoOrPrimaryKey.GetType() == typeof(T))
@@ -726,14 +732,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return DeleteAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
         }
 
-        /// <summary>
-        ///     Performs an SQL Delete
-        /// </summary>
-        /// <typeparam name="T">The POCO class who's attributes specify the name of the table to delete from</typeparam>
-        /// <param name="sql">The SQL condition clause identifying the row to delete (ie: everything after "DELETE FROM tablename"</param>
-        /// <param name="args">Arguments to any embedded parameters in the SQL</param>
-        /// <returns>The number of affected rows</returns>
         public Task<int> DeleteAsync<T>(string sql, params object[] args)
+        {
+
+            var pd = PocoData.ForType(typeof(T));
+            return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
+        }
+        public Task<int> DeleteTableAsync<T>(string table, string sql, params object[] args)
         {
 
             var pd = PocoData.ForType(typeof(T));
@@ -743,11 +748,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         #endregion
 
         #region SaveAsync
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="poco"></param>
-        /// <returns></returns>
         public Task SaveAsync(object poco)
         {
             if (poco == null)
@@ -766,6 +766,24 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return ExecuteUpdateAsync(tableName, primaryKeyName, poco, null);
             }
         }
+        public Task SaveTableAsync(string table, object poco)
+        {
+            if (poco == null)
+                throw new ArgumentNullException("poco");
+
+            var pd = PocoData.ForType(poco.GetType());
+            var primaryKeyName = pd.TableInfo.PrimaryKey;
+
+            if (string.IsNullOrEmpty(primaryKeyName))
+                throw new ArgumentException("primaryKeyName");
+
+            if (IsNew(primaryKeyName, pd, poco)) {
+                return ExecuteInsertAsync(table, primaryKeyName, true, poco);
+            } else {
+                return ExecuteUpdateAsync(table, primaryKeyName, poco, null);
+            }
+        }
+
 
         #endregion
 

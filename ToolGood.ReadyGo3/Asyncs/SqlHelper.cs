@@ -397,7 +397,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="poco">对象</param>
         /// <param name="autoIncrement">是否自增，是，返回自增ID</param>
         /// <returns></returns>
-        public async Task<object> InsertAsync(string table, object poco, bool autoIncrement = false)
+        public async Task<object> InsertTableAsync(string table, object poco, bool autoIncrement = false)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
@@ -418,7 +418,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="poco"></param>
         /// <param name="ignoreFields">忽略字段，这里填类中的属性名</param>
         /// <returns></returns>
-        public async Task<object> InsertAsync(string table, object poco, IEnumerable<string> ignoreFields)
+        public async Task<object> InsertTableAsync(string table, object poco, IEnumerable<string> ignoreFields)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
@@ -441,7 +441,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="autoIncrement">是否自增，是，返回自增ID</param>
         /// <param name="ignoreFields">忽略字段，这里填类中的属性名</param>
         /// <returns></returns>
-        public async Task<object> InsertAsync(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields)
+        public async Task<object> InsertTableAsync(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
