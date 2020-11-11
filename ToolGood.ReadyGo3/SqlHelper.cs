@@ -567,6 +567,21 @@ namespace ToolGood.ReadyGo3
 
             return Single<T>(sql, primaryKey);
         }
+        /// <summary>
+        /// 获取唯一一个类型，若数量不为1，则抛出异常
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="primaryKey">主键名</param>
+        /// <returns></returns>
+        public T SingleTableById<T>(string table, object primaryKey)
+        {
+            var pd = PocoData.ForType(typeof(T));
+            var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+            var sql = $"WHERE {pk}=@0";
+
+            return SingleTable<T>(table, sql, primaryKey);
+        }
 
         /// <summary>
         /// 获取唯一一个类型，若数量大于1，则抛出异常
@@ -581,6 +596,21 @@ namespace ToolGood.ReadyGo3
             var sql = $"WHERE {pk}=@0";
             return SingleOrDefault<T>(sql, primaryKey);
         }
+        /// <summary>
+        /// 获取唯一一个类型，若数量大于1，则抛出异常
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="primaryKey">主键名</param>
+        /// <returns></returns>
+        public T SingleOrDefaultTableById<T>(string table, object primaryKey)
+        {
+            var pd = PocoData.ForType(typeof(T));
+            var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+            var sql = $"WHERE {pk}=@0";
+            return SingleOrDefaultTable<T>(table, sql, primaryKey);
+        }
+
 
         /// <summary>
         ///获取唯一一个类型，若数量不为1，则抛出异常
@@ -596,6 +626,22 @@ namespace ToolGood.ReadyGo3
                 return GetDatabase().Query<T>(sql, args).Single();
             }
             return GetDatabase().Query<T>(0, 2, sql, args).Single();
+        }
+        /// <summary>
+        /// 获取唯一一个类型，若数量不为1，则抛出异常
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public T SingleTable<T>(string table, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            if (_sql_singleWithLimit2 == false) {
+                return GetDatabase().QueryTable<T>(table, sql, args).Single();
+            }
+            return GetDatabase().QueryTable<T>(table, 0, 2, sql, args).Single();
         }
 
 
@@ -614,6 +660,22 @@ namespace ToolGood.ReadyGo3
             }
             return GetDatabase().Query<T>(0, 2, sql, args).SingleOrDefault();
         }
+        /// <summary>
+        /// 获取唯一一个类型，若数量大于1，则抛出异常
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public T SingleOrDefaultTable<T>(string table, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            if (_sql_singleWithLimit2 == false) {
+                return GetDatabase().QueryTable<T>(table, sql, args).SingleOrDefault();
+            }
+            return GetDatabase().QueryTable<T>(table, 0, 2, sql, args).SingleOrDefault();
+        }
 
         /// <summary>
         /// 获取第一个类型，若数量为0，则抛出异常
@@ -629,6 +691,22 @@ namespace ToolGood.ReadyGo3
                 return GetDatabase().Query<T>(sql, args).First();
             }
             return GetDatabase().Query<T>(0, 1, sql, args).First();
+        }
+        /// <summary>
+        /// 获取第一个类型，若数量为0，则抛出异常
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public T FirstTable<T>(string table, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            if (_sql_firstWithLimit1 == false) {
+                return GetDatabase().QueryTable<T>(table, sql, args).First();
+            }
+            return GetDatabase().QueryTable<T>(table, 0, 1, sql, args).First();
         }
 
         /// <summary>
@@ -646,6 +724,23 @@ namespace ToolGood.ReadyGo3
             }
             return GetDatabase().Query<T>(0, 1, sql, args).FirstOrDefault();
         }
+        /// <summary>
+        /// 获取第一个类型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public T FirstOrDefaultTable<T>(string table,string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            if (_sql_firstWithLimit1 == false) {
+                return GetDatabase().QueryTable<T>(table,sql, args).FirstOrDefault();
+            }
+            return GetDatabase().QueryTable<T>(table, 0, 1, sql, args).FirstOrDefault();
+        }
+
 
         #endregion Single SingleOrDefault First FirstOrDefault
 
