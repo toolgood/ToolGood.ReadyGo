@@ -74,6 +74,31 @@ namespace ToolGood.ReadyGo3
             sql = FormatSql(sql);
             return await CountAsync<T>(sql, args) > 0;
         }
+        /// <summary>
+        /// 执行SQL 查询,判断是否存在，返回bool类型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<bool> ExistsAsync<T>(string table, string sql, params object[] args)
+        {
+            sql = FormatSql(sql);
+            return await CountTableAsync(table, sql, args) > 0;
+        }
+        /// <summary>
+        /// 执行SQL 查询,判断是否存在，返回bool类型
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<bool> ExistsAsync(string table, string sql, params object[] args)
+        {
+            sql = FormatSql(sql);
+            return await CountTableAsync(table, sql, args) > 0;
+        }
 
         /// <summary>
         ///  执行SQL 查询,返回数量
@@ -93,6 +118,23 @@ namespace ToolGood.ReadyGo3
             }
             return GetDatabase().ExecuteScalarAsync<int>(sql, args);
         }
+        /// <summary>
+        /// 执行SQL 查询,返回数量
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public Task<int> CountTableAsync<T>(string table, string sql = "", params object[] args)
+        {
+            sql = sql.Trim();
+            if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
+                sql = FormatSql(sql);
+                sql = $"SELECT COUNT(*) FROM {table} {sql}";
+            }
+            return GetDatabase().ExecuteScalarAsync<int>(sql, args);
+        }
 
         /// <summary>
         /// 执行SQL 查询,返回数量
@@ -103,6 +145,22 @@ namespace ToolGood.ReadyGo3
         public Task<int> CountAsync(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
+            return GetDatabase().ExecuteScalarAsync<int>(sql, args);
+        }
+        /// <summary>
+        /// 执行SQL 查询,返回数量
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public Task<int> CountTableAsync(string table, string sql = "", params object[] args)
+        {
+            sql = sql.Trim();
+            if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
+                sql = FormatSql(sql);
+                sql = $"SELECT COUNT(*) FROM {table} {sql}";
+            }
             return GetDatabase().ExecuteScalarAsync<int>(sql, args);
         }
 
@@ -125,6 +183,20 @@ namespace ToolGood.ReadyGo3
         /// 执行SQL 查询,返回集合
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<List<T>> SelectTableAsync<T>(string table, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            return (await GetDatabase().QueryAsync<T>(table, sql, args)).ToList();
+        }
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="limit">获取个数</param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
@@ -138,6 +210,21 @@ namespace ToolGood.ReadyGo3
         /// 执行SQL 查询,返回集合
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="limit">获取个数</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<List<T>> SelectTableAsync<T>(string table, int limit, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            return (await GetDatabase().QueryAsync<T>(table, 0, limit, sql, args)).ToList();
+        }
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="offset">跳过</param>
         /// <param name="limit">获取个数</param>
         /// <param name="sql">SQL 语句</param>
@@ -147,6 +234,21 @@ namespace ToolGood.ReadyGo3
         {
             sql = FormatSql(sql);
             return (await GetDatabase().QueryAsync<T>(offset, limit, sql, args)).ToList();
+        }
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="offset">跳过</param>
+        /// <param name="limit">获取个数</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<List<T>> SelectAsync<T>(string table, int limit, int offset, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            return (await GetDatabase().QueryAsync<T>(table, offset, limit, sql, args)).ToList();
         }
 
         /// <summary>
@@ -166,6 +268,24 @@ namespace ToolGood.ReadyGo3
             sql = FormatSql(sql);
             return (await GetDatabase().QueryAsync<T>((page - 1) * itemsPerPage, itemsPerPage, sql, args)).ToList();
         }
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<List<T>> SelectPageTableAsync<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args)
+        {
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
+
+            sql = FormatSql(sql);
+            return (await GetDatabase().QueryAsync<T>(table, (page - 1) * itemsPerPage, itemsPerPage, sql, args)).ToList();
+        }
 
 
         /// <summary>
@@ -184,6 +304,24 @@ namespace ToolGood.ReadyGo3
 
             sql = FormatSql(sql);
             return GetDatabase().PageAsync<T>(page, itemsPerPage, sql, args);
+        }
+        /// <summary>
+        /// 执行SQL 查询,返回Page类型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public Task<Page<T>> PageTableAsync<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args)
+        {
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
+
+            sql = FormatSql(sql);
+            return GetDatabase().PageTableAsync<T>(table, page, itemsPerPage, sql, args);
         }
 
         /// <summary>
@@ -265,6 +403,21 @@ namespace ToolGood.ReadyGo3
 
             return SingleAsync<T>(sql, primaryKey);
         }
+        /// <summary>
+        /// 获取唯一一个类型，若数量不为1，则抛出异常
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="primaryKey">主键名</param>
+        /// <returns></returns>
+        public Task<T> SingleTableByIdAsync<T>(string table, object primaryKey)
+        {
+            var pd = PocoData.ForType(typeof(T));
+            var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+            var sql = $"WHERE {pk}=@0";
+
+            return SingleTableAsync<T>(table, sql, primaryKey);
+        }
 
         /// <summary>
         /// 获取唯一一个类型，若数量大于1，则抛出异常
@@ -279,9 +432,23 @@ namespace ToolGood.ReadyGo3
             var sql = $"WHERE {pk}=@0";
             return SingleOrDefaultAsync<T>(sql, primaryKey);
         }
+        /// <summary>
+        /// 获取唯一一个类型，若数量大于1，则抛出异常
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="primaryKey">主键名</param>
+        /// <returns></returns>
+        public Task<T> SingleOrDefaultTableByIdAsync<T>(string table, object primaryKey)
+        {
+            var pd = PocoData.ForType(typeof(T));
+            var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+            var sql = $"WHERE {pk}=@0";
+            return SingleOrDefaultTableAsync<T>(table, sql, primaryKey);
+        }
 
         /// <summary>
-        ///获取唯一一个类型，若数量不为1，则抛出异常
+        /// 获取唯一一个类型，若数量不为1，则抛出异常
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="sql">SQL 语句</param>
@@ -295,6 +462,23 @@ namespace ToolGood.ReadyGo3
             }
             return (await GetDatabase().QueryAsync<T>(0, 2, sql, args)).Single();
         }
+        /// <summary>
+        /// 获取唯一一个类型，若数量不为1，则抛出异常
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<T> SingleTableAsync<T>(string table, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            if (_sql_singleWithLimit2 == false) {
+                return (await GetDatabase().QueryAsync<T>(table, sql, args)).Single();
+            }
+            return (await GetDatabase().QueryAsync<T>(table, 0, 2, sql, args)).Single();
+        }
+
 
 
         /// <summary>
@@ -311,6 +495,22 @@ namespace ToolGood.ReadyGo3
                 return (await GetDatabase().QueryAsync<T>(sql, args)).SingleOrDefault();
             }
             return (await GetDatabase().QueryAsync<T>(0, 2, sql, args)).SingleOrDefault();
+        }
+        /// <summary>
+        /// 获取唯一一个类型，若数量大于1，则抛出异常
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<T> SingleOrDefaultTableAsync<T>(string table, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            if (_sql_singleWithLimit2 == false) {
+                return (await GetDatabase().QueryAsync<T>(table, sql, args)).SingleOrDefault();
+            }
+            return (await GetDatabase().QueryAsync<T>(table, 0, 2, sql, args)).SingleOrDefault();
         }
 
 
@@ -329,6 +529,23 @@ namespace ToolGood.ReadyGo3
             }
             return (await GetDatabase().QueryAsync<T>(0, 1, sql, args)).First();
         }
+        /// <summary>
+        /// 获取第一个类型，若数量为0，则抛出异常
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<T> FirstTableAsync<T>(string table, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            if (_sql_firstWithLimit1 == false) {
+                return (await GetDatabase().QueryAsync<T>(table, sql, args)).First();
+            }
+            return (await GetDatabase().QueryAsync<T>(table, 0, 1, sql, args)).First();
+        }
+
 
         /// <summary>
         /// 获取第一个类型
@@ -344,6 +561,22 @@ namespace ToolGood.ReadyGo3
                 return (await GetDatabase().QueryAsync<T>(sql, args)).FirstOrDefault();
             }
             return (await GetDatabase().QueryAsync<T>(0, 1, sql, args)).FirstOrDefault();
+        }
+        /// <summary>
+        /// 获取第一个类型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<T> FirstOrDefaultTableAsync<T>(string table, string sql = "", params object[] args)
+        {
+            sql = FormatSql(sql);
+            if (_sql_firstWithLimit1 == false) {
+                return (await GetDatabase().QueryAsync<T>(table, sql, args)).FirstOrDefault();
+            }
+            return (await GetDatabase().QueryAsync<T>(table, 0, 1, sql, args)).FirstOrDefault();
         }
 
         #endregion Single SingleOrDefault First FirstOrDefault
@@ -369,6 +602,28 @@ namespace ToolGood.ReadyGo3
             await GetDatabase().InsertAsync(list);
             _Events.OnAfterInsert(list);
         }
+        /// <summary>
+        /// 插入集合，不返回主键
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="list"></param>
+        /// <returns></returns>
+        public async Task InsertListAsync<T>(string table, List<T> list) where T : class
+        {
+            if (list == null) throw new ArgumentNullException("list is null.");
+            if (list.Count == 0) return;
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
+                foreach (var item in list) {
+                    DefaultValue.SetDefaultValue<T>(item, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
+                }
+            }
+            if (_Events.OnBeforeInsert(list)) return;
+
+            await GetDatabase().InsertTableAsync(table, list);
+            _Events.OnAfterInsert(list);
+        }
+
 
         /// <summary>
         /// 插入，支持主键自动获取。
@@ -391,13 +646,36 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
+        /// 插入，支持主键自动获取。
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="poco">对象</param>
+        /// <returns></returns>
+        public async Task<object> InsertTableAsync<T>(string table, T poco) where T : class
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
+
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
+                DefaultValue.SetDefaultValue<T>(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
+            }
+            if (_Events.OnBeforeInsert(poco)) return null;
+
+            var obj = await GetDatabase().InsertTableAsync(table, poco);
+            _Events.OnAfterInsert(poco);
+            return obj;
+        }
+
+
+        /// <summary>
         /// 插入
         /// </summary>
         /// <param name="table">表名</param>
         /// <param name="poco">对象</param>
         /// <param name="autoIncrement">是否自增，是，返回自增ID</param>
         /// <returns></returns>
-        public async Task<object> InsertTableAsync(string table, object poco, bool autoIncrement = false)
+        public async Task<object> InsertTableAsync(string table, object poco, bool autoIncrement)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
@@ -407,10 +685,11 @@ namespace ToolGood.ReadyGo3
             }
             if (_Events.OnBeforeInsert(poco)) return null;
 
-            var obj = await GetDatabase().InsertAsync(table, poco, autoIncrement,null);
+            var obj = await GetDatabase().InsertAsync(table, poco, autoIncrement, null);
             _Events.OnAfterInsert(poco);
             return obj;
         }
+
         /// <summary>
         /// 插入
         /// </summary>
@@ -423,8 +702,7 @@ namespace ToolGood.ReadyGo3
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
 
-            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew)
-            {
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
                 DefaultValue.SetDefaultValue(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
             }
             if (_Events.OnBeforeInsert(poco)) return null;
@@ -446,8 +724,7 @@ namespace ToolGood.ReadyGo3
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
 
-            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew)
-            {
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
                 DefaultValue.SetDefaultValue(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew);
             }
             if (_Events.OnBeforeInsert(poco)) return null;
@@ -467,23 +744,6 @@ namespace ToolGood.ReadyGo3
         public async Task<int> UpdateAsync<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            //if (poco is IUpdateChange) {
-            //    var pd = PocoData.ForType(typeof(T));
-            //    StringBuilder stringBuilder = new StringBuilder();
-            //    ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
-            //    if (stringBuilder.Length == 0) { return 0; }
-            //    stringBuilder.Insert(0, "SET ");
-            //    object primaryKeyValue = null;
-            //    foreach (var i in pd.Columns) {
-            //        if (i.Value.ResultColumn) continue;
-            //        if (string.Compare(i.Value.ColumnName, pd.TableInfo.PrimaryKey, true) == 0) {
-            //            if (primaryKeyValue == null) primaryKeyValue = i.Value.GetValue(poco);
-            //        }
-            //    }
-            //    stringBuilder.Append($" WHERE [{pd.TableInfo.PrimaryKey}]=@0");
-            //    return await UpdateAsync<T>(stringBuilder.ToString(), primaryKeyValue);
-            //}
-
             if (_Events.OnBeforeUpdate(poco)) return -1;
 
             int r = await GetDatabase().UpdateAsync(poco);
@@ -491,6 +751,24 @@ namespace ToolGood.ReadyGo3
             _Events.OnAfterUpdate(poco);
             return r;
         }
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="poco">对象</param>
+        /// <returns></returns>
+        public async Task<int> UpdateTableAsync<T>(string table, T poco) where T : class
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            if (_Events.OnBeforeUpdate(poco)) return -1;
+
+            int r = await GetDatabase().UpdateTableAsync(table, poco);
+
+            _Events.OnAfterUpdate(poco);
+            return r;
+        }
+
         /// <summary>
         /// 删除
         /// </summary>
@@ -510,6 +788,24 @@ namespace ToolGood.ReadyGo3
         /// 删除
         /// </summary>
         /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="poco">对象</param>
+        /// <returns></returns>
+        public async Task<int> DeleteTableAsync<T>(string table, T poco) where T : class
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            if (_Events.OnBeforeDelete(poco)) return -1;
+
+            var t = await GetDatabase().DeleteTableAsync(table, poco);
+
+            _Events.OnAfterDelete(poco);
+            return t;
+        }
+
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
@@ -519,6 +815,23 @@ namespace ToolGood.ReadyGo3
             sql = FormatSql(sql);
             return GetDatabase().DeleteAsync<T>(sql, args);
         }
+
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public Task<int> DeleteTableAsync<T>(string table, string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
+            sql = FormatSql(sql);
+            return GetDatabase().DeleteTableAsync<T>(table, sql, args);
+        }
+
+
         /// <summary>
         /// 删除
         /// </summary>
@@ -529,6 +842,21 @@ namespace ToolGood.ReadyGo3
         {
             return GetDatabase().DeleteAsync<T>(primaryKey);
         }
+
+        /// <summary>
+        /// 删除
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="primaryKey">主键</param>
+        /// <returns></returns>
+        public Task<int> DeleteTableByIdAsync<T>(string table, object primaryKey)
+        {
+            return GetDatabase().DeleteTableAsync<T>(table, primaryKey);
+        }
+
+
+
         /// <summary>
         /// 保存
         /// </summary>
@@ -536,25 +864,21 @@ namespace ToolGood.ReadyGo3
         public async Task SaveAsync<T>(T poco)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            //if (poco is IUpdateChange) {
-            //    var pd = PocoData.ForType(typeof(T));
-            //    StringBuilder stringBuilder = new StringBuilder();
-            //    ObjectToSql(stringBuilder, poco, ",", new string[] { pd.TableInfo.PrimaryKey });
-            //    if (stringBuilder.Length == 0) { return; }
-            //    stringBuilder.Insert(0, "SET ");
-            //    object primaryKeyValue = null;
-            //    foreach (var i in pd.Columns) {
-            //        if (i.Value.ResultColumn) continue;
-            //        if (string.Compare(i.Value.ColumnName, pd.TableInfo.PrimaryKey, true) == 0) {
-            //            if (primaryKeyValue == null) primaryKeyValue = i.Value.GetValue(poco);
-            //        }
-            //    }
-            //    stringBuilder.Append($" WHERE [{pd.TableInfo.PrimaryKey}]=@0");
-            //    await UpdateAsync<T>(stringBuilder.ToString(), primaryKeyValue);
-            //    return;
-            //}
             await GetDatabase().SaveAsync(poco);
         }
+        /// <summary>
+        /// 保存
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="poco"></param>
+        /// <returns></returns>
+        public async Task SaveTableAsync<T>(string table, T poco)
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            await GetDatabase().SaveTableAsync(table, poco);
+        }
+
         /// <summary>
         /// 更新
         /// </summary>
@@ -567,6 +891,21 @@ namespace ToolGood.ReadyGo3
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = FormatSql(sql);
             return GetDatabase().UpdateAsync<T>(sql, args);
+        }
+
+        /// <summary>
+        /// 更新
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public Task<int> UpdateTableAsync<T>(string table, string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
+            sql = FormatSql(sql);
+            return GetDatabase().UpdateTableAsync<T>(table, sql, args);
         }
 
         #endregion Object  Insert Update Delete DeleteById Save

@@ -232,38 +232,32 @@ namespace ToolGood.ReadyGo3.PetaPoco
         #endregion
 
         #region QueryAsync
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="skip"></param>
-        /// <param name="take"></param>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public async Task<IEnumerable<T>> QueryAsync<T>(int skip, int take, string sql, object[] args)
+        public Task<IEnumerable<T>> QueryAsync<T>(int skip, int take, string sql, object[] args)
+        {
+            return QueryAsync<T>(null, skip, take, sql, args);
+        }
+
+
+        public async Task<IEnumerable<T>> QueryAsync<T>(string table, int skip, int take, string sql, object[] args)
         {
             //string sqlCount, sqlPage;
 
-            BuildPageQueries<T>(skip, take, sql, ref args, out _, out string sqlPage);
+            BuildPageQueriesTable<T>(table, skip, take, sql, ref args, out _, out string sqlPage);
 
             List<T> list = new List<T>(take);
             await QueryAsync<T>(sqlPage, args, list);
             return list;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <param name="commandType"></param>
-        /// <returns></returns>
-        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
+        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
+        {
+            return QueryAsync<T>(null, sql, args, commandType);
+        }
+
+        public async Task<IEnumerable<T>> QueryAsync<T>(string table, string sql, object[] args, CommandType commandType = CommandType.Text)
         {
             if (EnableAutoSelect)
-                sql = AutoSelectHelper.AddSelectClause<T>(_provider, null, sql);
+                sql = AutoSelectHelper.AddSelectClause<T>(_provider, table, sql);
 
             var resultList = new List<T>();
             await OpenSharedConnectionAsync().ConfigureAwait(false);
@@ -300,15 +294,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 _Token = CancellationToken.None;
             }
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <param name="resultList"></param>
-        /// <param name="commandType"></param>
-        /// <returns></returns>
+
         public async Task QueryAsync<T>(string sql, object[] args, IList<T> resultList, CommandType commandType = CommandType.Text)
         {
             if (EnableAutoSelect)
@@ -367,6 +353,22 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             return PageSqlAsync<T>(page, itemsPerPage, sqlPage, sqlCount, args);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="page"></param>
+        /// <param name="itemsPerPage"></param>
+        /// <param name="sql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Task<Page<T>> PageTableAsync<T>(string table, int page, int itemsPerPage, string sql, object[] args)
+        {
+            BuildPageQueriesTable<T>(table, (page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
+            return PageSqlAsync<T>(page, itemsPerPage, sqlPage, sqlCount, args);
+        }
+
 
         /// <summary>
         /// Retrieves a page of records	and the total number of available records
@@ -740,11 +742,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
         public Task<int> DeleteTableAsync<T>(string table, string sql, params object[] args)
         {
-
-            var pd = PocoData.ForType(typeof(T));
-            return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
+            return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(table), sql), args);
         }
-
+        public Task<int> DeleteTableAsync(string table, string sql, params object[] args)
+        {
+            return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(table), sql), args);
+        }
         #endregion
 
         #region SaveAsync

@@ -1018,7 +1018,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public int DeleteTableById<T>(string table, object primaryKey)
         {
-            return GetDatabase().Delete<T>(table, primaryKey);
+            return GetDatabase().DeleteTable<T>(table, primaryKey);
         }
 
 
