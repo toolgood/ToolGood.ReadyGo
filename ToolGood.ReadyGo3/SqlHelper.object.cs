@@ -1600,6 +1600,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 根据条件是判断否存在，异步操作
         /// </summary>
+        /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
         public async Task<bool> ExistsTableAsync<T>(string table,object condition) where T : class
