@@ -732,11 +732,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public T FirstOrDefaultTable<T>(string table,string sql = "", params object[] args)
+        public T FirstOrDefaultTable<T>(string table, string sql = "", params object[] args)
         {
             sql = FormatSql(sql);
             if (_sql_firstWithLimit1 == false) {
-                return GetDatabase().QueryTable<T>(table,sql, args).FirstOrDefault();
+                return GetDatabase().QueryTable<T>(table, sql, args).FirstOrDefault();
             }
             return GetDatabase().QueryTable<T>(table, 0, 1, sql, args).FirstOrDefault();
         }
@@ -836,7 +836,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="poco"></param>
         /// <param name="autoIncrement"></param>
         /// <returns></returns>
-        public object InsertTable(string table, object poco, bool autoIncrement = false)
+        public object InsertTable(string table, object poco, bool autoIncrement)
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");

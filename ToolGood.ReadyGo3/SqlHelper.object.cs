@@ -48,45 +48,102 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public T1 Single<T1>(int condition) where T1 : class
+        public T Single<T>(int condition) where T : class
         {
-            return SingleById<T1>(condition);
+            return SingleById<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T SingleTable<T>(string table, int condition) where T : class
+        {
+            return SingleTableById<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public T1 Single<T1>(uint condition) where T1 : class
+        public T Single<T>(uint condition) where T : class
         {
-            return SingleById<T1>(condition);
+            return SingleById<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T SingleTable<T>(string table, uint condition) where T : class
+        {
+            return SingleTableById<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
         /// <param name="condition">主键</param>
         /// <returns></returns>
-        public T1 Single<T1>(long condition) where T1 : class
+        public T Single<T>(long condition) where T : class
         {
-            return SingleById<T1>(condition);
+            return SingleById<T>(condition);
         }
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
-        public T1 Single<T1>(ulong condition) where T1 : class
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T SingleTable<T>(string table, long condition) where T : class
         {
-            return SingleById<T1>(condition);
+            return SingleTableById<T>(table, condition);
         }
+
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="condition">主键</param>
+        public T Single<T>(ulong condition) where T : class
+        {
+            return SingleById<T>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        public T SingleTable<T>(string table, ulong condition) where T : class
+        {
+            return SingleTableById<T>(table, condition);
+        }
+
         #endregion
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public T1 Single<T1>(object condition) where T1 : class
+        public T Single<T>(object condition) where T : class
         {
-            return Single<T1>(ConditionObjectToWhere(condition));
+            return Single<T>(ConditionObjectToWhere(condition));
         }
+
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T SingleTable<T>(string table, object condition) where T : class
+        {
+            return SingleTable<T>(table, ConditionObjectToWhere(condition));
+        }
+
         #region SingleOrDefault PK
 
         /// <summary>
@@ -94,18 +151,40 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">主键</param>
         /// <returns></returns>
-        public T1 SingleOrDefault<T1>(int condition) where T1 : class
+        public T SingleOrDefault<T>(int condition) where T : class
         {
-            return SingleOrDefaultById<T1>(condition);
+            return SingleOrDefaultById<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T SingleOrDefaultTable<T>(string table, int condition) where T : class
+        {
+            return SingleOrDefaultTableById<T>(table, condition);
+        }
+
+
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
         /// <param name="condition">主键</param>
         /// <returns></returns>
-        public T1 SingleOrDefault<T1>(uint condition) where T1 : class
+        public T SingleOrDefault<T>(uint condition) where T : class
         {
-            return SingleOrDefaultById<T1>(condition);
+            return SingleOrDefaultById<T>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T SingleOrDefaultTable<T>(string table, uint condition) where T : class
+        {
+            return SingleOrDefaultTableById<T>(table, condition);
         }
 
         /// <summary>
@@ -113,16 +192,38 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">主键</param>
         /// <returns></returns>
-        public T1 SingleOrDefault<T1>(long condition) where T1 : class
+        public T SingleOrDefault<T>(long condition) where T : class
         {
-            return SingleOrDefaultById<T1>(condition);
+            return SingleOrDefaultById<T>(condition);
         }
         /// <summary>
         /// 根据条件查询唯一项
         /// </summary>
-        public T1 SingleOrDefault<T1>(ulong condition) where T1 : class
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T SingleOrDefaultTable<T>(string table, long condition) where T : class
         {
-            return SingleOrDefaultById<T1>(condition);
+            return SingleOrDefaultTableById<T>(table, condition);
+        }
+
+
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        public T SingleOrDefault<T>(ulong condition) where T : class
+        {
+            return SingleOrDefaultById<T>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T SingleOrDefaultTable<T>(string table, ulong condition) where T : class
+        {
+            return SingleOrDefaultTableById<T>(table, condition);
         }
         #endregion
 
@@ -131,46 +232,102 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public T1 SingleOrDefault<T1>(object condition) where T1 : class
+        public T SingleOrDefault<T>(object condition) where T : class
         {
-            return SingleOrDefault<T1>(ConditionObjectToWhere(condition));
+            return SingleOrDefault<T>(ConditionObjectToWhere(condition));
         }
+
+        /// <summary>
+        /// 根据条件查询唯一项
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T SingleOrDefaultTable<T>(string table, object condition) where T : class
+        {
+            return SingleOrDefaultTableById<T>(table, condition);
+        }
+
         #region First PK
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
         /// <param name="condition">主键</param>
         /// <returns></returns>
-        public T1 First<T1>(int condition) where T1 : class
+        public T First<T>(int condition) where T : class
         {
-            return SingleById<T1>(condition);
+            return SingleById<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T FirstTable<T>(string table, int condition) where T : class
+        {
+            return SingleTableById<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
         /// <param name="condition">主键</param>
         /// <returns></returns>
-        public T1 First<T1>(uint condition) where T1 : class
+        public T First<T>(uint condition) where T : class
         {
-            return SingleById<T1>(condition);
+            return SingleById<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T FirstTable<T>(string table, uint condition) where T : class
+        {
+            return SingleTableById<T>(table, condition);
+        }
+
+
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
         /// <param name="condition">主键</param>
         /// <returns></returns>
-        public T1 First<T1>(long condition) where T1 : class
+        public T First<T>(long condition) where T : class
         {
-            return SingleById<T1>(condition);
+            return SingleById<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T FirstTable<T>(string table, long condition) where T : class
+        {
+            return SingleTableById<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
         /// <param name="condition">主键</param>
         /// <returns></returns>
-        public T1 First<T1>(ulong condition) where T1 : class
+        public T First<T>(ulong condition) where T : class
         {
-            return SingleById<T1>(condition);
+            return SingleById<T>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T FirstTable<T>(string table, ulong condition) where T : class
+        {
+            return SingleTableById<T>(table, condition);
         }
 
         #endregion
@@ -179,9 +336,19 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public T1 First<T1>(object condition) where T1 : class
+        public T First<T>(object condition) where T : class
         {
-            return First<T1>(ConditionObjectToWhere(condition));
+            return First<T>(ConditionObjectToWhere(condition));
+        }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">主键</param>
+        /// <returns></returns>
+        public T FirstTable<T>(string table, object condition) where T : class
+        {
+            return FirstTable<T>(table, ConditionObjectToWhere(condition));
         }
 
         #region FirstOrDefault PK
@@ -190,36 +357,80 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public T1 FirstOrDefault<T1>(int condition) where T1 : class
+        public T FirstOrDefault<T>(int condition) where T : class
         {
-            return SingleOrDefaultById<T1>(condition);
+            return SingleOrDefaultById<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T FirstOrDefaultTable<T>(string table, int condition) where T : class
+        {
+            return SingleOrDefaultTableById<T>(table, condition);
+        }
+
+
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public T1 FirstOrDefault<T1>(uint condition) where T1 : class
+        public T FirstOrDefault<T>(uint condition) where T : class
         {
-            return SingleOrDefaultById<T1>(condition);
+            return SingleOrDefaultById<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T FirstOrDefaultTable<T>(string table, uint condition) where T : class
+        {
+            return SingleOrDefaultTableById<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public T1 FirstOrDefault<T1>(long condition) where T1 : class
+        public T FirstOrDefault<T>(long condition) where T : class
         {
-            return SingleOrDefaultById<T1>(condition);
+            return SingleOrDefaultById<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T FirstOrDefaultTable<T>(string table, long condition) where T : class
+        {
+            return SingleOrDefaultTableById<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public T1 FirstOrDefault<T1>(ulong condition) where T1 : class
+        public T FirstOrDefault<T>(ulong condition) where T : class
         {
-            return SingleOrDefaultById<T1>(condition);
+            return SingleOrDefaultById<T>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T FirstOrDefaultTable<T>(string table, ulong condition) where T : class
+        {
+            return SingleOrDefaultTableById<T>(table, condition);
         }
 
         #endregion
@@ -228,9 +439,88 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public T1 FirstOrDefault<T1>(object condition) where T1 : class
+        public T FirstOrDefault<T>(object condition) where T : class
         {
-            return FirstOrDefault<T1>(ConditionObjectToWhere(condition));
+            return FirstOrDefault<T>(ConditionObjectToWhere(condition));
+        }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T FirstOrDefaultTable<T>(string table, object condition) where T : class
+        {
+            return FirstOrDefaultTable<T>(table, ConditionObjectToWhere(condition));
+        }
+
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <param name="limit">个数</param>
+        /// <param name="offset">位移</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public List<T> Select<T>(int limit, int offset, object condition) where T : class
+        {
+            return Select<T>(limit, offset, ConditionObjectToWhere(condition));
+        }
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="offset">位移</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public List<T> SelectTable<T>(string table, int limit, int offset, object condition) where T : class
+        {
+            return SelectTable<T>(table, limit, offset, ConditionObjectToWhere(condition));
+        }
+
+
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <param name="limit">个数</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public List<T> Select<T>(int limit, object condition) where T : class
+        {
+            return Select<T>(limit, ConditionObjectToWhere(condition));
+        }
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public List<T> SelectTable<T>(string table, int limit, object condition) where T : class
+        {
+            return SelectTable<T>(table, limit, ConditionObjectToWhere(condition));
+        }
+
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public List<T> Select<T>(object condition) where T : class
+        {
+            return Select<T>(ConditionObjectToWhere(condition));
+        }
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public List<T> SelectTable<T>(string table, object condition) where T : class
+        {
+            return SelectTable<T>(table, ConditionObjectToWhere(condition));
         }
 
 
@@ -240,49 +530,30 @@ namespace ToolGood.ReadyGo3
         /// <param name="limit">个数</param>
         /// <param name="offset">位移</param>
         /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T1> Select<T1>(int limit, int offset, object condition) where T1 : class
+        public List<T> SelectWithOrderBy<T>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC")
+             where T : class
         {
-            return Select<T1>(limit, offset, ConditionObjectToWhere(condition));
+            return Select<T>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
-
         /// <summary>
         /// 根据条件查询
         /// </summary>
-        /// <param name="limit">个数</param>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        public List<T1> Select<T1>(int limit, object condition) where T1 : class
-        {
-            return Select<T1>(limit, ConditionObjectToWhere(condition));
-        }
-
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
-        /// <typeparam name="T1"></typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        public List<T1> Select<T1>(object condition) where T1 : class
-        {
-            return Select<T1>(ConditionObjectToWhere(condition));
-        }
-
-
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
+        /// <param name="table"></param>
         /// <param name="limit">个数</param>
         /// <param name="offset">位移</param>
         /// <param name="condition">条件</param>
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T1> SelectWithOrderBy<T1>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC")
-             where T1 : class
+        public List<T> SelectTableWithOrderBy<T>(string table, int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC")
+             where T : class
         {
-            return Select<T1>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+            return SelectTable<T>(table, limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
+
 
         /// <summary>
         /// 根据条件查询
@@ -292,25 +563,56 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T1> SelectWithOrderBy<T1>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC")
-             where T1 : class
+        public List<T> SelectWithOrderBy<T>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC")
+             where T : class
         {
-            return Select<T1>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+            return Select<T>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
 
         /// <summary>
         /// 根据条件查询
         /// </summary>
-        /// <typeparam name="T1"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="limit">个数</param>
         /// <param name="condition">条件</param>
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T1> SelectWithOrderBy<T1>(object condition, string orderField = null, string ascOrDesc = "ASC")
-             where T1 : class
+        public List<T> SelectTableWithOrderBy<T>(string table, int limit, object condition, string orderField = null, string ascOrDesc = "ASC")
+             where T : class
         {
-            return Select<T1>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+            return SelectTable<T>(table, limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
+
+
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
+        /// <returns></returns>
+        public List<T> SelectWithOrderBy<T>(object condition, string orderField = null, string ascOrDesc = "ASC")
+             where T : class
+        {
+            return Select<T>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+        }
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
+        /// <returns></returns>
+        public List<T> SelectTableWithOrderBy<T>(string table, object condition, string orderField = null, string ascOrDesc = "ASC")
+             where T : class
+        {
+            return SelectTable<T>(table, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+        }
+
 
         /// <summary>
         /// 根据条件查询页
@@ -319,11 +621,25 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public List<T1> SelectPage<T1>(int page, int itemsPerPage, object condition)
-            where T1 : class
+        public List<T> SelectPage<T>(int page, int itemsPerPage, object condition)
+            where T : class
         {
-            return SelectPage<T1>(page, itemsPerPage, ConditionObjectToWhere(condition));
+            return SelectPage<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
+        /// <summary>
+        /// 根据条件查询页
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public List<T> SelectPageTable<T>(string table, int page, int itemsPerPage, object condition)
+            where T : class
+        {
+            return SelectPageTable<T>(table, page, itemsPerPage, ConditionObjectToWhere(condition));
+        }
+
 
         /// <summary>
         /// 根据条件查询页
@@ -334,11 +650,27 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T1> SelectPageWithOrderBy<T1>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
-            where T1 : class
+        public List<T> SelectPageWithOrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+            where T : class
         {
-            return SelectPage<T1>(page, itemsPerPage, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+            return SelectPage<T>(page, itemsPerPage, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
+        /// <summary>
+        /// 根据条件查询页
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
+        /// <returns></returns>
+        public List<T> SelectPageTableWithOrderBy<T>(string table, int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+            where T : class
+        {
+            return SelectPageTable<T>(table, page, itemsPerPage, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+        }
+
 
 
         /// <summary>
@@ -348,11 +680,25 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Page<T1> Page<T1>(int page, int itemsPerPage, object condition)
-            where T1 : class
+        public Page<T> Page<T>(int page, int itemsPerPage, object condition)
+            where T : class
         {
-            return Page<T1>(page, itemsPerPage, ConditionObjectToWhere(condition));
+            return Page<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
+        /// <summary>
+        /// 根据条件查询页
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Page<T> PageTable<T>(string table, int page, int itemsPerPage, object condition)
+            where T : class
+        {
+            return PageTable<T>(table, page, itemsPerPage, ConditionObjectToWhere(condition));
+        }
+
 
         /// <summary>
         /// 根据条件查询页
@@ -363,13 +709,14 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Page<T1> PageWithOrderBy<T1>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
-            where T1 : class
+        public Page<T> PageWithOrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+            where T : class
         {
-            return this.Where<T1>().Where(ConditionObjectToWhere(condition))
+            return this.Where<T>().Where(ConditionObjectToWhere(condition))
                    .IfSet(orderField).OrderBy(BuildOrderBy(orderField, ascOrDesc))
                    .Page(page, itemsPerPage);
         }
+
 
         /// <summary>
         /// 根据条件更新对象
@@ -378,43 +725,98 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition">条件</param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        public int Update<T1>(object set, object condition, IEnumerable<string> ignoreFields = null) where T1 : class
+        public int Update<T>(object set, object condition, IEnumerable<string> ignoreFields = null) where T : class
         {
-            return Update<T1>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
+            return Update<T>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
         }
+        /// <summary>
+        /// 根据条件更新对象
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="set"></param>
+        /// <param name="condition">条件</param>
+        /// <param name="ignoreFields"></param>
+        /// <returns></returns>
+        public int UpdateTable<T>(string table, object set, object condition, IEnumerable<string> ignoreFields = null) where T : class
+        {
+            return UpdateTable<T>(table, ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
+        }
+
 
         /// <summary>
         /// 根据条件从数据库中删除对象
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public int Delete<T1>(object condition) where T1 : class
+        public int Delete<T>(object condition) where T : class
         {
-            return Delete<T1>(ConditionObjectToWhere(condition));
+            return Delete<T>(ConditionObjectToWhere(condition));
         }
+
+        /// <summary>
+        /// 根据条件从数据库中删除对象
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public int DeleteTable<T>(string table, object condition) where T : class
+        {
+            return DeleteTable<T>(table, ConditionObjectToWhere(condition));
+        }
+
 
         /// <summary>
         /// 根据条件查询个数
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public int Count<T1>(object condition) where T1 : class
+        public int Count<T>(object condition) where T : class
         {
-            return Count<T1>(ConditionObjectToWhere(condition));
+            return Count<T>(ConditionObjectToWhere(condition));
         }
+        /// <summary>
+        /// 根据条件查询个数
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public int CountTable<T>(string table, object condition) where T : class
+        {
+            return CountTable<T>(table, ConditionObjectToWhere(condition));
+        }
+
 
         /// <summary>
         /// 根据条件判断是否存在
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public bool Exists<T1>(object condition) where T1 : class
+        public bool Exists<T>(object condition) where T : class
         {
             if (condition.GetType().IsClass) {
-                return Exists<T1>(ConditionObjectToWhere(condition));
+                return Exists<T>(ConditionObjectToWhere(condition));
             } else {
-                var pd = PocoData.ForType(typeof(T1));
+                var pd = PocoData.ForType(typeof(T));
                 var table = _provider.GetTableName(pd);
+                var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+                var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
+
+                var args = new object[] { condition };
+                return GetDatabase().ExecuteScalar<int>(sql, args) > 0;
+            }
+        }
+        /// <summary>
+        /// 根据条件判断是否存在
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public bool ExistsTable<T>(string table, object condition) where T : class
+        {
+            if (condition.GetType().IsClass) {
+                return Exists<T>(ConditionObjectToWhere(condition));
+            } else {
+                var pd = PocoData.ForType(typeof(T));
                 var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
@@ -463,37 +865,81 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> FirstAsync<T1>(int condition) where T1 : class
+        public Task<T> FirstAsync<T>(int condition) where T : class
         {
-            return SingleByIdAsync<T1>(condition);
+            return SingleByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstTableAsync<T>(string table, int condition) where T : class
+        {
+            return SingleTableByIdAsync<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> FirstAsync<T1>(uint condition) where T1 : class
+        public Task<T> FirstAsync<T>(uint condition) where T : class
         {
-            return SingleByIdAsync<T1>(condition);
+            return SingleByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstTableAsync<T>(string table, uint condition) where T : class
+        {
+            return SingleTableByIdAsync<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> FirstAsync<T1>(long condition) where T1 : class
+        public Task<T> FirstAsync<T>(long condition) where T : class
         {
-            return SingleByIdAsync<T1>(condition);
+            return SingleByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstTableAsync<T>(string table, long condition) where T : class
+        {
+            return SingleTableByIdAsync<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> FirstAsync<T1>(ulong condition) where T1 : class
+        public Task<T> FirstAsync<T>(ulong condition) where T : class
         {
-            return SingleByIdAsync<T1>(condition);
+            return SingleByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstTableAsync<T>(string table, ulong condition) where T : class
+        {
+            return SingleTableByIdAsync<T>(table, condition);
+        }
+
         #endregion
 
         /// <summary>
@@ -501,10 +947,21 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> FirstAsync<T1>(object condition) where T1 : class
+        public Task<T> FirstAsync<T>(object condition) where T : class
         {
-            return FirstAsync<T1>(ConditionObjectToWhere(condition));
+            return FirstAsync<T>(ConditionObjectToWhere(condition));
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstAsync<T>(string table, object condition) where T : class
+        {
+            return FirstAsync<T>(table, ConditionObjectToWhere(condition));
+        }
+
 
         #region FirstOrDefaultAsync PK
         /// <summary>
@@ -512,37 +969,82 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> FirstOrDefaultAsync<T1>(int condition) where T1 : class
+        public Task<T> FirstOrDefaultAsync<T>(int condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T1>(condition);
+            return SingleOrDefaultByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstOrDefaultTableAsync<T>(string table, int condition) where T : class
+        {
+            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+        }
+
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> FirstOrDefaultAsync<T1>(uint condition) where T1 : class
+        public Task<T> FirstOrDefaultAsync<T>(uint condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T1>(condition);
+            return SingleOrDefaultByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstOrDefaultTableAsync<T>(string table, uint condition) where T : class
+        {
+            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> FirstOrDefaultAsync<T1>(long condition) where T1 : class
+        public Task<T> FirstOrDefaultAsync<T>(long condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T1>(condition);
+            return SingleOrDefaultByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstOrDefaultTableAsync<T>(string table, long condition) where T : class
+        {
+            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> FirstOrDefaultAsync<T1>(ulong condition) where T1 : class
+        public Task<T> FirstOrDefaultAsync<T>(ulong condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T1>(condition);
+            return SingleOrDefaultByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstOrDefaultTableAsync<T>(string table, ulong condition) where T : class
+        {
+            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+        }
+
         #endregion
 
         /// <summary>
@@ -550,9 +1052,18 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> FirstOrDefaultAsync<T1>(object condition) where T1 : class
+        public Task<T> FirstOrDefaultAsync<T>(object condition) where T : class
         {
-            return FirstOrDefaultAsync<T1>(ConditionObjectToWhere(condition));
+            return FirstOrDefaultAsync<T>(ConditionObjectToWhere(condition));
+        }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstOrDefaultTableAsync<T>(string table, object condition) where T : class
+        {
+            return FirstOrDefaultTableAsync<T>(table, ConditionObjectToWhere(condition));
         }
 
         #region SingleAsync PK
@@ -561,18 +1072,61 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> SingleAsync<T1>(int condition) where T1 : class
+        public Task<T> SingleAsync<T>(int condition) where T : class
         {
-            return SingleByIdAsync<T1>(condition);
+            return SingleByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleTableAsync<T>(string table, int condition) where T : class
+        {
+            return SingleTableByIdAsync<T>(table, condition);
+        }
+
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> SingleAsync<T1>(uint condition) where T1 : class
+        public Task<T> SingleAsync<T>(uint condition) where T : class
         {
-            return SingleByIdAsync<T1>(condition);
+            return SingleByIdAsync<T>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleTableAsync<T>(string table, uint condition) where T : class
+        {
+            return SingleTableByIdAsync<T>(table, condition);
+        }
+
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleAsync<T>(long condition) where T : class
+        {
+            return SingleByIdAsync<T>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleTableAsync<T>(string table, long condition) where T : class
+        {
+            return SingleTableByIdAsync<T>(table, condition);
         }
 
         /// <summary>
@@ -580,19 +1134,21 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> SingleAsync<T1>(long condition) where T1 : class
+        public Task<T> SingleAsync<T>(ulong condition) where T : class
         {
-            return SingleByIdAsync<T1>(condition);
+            return SingleByIdAsync<T>(condition);
         }
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
+        /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> SingleAsync<T1>(ulong condition) where T1 : class
+        public Task<T> SingleTableAsync<T>(string table, ulong condition) where T : class
         {
-            return SingleByIdAsync<T1>(condition);
+            return SingleTableByIdAsync<T>(table, condition);
         }
+
         #endregion
 
         /// <summary>
@@ -600,10 +1156,20 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> SingleAsync<T1>(object condition) where T1 : class
+        public Task<T> SingleAsync<T>(object condition) where T : class
         {
-            return SingleAsync<T1>(ConditionObjectToWhere(condition));
+            return SingleAsync<T>(ConditionObjectToWhere(condition));
         }
+        /// <summary>
+        /// 根据条件查询唯一项，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleTableAsync<T>(string table, object condition) where T : class
+        {
+            return SingleTableAsync<T>(table, ConditionObjectToWhere(condition));
+        }
+
 
         #region SingleOrDefaultAsync PK
         /// <summary>
@@ -611,18 +1177,40 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> SingleOrDefaultAsync<T1>(int condition) where T1 : class
+        public Task<T> SingleOrDefaultAsync<T>(int condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T1>(condition);
+            return SingleOrDefaultByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleOrDefaultTableAsync<T>(string table, int condition) where T : class
+        {
+            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+        }
+
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> SingleOrDefaultAsync<T1>(uint condition) where T1 : class
+        public Task<T> SingleOrDefaultAsync<T>(uint condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T1>(condition);
+            return SingleOrDefaultByIdAsync<T>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleOrDefaultTableAsync<T>(string table, uint condition) where T : class
+        {
+            return SingleOrDefaultTableByIdAsync<T>(table, condition);
         }
 
         /// <summary>
@@ -630,19 +1218,41 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> SingleOrDefaultAsync<T1>(long condition) where T1 : class
+        public Task<T> SingleOrDefaultAsync<T>(long condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T1>(condition);
+            return SingleOrDefaultByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleOrDefaultTableAsync<T>(string table, long condition) where T : class
+        {
+            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+        }
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> SingleOrDefaultAsync<T1>(ulong condition) where T1 : class
+        public Task<T> SingleOrDefaultAsync<T>(ulong condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T1>(condition);
+            return SingleOrDefaultByIdAsync<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleOrDefaultTableAsync<T>(string table, ulong condition) where T : class
+        {
+            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+        }
+
         #endregion
 
         /// <summary>
@@ -650,10 +1260,21 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T1> SingleOrDefaultAsync<T1>(object condition) where T1 : class
+        public Task<T> SingleOrDefaultAsync<T>(object condition) where T : class
         {
-            return SingleOrDefaultAsync<T1>(ConditionObjectToWhere(condition));
+            return SingleOrDefaultAsync<T>(ConditionObjectToWhere(condition));
         }
+        /// <summary>
+        /// 根据条件查询唯一项，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleOrDefaultTableAsync<T>(string table, object condition) where T : class
+        {
+            return SingleOrDefaultAsync<T>(table, ConditionObjectToWhere(condition));
+        }
+
 
         /// <summary>
         /// 根据条件查询，异步操作
@@ -662,28 +1283,63 @@ namespace ToolGood.ReadyGo3
         /// <param name="offset">位移</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<List<T1>> SelectAsync<T1>(int limit, int offset, object condition) where T1 : class
+        public Task<List<T>> SelectAsync<T>(int limit, int offset, object condition) where T : class
         {
-            return SelectAsync<T1>(limit, offset, ConditionObjectToWhere(condition));
+            return SelectAsync<T>(limit, offset, ConditionObjectToWhere(condition));
         }
+        /// <summary>
+        /// 根据条件查询，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="offset">位移</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<List<T>> SelectTableAsync<T>(string table, int limit, int offset, object condition) where T : class
+        {
+            return SelectTableAsync<T>(table, limit, offset, ConditionObjectToWhere(condition));
+        }
+
+
         /// <summary>
         /// 根据条件查询
         /// </summary>
         /// <param name="limit">个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<List<T1>> SelectAsync<T1>(int limit, object condition) where T1 : class
+        public Task<List<T>> SelectAsync<T>(int limit, object condition) where T : class
         {
-            return SelectAsync<T1>(limit, ConditionObjectToWhere(condition));
+            return SelectAsync<T>(limit, ConditionObjectToWhere(condition));
+        }
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<List<T>> SelectTableAsync<T>(string table, int limit, object condition) where T : class
+        {
+            return SelectTableAsync<T>(table, limit, ConditionObjectToWhere(condition));
+        }
+
+        /// <summary>
+        /// 根据条件查询，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<List<T>> SelectAsync<T>(object condition) where T : class
+        {
+            return SelectAsync<T>(ConditionObjectToWhere(condition));
         }
         /// <summary>
         /// 根据条件查询，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<List<T1>> SelectAsync<T1>(object condition) where T1 : class
+        public Task<List<T>> SelectTableAsync<T>(string table, object condition) where T : class
         {
-            return SelectAsync<T1>(ConditionObjectToWhere(condition));
+            return SelectTableAsync<T>(table, ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -695,10 +1351,25 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T1>> SelectWithOrderByAsync<T1>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
+        public Task<List<T>> SelectWithOrderByAsync<T>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
-            return SelectAsync<T1>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+            return SelectAsync<T>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
+        /// <summary>
+        /// 根据条件查询，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="offset">位移</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
+        /// <returns></returns>
+        public Task<List<T>> SelectTableWithOrderByAsync<T>(string table, int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        {
+            return SelectAsync<T>(table, limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+        }
+
         /// <summary>
         /// 根据条件查询
         /// </summary>
@@ -707,10 +1378,24 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T1>> SelectWithOrderByAsync<T1>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
+        public Task<List<T>> SelectWithOrderByAsync<T>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
-            return SelectAsync<T1>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+            return SelectAsync<T>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
+        /// <summary>
+        /// 根据条件查询
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="limit">个数</param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
+        /// <returns></returns>
+        public Task<List<T>> SelectTableWithOrderByAsync<T>(string table, int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        {
+            return SelectTableAsync<T>(table, limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+        }
+
         /// <summary>
         /// 根据条件查询，异步操作
         /// </summary>
@@ -718,9 +1403,21 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T1>> SelectWithOrderByAsync<T1>(object condition, string orderField = null, string ascOrDesc = "ASC") where T1 : class
+        public Task<List<T>> SelectWithOrderByAsync<T>(object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
-            return SelectAsync<T1>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+            return SelectAsync<T>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+        }
+        /// <summary>
+        /// 根据条件查询，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <param name="orderField">排序字段</param>
+        /// <param name="ascOrDesc">升序或降序</param>
+        /// <returns></returns>
+        public Task<List<T>> SelectWithOrderByAsync<T>(string table, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        {
+            return SelectTableAsync<T>(table, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
 
         /// <summary>
@@ -730,11 +1427,25 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<List<T1>> SelectPageAsync<T1>(int page, int itemsPerPage, object condition)
-            where T1 : class
+        public Task<List<T>> SelectPageAsync<T>(int page, int itemsPerPage, object condition)
+            where T : class
         {
-            return SelectPageAsync<T1>(page, itemsPerPage, ConditionObjectToWhere(condition));
+            return SelectPageAsync<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
+        /// <summary>
+        ///  根据条件查询页，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<List<T>> SelectPageTableAsync<T>(string table, int page, int itemsPerPage, object condition)
+            where T : class
+        {
+            return SelectPageTableAsync<T>(table, page, itemsPerPage, ConditionObjectToWhere(condition));
+        }
+
 
         /// <summary>
         ///  根据条件查询页，异步操作
@@ -745,10 +1456,10 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T1>> SelectPageWithOrderByAsync<T1>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
-            where T1 : class
+        public Task<List<T>> SelectPageWithOrderByAsync<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+            where T : class
         {
-            return this.Where<T1>().Where(ConditionObjectToWhere(condition))
+            return this.Where<T>().Where(ConditionObjectToWhere(condition))
                    .IfSet(orderField).OrderBy(BuildOrderBy(orderField, ascOrDesc))
                    .SelectPageAsync(page, itemsPerPage);
         }
@@ -761,11 +1472,25 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<Page<T1>> PageAsync<T1>(int page, int itemsPerPage, object condition)
-            where T1 : class
+        public Task<Page<T>> PageAsync<T>(int page, int itemsPerPage, object condition)
+            where T : class
         {
-            return PageAsync<T1>(page, itemsPerPage, ConditionObjectToWhere(condition));
+            return PageAsync<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
+        /// <summary>
+        ///  根据条件查询页，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页个数</param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<Page<T>> PageTableAsync<T>(string table, int page, int itemsPerPage, object condition)
+            where T : class
+        {
+            return PageTableAsync<T>(table, page, itemsPerPage, ConditionObjectToWhere(condition));
+        }
+
 
         /// <summary>
         ///  根据条件查询页，异步操作
@@ -776,10 +1501,10 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<Page<T1>> PageWithOrderByAsync<T1>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
-             where T1 : class
+        public Task<Page<T>> PageWithOrderByAsync<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+             where T : class
         {
-            return this.Where<T1>().Where(ConditionObjectToWhere(condition))
+            return this.Where<T>().Where(ConditionObjectToWhere(condition))
                        .IfSet(orderField).OrderBy(BuildOrderBy(orderField, ascOrDesc))
                        .PageAsync(page, itemsPerPage);
         }
@@ -793,42 +1518,96 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition">条件</param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        public Task<int> UpdateAsync<T1>(object set, object condition, IEnumerable<string> ignoreFields = null) where T1 : class
+        public Task<int> UpdateAsync<T>(object set, object condition, IEnumerable<string> ignoreFields = null) where T : class
         {
-            return UpdateAsync<T1>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
+            return UpdateAsync<T>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
         }
+        /// <summary>
+        /// 根据条件更新对象
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="set"></param>
+        /// <param name="condition">条件</param>
+        /// <param name="ignoreFields"></param>
+        /// <returns></returns>
+        public Task<int> UpdateTableAsync<T>(string table, object set, object condition, IEnumerable<string> ignoreFields = null) where T : class
+        {
+            return UpdateTableAsync<T>(table, ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
+        }
+
 
         /// <summary>
         /// 根据条件从数据库中删除对象 
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<int> DeleteAsync<T1>(object condition) where T1 : class
+        public Task<int> DeleteAsync<T>(object condition) where T : class
         {
-            return DeleteAsync<T1>(ConditionObjectToWhere(condition));
+            return DeleteAsync<T>(ConditionObjectToWhere(condition));
         }
+        /// <summary>
+        /// 根据条件从数据库中删除对象 
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<int> DeleteTableAsync<T>(string table, object condition) where T : class
+        {
+            return DeleteTableAsync<T>(table, ConditionObjectToWhere(condition));
+        }
+
 
         /// <summary>
         /// 根据条件查询个数，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<int> CountAsync<T1>(object condition) where T1 : class
+        public Task<int> CountAsync<T>(object condition) where T : class
         {
-            return CountAsync<T1>(ConditionObjectToWhere(condition));
+            return CountAsync<T>(ConditionObjectToWhere(condition));
         }
+        /// <summary>
+        /// 根据条件查询个数，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<int> CountTableAsync<T>(string table, object condition) where T : class
+        {
+            return CountTableAsync<T>(table, ConditionObjectToWhere(condition));
+        }
+
         /// <summary>
         /// 根据条件是判断否存在，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public async Task<bool> ExistsAsync<T1>(object condition) where T1 : class
+        public async Task<bool> ExistsAsync<T>(object condition) where T : class
         {
             if (condition.GetType().IsClass) {
-                return await ExistsAsync<T1>(ConditionObjectToWhere(condition));
+                return await ExistsAsync<T>(ConditionObjectToWhere(condition));
             } else {
-                var pd = PocoData.ForType(typeof(T1));
+                var pd = PocoData.ForType(typeof(T));
                 var table = _provider.GetTableName(pd);
+                var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+                var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
+
+                var args = new object[] { condition };
+                return await GetDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
+            }
+        }
+
+        /// <summary>
+        /// 根据条件是判断否存在，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public async Task<bool> ExistsTableAsync<T>(string table,object condition) where T : class
+        {
+            if (condition.GetType().IsClass) {
+                return await ExistsAsync<T>(table, ConditionObjectToWhere(condition));
+            } else {
+                var pd = PocoData.ForType(typeof(T));
                 var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
@@ -845,7 +1624,7 @@ namespace ToolGood.ReadyGo3
             if (orderField == null) {
                 return "";
             }
-            if (!ascOrDesc.Equals("DESC",StringComparison.OrdinalIgnoreCase)) {
+            if (!ascOrDesc.Equals("DESC", StringComparison.OrdinalIgnoreCase)) {
                 ascOrDesc = "ASC";
             }
             return " ORDER BY " + orderField + " " + ascOrDesc;
@@ -988,7 +1767,7 @@ namespace ToolGood.ReadyGo3
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
             if (fieldType == typeof(TimeSpan)) return ((TimeSpan)value).Ticks.ToString(CultureInfo.InvariantCulture);
             if (fieldType == typeof(byte[])) {
-                var txt =  BitConverter.ToString((byte[])value).Replace("-","");
+                var txt = BitConverter.ToString((byte[])value).Replace("-", "");
                 return "X'" + txt + "'";
             }
             return "'" + value.ToString() + "'";
