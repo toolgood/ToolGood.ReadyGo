@@ -1047,20 +1047,6 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 更新
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public int Update_Table<T>(string table, string sql, params object[] args)
-        {
-            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            sql = FormatSql(sql);
-            return GetDatabase().Update_Table(table, sql, args);
-        }
-        /// <summary>
-        /// 更新
-        /// </summary>
         /// <param name="table"></param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
