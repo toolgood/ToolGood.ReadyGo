@@ -736,14 +736,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(typeof(T));
             return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
         }
-        public Task<int> DeleteAsync_Table<T>(string table, string sql, params object[] args)
-        {
-            return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(table), sql), args);
-        }
         public Task<int> DeleteAsync_Table(string table, string sql, params object[] args)
         {
             return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(table), sql), args);
         }
+ 
         #endregion
 
         #region SaveAsync

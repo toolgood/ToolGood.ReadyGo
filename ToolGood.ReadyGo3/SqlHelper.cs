@@ -262,10 +262,10 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public bool Exists_Table<T>(string table, string sql, params object[] args)
+        public bool Exists_Table(string table, string sql, params object[] args)
         {
             sql = FormatSql(sql);
-            return Count<T>(table, sql, args) > 0;
+            return Count(table, sql, args) > 0;
         }
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public int Count<T>(string table, string sql, params object[] args)
+        public int Count_Table(string table, string sql, params object[] args)
         {
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {

@@ -77,24 +77,11 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 执行SQL 查询,判断是否存在，返回bool类型
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<bool> ExistsAsync<T>(string table, string sql, params object[] args)
-        {
-            sql = FormatSql(sql);
-            return await CountAsync_Table(table, sql, args) > 0;
-        }
-        /// <summary>
-        /// 执行SQL 查询,判断是否存在，返回bool类型
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public async Task<bool> ExistsAsync(string table, string sql, params object[] args)
+        public async Task<bool> ExistsAsync_Table(string table, string sql, params object[] args)
         {
             sql = FormatSql(sql);
             return await CountAsync_Table(table, sql, args) > 0;
@@ -824,11 +811,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<int> DeleteAsync_Table<T>(string table, string sql, params object[] args)
+        public Task<int> DeleteAsync_Table(string table, string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = FormatSql(sql);
-            return GetDatabase().DeleteAsync_Table<T>(table, sql, args);
+            return GetDatabase().DeleteAsync_Table(table, sql, args);
         }
 
 
