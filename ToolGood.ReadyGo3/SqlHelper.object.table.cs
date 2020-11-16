@@ -22,7 +22,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T Single_Table<T>(string table, int condition) where T : class
         {
-            return SingleTableById<T>(table, condition);
+            return SingleById_Table<T>(table, condition);
         }
         /// <summary>
         /// 根据条件查询唯一项
@@ -32,7 +32,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T Single_Table<T>(string table, uint condition) where T : class
         {
-            return SingleTableById<T>(table, condition);
+            return SingleById_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T Single_Table<T>(string table, long condition) where T : class
         {
-            return SingleTableById<T>(table, condition);
+            return SingleById_Table<T>(table, condition);
         }
         /// <summary>
         /// 根据条件查询唯一项
@@ -52,7 +52,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition">主键</param>
         public T Single_Table<T>(string table, ulong condition) where T : class
         {
-            return SingleTableById<T>(table, condition);
+            return SingleById_Table<T>(table, condition);
         }
         #endregion
 
@@ -137,7 +137,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T First_Table<T>(string table, int condition) where T : class
         {
-            return SingleTableById<T>(table, condition);
+            return SingleById_Table<T>(table, condition);
         }
 
 
@@ -149,7 +149,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T First_Table<T>(string table, uint condition) where T : class
         {
-            return SingleTableById<T>(table, condition);
+            return SingleById_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -160,7 +160,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T First_Table<T>(string table, long condition) where T : class
         {
-            return SingleTableById<T>(table, condition);
+            return SingleById_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -171,7 +171,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T First_Table<T>(string table, ulong condition) where T : class
         {
-            return SingleTableById<T>(table, condition);
+            return SingleById_Table<T>(table, condition);
         }
 
         #endregion
@@ -467,7 +467,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstAsync_Table<T>(string table, int condition) where T : class
         {
-            return SingleTableByIdAsync<T>(table, condition);
+            return SingleByIdAsync_Table<T>(table, condition);
         }
 
 
@@ -479,7 +479,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstAsync_Table<T>(string table, uint condition) where T : class
         {
-            return SingleTableByIdAsync<T>(table, condition);
+            return SingleByIdAsync_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -490,7 +490,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstAsync_Table<T>(string table, long condition) where T : class
         {
-            return SingleTableByIdAsync<T>(table, condition);
+            return SingleByIdAsync_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -501,7 +501,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstAsync_Table<T>(string table, ulong condition) where T : class
         {
-            return SingleTableByIdAsync<T>(table, condition);
+            return SingleByIdAsync_Table<T>(table, condition);
         }
 
         #endregion
@@ -528,7 +528,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstOrDefaultAsync_Table<T>(string table, int condition) where T : class
         {
-            return SingleOrDefaultById_TableAsync<T>(table, condition);
+            return SingleOrDefaultByIdAsync_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -539,7 +539,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstOrDefaultAsync_Table<T>(string table, uint condition) where T : class
         {
-            return SingleOrDefaultById_TableAsync<T>(table, condition);
+            return SingleOrDefaultByIdAsync_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -550,7 +550,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstOrDefaultAsync_Table<T>(string table, long condition) where T : class
         {
-            return SingleOrDefaultById_TableAsync<T>(table, condition);
+            return SingleOrDefaultByIdAsync_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -561,7 +561,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstOrDefaultAsync_Table<T>(string table, ulong condition) where T : class
         {
-            return SingleOrDefaultById_TableAsync<T>(table, condition);
+            return SingleOrDefaultByIdAsync_Table<T>(table, condition);
         }
 
         #endregion
@@ -586,7 +586,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleAsync_Table<T>(string table, int condition) where T : class
         {
-            return SingleTableByIdAsync<T>(table, condition);
+            return SingleByIdAsync_Table<T>(table, condition);
         }
 
 
@@ -598,7 +598,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleAsync_Table<T>(string table, uint condition) where T : class
         {
-            return SingleTableByIdAsync<T>(table, condition);
+            return SingleByIdAsync_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -609,7 +609,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleAsync_Table<T>(string table, long condition) where T : class
         {
-            return SingleTableByIdAsync<T>(table, condition);
+            return SingleByIdAsync_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -620,7 +620,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleAsync_Table<T>(string table, ulong condition) where T : class
         {
-            return SingleTableByIdAsync<T>(table, condition);
+            return SingleByIdAsync_Table<T>(table, condition);
         }
 
         #endregion
@@ -647,7 +647,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleOrDefaultAsync_Table<T>(string table, int condition) where T : class
         {
-            return SingleOrDefaultById_TableAsync<T>(table, condition);
+            return SingleOrDefaultByIdAsync_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -658,7 +658,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleOrDefaultAsync_Table<T>(string table, uint condition) where T : class
         {
-            return SingleOrDefaultById_TableAsync<T>(table, condition);
+            return SingleOrDefaultByIdAsync_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -669,7 +669,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleOrDefaultAsync_Table<T>(string table, long condition) where T : class
         {
-            return SingleOrDefaultById_TableAsync<T>(table, condition);
+            return SingleOrDefaultByIdAsync_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -680,7 +680,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleOrDefaultAsync_Table<T>(string table, ulong condition) where T : class
         {
-            return SingleOrDefaultById_TableAsync<T>(table, condition);
+            return SingleOrDefaultByIdAsync_Table<T>(table, condition);
         }
 
         #endregion
@@ -742,7 +742,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> Select_OrderBy_TableAsync<T>(string table, int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> SelectAsync_OrderBy_Table<T>(string table, int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
             return SelectAsync<T>(table, limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
@@ -756,7 +756,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> Select_OrderBy_TableAsync<T>(string table, int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> SelectAsync_OrderBy_Table<T>(string table, int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
             return SelectAsync_Table<T>(table, limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
@@ -769,7 +769,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> Select_OrderByAsync<T>(string table, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> SelectAsync_OrderBy<T>(string table, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
             return SelectAsync_Table<T>(table, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }

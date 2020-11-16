@@ -576,7 +576,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="primaryKey">主键名</param>
         /// <returns></returns>
-        public T SingleTableById<T>(string table, object primaryKey)
+        public T SingleById_Table<T>(string table, object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
