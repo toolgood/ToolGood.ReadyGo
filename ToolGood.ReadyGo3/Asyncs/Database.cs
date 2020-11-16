@@ -91,14 +91,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        /// <param name="commandType"></param>
         /// <returns></returns>
-        public async Task<int> ExecuteAsync(string sql, object[] args, CommandType commandType = CommandType.Text)
+        public async Task<int> ExecuteAsync(string sql, object[] args)
         {
             try {
                 await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
-                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
                         var retv = await ((SqlCommand)cmd).ExecuteNonQueryAsync(_Token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
@@ -120,14 +119,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <typeparam name="T"></typeparam>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        /// <param name="commandType"></param>
         /// <returns></returns>
-        public async Task<T> ExecuteScalarAsync<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
+        public async Task<T> ExecuteScalarAsync<T>(string sql, object[] args)
         {
             try {
                 await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
-                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
                         object val = await ((SqlCommand)cmd).ExecuteScalarAsync(_Token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
@@ -154,14 +152,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        /// <param name="commandType"></param>
         /// <returns></returns>
-        public async Task<DataTable> ExecuteDataTableAsync(string sql, object[] args, CommandType commandType = CommandType.Text)
+        public async Task<DataTable> ExecuteDataTableAsync(string sql, object[] args)
         {
             try {
                 await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
-                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
                         var reader = await ((SqlCommand)cmd).ExecuteReaderAsync(CommandBehavior.SequentialAccess | CommandBehavior.SingleResult, _Token).ConfigureAwait(false);
                         OnExecutedCommand(cmd);
@@ -202,14 +199,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        /// <param name="commandType"></param>
         /// <returns></returns>
-        public async Task<DataSet> ExecuteDataSetAsync(string sql, object[] args, CommandType commandType = CommandType.Text)
+        public async Task<DataSet> ExecuteDataSetAsync(string sql, object[] args)
         {
             try {
                 await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
-                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         using (var adapter = _factory.CreateDataAdapter()) {
                             DoPreExecute(cmd);
                             adapter.SelectCommand = (DbCommand)cmd;
@@ -249,12 +245,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return list;
         }
 
-        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
+        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object[] args)
         {
-            return QueryAsync<T>(null, sql, args, commandType);
+            return QueryAsync<T>(null, sql, args);
         }
 
-        public async Task<IEnumerable<T>> QueryAsync<T>(string table, string sql, object[] args, CommandType commandType = CommandType.Text)
+        public async Task<IEnumerable<T>> QueryAsync<T>(string table, string sql, object[] args)
         {
             if (EnableAutoSelect)
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, table, sql);
@@ -262,7 +258,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var resultList = new List<T>();
             await OpenSharedConnectionAsync().ConfigureAwait(false);
             try {
-                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                     SqlDataReader r = null;
                     var pd = PocoData.ForType(typeof(T));
                     try {
@@ -295,14 +291,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        public async Task QueryAsync<T>(string sql, object[] args, IList<T> resultList, CommandType commandType = CommandType.Text)
+        public async Task QueryAsync<T>(string sql, object[] args, IList<T> resultList)
         {
             if (EnableAutoSelect)
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, null, sql);
 
             await OpenSharedConnectionAsync().ConfigureAwait(false);
             try {
-                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                     SqlDataReader r = null;
                     var pd = PocoData.ForType(typeof(T));
                     try {
@@ -535,7 +531,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             try {
                 await OpenSharedConnectionAsync().ConfigureAwait(false);
                 try {
-                    using (var cmd = CreateCommand(_sharedConnection, "", new object[0], CommandType.Text)) {
+                    using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = typeof(T);
                         var pd = PocoData.ForType(type);
                         cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, size, tableName, primaryKeyName, autoIncrement);

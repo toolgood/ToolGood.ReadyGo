@@ -316,9 +316,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="connection"></param>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        /// <param name="commandType"></param>
         /// <returns></returns>
-        public IDbCommand CreateCommand(IDbConnection connection, string sql, object[] args, CommandType commandType = CommandType.Text)
+        public IDbCommand CreateCommand(IDbConnection connection, string sql, object[] args)
         {
             // Perform parameter prefix replacements
             if (_paramPrefix != "@")
@@ -329,24 +328,17 @@ namespace ToolGood.ReadyGo3.PetaPoco
             cmd.Connection = connection;
             cmd.CommandText = sql;
             cmd.Transaction = _transaction;
-            cmd.CommandType = commandType;
+            cmd.CommandType = CommandType.Text;
             if (args != null) {
-                if (commandType == CommandType.StoredProcedure) {
-                    foreach (var item in args) {
-                        var idbParam = item as IDbDataParameter;
-                        cmd.Parameters.Add(idbParam);
-                    }
-                } else {
-                    foreach (var item in args) {
-                        var items = item as IList;
-                        if (items != null) {
-                            foreach (var obj in items) {
-                                AddParam(cmd, obj, null);
-                            }
-                        } else {
-                            AddParam(cmd, item, null);
-
+                foreach (var item in args) {
+                    var items = item as IList;
+                    if (items != null) {
+                        foreach (var obj in items) {
+                            AddParam(cmd, obj, null);
                         }
+                    } else {
+                        AddParam(cmd, item, null);
+
                     }
                 }
             }
@@ -410,14 +402,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         /// <param name="sql">The SQL statement to execute</param>
         /// <param name="args">Arguments to any embedded parameters in the SQL</param>
-        /// <param name="commandType"></param>
         /// <returns>The number of rows affected</returns>
-        public int Execute(string sql, object[] args, CommandType commandType = CommandType.Text)
+        public int Execute(string sql, object[] args)
         {
             try {
                 OpenSharedConnection();
                 try {
-                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
                         var retv = cmd.ExecuteNonQuery();
                         OnExecutedCommand(cmd);
@@ -439,14 +430,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <typeparam name="T">The type that the result value should be cast to</typeparam>
         /// <param name="sql">The SQL query to execute</param>
         /// <param name="args">Arguments to any embedded parameters in the SQL</param>
-        /// <param name="commandType"></param>
         /// <returns>The scalar value cast to T</returns>
-        public T ExecuteScalar<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
+        public T ExecuteScalar<T>(string sql, object[] args)
         {
             try {
                 OpenSharedConnection();
                 try {
-                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
                         object val = cmd.ExecuteScalar();
                         OnExecutedCommand(cmd);
@@ -474,12 +464,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="args"></param>
         /// <param name="commandType"></param>
         /// <returns></returns>
-        public DataTable ExecuteDataTable(string sql, object[] args, CommandType commandType = CommandType.Text)
+        public DataTable ExecuteDataTable(string sql, object[] args)
         {
             try {
                 OpenSharedConnection();
                 try {
-                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
                         var reader = cmd.ExecuteReader();
                         OnExecutedCommand(cmd);
@@ -519,14 +509,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
-        /// <param name="commandType"></param>
         /// <returns></returns>
-        public DataSet ExecuteDataSet(string sql, object[] args, CommandType commandType = CommandType.Text)
+        public DataSet ExecuteDataSet(string sql, object[] args)
         {
             try {
                 OpenSharedConnection();
                 try {
-                    using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                    using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         using (var adapter = _factory.CreateDataAdapter()) {
                             DoPreExecute(cmd);
                             adapter.SelectCommand = (DbCommand)cmd;
@@ -607,19 +596,19 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 
 
-        public IEnumerable<T> Query<T>(string sql, object[] args, CommandType commandType = CommandType.Text)
+        public IEnumerable<T> Query<T>(string sql, object[] args)
         {
-            return QueryTable<T>(null, sql, args, commandType);
+            return QueryTable<T>(null, sql, args);
         }
 
-        public IEnumerable<T> QueryTable<T>(string table, string sql, object[] args, CommandType commandType = CommandType.Text)
+        public IEnumerable<T> QueryTable<T>(string table, string sql, object[] args)
         {
             if (EnableAutoSelect)
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, table, sql);
 
             OpenSharedConnection();
             try {
-                using (var cmd = CreateCommand(_sharedConnection, sql, args, commandType)) {
+                using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                     IDataReader r;
                     var pd = PocoData.ForType(typeof(T));
                     try {
@@ -851,7 +840,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             try {
                 OpenSharedConnection();
                 try {
-                    using (var cmd = CreateCommand(_sharedConnection, "", new object[0], CommandType.Text)) {
+                    using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = typeof(T);
                         var pd = PocoData.ForType(type);
                         cmd.CommandText = CrudCache.GetInsertSql(_provider, _paramPrefix, pd, size, tableName, primaryKeyName, autoIncrement);

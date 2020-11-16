@@ -22,6 +22,14 @@ namespace ToolGood.ReadyGo3.LinQ
             this._paramPrefix = DatabaseProvider.Resolve(_sqlhelper._sqlType).GetParameterPrefix(_sqlhelper._connectionString);
             _sqlExpression = new Expressions.SqlExpression(_sqlhelper._sqlType);
         }
+        internal WhereHelper(SqlHelper helper,string table)
+        {
+            this._sqlhelper = helper;
+            this._paramPrefix = DatabaseProvider.Resolve(_sqlhelper._sqlType).GetParameterPrefix(_sqlhelper._connectionString);
+            _sqlExpression = new Expressions.SqlExpression(_sqlhelper._sqlType);
+            _table = table;
+        }
+
         #region  01 私有变量
         private SqlExpression _sqlExpression;
         private readonly SqlHelper _sqlhelper;
@@ -39,6 +47,7 @@ namespace ToolGood.ReadyGo3.LinQ
         //private bool _useTableName = false;
         private string _tableName = "t1";
 
+        private string _table;
         #endregion
 
         #region 02 SQL拼接 基础方法
@@ -1422,7 +1431,11 @@ namespace ToolGood.ReadyGo3.LinQ
             var dp = DatabaseProvider.Resolve(_sqlhelper._sqlType);
             StringBuilder sb = new StringBuilder();
             sb.Append("FROM ");
-            sb.Append(dp.GetTableName(pd1));
+            if (string.IsNullOrEmpty(_table)) {
+                sb.Append(dp.GetTableName(pd1));
+            } else {
+                sb.Append(_table);
+            }
 
             sb.Append(" AS " + _tableName + " ");
             sb.Append(_joinOnString);

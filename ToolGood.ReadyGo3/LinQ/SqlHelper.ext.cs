@@ -6,6 +6,7 @@ namespace ToolGood.ReadyGo3
 {
     public partial class SqlHelper
     {
+        #region Where
         /// <summary>
         /// 动态Sql拼接
         /// </summary>
@@ -16,6 +17,7 @@ namespace ToolGood.ReadyGo3
             var where = new WhereHelper<T>(this);
             return where;
         }
+
 
         /// <summary>
         /// 动态Sql拼接， 
@@ -57,6 +59,66 @@ namespace ToolGood.ReadyGo3
             whereHelper.Where(where);
             return whereHelper;
         }
+
+        #endregion
+
+        #region WhereTable
+        /// <summary>
+        /// 动态Sql拼接
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        public WhereHelper<T> WhereTable<T>(string table) where T : class
+        {
+            var where = new WhereHelper<T>(this, table);
+            return where;
+        }
+
+
+        /// <summary>
+        /// 动态Sql拼接， 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
+        public WhereHelper<T> WhereTable<T>(string table, string where) where T : class
+        {
+            var whereHelper = new WhereHelper<T>(this, table);
+            whereHelper.Where(where);
+
+            return whereHelper;
+        }
+
+        /// <summary>
+        /// 动态Sql拼接， 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="table"></param>
+        /// <param name="where"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T> WhereTable<T>(string table, string where, params object[] args) where T : class
+        {
+            var whereHelper = new WhereHelper<T>(this, table);
+            if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
+            whereHelper.where(where, args);
+            return whereHelper;
+        }
+
+        /// <summary>
+        /// 动态Sql拼接
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
+        public WhereHelper<T> WhereTable<T>(string table, Expression<Func<T, bool>> where) where T : class
+        {
+            var whereHelper = new WhereHelper<T>(this, table);
+            whereHelper.Where(where);
+            return whereHelper;
+        } 
+        #endregion
 
     }
 
