@@ -277,7 +277,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T> SelectWithOrderBy<T>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public List<T> Select_OrderBy<T>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T : class
         {
             return Select<T>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
@@ -291,7 +291,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T> SelectWithOrderBy<T>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public List<T> Select_OrderBy<T>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T : class
         {
             return Select<T>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
@@ -306,7 +306,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T> SelectWithOrderBy<T>(object condition, string orderField = null, string ascOrDesc = "ASC")
+        public List<T> Select_OrderBy<T>(object condition, string orderField = null, string ascOrDesc = "ASC")
              where T : class
         {
             return Select<T>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
@@ -335,7 +335,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T> SelectPageWithOrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public List<T> SelectPage_OrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
             where T : class
         {
             return SelectPage<T>(page, itemsPerPage, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
@@ -365,7 +365,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Page<T> PageWithOrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public Page<T> Page_OrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
             where T : class
         {
             return this.Where<T>().Where(ConditionObjectToWhere(condition))
@@ -695,7 +695,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectWithOrderByAsync<T>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> Select_OrderByAsync<T>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
             return SelectAsync<T>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
@@ -708,7 +708,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectWithOrderByAsync<T>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> Select_OrderByAsync<T>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
             return SelectAsync<T>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
@@ -720,7 +720,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectWithOrderByAsync<T>(object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> Select_OrderByAsync<T>(object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
             return SelectAsync<T>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
@@ -747,7 +747,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectPageWithOrderByAsync<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public Task<List<T>> SelectPageAsync_OrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
             where T : class
         {
             return this.Where<T>().Where(ConditionObjectToWhere(condition))
@@ -779,7 +779,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<Page<T>> PageWithOrderByAsync<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public Task<Page<T>> PageAsync_OrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T : class
         {
             return this.Where<T>().Where(ConditionObjectToWhere(condition))

@@ -76,7 +76,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T SingleOrDefault_Table<T>(string table, int condition) where T : class
         {
-            return SingleOrDefaultTableById<T>(table, condition);
+            return SingleOrDefaultById_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -87,7 +87,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T SingleOrDefault_Table<T>(string table, uint condition) where T : class
         {
-            return SingleOrDefaultTableById<T>(table, condition);
+            return SingleOrDefaultById_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T SingleOrDefault_Table<T>(string table, long condition) where T : class
         {
-            return SingleOrDefaultTableById<T>(table, condition);
+            return SingleOrDefaultById_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -109,7 +109,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T SingleOrDefault_Table<T>(string table, ulong condition) where T : class
         {
-            return SingleOrDefaultTableById<T>(table, condition);
+            return SingleOrDefaultById_Table<T>(table, condition);
         }
         #endregion
 
@@ -122,7 +122,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T SingleOrDefault_Table<T>(string table, object condition) where T : class
         {
-            return SingleOrDefaultTableById<T>(table, condition);
+            return SingleOrDefaultById_Table<T>(table, condition);
         }
 
 
@@ -197,7 +197,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T FirstOrDefault_Table<T>(string table, int condition) where T : class
         {
-            return SingleOrDefaultTableById<T>(table, condition);
+            return SingleOrDefaultById_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -208,7 +208,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T FirstOrDefault_Table<T>(string table, uint condition) where T : class
         {
-            return SingleOrDefaultTableById<T>(table, condition);
+            return SingleOrDefaultById_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -219,7 +219,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T FirstOrDefault_Table<T>(string table, long condition) where T : class
         {
-            return SingleOrDefaultTableById<T>(table, condition);
+            return SingleOrDefaultById_Table<T>(table, condition);
         }
 
         /// <summary>
@@ -230,7 +230,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T FirstOrDefault_Table<T>(string table, ulong condition) where T : class
         {
-            return SingleOrDefaultTableById<T>(table, condition);
+            return SingleOrDefaultById_Table<T>(table, condition);
         }
 
         #endregion
@@ -294,7 +294,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T> SelectTableWithOrderBy<T>(string table, int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public List<T> Select_OrderBy_Table<T>(string table, int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T : class
         {
             return Select_Table<T>(table, limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
@@ -309,7 +309,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T> SelectTableWithOrderBy<T>(string table, int limit, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public List<T> Select_OrderBy_Table<T>(string table, int limit, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T : class
         {
             return Select_Table<T>(table, limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
@@ -324,7 +324,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T> SelectTableWithOrderBy<T>(string table, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public List<T> Select_OrderBy_Table<T>(string table, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T : class
         {
             return Select_Table<T>(table, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
@@ -354,7 +354,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public List<T> SelectPageTableWithOrderBy<T>(string table, int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public List<T> SelectPage_OrderBy_Table<T>(string table, int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
             where T : class
         {
             return SelectPage_Table<T>(table, page, itemsPerPage, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
@@ -385,7 +385,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Page<T> PageTableWithOrderBy<T>(string table, int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public Page<T> Page_OrderBy_Table<T>(string table, int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
             where T : class
         {
             return this.Where_Table<T>(table).Where(ConditionObjectToWhere(condition))
@@ -528,7 +528,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstOrDefaultAsync_Table<T>(string table, int condition) where T : class
         {
-            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+            return SingleOrDefaultById_TableAsync<T>(table, condition);
         }
 
         /// <summary>
@@ -539,7 +539,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstOrDefaultAsync_Table<T>(string table, uint condition) where T : class
         {
-            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+            return SingleOrDefaultById_TableAsync<T>(table, condition);
         }
 
         /// <summary>
@@ -550,7 +550,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstOrDefaultAsync_Table<T>(string table, long condition) where T : class
         {
-            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+            return SingleOrDefaultById_TableAsync<T>(table, condition);
         }
 
         /// <summary>
@@ -561,7 +561,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> FirstOrDefaultAsync_Table<T>(string table, ulong condition) where T : class
         {
-            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+            return SingleOrDefaultById_TableAsync<T>(table, condition);
         }
 
         #endregion
@@ -647,7 +647,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleOrDefaultAsync_Table<T>(string table, int condition) where T : class
         {
-            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+            return SingleOrDefaultById_TableAsync<T>(table, condition);
         }
 
         /// <summary>
@@ -658,7 +658,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleOrDefaultAsync_Table<T>(string table, uint condition) where T : class
         {
-            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+            return SingleOrDefaultById_TableAsync<T>(table, condition);
         }
 
         /// <summary>
@@ -669,7 +669,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleOrDefaultAsync_Table<T>(string table, long condition) where T : class
         {
-            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+            return SingleOrDefaultById_TableAsync<T>(table, condition);
         }
 
         /// <summary>
@@ -680,7 +680,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public Task<T> SingleOrDefaultAsync_Table<T>(string table, ulong condition) where T : class
         {
-            return SingleOrDefaultTableByIdAsync<T>(table, condition);
+            return SingleOrDefaultById_TableAsync<T>(table, condition);
         }
 
         #endregion
@@ -742,7 +742,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectTableWithOrderByAsync<T>(string table, int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> Select_OrderBy_TableAsync<T>(string table, int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
             return SelectAsync<T>(table, limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
@@ -756,7 +756,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectTableWithOrderByAsync<T>(string table, int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> Select_OrderBy_TableAsync<T>(string table, int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
             return SelectAsync_Table<T>(table, limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
@@ -769,7 +769,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectWithOrderByAsync<T>(string table, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> Select_OrderByAsync<T>(string table, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
             return SelectAsync_Table<T>(table, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
@@ -799,7 +799,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectPageTableWithOrderByAsync<T>(string table, int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public Task<List<T>> SelectPageAsync_OrderBy_Table<T>(string table, int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
             where T : class
         {
             return this.Where_Table<T>(table).Where(ConditionObjectToWhere(condition))
@@ -832,7 +832,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<Page<T>> PageWithTableOrderByAsync<T>(string table, int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public Task<Page<T>> PageAsync_OrderBy_Table<T>(string table, int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T : class
         {
             return this.Where_Table<T>(table).Where(ConditionObjectToWhere(condition))
