@@ -118,23 +118,23 @@ namespace ToolGood.ReadyGo3
             }
             return GetDatabase().ExecuteScalarAsync<int>(sql, args);
         }
-        /// <summary>
-        /// 执行SQL 查询,返回数量
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public Task<int> CountTableAsync<T>(string table, string sql = "", params object[] args)
-        {
-            sql = sql.Trim();
-            if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
-                sql = FormatSql(sql);
-                sql = $"SELECT COUNT(*) FROM {table} {sql}";
-            }
-            return GetDatabase().ExecuteScalarAsync<int>(sql, args);
-        }
+        ///// <summary>
+        ///// 执行SQL 查询,返回数量
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="table"></param>
+        ///// <param name="sql">SQL 语句</param>
+        ///// <param name="args">SQL 参数</param>
+        ///// <returns></returns>
+        //public Task<int> CountTableAsync(string table, string sql = "", params object[] args)
+        //{
+        //    sql = sql.Trim();
+        //    if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
+        //        sql = FormatSql(sql);
+        //        sql = $"SELECT COUNT(*) FROM {table} {sql}";
+        //    }
+        //    return GetDatabase().ExecuteScalarAsync<int>(sql, args);
+        //}
 
         /// <summary>
         /// 执行SQL 查询,返回数量
@@ -609,7 +609,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="list"></param>
         /// <returns></returns>
-        public async Task InsertListAsync<T>(string table, List<T> list) where T : class
+        public async Task InsertListTableAsync<T>(string table, List<T> list) where T : class
         {
             if (list == null) throw new ArgumentNullException("list is null.");
             if (list.Count == 0) return;

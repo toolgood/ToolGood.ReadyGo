@@ -538,6 +538,8 @@ namespace ToolGood.ReadyGo3
             sql = FormatSql(sql);
             return GetDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
         }
+
+
         private string RemoveStart(string txt, string startsText)
         {
             if (string.IsNullOrEmpty(txt) == false) {
@@ -983,21 +985,6 @@ namespace ToolGood.ReadyGo3
             sql = FormatSql(sql);
             return GetDatabase().DeleteTable(table, sql, args);
         }
-        /// <summary>
-        /// 删除
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public int DeleteTable<T>(string table, string sql, params object[] args)
-        {
-            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            sql = FormatSql(sql);
-            return GetDatabase().DeleteTable(table, sql, args);
-        }
-
 
         /// <summary>
         /// 删除
@@ -1016,9 +1003,9 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="primaryKey">主键</param>
         /// <returns></returns>
-        public int DeleteTableById<T>(string table, object primaryKey)
+        public int DeleteTableById(string table, object primaryKey)
         {
-            return GetDatabase().DeleteTable<T>(table, primaryKey);
+            return GetDatabase().DeleteTable(table, primaryKey);
         }
 
 
