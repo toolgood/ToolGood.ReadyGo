@@ -491,7 +491,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> SelectSql<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        public List<T> SQL_Select<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
@@ -519,7 +519,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Page<T> PageSql<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        public Page<T> SQL_Page<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
@@ -561,7 +561,7 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T"></typeparam>
         /// <param name="primaryKey">主键名</param>
         /// <returns></returns>
-        public T SingleById<T>(object primaryKey)
+        private T SingleById<T>(object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
@@ -576,7 +576,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="primaryKey">主键名</param>
         /// <returns></returns>
-        public T SingleById_Table<T>(string table, object primaryKey)
+        private T SingleById_Table<T>(string table, object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
@@ -591,7 +591,7 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T"></typeparam>
         /// <param name="primaryKey">主键名</param>
         /// <returns></returns>
-        public T SingleOrDefaultById<T>(object primaryKey)
+        private T SingleOrDefaultById<T>(object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
@@ -605,7 +605,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="primaryKey">主键名</param>
         /// <returns></returns>
-        public T SingleOrDefaultById_Table<T>(string table, object primaryKey)
+        private T SingleOrDefaultById_Table<T>(string table, object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
@@ -1013,7 +1013,7 @@ namespace ToolGood.ReadyGo3
         /// 保存
         /// </summary>
         /// <param name="poco"></param>
-        public void Save<T>(T poco)
+        public void Save<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             GetDatabase().Save(poco);
@@ -1024,7 +1024,7 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
         /// <param name="poco"></param>
-        public void Save_Table<T>(string table, T poco)
+        public void Save_Table<T>(string table, T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             GetDatabase().SaveTable(table, poco);

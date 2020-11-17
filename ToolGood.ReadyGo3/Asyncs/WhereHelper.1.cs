@@ -21,9 +21,9 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<List<T1>> SelectAsync(string selectSql = null)
+        public Task<List<T1>> Select_Async(string selectSql = null)
         {
-            return _sqlhelper.SelectAsync<T1>(GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.Select_Async<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
         /// 查询 返回列表
@@ -31,9 +31,9 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="limit"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<List<T1>> SelectAsync(int limit, string selectSql = null)
+        public Task<List<T1>> Select_Async(int limit, string selectSql = null)
         {
-            return _sqlhelper.SelectAsync<T1>(limit, 0, GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.Select_Async<T1>(limit, 0, GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
         /// 查询 返回列表
@@ -42,9 +42,9 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="take"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<List<T1>> SelectAsync(int skip, int take, string selectSql = null)
+        public Task<List<T1>> Select_Async(int skip, int take, string selectSql = null)
         {
-            return _sqlhelper.SelectAsync<T1>(skip, take, GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.Select_Async<T1>(skip, take, GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
         /// 查询 返回列表
@@ -53,11 +53,11 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<List<T1>> SelectPageAsync(int page, int itemsPerPage, string selectSql = null)
+        public Task<List<T1>> SelectPage_Async(int page, int itemsPerPage, string selectSql = null)
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
-            return _sqlhelper.SelectAsync<T1>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.Select_Async<T1>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
         }
 
 
@@ -68,9 +68,9 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<Page<T1>> PageAsync(int page, int itemsPerPage, string selectSql = null)
+        public Task<Page<T1>> Page_Async(int page, int itemsPerPage, string selectSql = null)
         {
-            return _sqlhelper.PageAsync<T1>(page, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.Page_Async<T1>(page, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
         }
 
         /// <summary>
@@ -78,36 +78,36 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<T1> SingleAsync(string selectSql = null)
+        public Task<T1> Single_Async(string selectSql = null)
         {
-            return _sqlhelper.SingleAsync<T1>(GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.Single_Async<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
         /// 返回唯一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<T1> SingleOrDefaultAsync(string selectSql = null)
+        public Task<T1> SingleOrDefault_Async(string selectSql = null)
         {
-            return _sqlhelper.SingleOrDefaultAsync<T1>(GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.SingleOrDefault_Async<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
         /// 返回第一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<T1> FirstAsync(string selectSql = null)
+        public Task<T1> First_Async(string selectSql = null)
         {
-            return _sqlhelper.FirstAsync<T1>(GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.First_Async<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
         /// <summary>
         /// 返回第一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<T1> FirstOrDefaultAsync(string selectSql = null)
+        public Task<T1> FirstOrDefault_Async(string selectSql = null)
         {
-            return _sqlhelper.FirstOrDefaultAsync<T1>(GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.FirstOrDefault_Async<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
 
         #endregion Select Page SkipTake Single SingleOrDefault First FirstOrDefault
@@ -119,10 +119,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <typeparam name="T"></typeparam>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(Expression<Func<T1, T>> columns)
+        public Task<List<T>> Select_Async<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SelectAsync<T>(GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Select_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 查询 返回列表
@@ -131,10 +131,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="limit"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(int limit, Expression<Func<T1, T>> columns)
+        public Task<List<T>> Select_Async<T>(int limit, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SelectAsync<T>(limit, GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Select_Async<T>(limit, GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 查询 返回列表
@@ -144,10 +144,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="take"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(int skip, int take, Expression<Func<T1, T>> columns)
+        public Task<List<T>> Select_Async<T>(int skip, int take, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SelectAsync<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Select_Async<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 查询 返回列表
@@ -157,13 +157,13 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectPageAsync<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns)
+        public Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns)
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SelectAsync<T>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Select_Async<T>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
 
@@ -174,10 +174,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <typeparam name="T"></typeparam>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<T> SingleAsync<T>(Expression<Func<T1, T>> columns)
+        public Task<T> Single_Async<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SingleAsync<T>(GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Single_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回唯一列
@@ -185,10 +185,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <typeparam name="T"></typeparam>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<T> SingleOrDefaultAsync<T>(Expression<Func<T1, T>> columns)
+        public Task<T> SingleOrDefault_Async<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SingleOrDefaultAsync<T>(GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.SingleOrDefault_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回第一列
@@ -196,10 +196,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <typeparam name="T"></typeparam>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<T> FirstAsync<T>(Expression<Func<T1, T>> columns)
+        public Task<T> First_Async<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.FirstAsync<T>(GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.First_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回第一列
@@ -207,10 +207,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <typeparam name="T"></typeparam>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<T> FirstOrDefaultAsync<T>(Expression<Func<T1, T>> columns)
+        public Task<T> FirstOrDefault_Async<T>(Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.FirstOrDefaultAsync<T>(GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.FirstOrDefault_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
 
         /// <summary>
@@ -221,10 +221,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<Page<T>> PageAsync<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns)
+        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns)
         {
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.PageAsync<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Page_Async<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
         #endregion
@@ -238,18 +238,18 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="selectSql"></param>
         /// <param name="distinct"></param>
         /// <returns></returns>
-        public Task<int> SelectCountAsync(string selectSql = null, bool distinct = false)
+        public Task<int> SelectCount_Async(string selectSql = null, bool distinct = false)
         {
-            return _sqlhelper.GetDatabase().ExecuteScalarAsync<int>(GetCountSql(selectSql, distinct), _args.ToArray());
+            return _sqlhelper.GetDatabase().ExecuteScalar_Async<int>(GetCountSql(selectSql, distinct), _args.ToArray());
         }
         /// <summary>
         /// 执行返回DataTable
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<DataTable> ExecuteDataTableAsync(string selectSql = null)
+        public Task<DataTable> ExecuteDataTable_Async(string selectSql = null)
         {
-            return _sqlhelper.ExecuteDataTableAsync(GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.ExecuteDataTable_Async(GetFullSelectSql(selectSql), _args.ToArray());
         }
 
         /// <summary>
@@ -257,10 +257,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(string selectSql = null)
+        public Task<List<T>> Select_Async<T>(string selectSql = null)
         {
             var sql = getSelect<T>(selectSql);
-            return _sqlhelper.SelectAsync<T>(GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Select_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 执行返回集合
@@ -268,10 +268,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="limit"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(int limit, string selectSql = null)
+        public Task<List<T>> Select_Async<T>(int limit, string selectSql = null)
         {
             var sql = getSelect<T>(selectSql);
-            return _sqlhelper.SelectAsync<T>(limit, 0, GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Select_Async<T>(limit, 0, GetFullSelectSql(sql), _args.ToArray());
         }
 
         /// <summary>
@@ -281,10 +281,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="take"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(int skip, int take, string selectSql = null)
+        public Task<List<T>> Select_Async<T>(int skip, int take, string selectSql = null)
         {
             var sql = getSelect<T>(selectSql);
-            return _sqlhelper.SelectAsync<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Select_Async<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 执行返回集合
@@ -294,13 +294,13 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectPageAsync<T>(int page, int itemsPerPage, string selectSql = null)
+        public Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, string selectSql = null)
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             var sql = getSelect<T>(selectSql);
-            return _sqlhelper.SelectAsync<T>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Select_Async<T>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
 
@@ -310,20 +310,20 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<T> SingleAsync<T>(string selectSql = null)
+        public Task<T> Single_Async<T>(string selectSql = null)
         {
             var sql = getSelect<T>(selectSql);
-            return _sqlhelper.SingleAsync<T>(GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Single_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回唯一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<T> SingleOrDefaultAsync<T>(string selectSql = null)
+        public Task<T> SingleOrDefault_Async<T>(string selectSql = null)
         {
             var sql = getSelect<T>(selectSql);
-            return _sqlhelper.SingleOrDefaultAsync<T>(GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.SingleOrDefault_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
 
         /// <summary>
@@ -331,20 +331,20 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<T> FirstAsync<T>(string selectSql = null)
+        public Task<T> First_Async<T>(string selectSql = null)
         {
             var sql = getSelect<T>(selectSql);
-            return _sqlhelper.FirstAsync<T>(GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.First_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回第一列
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<T> FirstOrDefaultAsync<T>(string selectSql = null)
+        public Task<T> FirstOrDefault_Async<T>(string selectSql = null)
         {
             var sql = getSelect<T>(selectSql);
-            return _sqlhelper.FirstOrDefaultAsync<T>(GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.FirstOrDefault_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
         /// <summary>
         /// 返回页，page类
@@ -353,10 +353,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<Page<T>> PageAsync<T>(int page, int itemsPerPage, string selectSql = null)
+        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, string selectSql = null)
         {
             var sql = getSelect<T>(selectSql);
-            return _sqlhelper.PageAsync<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Page_Async<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
         #endregion
@@ -367,7 +367,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="setData"></param>
         /// <returns></returns>
-        public Task<int> UpdateAsync(object setData)
+        public Task<int> Update_Async(object setData)
         {
             if (object.Equals(null, setData)) { throw new Exception("No setData Error!"); }
             if (_where.Length == 0) { throw new Exception("No Where Error!"); }
@@ -384,7 +384,7 @@ namespace ToolGood.ReadyGo3.LinQ
                 args.Add(pi.GetValue(setData, null));
             }
             var sql = BuildUpdateSql(sb.ToString(), args);
-            return _sqlhelper.UpdateAsync<T1>(sql, _args.ToArray());
+            return _sqlhelper.Update_Async<T1>(sql, _args.ToArray());
         }
 
         /// <summary>
@@ -392,7 +392,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="setData"></param>
         /// <returns></returns>
-        public Task<int> UpdateAsync(IDictionary<string, object> setData)
+        public Task<int> Update_Async(IDictionary<string, object> setData)
         {
             if (setData.Count == 0) { throw new Exception("No setData Error!"); }
             if (_where.Length == 0) { throw new Exception("No Where Error!"); }
@@ -407,7 +407,7 @@ namespace ToolGood.ReadyGo3.LinQ
                 args.Add(item.Value);
             }
             var sql = BuildUpdateSql(sb.ToString(), args);
-            return _sqlhelper.UpdateAsync<T1>(sql, _args.ToArray());
+            return _sqlhelper.Update_Async<T1>(sql, _args.ToArray());
 
         }
 
@@ -417,7 +417,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="setSql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<int> UpdateAsync(string setSql, params object[] args)
+        public Task<int> Update_Async(string setSql, params object[] args)
         {
             if (string.IsNullOrEmpty(setSql)) { throw new Exception("No SET Error!"); }
             if (_where.Length == 0) { throw new Exception("No Where Error!"); }
@@ -427,25 +427,25 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             var sql = BuildUpdateSql(setSql, args);
 
-            return _sqlhelper.UpdateAsync<T1>(sql, _args.ToArray());
+            return _sqlhelper.Update_Async<T1>(sql, _args.ToArray());
         }
 
         #endregion
 
-        #region 11 DeleteAsync
+        #region 11 Delete_Async
         /// <summary>
         /// 删除，只支持单一表格，WHERE条件为空报错
         /// </summary>
         /// <returns></returns>
-        public Task<int> DeleteAsync()
+        public Task<int> Delete_Async()
         {
             if (_where.Length == 0) { throw new Exception("No Where Error!"); }
-            return _sqlhelper.DeleteAsync<T1>($"WHERE {_where.ToString()}", _args.ToArray());
+            return _sqlhelper.Delete_Async<T1>($"WHERE {_where.ToString()}", _args.ToArray());
         }
 
         #endregion
 
-        #region 12 SelectInsertAsync
+        #region 12 SelectInsert_Async
         /// <summary>
         /// 查询插入
         /// </summary>
@@ -453,10 +453,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="replaceSelect"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task SelectInsertAsync(string insertTableName = null, string replaceSelect = null, params object[] args)
+        public Task SelectInsert_Async(string insertTableName = null, string replaceSelect = null, params object[] args)
         {
             var sql = CreateSelectInsertSql(typeof(T1), insertTableName, replaceSelect, args);
-            return _sqlhelper.ExecuteAsync(sql, _args.ToArray());
+            return _sqlhelper.Execute_Async(sql, _args.ToArray());
         }
 
         /// <summary>
@@ -467,10 +467,10 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="replaceSelect"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task SelectInsertAsync<T>(string insertTableName = null, string replaceSelect = null, params object[] args)
+        public Task SelectInsert_Async<T>(string insertTableName = null, string replaceSelect = null, params object[] args)
         {
             var sql = CreateSelectInsertSql(typeof(T), insertTableName, replaceSelect, args);
-            return _sqlhelper.ExecuteAsync(sql, _args.ToArray());
+            return _sqlhelper.Execute_Async(sql, _args.ToArray());
         }
 
 

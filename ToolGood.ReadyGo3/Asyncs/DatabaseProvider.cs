@@ -22,10 +22,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="cmd"></param>
         /// <param name="PrimaryKeyName"></param>
         /// <returns></returns>
-        public virtual async Task<object> ExecuteInsertAsync(Database db, SqlCommand cmd, string PrimaryKeyName)
+        public virtual async Task<object> ExecuteInsert_Async(Database db, SqlCommand cmd, string PrimaryKeyName)
         {
             cmd.CommandText += ";\nSELECT @@IDENTITY AS NewID;";
-            return await db.ExecuteScalarHelperAsync(cmd);
+            return await db.ExecuteScalarHelper_Async(cmd);
         }
     }
 }
@@ -34,7 +34,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
     public partial class FirebirdDbDatabaseProvider
     {
-        public override Task<object> ExecuteInsertAsync(Database database, SqlCommand cmd, string primaryKeyName)
+        public override Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
         {
             cmd.CommandText = cmd.CommandText.TrimEnd();
 
@@ -42,16 +42,16 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 cmd.CommandText = cmd.CommandText.Substring(0, cmd.CommandText.Length - 1);
 
             cmd.CommandText += " RETURNING " + EscapeSqlIdentifier(primaryKeyName) + ";";
-            return database.ExecuteScalarHelperAsync(cmd);
+            return database.ExecuteScalarHelper_Async(cmd);
         }
     }
     public partial class MsAccessDbDatabaseProvider
     {
-        public override async Task<object> ExecuteInsertAsync(Database database, SqlCommand cmd, string primaryKeyName)
+        public override async Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
         {
-            await database.ExecuteNonQueryHelperAsync(cmd);
+            await database.ExecuteNonQueryHelper_Async(cmd);
             cmd.CommandText = "SELECT @@IDENTITY AS NewID;";
-            return await database.ExecuteScalarHelperAsync(cmd);
+            return await database.ExecuteScalarHelper_Async(cmd);
         }
     }
     public partial class MySqlDatabaseProvider
@@ -61,7 +61,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
     public partial class OracleDatabaseProvider
     {
 
-        public override async Task<object> ExecuteInsertAsync(Database database, SqlCommand cmd, string primaryKeyName)
+        public override async Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
         {
             if (primaryKeyName != null) {
                 cmd.CommandText += $" returning {EscapeSqlIdentifier(primaryKeyName)} into :newid";
@@ -71,10 +71,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 param.Direction = ParameterDirection.ReturnValue;
                 param.DbType = DbType.Int64;
                 cmd.Parameters.Add(param);
-                await database.ExecuteNonQueryHelperAsync(cmd);
+                await database.ExecuteNonQueryHelper_Async(cmd);
                 return param.Value;
             } else {
-                await database.ExecuteNonQueryHelperAsync(cmd);
+                await database.ExecuteNonQueryHelper_Async(cmd);
                 return -1;
             }
         }
@@ -82,26 +82,26 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
     public partial class PostgreSQLDatabaseProvider
     {
-        public override async Task<object> ExecuteInsertAsync(Database database, SqlCommand cmd, string primaryKeyName)
+        public override async Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
         {
             if (primaryKeyName != null) {
                 cmd.CommandText += $"returning {EscapeSqlIdentifier(primaryKeyName)} as NewID";
-                return await database.ExecuteScalarHelperAsync(cmd);
+                return await database.ExecuteScalarHelper_Async(cmd);
             } else {
-                await database.ExecuteNonQueryHelperAsync(cmd);
+                await database.ExecuteNonQueryHelper_Async(cmd);
                 return -1;
             }
         }
     }
     public partial class SQLiteDatabaseProvider
     {
-        public override async Task<object> ExecuteInsertAsync(Database database, SqlCommand cmd, string primaryKeyName)
+        public override async Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
         {
             if (primaryKeyName != null) {
                 cmd.CommandText += ";\nSELECT last_insert_rowid();";
-                return await database.ExecuteScalarHelperAsync(cmd);
+                return await database.ExecuteScalarHelper_Async(cmd);
             } else {
-                await database.ExecuteNonQueryHelperAsync(cmd);
+                await database.ExecuteNonQueryHelper_Async(cmd);
                 return -1;
             }
         }
@@ -116,9 +116,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
     }
     public partial class SqlServerDatabaseProvider
     {
-        public override Task<object> ExecuteInsertAsync(Database database, SqlCommand cmd, string primaryKeyName)
+        public override Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
         {
-            return database.ExecuteScalarHelperAsync(cmd);
+            return database.ExecuteScalarHelper_Async(cmd);
         }
     }
 

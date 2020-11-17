@@ -34,7 +34,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <remarks>
         /// Calls to Open/CloseSharedConnection are reference counted and should be balanced
         /// </remarks>
-        public async Task OpenSharedConnectionAsync()
+        public async Task OpenSharedConnection_Async()
         {
             if (_sharedConnectionDepth == 0) {
                 _sharedConnection = _factory.CreateConnection();
@@ -68,7 +68,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             _sharedConnectionDepth++;
         }
 
-        internal async Task ExecuteNonQueryHelperAsync(SqlCommand cmd)
+        internal async Task ExecuteNonQueryHelper_Async(SqlCommand cmd)
         {
             DoPreExecute(cmd);
             await cmd.ExecuteNonQueryAsync().ConfigureAwait(false); ;
@@ -76,7 +76,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 
 
-        internal async Task<object> ExecuteScalarHelperAsync(SqlCommand cmd)
+        internal async Task<object> ExecuteScalarHelper_Async(SqlCommand cmd)
         {
             DoPreExecute(cmd);
             object r = await cmd.ExecuteScalarAsync(_Token).ConfigureAwait(false);
@@ -85,17 +85,17 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 
 
-        #region ExecuteAsync ExecuteScalarAsync
+        #region Execute_Async ExecuteScalar_Async
         /// <summary>
         /// 
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public async Task<int> ExecuteAsync(string sql, object[] args)
+        public async Task<int> Execute_Async(string sql, object[] args)
         {
             try {
-                await OpenSharedConnectionAsync().ConfigureAwait(false);
+                await OpenSharedConnection_Async().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
@@ -120,10 +120,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public async Task<T> ExecuteScalarAsync<T>(string sql, object[] args)
+        public async Task<T> ExecuteScalar_Async<T>(string sql, object[] args)
         {
             try {
-                await OpenSharedConnectionAsync().ConfigureAwait(false);
+                await OpenSharedConnection_Async().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
@@ -153,10 +153,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public async Task<DataTable> ExecuteDataTableAsync(string sql, object[] args)
+        public async Task<DataTable> ExecuteDataTable_Async(string sql, object[] args)
         {
             try {
-                await OpenSharedConnectionAsync().ConfigureAwait(false);
+                await OpenSharedConnection_Async().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
@@ -200,10 +200,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public async Task<DataSet> ExecuteDataSetAsync(string sql, object[] args)
+        public async Task<DataSet> ExecuteDataSet_Async(string sql, object[] args)
         {
             try {
-                await OpenSharedConnectionAsync().ConfigureAwait(false);
+                await OpenSharedConnection_Async().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         using (var adapter = _factory.CreateDataAdapter()) {
@@ -227,36 +227,36 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
         #endregion
 
-        #region QueryAsync
-        public Task<IEnumerable<T>> QueryAsync<T>(int skip, int take, string sql, object[] args)
+        #region Query_Async
+        public Task<IEnumerable<T>> Query_Async<T>(int skip, int take, string sql, object[] args)
         {
-            return QueryAsync<T>(null, skip, take, sql, args);
+            return Query_Async<T>(null, skip, take, sql, args);
         }
 
 
-        public async Task<IEnumerable<T>> QueryAsync<T>(string table, int skip, int take, string sql, object[] args)
+        public async Task<IEnumerable<T>> Query_Async<T>(string table, int skip, int take, string sql, object[] args)
         {
             //string sqlCount, sqlPage;
 
             BuildPageQueries_Table<T>(table, skip, take, sql, ref args, out _, out string sqlPage);
 
             List<T> list = new List<T>(take);
-            await QueryAsync<T>(sqlPage, args, list);
+            await Query_Async<T>(sqlPage, args, list);
             return list;
         }
 
-        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object[] args)
+        public Task<IEnumerable<T>> Query_Async<T>(string sql, object[] args)
         {
-            return QueryAsync<T>(null, sql, args);
+            return Query_Async<T>(null, sql, args);
         }
 
-        public async Task<IEnumerable<T>> QueryAsync<T>(string table, string sql, object[] args)
+        public async Task<IEnumerable<T>> Query_Async<T>(string table, string sql, object[] args)
         {
             if (EnableAutoSelect)
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, table, sql);
 
             var resultList = new List<T>();
-            await OpenSharedConnectionAsync().ConfigureAwait(false);
+            await OpenSharedConnection_Async().ConfigureAwait(false);
             try {
                 using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                     SqlDataReader r = null;
@@ -291,12 +291,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        public async Task QueryAsync<T>(string sql, object[] args, IList<T> resultList)
+        public async Task Query_Async<T>(string sql, object[] args, IList<T> resultList)
         {
             if (EnableAutoSelect)
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, null, sql);
 
-            await OpenSharedConnectionAsync().ConfigureAwait(false);
+            await OpenSharedConnection_Async().ConfigureAwait(false);
             try {
                 using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                     SqlDataReader r = null;
@@ -332,7 +332,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         #endregion
 
-        #region PageAsync
+        #region Page_Async
 
         /// <summary>
         /// 
@@ -343,11 +343,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<Page<T>> PageAsync<T>(int page, int itemsPerPage, string sql, object[] args)
+        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, string sql, object[] args)
         {
             BuildPageQueries<T>((page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
 
-            return PageSqlAsync<T>(page, itemsPerPage, sqlPage, sqlCount, args);
+            return PageSql_Async<T>(page, itemsPerPage, sqlPage, sqlCount, args);
         }
         /// <summary>
         /// 
@@ -359,10 +359,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<Page<T>> PageAsync_Table<T>(string table, int page, int itemsPerPage, string sql, object[] args)
+        public Task<Page<T>> Page_Async_Table<T>(string table, int page, int itemsPerPage, string sql, object[] args)
         {
             BuildPageQueries_Table<T>(table, (page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
-            return PageSqlAsync<T>(page, itemsPerPage, sqlPage, sqlCount, args);
+            return PageSql_Async<T>(page, itemsPerPage, sqlPage, sqlCount, args);
         }
 
 
@@ -376,7 +376,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// <param name="countSql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public async Task<Page<T>> PageSqlAsync<T>(int page, int itemsPerPage, string selectSql, string countSql, object[] args)
+        public async Task<Page<T>> PageSql_Async<T>(int page, int itemsPerPage, string selectSql, string countSql, object[] args)
         {
             // Save the one-time command time out and use it for both queries
             var saveTimeout = OneTimeCommandTimeout;
@@ -386,14 +386,14 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var result = new Page<T> {
                 CurrentPage = page,
                 PageSize = itemsPerPage,
-                TotalItems = await ExecuteScalarAsync<int>(countSql, args).ConfigureAwait(false)
+                TotalItems = await ExecuteScalar_Async<int>(countSql, args).ConfigureAwait(false)
             };
             OneTimeCommandTimeout = saveTimeout;
 
             _Token = tokenTemp;
 
             List<T> list = new List<T>();
-            await QueryAsync<T>(selectSql, args, list);
+            await Query_Async<T>(selectSql, args, list);
             // Get the records
             result.Items = list;
             // Done
@@ -402,36 +402,36 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         #endregion
 
-        #region InsertAsync
-        public Task<object> InsertAsync(object poco)
+        #region Insert_Async
+        public Task<object> Insert_Async(object poco)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
 
             var pd = PocoData.ForType(poco.GetType());
-            return ExecuteInsertAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
+            return ExecuteInsert_Async(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
-        public Task<object> InsertAsync_Table(string table, object poco)
+        public Task<object> Insert_Async_Table(string table, object poco)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
 
             var pd = PocoData.ForType(poco.GetType());
-            return ExecuteInsertAsync(table, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
+            return ExecuteInsert_Async(table, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
 
-        public Task<object> InsertAsync(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields)
+        public Task<object> Insert_Async(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
-            return ExecuteInsertAsync(table, null, autoIncrement, poco, ignoreFields);
+            return ExecuteInsert_Async(table, null, autoIncrement, poco, ignoreFields);
         }
 
 
-        private async Task<object> ExecuteInsertAsync(string tableName, string primaryKeyName, bool autoIncrement, object poco, IEnumerable<string> ignoreFields = null)
+        private async Task<object> ExecuteInsert_Async(string tableName, string primaryKeyName, bool autoIncrement, object poco, IEnumerable<string> ignoreFields = null)
         {
             try {
-                await OpenSharedConnectionAsync().ConfigureAwait(false);
+                await OpenSharedConnection_Async().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var pd = PocoData.ForObject(poco, primaryKeyName);
@@ -456,7 +456,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                                 return null;
                         }
 
-                        object id = await _provider.ExecuteInsertAsync(this, (SqlCommand)cmd, primaryKeyName);
+                        object id = await _provider.ExecuteInsert_Async(this, (SqlCommand)cmd, primaryKeyName);
 
                         // Assign the ID back to the primary key property
                         if (primaryKeyName != null && !poco.GetType().Name.Contains("AnonymousType")) {
@@ -478,7 +478,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        public async Task InsertAsync_Table<T>(string table, List<T> list)
+        public async Task Insert_Async_Table<T>(string table, List<T> list)
         {
             if (string.IsNullOrEmpty(table)) throw new ArgumentNullException("table");
             if (list == null) throw new ArgumentNullException("poco");
@@ -497,12 +497,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 } else {
                     size = count;
                 }
-                await ExecuteInsertAsync<T>(table, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, size);
+                await ExecuteInsert_Async<T>(table, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, size);
                 index += size;
             }
         }
 
-        public async Task InsertAsync<T>(List<T> list)
+        public async Task Insert_Async<T>(List<T> list)
         {
             if (list == null) throw new ArgumentNullException("poco");
             if (list.Count == 0) return;
@@ -521,15 +521,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 } else {
                     size = count;
                 }
-                await ExecuteInsertAsync<T>(tableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, size);
+                await ExecuteInsert_Async<T>(tableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, list, index, size);
                 index += size;
             }
         }
 
-        private async Task ExecuteInsertAsync<T>(string tableName, string primaryKeyName, bool autoIncrement, List<T> list, int index2, int size)
+        private async Task ExecuteInsert_Async<T>(string tableName, string primaryKeyName, bool autoIncrement, List<T> list, int index2, int size)
         {
             try {
-                await OpenSharedConnectionAsync().ConfigureAwait(false);
+                await OpenSharedConnection_Async().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = typeof(T);
@@ -565,45 +565,45 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         #endregion
 
-        #region UpdateAsync
-        public Task<int> UpdateAsync(object poco)
+        #region Update_Async
+        public Task<int> Update_Async(object poco)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
 
             var pd = PocoData.ForType(poco.GetType());
-            return ExecuteUpdateAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
+            return ExecuteUpdate_Async(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
-        public Task<int> UpdateAsync_Table(string table, object poco)
+        public Task<int> Update_Async_Table(string table, object poco)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
 
             var pd = PocoData.ForType(poco.GetType());
-            return ExecuteUpdateAsync(table, pd.TableInfo.PrimaryKey, poco, null);
+            return ExecuteUpdate_Async(table, pd.TableInfo.PrimaryKey, poco, null);
         }
 
-        public Task<int> UpdateAsync<T>(string sql, params object[] args)
+        public Task<int> Update_Async<T>(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql))
                 throw new ArgumentNullException("sql");
 
             var pd = PocoData.ForType(typeof(T));
-            return ExecuteAsync(string.Format("UPDATE {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
+            return Execute_Async(string.Format("UPDATE {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
         }
-        public Task<int> UpdateAsync_Table<T>(string table, string sql, params object[] args)
+        public Task<int> Update_Async_Table<T>(string table, string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql))
                 throw new ArgumentNullException("sql");
 
-            return ExecuteAsync(string.Format("UPDATE {0} {1}", _provider.GetTableName(table), sql), args);
+            return Execute_Async(string.Format("UPDATE {0} {1}", _provider.GetTableName(table), sql), args);
         }
 
 
-        private async Task<int> ExecuteUpdateAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
+        private async Task<int> ExecuteUpdate_Async(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
         {
             try {
-                await OpenSharedConnectionAsync().ConfigureAwait(false);
+                await OpenSharedConnection_Async().ConfigureAwait(false);
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = poco.GetType();
@@ -650,7 +650,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         #endregion
 
-        #region DeleteAsync
+        #region Delete_Async
         /// <summary>
         ///     Performs and SQL Delete
         /// </summary>
@@ -665,7 +665,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     value from the POCO instance)
         /// </param>
         /// <returns>The number of rows affected</returns>
-        public Task<int> DeleteAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
+        public Task<int> Delete_Async(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
         {
             // If primary key value not specified, pick it up from the object
             if (primaryKeyValue == null) {
@@ -677,26 +677,26 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             // Do it
             var sql = string.Format("DELETE FROM {0} WHERE {1}=@0", _provider.GetTableName(tableName), _provider.EscapeSqlIdentifier(primaryKeyName));
-            return ExecuteAsync(sql, new object[] { primaryKeyValue });
+            return Execute_Async(sql, new object[] { primaryKeyValue });
         }
 
-        public Task<int> DeleteAsync(object poco)
+        public Task<int> Delete_Async(object poco)
         {
             var pd = PocoData.ForType(poco.GetType());
-            return DeleteAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
+            return Delete_Async(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
 
-        public Task<int> DeleteAsync_Table(string table, object poco)
+        public Task<int> Delete_Async_Table(string table, object poco)
         {
             var pd = PocoData.ForType(poco.GetType());
-            return DeleteAsync(table, pd.TableInfo.PrimaryKey, poco, null);
+            return Delete_Async(table, pd.TableInfo.PrimaryKey, poco, null);
         }
 
 
-        public Task<int> DeleteAsync_Table<T>(string table, object pocoOrPrimaryKey)
+        public Task<int> Delete_Async_Table<T>(string table, object pocoOrPrimaryKey)
         {
             if (pocoOrPrimaryKey.GetType() == typeof(T))
-                return DeleteAsync(pocoOrPrimaryKey);
+                return Delete_Async(pocoOrPrimaryKey);
 
             var pd = PocoData.ForType(typeof(T));
 
@@ -709,12 +709,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 pocoOrPrimaryKey = pi.GetValue(pocoOrPrimaryKey, new object[0]);
             }
 
-            return DeleteAsync(table, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
+            return Delete_Async(table, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
         }
-        public Task<int> DeleteAsync<T>(object pocoOrPrimaryKey)
+        public Task<int> Delete_Async<T>(object pocoOrPrimaryKey)
         {
             if (pocoOrPrimaryKey.GetType() == typeof(T))
-                return DeleteAsync(pocoOrPrimaryKey);
+                return Delete_Async(pocoOrPrimaryKey);
 
             var pd = PocoData.ForType(typeof(T));
 
@@ -727,24 +727,24 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 pocoOrPrimaryKey = pi.GetValue(pocoOrPrimaryKey, new object[0]);
             }
 
-            return DeleteAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
+            return Delete_Async(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
         }
 
-        public Task<int> DeleteAsync<T>(string sql, params object[] args)
+        public Task<int> Delete_Async<T>(string sql, params object[] args)
         {
 
             var pd = PocoData.ForType(typeof(T));
-            return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
+            return Execute_Async(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
         }
-        public Task<int> DeleteAsync_Table(string table, string sql, params object[] args)
+        public Task<int> Delete_Async_Table(string table, string sql, params object[] args)
         {
-            return ExecuteAsync(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(table), sql), args);
+            return Execute_Async(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(table), sql), args);
         }
  
         #endregion
 
-        #region SaveAsync
-        public Task SaveAsync(object poco)
+        #region Save_Async
+        public Task Save_Async(object poco)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
@@ -757,12 +757,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 throw new ArgumentException("primaryKeyName");
 
             if (IsNew(primaryKeyName, pd, poco)) {
-                return ExecuteInsertAsync(tableName, primaryKeyName, true, poco);
+                return ExecuteInsert_Async(tableName, primaryKeyName, true, poco);
             } else {
-                return ExecuteUpdateAsync(tableName, primaryKeyName, poco, null);
+                return ExecuteUpdate_Async(tableName, primaryKeyName, poco, null);
             }
         }
-        public Task SaveAsync_Table(string table, object poco)
+        public Task Save_Async_Table(string table, object poco)
         {
             if (poco == null)
                 throw new ArgumentNullException("poco");
@@ -774,9 +774,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 throw new ArgumentException("primaryKeyName");
 
             if (IsNew(primaryKeyName, pd, poco)) {
-                return ExecuteInsertAsync(table, primaryKeyName, true, poco);
+                return ExecuteInsert_Async(table, primaryKeyName, true, poco);
             } else {
-                return ExecuteUpdateAsync(table, primaryKeyName, poco, null);
+                return ExecuteUpdate_Async(table, primaryKeyName, poco, null);
             }
         }
 

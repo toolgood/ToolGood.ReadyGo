@@ -437,15 +437,15 @@ namespace ToolGood.ReadyGo3
 
 #if !NET40
 
-        #region FirstAsync PK
+        #region First_Async PK
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> FirstAsync<T>(int condition) where T : class
+        public Task<T> First_Async<T>(int condition) where T : class
         {
-            return SingleByIdAsync<T>(condition);
+            return SingleById_Async<T>(condition);
         }
 
 
@@ -454,9 +454,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> FirstAsync<T>(uint condition) where T : class
+        public Task<T> First_Async<T>(uint condition) where T : class
         {
-            return SingleByIdAsync<T>(condition);
+            return SingleById_Async<T>(condition);
         }
 
 
@@ -465,9 +465,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> FirstAsync<T>(long condition) where T : class
+        public Task<T> First_Async<T>(long condition) where T : class
         {
-            return SingleByIdAsync<T>(condition);
+            return SingleById_Async<T>(condition);
         }
 
 
@@ -476,9 +476,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> FirstAsync<T>(ulong condition) where T : class
+        public Task<T> First_Async<T>(ulong condition) where T : class
         {
-            return SingleByIdAsync<T>(condition);
+            return SingleById_Async<T>(condition);
         }
 
 
@@ -489,30 +489,20 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> FirstAsync<T>(object condition) where T : class
+        public Task<T> First_Async<T>(object condition) where T : class
         {
-            return FirstAsync<T>(ConditionObjectToWhere(condition));
+            return First_Async<T>(ConditionObjectToWhere(condition));
         }
 
-        #region FirstOrDefaultAsync PK
+        #region FirstOrDefault_Async PK
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> FirstOrDefaultAsync<T>(int condition) where T : class
+        public Task<T> FirstOrDefault_Async<T>(int condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T>(condition);
-        }
-
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        public Task<T> FirstOrDefaultAsync<T>(uint condition) where T : class
-        {
-            return SingleOrDefaultByIdAsync<T>(condition);
+            return SingleOrDefaultById_Async<T>(condition);
         }
 
         /// <summary>
@@ -520,9 +510,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> FirstOrDefaultAsync<T>(long condition) where T : class
+        public Task<T> FirstOrDefault_Async<T>(uint condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T>(condition);
+            return SingleOrDefaultById_Async<T>(condition);
         }
 
         /// <summary>
@@ -530,9 +520,19 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> FirstOrDefaultAsync<T>(ulong condition) where T : class
+        public Task<T> FirstOrDefault_Async<T>(long condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T>(condition);
+            return SingleOrDefaultById_Async<T>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstOrDefault_Async<T>(ulong condition) where T : class
+        {
+            return SingleOrDefaultById_Async<T>(condition);
         }
 
         #endregion
@@ -542,30 +542,20 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> FirstOrDefaultAsync<T>(object condition) where T : class
+        public Task<T> FirstOrDefault_Async<T>(object condition) where T : class
         {
-            return FirstOrDefaultAsync<T>(ConditionObjectToWhere(condition));
+            return FirstOrDefault_Async<T>(ConditionObjectToWhere(condition));
         }
 
-        #region SingleAsync PK
+        #region Single_Async PK
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> SingleAsync<T>(int condition) where T : class
+        public Task<T> Single_Async<T>(int condition) where T : class
         {
-            return SingleByIdAsync<T>(condition);
-        }
-
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        public Task<T> SingleAsync<T>(uint condition) where T : class
-        {
-            return SingleByIdAsync<T>(condition);
+            return SingleById_Async<T>(condition);
         }
 
         /// <summary>
@@ -573,9 +563,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> SingleAsync<T>(long condition) where T : class
+        public Task<T> Single_Async<T>(uint condition) where T : class
         {
-            return SingleByIdAsync<T>(condition);
+            return SingleById_Async<T>(condition);
         }
 
         /// <summary>
@@ -583,32 +573,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> SingleAsync<T>(ulong condition) where T : class
+        public Task<T> Single_Async<T>(long condition) where T : class
         {
-            return SingleByIdAsync<T>(condition);
-        }
-
-        #endregion
-
-        /// <summary>
-        /// 根据条件查询唯一项，异步操作
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        public Task<T> SingleAsync<T>(object condition) where T : class
-        {
-            return SingleAsync<T>(ConditionObjectToWhere(condition));
-        }
-
-        #region SingleOrDefaultAsync PK
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        public Task<T> SingleOrDefaultAsync<T>(int condition) where T : class
-        {
-            return SingleOrDefaultByIdAsync<T>(condition);
+            return SingleById_Async<T>(condition);
         }
 
         /// <summary>
@@ -616,29 +583,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> SingleOrDefaultAsync<T>(uint condition) where T : class
+        public Task<T> Single_Async<T>(ulong condition) where T : class
         {
-            return SingleOrDefaultByIdAsync<T>(condition);
-        }
-
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        public Task<T> SingleOrDefaultAsync<T>(long condition) where T : class
-        {
-            return SingleOrDefaultByIdAsync<T>(condition);
-        }
-
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        public Task<T> SingleOrDefaultAsync<T>(ulong condition) where T : class
-        {
-            return SingleOrDefaultByIdAsync<T>(condition);
+            return SingleById_Async<T>(condition);
         }
 
         #endregion
@@ -648,9 +595,62 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<T> SingleOrDefaultAsync<T>(object condition) where T : class
+        public Task<T> Single_Async<T>(object condition) where T : class
         {
-            return SingleOrDefaultAsync<T>(ConditionObjectToWhere(condition));
+            return Single_Async<T>(ConditionObjectToWhere(condition));
+        }
+
+        #region SingleOrDefault_Async PK
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleOrDefault_Async<T>(int condition) where T : class
+        {
+            return SingleOrDefaultById_Async<T>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleOrDefault_Async<T>(uint condition) where T : class
+        {
+            return SingleOrDefaultById_Async<T>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleOrDefault_Async<T>(long condition) where T : class
+        {
+            return SingleOrDefaultById_Async<T>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleOrDefault_Async<T>(ulong condition) where T : class
+        {
+            return SingleOrDefaultById_Async<T>(condition);
+        }
+
+        #endregion
+
+        /// <summary>
+        /// 根据条件查询唯一项，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> SingleOrDefault_Async<T>(object condition) where T : class
+        {
+            return SingleOrDefault_Async<T>(ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -660,9 +660,9 @@ namespace ToolGood.ReadyGo3
         /// <param name="offset">位移</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(int limit, int offset, object condition) where T : class
+        public Task<List<T>> Select_Async<T>(int limit, int offset, object condition) where T : class
         {
-            return SelectAsync<T>(limit, offset, ConditionObjectToWhere(condition));
+            return Select_Async<T>(limit, offset, ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -671,9 +671,9 @@ namespace ToolGood.ReadyGo3
         /// <param name="limit">个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(int limit, object condition) where T : class
+        public Task<List<T>> Select_Async<T>(int limit, object condition) where T : class
         {
-            return SelectAsync<T>(limit, ConditionObjectToWhere(condition));
+            return Select_Async<T>(limit, ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -681,9 +681,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync<T>(object condition) where T : class
+        public Task<List<T>> Select_Async<T>(object condition) where T : class
         {
-            return SelectAsync<T>(ConditionObjectToWhere(condition));
+            return Select_Async<T>(ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -695,9 +695,9 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync_OrderBy<T>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> Select_Async_OrderBy<T>(int limit, int offset, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
-            return SelectAsync<T>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+            return Select_Async<T>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
 
         /// <summary>
@@ -708,9 +708,9 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync_OrderBy<T>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> Select_Async_OrderBy<T>(int limit, object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
-            return SelectAsync<T>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+            return Select_Async<T>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
 
         /// <summary>
@@ -720,9 +720,9 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectAsync_OrderBy<T>(object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
+        public Task<List<T>> Select_Async_OrderBy<T>(object condition, string orderField = null, string ascOrDesc = "ASC") where T : class
         {
-            return SelectAsync<T>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
+            return Select_Async<T>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
         }
 
         /// <summary>
@@ -732,10 +732,10 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<List<T>> SelectPageAsync<T>(int page, int itemsPerPage, object condition)
+        public Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
-            return SelectPageAsync<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
+            return SelectPage_Async<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -747,12 +747,12 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<List<T>> SelectPageAsync_OrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public Task<List<T>> SelectPage_Async_OrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
             where T : class
         {
             return this.Where<T>().Where(ConditionObjectToWhere(condition))
                    .IfSet(orderField).OrderBy(BuildOrderBy(orderField, ascOrDesc))
-                   .SelectPageAsync(page, itemsPerPage);
+                   .SelectPage_Async(page, itemsPerPage);
         }
 
 
@@ -763,10 +763,10 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<Page<T>> PageAsync<T>(int page, int itemsPerPage, object condition)
+        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
-            return PageAsync<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
+            return Page_Async<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
 
 
@@ -779,12 +779,12 @@ namespace ToolGood.ReadyGo3
         /// <param name="orderField">排序字段</param>
         /// <param name="ascOrDesc">升序或降序</param>
         /// <returns></returns>
-        public Task<Page<T>> PageAsync_OrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
+        public Task<Page<T>> Page_Async_OrderBy<T>(int page, int itemsPerPage, object condition, string orderField = null, string ascOrDesc = "ASC")
              where T : class
         {
             return this.Where<T>().Where(ConditionObjectToWhere(condition))
                        .IfSet(orderField).OrderBy(BuildOrderBy(orderField, ascOrDesc))
-                       .PageAsync(page, itemsPerPage);
+                       .Page_Async(page, itemsPerPage);
         }
 
 
@@ -796,9 +796,9 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition">条件</param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        public Task<int> UpdateAsync<T>(object set, object condition, IEnumerable<string> ignoreFields = null) where T : class
+        public Task<int> Update_Async<T>(object set, object condition, IEnumerable<string> ignoreFields = null) where T : class
         {
-            return UpdateAsync<T>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
+            return Update_Async<T>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
         }
 
         /// <summary>
@@ -806,9 +806,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<int> DeleteAsync<T>(object condition) where T : class
+        public Task<int> Delete_Async<T>(object condition) where T : class
         {
-            return DeleteAsync<T>(ConditionObjectToWhere(condition));
+            return Delete_Async<T>(ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -816,9 +816,9 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public Task<int> CountAsync<T>(object condition) where T : class
+        public Task<int> Count_Async<T>(object condition) where T : class
         {
-            return CountAsync<T>(ConditionObjectToWhere(condition));
+            return Count_Async<T>(ConditionObjectToWhere(condition));
         }
 
         /// <summary>
@@ -826,10 +826,10 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        public async Task<bool> ExistsAsync<T>(object condition) where T : class
+        public async Task<bool> Exists_Async<T>(object condition) where T : class
         {
             if (condition.GetType().IsClass) {
-                return await ExistsAsync<T>(ConditionObjectToWhere(condition));
+                return await Exists_Async<T>(ConditionObjectToWhere(condition));
             } else {
                 var pd = PocoData.ForType(typeof(T));
                 var table = _provider.GetTableName(pd);
@@ -837,7 +837,7 @@ namespace ToolGood.ReadyGo3
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
                 var args = new object[] { condition };
-                return await GetDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
+                return await GetDatabase().ExecuteScalar_Async<int>(sql, args) > 0;
             }
         }
 
