@@ -796,7 +796,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<int> Delete_Async<T>(string sql, params object[] args)
+        public Task<int> Delete_Async<T>(string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = FormatSql(sql);
@@ -825,7 +825,7 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T"></typeparam>
         /// <param name="primaryKey">主键</param>
         /// <returns></returns>
-        public Task<int> DeleteById_Async<T>(object primaryKey)
+        public Task<int> DeleteById_Async<T>(object primaryKey) where T : class
         {
             return GetDatabase().Delete_Async<T>(primaryKey);
         }
@@ -837,7 +837,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="primaryKey">主键</param>
         /// <returns></returns>
-        public Task<int> DeleteById_Async_Table<T>(string table, object primaryKey)
+        public Task<int> DeleteById_Async_Table<T>(string table, object primaryKey) where T : class
         {
             return GetDatabase().Delete_Async_Table<T>(table, primaryKey);
         }
@@ -873,7 +873,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<int> Update_Async<T>(string sql, params object[] args)
+        public Task<int> Update_Async<T>(string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = FormatSql(sql);
@@ -888,7 +888,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<int> Update_Async_Table<T>(string table, string sql, params object[] args)
+        public Task<int> Update_Async_Table<T>(string table, string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             sql = FormatSql(sql);

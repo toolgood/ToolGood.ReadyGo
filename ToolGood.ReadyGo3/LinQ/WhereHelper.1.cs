@@ -886,7 +886,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <typeparam name="T"></typeparam>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public List<T> Select<T>(Expression<Func<T1, T>> columns)
+        public List<T> Select<T>(Expression<Func<T1, T>> columns) where T : class
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>(GetFullSelectSql(sql), _args.ToArray());
@@ -898,7 +898,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="limit"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public List<T> Select<T>(int limit, Expression<Func<T1, T>> columns)
+        public List<T> Select<T>(int limit, Expression<Func<T1, T>> columns) where T : class
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>(limit, GetFullSelectSql(sql), _args.ToArray());
@@ -911,7 +911,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="take"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public List<T> Select<T>(int skip, int take, Expression<Func<T1, T>> columns)
+        public List<T> Select<T>(int skip, int take, Expression<Func<T1, T>> columns) where T : class
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
@@ -925,7 +925,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public List<T> SelectPage<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns)
+        public List<T> SelectPage<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns) where T : class
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -941,7 +941,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <typeparam name="T"></typeparam>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public T Single<T>(Expression<Func<T1, T>> columns)
+        public T Single<T>(Expression<Func<T1, T>> columns) where T : class
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Single<T>(GetFullSelectSql(sql), _args.ToArray());
@@ -952,7 +952,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <typeparam name="T"></typeparam>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public T SingleOrDefault<T>(Expression<Func<T1, T>> columns)
+        public T SingleOrDefault<T>(Expression<Func<T1, T>> columns) where T : class
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.SingleOrDefault<T>(GetFullSelectSql(sql), _args.ToArray());
@@ -963,7 +963,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <typeparam name="T"></typeparam>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public T First<T>(Expression<Func<T1, T>> columns)
+        public T First<T>(Expression<Func<T1, T>> columns) where T : class
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.First<T>(GetFullSelectSql(sql), _args.ToArray());
@@ -974,7 +974,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <typeparam name="T"></typeparam>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public T FirstOrDefault<T>(Expression<Func<T1, T>> columns)
+        public T FirstOrDefault<T>(Expression<Func<T1, T>> columns) where T : class
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.FirstOrDefault<T>(GetFullSelectSql(sql), _args.ToArray());
@@ -988,7 +988,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Page<T> Page<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns)
+        public Page<T> Page<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns) where T : class
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Page<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
@@ -1033,7 +1033,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public List<T> Select<T>(string selectSql = null)
+        public List<T> Select<T>(string selectSql = null) where T : class
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Select<T>(this.GetFullSelectSql(sql), this._args.ToArray());
@@ -1044,7 +1044,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="limit"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public List<T> Select<T>(int limit, string selectSql = null)
+        public List<T> Select<T>(int limit, string selectSql = null) where T : class
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Select<T>(limit, 0, this.GetFullSelectSql(sql), this._args.ToArray());
@@ -1057,7 +1057,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="take"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public List<T> Select<T>(int skip, int take, string selectSql = null)
+        public List<T> Select<T>(int skip, int take, string selectSql = null) where T : class
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Select<T>(skip, take, this.GetFullSelectSql(sql), this._args.ToArray());
@@ -1071,7 +1071,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public List<T> SelectPage<T>(int page, int itemsPerPage, string selectSql = null)
+        public List<T> SelectPage<T>(int page, int itemsPerPage, string selectSql = null) where T : class
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -1087,7 +1087,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public T Single<T>(string selectSql = null)
+        public T Single<T>(string selectSql = null) where T : class
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Single<T>(this.GetFullSelectSql(sql), this._args.ToArray());
@@ -1097,7 +1097,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public T SingleOrDefault<T>(string selectSql = null)
+        public T SingleOrDefault<T>(string selectSql = null) where T : class
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.SingleOrDefault<T>(this.GetFullSelectSql(sql), this._args.ToArray());
@@ -1108,7 +1108,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public T First<T>(string selectSql = null)
+        public T First<T>(string selectSql = null) where T : class
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.First<T>(this.GetFullSelectSql(sql), this._args.ToArray());
@@ -1118,7 +1118,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public T FirstOrDefault<T>(string selectSql = null)
+        public T FirstOrDefault<T>(string selectSql = null) where T : class
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.FirstOrDefault<T>(this.GetFullSelectSql(sql), this._args.ToArray());
@@ -1130,7 +1130,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Page<T> Page<T>(int page, int itemsPerPage, string selectSql = null)
+        public Page<T> Page<T>(int page, int itemsPerPage, string selectSql = null) where T : class
         {
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Page<T>(page, itemsPerPage, this.GetFullSelectSql(sql), this._args.ToArray());
