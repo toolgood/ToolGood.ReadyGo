@@ -194,37 +194,37 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public async Task<DataSet> ExecuteDataSet_Async(string sql, object[] args)
-        {
-            try {
-                await OpenSharedConnection_Async().ConfigureAwait(false);
-                try {
-                    using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
-                        using (var adapter = _factory.CreateDataAdapter()) {
-                            DoPreExecute(cmd);
-                            adapter.SelectCommand = (DbCommand)cmd;
-                            DataSet ds = new DataSet();
-                            adapter.Fill(ds);
-                            OnExecutedCommand(cmd);
-                            return ds;
-                        }
-                    }
-                } finally {
-                    CloseSharedConnection();
-                    _Token = CancellationToken.None;
-                }
-            } catch (Exception x) {
-                if (OnException(x))
-                    throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-                return default;
-            }
-        }
+        ///// <summary>
+        ///// 
+        ///// </summary>
+        ///// <param name="sql"></param>
+        ///// <param name="args"></param>
+        ///// <returns></returns>
+        //public async Task<DataSet> ExecuteDataSet_Async(string sql, object[] args)
+        //{
+        //    try {
+        //        await OpenSharedConnection_Async().ConfigureAwait(false);
+        //        try {
+        //            using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
+        //                using (var adapter = _factory.CreateDataAdapter()) {
+        //                    DoPreExecute(cmd);
+        //                    adapter.SelectCommand = (DbCommand)cmd;
+        //                    DataSet ds = new DataSet();
+        //                    adapter.Fill(ds);
+        //                    OnExecutedCommand(cmd);
+        //                    return ds;
+        //                }
+        //            }
+        //        } finally {
+        //            CloseSharedConnection();
+        //            _Token = CancellationToken.None;
+        //        }
+        //    } catch (Exception x) {
+        //        if (OnException(x))
+        //            throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
+        //        return default;
+        //    }
+        //}
         #endregion
 
         #region Query_Async

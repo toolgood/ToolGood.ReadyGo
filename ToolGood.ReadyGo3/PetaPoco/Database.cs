@@ -647,26 +647,26 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         #region operation: Exists
 
-        public bool Exists_Table<T>(string table, string sqlCondition, params object[] args)
-        {
-            var poco = PocoData.ForType(typeof(T)).TableInfo;
+        //public bool Exists_Table<T>(string table, string sqlCondition, params object[] args)
+        //{
+        //    var poco = PocoData.ForType(typeof(T)).TableInfo;
 
-            if (sqlCondition.TrimStart().StartsWith("where", StringComparison.OrdinalIgnoreCase))
-                sqlCondition = sqlCondition.TrimStart().Substring(5);
+        //    if (sqlCondition.TrimStart().StartsWith("where", StringComparison.OrdinalIgnoreCase))
+        //        sqlCondition = sqlCondition.TrimStart().Substring(5);
 
-            return ExecuteScalar<int>(string.Format(_provider.GetExistsSql(), _provider.GetTableName(table), sqlCondition), args) != 0;
-        }
+        //    return ExecuteScalar<int>(string.Format(_provider.GetExistsSql(), _provider.GetTableName(table), sqlCondition), args) != 0;
+        //}
 
 
-        public bool Exists<T>(string sqlCondition, params object[] args)
-        {
-            var poco = PocoData.ForType(typeof(T)).TableInfo;
+        //public bool Exists<T>(string sqlCondition, params object[] args)
+        //{
+        //    var poco = PocoData.ForType(typeof(T)).TableInfo;
 
-            if (sqlCondition.TrimStart().StartsWith("where", StringComparison.OrdinalIgnoreCase))
-                sqlCondition = sqlCondition.TrimStart().Substring(5);
+        //    if (sqlCondition.TrimStart().StartsWith("where", StringComparison.OrdinalIgnoreCase))
+        //        sqlCondition = sqlCondition.TrimStart().Substring(5);
 
-            return ExecuteScalar<int>(string.Format(_provider.GetExistsSql(), _provider.GetTableName(poco.TableName), sqlCondition), args) != 0;
-        }
+        //    return ExecuteScalar<int>(string.Format(_provider.GetExistsSql(), _provider.GetTableName(poco.TableName), sqlCondition), args) != 0;
+        //}
 
 
         //public bool Exists_Table<T>(string table, object primaryKey)
@@ -1039,24 +1039,24 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             return Delete(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
         }
-        public int Delete_Table<T>(string table, object pocoOrPrimaryKey)
-        {
-            if (pocoOrPrimaryKey.GetType() == typeof(T))
-                return Delete(pocoOrPrimaryKey);
+        //public int Delete_Table<T>(string table, object pocoOrPrimaryKey)
+        //{
+        //    if (pocoOrPrimaryKey.GetType() == typeof(T))
+        //        return Delete(pocoOrPrimaryKey);
 
-            var pd = PocoData.ForType(typeof(T));
+        //    var pd = PocoData.ForType(typeof(T));
 
-            if (pocoOrPrimaryKey.GetType().Name.Contains("AnonymousType")) {
-                var pi = pocoOrPrimaryKey.GetType().GetProperty(pd.TableInfo.PrimaryKey);
+        //    if (pocoOrPrimaryKey.GetType().Name.Contains("AnonymousType")) {
+        //        var pi = pocoOrPrimaryKey.GetType().GetProperty(pd.TableInfo.PrimaryKey);
 
-                if (pi == null)
-                    throw new InvalidOperationException(string.Format("Anonymous type does not contain an id for PK column `{0}`.", pd.TableInfo.PrimaryKey));
+        //        if (pi == null)
+        //            throw new InvalidOperationException(string.Format("Anonymous type does not contain an id for PK column `{0}`.", pd.TableInfo.PrimaryKey));
 
-                pocoOrPrimaryKey = pi.GetValue(pocoOrPrimaryKey, new object[0]);
-            }
+        //        pocoOrPrimaryKey = pi.GetValue(pocoOrPrimaryKey, new object[0]);
+        //    }
 
-            return Delete(table, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
-        }
+        //    return Delete(table, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
+        //}
 
 
 
@@ -1164,37 +1164,37 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         #region FormatCommand
 
-        /// <summary>
-        ///     Formats the contents of a DB command for display
-        /// </summary>
-        /// <param name="cmd"></param>
-        /// <returns></returns>
-        public string FormatCommand(IDbCommand cmd)
-        {
-            return FormatCommand(cmd.CommandText, (from IDataParameter parameter in cmd.Parameters select parameter.Value).ToArray());
-        }
+        ///// <summary>
+        /////     Formats the contents of a DB command for display
+        ///// </summary>
+        ///// <param name="cmd"></param>
+        ///// <returns></returns>
+        //public string FormatCommand(IDbCommand cmd)
+        //{
+        //    return FormatCommand(cmd.CommandText, (from IDataParameter parameter in cmd.Parameters select parameter.Value).ToArray());
+        //}
 
-        /// <summary>
-        ///     Formats an SQL query and it's arguments for display
-        /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public string FormatCommand(string sql, object[] args)
-        {
-            var sb = new StringBuilder();
-            if (sql == null)
-                return "";
-            sb.Append(sql);
-            if (args != null && args.Length > 0) {
-                sb.Append("\n");
-                for (int i = 0; i < args.Length; i++) {
-                    sb.AppendFormat("\t -> {0}{1} [{2}] = \"{3}\"\n", _paramPrefix, i, args[i].GetType().Name, args[i]);
-                }
-                sb.Remove(sb.Length - 1, 1);
-            }
-            return sb.ToString();
-        }
+        ///// <summary>
+        /////     Formats an SQL query and it's arguments for display
+        ///// </summary>
+        ///// <param name="sql"></param>
+        ///// <param name="args"></param>
+        ///// <returns></returns>
+        //public string FormatCommand(string sql, object[] args)
+        //{
+        //    var sb = new StringBuilder();
+        //    if (sql == null)
+        //        return "";
+        //    sb.Append(sql);
+        //    if (args != null && args.Length > 0) {
+        //        sb.Append("\n");
+        //        for (int i = 0; i < args.Length; i++) {
+        //            sb.AppendFormat("\t -> {0}{1} [{2}] = \"{3}\"\n", _paramPrefix, i, args[i].GetType().Name, args[i]);
+        //        }
+        //        sb.Remove(sb.Length - 1, 1);
+        //    }
+        //    return sb.ToString();
+        //}
 
         #endregion
 
