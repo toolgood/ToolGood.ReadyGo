@@ -77,17 +77,17 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             return GetTableName(databaseName, schemaName, tableName);
         }
 
-        /// <summary>
-        /// 获取表名 ,不带databaseName ， schemaName
-        /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
-        public string GetMiniTableName(PocoData data)
-        {
-            var ti = data.TableInfo;
-            var tableName = ti.TableName;
-            return GetTableName(null, null, tableName);
-        }
+        ///// <summary>
+        ///// 获取表名 ,不带databaseName ， schemaName
+        ///// </summary>
+        ///// <param name="data"></param>
+        ///// <returns></returns>
+        //public string GetMiniTableName(PocoData data)
+        //{
+        //    var ti = data.TableInfo;
+        //    var tableName = ti.TableName;
+        //    return GetTableName(null, null, tableName);
+        //}
 
         /// <summary>
         /// 获取表名

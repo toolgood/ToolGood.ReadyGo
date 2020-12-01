@@ -19,7 +19,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 "System.Data.SqlClient.SqlClientFactory, System.Data"
                 );
         }
-        protected static readonly Regex SelectTopRegex = new Regex(@"^SELECT +TOP(\d+)", RegexOptions.IgnoreCase);
+        protected static readonly Regex SelectTopRegex = new Regex(@"^SELECT +TOP(\d+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
 
         public override string BuildPageQuery(int skip, int take, SQLParts parts, ref object[] args)
