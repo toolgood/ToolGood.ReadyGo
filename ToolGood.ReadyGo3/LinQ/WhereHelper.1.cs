@@ -778,10 +778,10 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #endregion WhereIn Where OrderBy Having
 
-        #region 06 查询 Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        #region 06 查询 Select Page SkipTake FirstOrDefault
 
 
-        #region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        #region Select Page SkipTake First FirstOrDefault
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -839,34 +839,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return _sqlhelper.Page<T1>(page, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
         }
-
-        /// <summary>
-        /// 返回唯一列
-        /// </summary>
-        /// <param name="selectSql"></param>
-        /// <returns></returns>
-        public T1 Single(string selectSql = null)
-        {
-            return _sqlhelper.Single<T1>(GetFullSelectSql(selectSql), _args.ToArray());
-        }
-        /// <summary>
-        /// 返回唯一列
-        /// </summary>
-        /// <param name="selectSql"></param>
-        /// <returns></returns>
-        public T1 SingleOrDefault(string selectSql = null)
-        {
-            return _sqlhelper.SingleOrDefault<T1>(GetFullSelectSql(selectSql), _args.ToArray());
-        }
-        /// <summary>
-        /// 返回第一列
-        /// </summary>
-        /// <param name="selectSql"></param>
-        /// <returns></returns>
-        public T1 First(string selectSql = null)
-        {
-            return _sqlhelper.First<T1>(GetFullSelectSql(selectSql), _args.ToArray());
-        }
+  
         /// <summary>
         /// 返回第一列
         /// </summary>
@@ -877,9 +850,9 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.FirstOrDefault<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
 
-        #endregion Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        #endregion Select Page SkipTake FirstOrDefault
 
-        #region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        #region Select Page SkipTake FirstOrDefault
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -933,41 +906,7 @@ namespace ToolGood.ReadyGo3.LinQ
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>((page - 1) * itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
-
-
-        /// <summary>
-        /// 返回唯一列
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="columns"></param>
-        /// <returns></returns>
-        public T Single<T>(Expression<Func<T1, T>> columns) where T : class
-        {
-            _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.Single<T>(GetFullSelectSql(sql), _args.ToArray());
-        }
-        /// <summary>
-        /// 返回唯一列
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="columns"></param>
-        /// <returns></returns>
-        public T SingleOrDefault<T>(Expression<Func<T1, T>> columns) where T : class
-        {
-            _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.SingleOrDefault<T>(GetFullSelectSql(sql), _args.ToArray());
-        }
-        /// <summary>
-        /// 返回第一列
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="columns"></param>
-        /// <returns></returns>
-        public T First<T>(Expression<Func<T1, T>> columns) where T : class
-        {
-            _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.First<T>(GetFullSelectSql(sql), _args.ToArray());
-        }
+         
         /// <summary>
         /// 返回第一列
         /// </summary>
@@ -997,7 +936,7 @@ namespace ToolGood.ReadyGo3.LinQ
         #endregion
         #endregion
 
-        #region 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page Single SingleOrDefault First FirstOrDefault
+        #region 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page FirstOrDefault
         /// <summary>
         /// 获取数量
         /// </summary>
@@ -1079,40 +1018,7 @@ namespace ToolGood.ReadyGo3.LinQ
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Select<T>((page - 1) * itemsPerPage, itemsPerPage, this.GetFullSelectSql(sql), this._args.ToArray());
         }
-
-
-
-        /// <summary>
-        /// 返回唯一列
-        /// </summary>
-        /// <param name="selectSql"></param>
-        /// <returns></returns>
-        public T Single<T>(string selectSql = null) where T : class
-        {
-            var sql = getSelect<T>(selectSql);
-            return this._sqlhelper.Single<T>(this.GetFullSelectSql(sql), this._args.ToArray());
-        }
-        /// <summary>
-        /// 返回唯一列
-        /// </summary>
-        /// <param name="selectSql"></param>
-        /// <returns></returns>
-        public T SingleOrDefault<T>(string selectSql = null) where T : class
-        {
-            var sql = getSelect<T>(selectSql);
-            return this._sqlhelper.SingleOrDefault<T>(this.GetFullSelectSql(sql), this._args.ToArray());
-        }
-
-        /// <summary>
-        /// 返回第一列
-        /// </summary>
-        /// <param name="selectSql"></param>
-        /// <returns></returns>
-        public T First<T>(string selectSql = null) where T : class
-        {
-            var sql = getSelect<T>(selectSql);
-            return this._sqlhelper.First<T>(this.GetFullSelectSql(sql), this._args.ToArray());
-        }
+         
         /// <summary>
         /// 返回第一列
         /// </summary>

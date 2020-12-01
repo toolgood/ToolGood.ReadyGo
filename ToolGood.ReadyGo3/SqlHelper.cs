@@ -678,38 +678,7 @@ namespace ToolGood.ReadyGo3
             }
             return GetDatabase().Query_Table<T>(table, 0, 2, sql, args).SingleOrDefault();
         }
-
-        /// <summary>
-        /// 获取第一个类型，若数量为0，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public T First<T>(string sql = "", params object[] args) where T : class
-        {
-            sql = FormatSql(sql);
-            if (_sql_firstWithLimit1 == false) {
-                return GetDatabase().Query<T>(sql, args).First();
-            }
-            return GetDatabase().Query<T>(0, 1, sql, args).First();
-        }
-        /// <summary>
-        /// 获取第一个类型，若数量为0，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public T First_Table<T>(string table, string sql = "", params object[] args) where T : class
-        {
-            sql = FormatSql(sql);
-            if (_sql_firstWithLimit1 == false) {
-                return GetDatabase().Query_Table<T>(table, sql, args).First();
-            }
-            return GetDatabase().Query_Table<T>(table, 0, 1, sql, args).First();
-        }
+         
 
         /// <summary>
         /// 获取第一个类型
