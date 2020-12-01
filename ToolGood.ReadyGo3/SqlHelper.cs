@@ -567,10 +567,10 @@ namespace ToolGood.ReadyGo3
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
 
-             if (_sql_singleWithLimit2 == false) {
-                return GetDatabase().Query<T>(sql,new object[0]).FirstOrDefault();
+            if (_sql_singleWithLimit2 == false) {
+                return GetDatabase().Query<T>(sql, new object[] { primaryKey }).FirstOrDefault();
             }
-            return GetDatabase().Query<T>(0, 2, sql, new object[0]).FirstOrDefault();
+            return GetDatabase().Query<T>(0, 2, sql, new object[] { primaryKey }).FirstOrDefault();
         }
 
         /// <summary>
@@ -585,25 +585,12 @@ namespace ToolGood.ReadyGo3
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
-            return SingleOrDefault_Table<T>(table, sql, primaryKey);
-        }
-        /// <summary>
-        /// 获取唯一一个类型，若数量大于1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        private T SingleOrDefault_Table<T>(string table, string sql = "", params object[] args) where T : class
-        {
-            sql = FormatSql(sql);
             if (_sql_singleWithLimit2 == false) {
-                return GetDatabase().Query_Table<T>(table, sql, args).SingleOrDefault();
+                return GetDatabase().Query_Table<T>(table, sql, new object[] { primaryKey }).SingleOrDefault();
             }
-            return GetDatabase().Query_Table<T>(table, 0, 2, sql, args).SingleOrDefault();
+            return GetDatabase().Query_Table<T>(table, 0, 2, sql, new object[] { primaryKey }).SingleOrDefault();
+
         }
-         
 
         /// <summary>
         /// 获取第一个类型

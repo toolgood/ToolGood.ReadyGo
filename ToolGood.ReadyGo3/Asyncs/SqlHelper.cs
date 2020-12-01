@@ -377,47 +377,20 @@ namespace ToolGood.ReadyGo3
         #region Single SingleOrDefault First FirstOrDefault
 
         /// <summary>
-        /// 获取唯一一个类型，若数量不为1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="primaryKey">主键名</param>
-        /// <returns></returns>
-        private Task<T> SingleById_Async<T>(object primaryKey)
-        {
-            var pd = PocoData.ForType(typeof(T));
-            var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
-            var sql = $"WHERE {pk}=@0";
-
-            return Single_Async<T>(sql, primaryKey);
-        }
-        /// <summary>
-        /// 获取唯一一个类型，若数量不为1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="primaryKey">主键名</param>
-        /// <returns></returns>
-        private Task<T> SingleById_Async_Table<T>(string table, object primaryKey)
-        {
-            var pd = PocoData.ForType(typeof(T));
-            var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
-            var sql = $"WHERE {pk}=@0";
-
-            return Single_Async_Table<T>(table, sql, primaryKey);
-        }
-
-        /// <summary>
         /// 获取唯一一个类型，若数量大于1，则抛出异常
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="primaryKey">主键名</param>
         /// <returns></returns>
-        private Task<T> SingleOrDefaultById_Async<T>(object primaryKey)
+        private async Task<T> SingleOrDefaultById_Async<T>(object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
-            return SingleOrDefault_Async<T>(sql, primaryKey);
+            if (_sql_singleWithLimit2 == false) {
+                return (await GetDatabase().Query_Async<T>(sql, new object[] { primaryKey })).FirstOrDefault();
+            }
+            return (await GetDatabase().Query_Async<T>(0, 2, sql, new object[] { primaryKey })).FirstOrDefault();
         }
         /// <summary>
         /// 获取唯一一个类型，若数量大于1，则抛出异常
@@ -426,113 +399,16 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="primaryKey">主键名</param>
         /// <returns></returns>
-        private Task<T> SingleOrDefaultById_Async_Table<T>(string table, object primaryKey)
+        private async Task<T> SingleOrDefaultById_Async_Table<T>(string table, object primaryKey)
         {
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
-            return SingleOrDefault_Async_Table<T>(table, sql, primaryKey);
-        }
-
-        /// <summary>
-        /// 获取唯一一个类型，若数量不为1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public async Task<T> Single_Async<T>(string sql = "", params object[] args)
-        {
-            sql = FormatSql(sql);
             if (_sql_singleWithLimit2 == false) {
-                return (await GetDatabase().Query_Async<T>(sql, args)).Single();
+                return (await GetDatabase().Query_Async<T>(table, sql, new object[] { primaryKey })).FirstOrDefault();
             }
-            return (await GetDatabase().Query_Async<T>(0, 2, sql, args)).Single();
+            return (await GetDatabase().Query_Async<T>(table, 0, 2, sql, new object[] { primaryKey })).FirstOrDefault();
         }
-        /// <summary>
-        /// 获取唯一一个类型，若数量不为1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public async Task<T> Single_Async_Table<T>(string table, string sql = "", params object[] args)
-        {
-            sql = FormatSql(sql);
-            if (_sql_singleWithLimit2 == false) {
-                return (await GetDatabase().Query_Async<T>(table, sql, args)).Single();
-            }
-            return (await GetDatabase().Query_Async<T>(table, 0, 2, sql, args)).Single();
-        }
-
-
-
-        /// <summary>
-        /// 获取唯一一个类型，若数量大于1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public async Task<T> SingleOrDefault_Async<T>(string sql = "", params object[] args)
-        {
-            sql = FormatSql(sql);
-            if (_sql_singleWithLimit2 == false) {
-                return (await GetDatabase().Query_Async<T>(sql, args)).SingleOrDefault();
-            }
-            return (await GetDatabase().Query_Async<T>(0, 2, sql, args)).SingleOrDefault();
-        }
-        /// <summary>
-        /// 获取唯一一个类型，若数量大于1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public async Task<T> SingleOrDefault_Async_Table<T>(string table, string sql = "", params object[] args)
-        {
-            sql = FormatSql(sql);
-            if (_sql_singleWithLimit2 == false) {
-                return (await GetDatabase().Query_Async<T>(table, sql, args)).SingleOrDefault();
-            }
-            return (await GetDatabase().Query_Async<T>(table, 0, 2, sql, args)).SingleOrDefault();
-        }
-
-
-        /// <summary>
-        /// 获取第一个类型，若数量为0，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public async Task<T> First_Async<T>(string sql = "", params object[] args)
-        {
-            sql = FormatSql(sql);
-            if (_sql_firstWithLimit1 == false) {
-                return (await GetDatabase().Query_Async<T>(sql, args)).First();
-            }
-            return (await GetDatabase().Query_Async<T>(0, 1, sql, args)).First();
-        }
-        /// <summary>
-        /// 获取第一个类型，若数量为0，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public async Task<T> First_Async_Table<T>(string table, string sql = "", params object[] args)
-        {
-            sql = FormatSql(sql);
-            if (_sql_firstWithLimit1 == false) {
-                return (await GetDatabase().Query_Async<T>(table, sql, args)).First();
-            }
-            return (await GetDatabase().Query_Async<T>(table, 0, 1, sql, args)).First();
-        }
-
 
         /// <summary>
         /// 获取第一个类型
