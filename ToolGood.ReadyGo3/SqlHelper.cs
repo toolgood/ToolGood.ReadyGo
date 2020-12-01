@@ -257,7 +257,6 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 执行SQL 查询,判断是否存在，返回bool类型
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
@@ -271,7 +270,6 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 执行SQL 查询,返回数量
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
@@ -880,7 +878,6 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 删除
         /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
         /// <param name="primaryKey">主键</param>
         /// <returns></returns>
