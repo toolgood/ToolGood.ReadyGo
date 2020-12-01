@@ -553,37 +553,7 @@ namespace ToolGood.ReadyGo3
 
         #endregion Select Page Select
 
-        #region Single SingleOrDefault First FirstOrDefault
-
-        /// <summary>
-        /// 获取唯一一个类型，若数量不为1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="primaryKey">主键名</param>
-        /// <returns></returns>
-        private T SingleById<T>(object primaryKey) where T : class
-        {
-            var pd = PocoData.ForType(typeof(T));
-            var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
-            var sql = $"WHERE {pk}=@0";
-
-            return Single<T>(sql, primaryKey);
-        }
-        /// <summary>
-        /// 获取唯一一个类型，若数量不为1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="primaryKey">主键名</param>
-        /// <returns></returns>
-        private T SingleById_Table<T>(string table, object primaryKey) where T : class
-        {
-            var pd = PocoData.ForType(typeof(T));
-            var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
-            var sql = $"WHERE {pk}=@0";
-
-            return Single_Table<T>(table, sql, primaryKey);
-        }
+        #region FirstOrDefault
 
         /// <summary>
         /// 获取唯一一个类型，若数量大于1，则抛出异常
@@ -596,8 +566,13 @@ namespace ToolGood.ReadyGo3
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
-            return SingleOrDefault<T>(sql, primaryKey);
+
+             if (_sql_singleWithLimit2 == false) {
+                return GetDatabase().Query<T>(sql,new object[0]).FirstOrDefault();
+            }
+            return GetDatabase().Query<T>(0, 2, sql, new object[0]).FirstOrDefault();
         }
+
         /// <summary>
         /// 获取唯一一个类型，若数量大于1，则抛出异常
         /// </summary>
@@ -612,56 +587,6 @@ namespace ToolGood.ReadyGo3
             var sql = $"WHERE {pk}=@0";
             return SingleOrDefault_Table<T>(table, sql, primaryKey);
         }
-
-
-        /// <summary>
-        ///获取唯一一个类型，若数量不为1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public T Single<T>(string sql = "", params object[] args) where T : class
-        {
-            sql = FormatSql(sql);
-            if (_sql_singleWithLimit2 == false) {
-                return GetDatabase().Query<T>(sql, args).Single();
-            }
-            return GetDatabase().Query<T>(0, 2, sql, args).Single();
-        }
-        /// <summary>
-        /// 获取唯一一个类型，若数量不为1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="table"></param>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public T Single_Table<T>(string table, string sql = "", params object[] args) where T : class
-        {
-            sql = FormatSql(sql);
-            if (_sql_singleWithLimit2 == false) {
-                return GetDatabase().Query_Table<T>(table, sql, args).Single();
-            }
-            return GetDatabase().Query_Table<T>(table, 0, 2, sql, args).Single();
-        }
-
-
-        /// <summary>
-        /// 获取唯一一个类型，若数量大于1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="sql">SQL 语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public T SingleOrDefault<T>(string sql = "", params object[] args) where T : class
-        {
-            sql = FormatSql(sql);
-            if (_sql_singleWithLimit2 == false) {
-                return GetDatabase().Query<T>(sql, args).SingleOrDefault();
-            }
-            return GetDatabase().Query<T>(0, 2, sql, args).SingleOrDefault();
-        }
         /// <summary>
         /// 获取唯一一个类型，若数量大于1，则抛出异常
         /// </summary>
@@ -670,7 +595,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public T SingleOrDefault_Table<T>(string table, string sql = "", params object[] args) where T : class
+        private T SingleOrDefault_Table<T>(string table, string sql = "", params object[] args) where T : class
         {
             sql = FormatSql(sql);
             if (_sql_singleWithLimit2 == false) {
@@ -713,7 +638,7 @@ namespace ToolGood.ReadyGo3
         }
 
 
-        #endregion Single SingleOrDefault First FirstOrDefault
+        #endregion FirstOrDefault
 
         #region Object  Insert Update Delete DeleteById Save
 
