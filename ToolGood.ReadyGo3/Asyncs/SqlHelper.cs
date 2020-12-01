@@ -105,23 +105,6 @@ namespace ToolGood.ReadyGo3
             }
             return GetDatabase().ExecuteScalar_Async<int>(sql, args);
         }
-        ///// <summary>
-        ///// 执行SQL 查询,返回数量
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="table"></param>
-        ///// <param name="sql">SQL 语句</param>
-        ///// <param name="args">SQL 参数</param>
-        ///// <returns></returns>
-        //public Task<int> Count_Table_Async(string table, string sql = "", params object[] args)
-        //{
-        //    sql = sql.Trim();
-        //    if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
-        //        sql = FormatSql(sql);
-        //        sql = $"SELECT COUNT(*) FROM {table} {sql}";
-        //    }
-        //    return GetDatabase().ExecuteScalar_Async<int>(sql, args);
-        //}
 
         /// <summary>
         /// 执行SQL 查询,返回数量
@@ -387,10 +370,7 @@ namespace ToolGood.ReadyGo3
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
-            if (_sql_singleWithLimit2 == false) {
-                return (await GetDatabase().Query_Async<T>(sql, new object[] { primaryKey })).FirstOrDefault();
-            }
-            return (await GetDatabase().Query_Async<T>(0, 2, sql, new object[] { primaryKey })).FirstOrDefault();
+            return (await GetDatabase().Query_Async<T>(sql, new object[] { primaryKey })).FirstOrDefault();
         }
         /// <summary>
         /// 获取唯一一个类型，若数量大于1，则抛出异常
@@ -404,10 +384,7 @@ namespace ToolGood.ReadyGo3
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
-            if (_sql_singleWithLimit2 == false) {
-                return (await GetDatabase().Query_Async<T>(table, sql, new object[] { primaryKey })).FirstOrDefault();
-            }
-            return (await GetDatabase().Query_Async<T>(table, 0, 2, sql, new object[] { primaryKey })).FirstOrDefault();
+            return (await GetDatabase().Query_Async<T>(table, sql, new object[] { primaryKey })).FirstOrDefault();
         }
 
         /// <summary>

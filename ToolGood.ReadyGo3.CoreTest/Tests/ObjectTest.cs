@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             var helper = Config.TempHelper;
             helper.Insert(admin);
             Assert.Greater(admin.ID, 0);
-            var ad = helper.SingleById<DbAdmin>(admin.ID);
+            var ad = helper.FirstOrDefault<DbAdmin>(admin.ID);
             Assert.IsNotNull(ad.AdminGroupName);
         }
 
@@ -35,13 +35,13 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
         {
             var helper = Config.TempHelper;
             helper.Update<DbAdmin>("set Password='123'  where TrueName=@0", "小明");
-            var admin = helper.Single<DbAdmin>("where TrueName=@0", "小明");
+            var admin = helper.FirstOrDefault<DbAdmin>("where TrueName=@0", "小明");
             Assert.AreEqual("123", admin.Password);
 
             //
             admin.TrueName = "XXX";
             helper.Update(admin);
-            var admin2 = helper.SingleOrDefault<DbAdmin>("where TrueName=@0", "小明");
+            var admin2 = helper.FirstOrDefault<DbAdmin>("where TrueName=@0", "小明");
             Assert.IsNull(admin2);
 
         }
@@ -62,7 +62,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
         public void delete()
         {
             var helper = Config.TempHelper;
-            var admin2 = helper.Single<DbAdmin>("where TrueName=@0", "XXX");
+            var admin2 = helper.FirstOrDefault<DbAdmin>("where TrueName=@0", "XXX");
 
             helper.Delete(admin2);
             helper.Delete<DbAdmin>("where id=@0", admin2.ID);

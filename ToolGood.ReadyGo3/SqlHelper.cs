@@ -21,8 +21,6 @@ namespace ToolGood.ReadyGo3
         internal bool _setStringDefaultNotNull;
         internal bool _setGuidDefaultNew;
         internal bool _sql_firstWithLimit1;
-        internal bool _sql_singleWithLimit2;
-        //internal bool _use_proxyType;
 
 
         // 读写数据库
@@ -564,11 +562,7 @@ namespace ToolGood.ReadyGo3
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
-
-            if (_sql_singleWithLimit2 == false) {
-                return GetDatabase().Query<T>(sql, new object[] { primaryKey }).FirstOrDefault();
-            }
-            return GetDatabase().Query<T>(0, 2, sql, new object[] { primaryKey }).FirstOrDefault();
+            return GetDatabase().Query<T>(sql, new object[] { primaryKey }).FirstOrDefault();
         }
 
         /// <summary>
@@ -583,10 +577,7 @@ namespace ToolGood.ReadyGo3
             var pd = PocoData.ForType(typeof(T));
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
-            if (_sql_singleWithLimit2 == false) {
-                return GetDatabase().Query_Table<T>(table, sql, new object[] { primaryKey }).SingleOrDefault();
-            }
-            return GetDatabase().Query_Table<T>(table, 0, 2, sql, new object[] { primaryKey }).SingleOrDefault();
+            return GetDatabase().Query_Table<T>(table, sql, new object[] { primaryKey }).FirstOrDefault();
 
         }
 

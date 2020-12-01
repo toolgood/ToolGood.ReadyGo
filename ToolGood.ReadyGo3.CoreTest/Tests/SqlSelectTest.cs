@@ -23,7 +23,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
 
             SqlParameterCollection parameters2 = new SqlParameterCollection();
             parameters2.Add("id", 1);
-            var t222 = helper.Single<DbArea>("where id=@id", parameters2);
+            var t222 = helper.FirstOrDefault<DbArea>("where id=@id", parameters2);
 
 
             //var ts1 = helper.SelectUnion<DbArea>("Select * from Area where id=@@", 1, 2, 3, 2);
@@ -40,11 +40,8 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
 
 
 
-            helper.Single<DbArea>("where id=@0", 1);
-            helper.SingleOrDefault<DbArea>("where id=@0", 1);
-            helper.SingleById<DbArea>(1);
-            helper.SingleOrDefaultById<DbArea>(1);
-            helper.First<DbArea>();
+            helper.FirstOrDefault<DbArea>("where id=@0", 1);
+            helper.FirstOrDefault<DbArea>(1);
             helper.FirstOrDefault<DbArea>();
 
             helper.Select<DbArea>("where Level=@0", 2);
@@ -72,25 +69,22 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             var table = "Area";
             var where = "id>120";
 
-            var tt13 = await helper.SQL_SelectAsync<DbArea>(1, 20, selectColumns, table, null, where);
-            var tt23 = await helper.SQL_SelectAsync<DbArea>(2, 20, selectColumns, table, null, where);
-            var tt33 = await helper.SQL_PageAsync<DbArea>(1, 20, selectColumns, table, null, where);
-            var tt43 = await helper.SQL_PageAsync<DbArea>(5, 20, selectColumns, table, null, where);
+            var tt13 = await helper.SQL_Select_Async<DbArea>(1, 20, selectColumns, table, null, where);
+            var tt23 = await helper.SQL_Select_Async<DbArea>(2, 20, selectColumns, table, null, where);
+            var tt33 = await helper.SQL_Page_Async<DbArea>(1, 20, selectColumns, table, null, where);
+            var tt43 = await helper.SQL_Page_Async<DbArea>(5, 20, selectColumns, table, null, where);
 
-            await helper.SingleAsync<DbArea>("where id=@0", 1);
-            await helper.SingleOrDefaultAsync<DbArea>("where id=@0", 1);
-            await helper.SingleByIdAsync<DbArea>(1);
-            await helper.SingleOrDefaultByIdAsync<DbArea>(1);
-            await helper.FirstAsync<DbArea>();
-            await helper.FirstOrDefaultAsync<DbArea>();
+            await helper.FirstOrDefault_Async<DbArea>("where id=@0", 1);
+            await helper.FirstOrDefault_Async<DbArea>(1);
+            await helper.FirstOrDefault_Async<DbArea>();
 
-            await helper.SelectAsync<DbArea>("where Level=@0", 2);
-            await helper.SelectAsync<DbArea>(10, "where Level=@0", 2);
-            await helper.SelectAsync<DbArea>(1, 10, "where Level=@0", 2);
-            await helper.PageAsync<DbArea>(1, 10, "where Level=@0", 2);
+            await helper.Select_Async<DbArea>("where Level=@0", 2);
+            await helper.Select_Async<DbArea>(10, "where Level=@0", 2);
+            await helper.Select_Async<DbArea>(1, 10, "where Level=@0", 2);
+            await helper.Page_Async<DbArea>(1, 10, "where Level=@0", 2);
 
-            await helper.ExecuteAsync("select count(*) from Area");
-            await helper.ExecuteDataTableAsync("select count(*) from Area where Level=@0", 2);
+            await helper.Execute_Async("select count(*) from Area");
+            await helper.ExecuteDataTable_Async("select count(*) from Area where Level=@0", 2);
         }
 
 

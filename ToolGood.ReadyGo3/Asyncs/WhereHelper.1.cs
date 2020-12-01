@@ -12,10 +12,10 @@ namespace ToolGood.ReadyGo3.LinQ
     partial class WhereHelper<T1>
     {
 
-        #region 06 查询 Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        #region 06 查询 Select Page FirstOrDefault
 
 
-        #region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        #region Select Page SkipTake FirstOrDefault
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -83,9 +83,9 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.FirstOrDefault_Async<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
 
-        #endregion Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        #endregion Select Page FirstOrDefault
 
-        #region Select Page SkipTake Single SingleOrDefault First FirstOrDefault
+        #region Select Page FirstOrDefault
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -169,7 +169,7 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #endregion
 
-        #region 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page Single SingleOrDefault First FirstOrDefault
+        #region 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page FirstOrDefault
         /// <summary>
         /// 获取数量
         /// </summary>
@@ -242,38 +242,6 @@ namespace ToolGood.ReadyGo3.LinQ
         }
 
 
-
-        ///// <summary>
-        ///// 返回唯一列
-        ///// </summary>
-        ///// <param name="selectSql"></param>
-        ///// <returns></returns>
-        //public Task<T> Single_Async<T>(string selectSql = null)
-        //{
-        //    var sql = getSelect<T>(selectSql);
-        //    return _sqlhelper.Single_Async<T>(GetFullSelectSql(sql), _args.ToArray());
-        //}
-        ///// <summary>
-        ///// 返回唯一列
-        ///// </summary>
-        ///// <param name="selectSql"></param>
-        ///// <returns></returns>
-        //public Task<T> SingleOrDefault_Async<T>(string selectSql = null)
-        //{
-        //    var sql = getSelect<T>(selectSql);
-        //    return _sqlhelper.SingleOrDefault_Async<T>(GetFullSelectSql(sql), _args.ToArray());
-        //}
-
-        ///// <summary>
-        ///// 返回第一列
-        ///// </summary>
-        ///// <param name="selectSql"></param>
-        ///// <returns></returns>
-        //public Task<T> First_Async<T>(string selectSql = null)
-        //{
-        //    var sql = getSelect<T>(selectSql);
-        //    return _sqlhelper.First_Async<T>(GetFullSelectSql(sql), _args.ToArray());
-        //}
         /// <summary>
         /// 返回第一列
         /// </summary>

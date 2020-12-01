@@ -14,9 +14,6 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
         public void LinQTest()
         {
             var helper = Config.DbHelper;
-            helper.Where<DbArea>(q => q.Id == 2).Single();
-            helper.Where<DbArea>(q => q.Id == 2).SingleOrDefault();
-            helper.Where<DbArea>(q => q.Level == 2).First();
             helper.Where<DbArea>(q => q.Level == 2).FirstOrDefault();
             helper.Where<DbArea>(q => q.Level == 2).Select();
             helper.Where<DbArea>(q => q.Level == 2).Select(10);
@@ -29,70 +26,70 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             var db = helper.Where<DbArea>()
                       .Where("Id=@0", 8)
                       .Where("ParentId=@0", 1)
-                      .First();
+                      .FirstOrDefault();
             #region 字符串操作
             db = helper.Where<DbArea>()
                        .Where(q => q.NamePinyin.ToLower() == "yazhou")
-                      .First();
+                      .FirstOrDefault();
             db = helper.Where<DbArea>()
                   .Where(q => q.NamePinyin.ToUpper() == "yazhou".ToUpper())
-                 .First();
+                 .FirstOrDefault();
 
             db = helper.Where<DbArea>()
                .Where(q => q.NamePinyin.Substring(1, 2) == "ya")
-              .First();
+              .FirstOrDefault();
 
             db = helper.Where<DbArea>()
                 .Where(q => q.NamePinyin.Contains("ya"))
-               .First();
+               .FirstOrDefault();
 
             db = helper.Where<DbArea>()
                    .Where(q => q.NamePinyin.StartsWith("ya"))
-                  .First();
+                  .FirstOrDefault();
             db = helper.Where<DbArea>()
                          .Where(q => q.NamePinyin.EndsWith("ou"))
-                        .First();
+                        .FirstOrDefault();
             db = helper.Where<DbArea>()
                          .Where(q => q.NamePinyin.Trim() == ("yazhou"))
-                        .First();
+                        .FirstOrDefault();
             db = helper.Where<DbArea>()
                  .Where(q => q.NamePinyin.TrimStart() == ("yazhou"))
-                .First();
+                .FirstOrDefault();
             db = helper.Where<DbArea>()
                  .Where(q => q.NamePinyin.TrimEnd() == ("yazhou"))
-                .First();
+                .FirstOrDefault();
             db = helper.Where<DbArea>()
                  .Where(q => q.NamePinyin.ToString() == ("yazhou"))
-                .First();
+                .FirstOrDefault();
             #endregion
 
             #region 日期操作
             db = helper.Where<DbArea>()
                 .Where(q => q.AddingTime.Year < 2019)
-               .First();
+               .FirstOrDefault();
             db = helper.Where<DbArea>()
                .Where(q => q.AddingTime.Year <= DateTime.Now.Year)
-              .First();
+              .FirstOrDefault();
 
             var db2 = helper.Where<DbArea2>()
                       .Where(q => q.AddingTime.Value.Year < 2019)
-                     .First();
+                     .FirstOrDefault();
             db2 = helper.Where<DbArea2>()
                    .Where(q => q.AddingTime.Value.Year <= DateTime.Now.Year)
-                  .First();
+                  .FirstOrDefault();
             db2 = helper.Where<DbArea2>()
                   .Where(q => q.AddingTime.Value < DateTime.Now)
-                 .First();
+                 .FirstOrDefault();
             db2 = helper.Where<DbArea2>()
                 .Where(q => q.AddingTime < DateTime.Now)
-               .First();
+               .FirstOrDefault();
             db2 = helper.Where<DbArea2>()
                  .Where(q => q.AddingTime == null)
                 .FirstOrDefault();
 
             db2 = helper.Where<DbArea2>()
                  .Where(q => q.AddingTime != null)
-                .First();
+                .FirstOrDefault();
             #endregion
 
         }
@@ -102,18 +99,15 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
         public void LinQAsyncTest()
         {
             var helper = Config.DbHelper;
-            helper.Where<DbArea>(q => q.Id == 2).SingleAsync();
-            helper.Where<DbArea>(q => q.Id == 2).SingleOrDefaultAsync();
-            helper.Where<DbArea>(q => q.Level == 2).FirstAsync();
-            helper.Where<DbArea>(q => q.Level == 2).FirstOrDefaultAsync();
+            helper.Where<DbArea>(q => q.Level == 2).FirstOrDefault_Async();
 
-            helper.Where<DbArea>(q => q.Level == 2).SelectAsync();
-            helper.Where<DbArea>(q => q.Level == 2).SelectAsync(10);
+            helper.Where<DbArea>(q => q.Level == 2).Select_Async();
+            helper.Where<DbArea>(q => q.Level == 2).Select_Async(10);
 
-            helper.Where<DbArea>(q => q.Level == 2).SelectAsync(2, 10);
+            helper.Where<DbArea>(q => q.Level == 2).Select_Async(2, 10);
 
-            helper.Where<DbArea>(q => q.Level == 2).PageAsync(2, 10);
-            helper.Where<DbArea>(q => q.Level == 2).ExecuteDataTableAsync();
+            helper.Where<DbArea>(q => q.Level == 2).Page_Async(2, 10);
+            helper.Where<DbArea>(q => q.Level == 2).ExecuteDataTable_Async();
 
         }
 
@@ -125,7 +119,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             var db = helper.Where<DbArea>()
                 .Where("Id=@0", 8)
                 .Where("ParentId=@0", 1)
-                .First();
+                .FirstOrDefault();
 
             var dbs = helper.Where<DbArea>()
                  .Where("ParentId=@0", 1)
@@ -151,7 +145,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
              .Where("Id=@0", 1125)//圣菲利普
              .Update("Name=@0,NameEn=@1", "测试", "123");
 
-            var db = helper.SingleById<DbArea>(1125);
+            var db = helper.FirstOrDefault<DbArea>(1125);
             Assert.AreEqual("测试", db.Name);
             Assert.AreEqual("123", db.NameEn);
 
@@ -163,7 +157,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
                  .Where("Id=@0", 1175)
                  .Update(dict);
 
-            db = helper.SingleById<DbArea>(1175);
+            db = helper.FirstOrDefault<DbArea>(1175);
             Assert.AreEqual("测试", db.Name);
             Assert.AreEqual("456", db.NameEn);
 
@@ -171,7 +165,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
                  .Where("Id=@0", 1185)
                  .Update(new { Name = "测试", NameEn = "789" });
 
-            db = helper.SingleById<DbArea>(1185);
+            db = helper.FirstOrDefault<DbArea>(1185);
             Assert.AreEqual("测试", db.Name);
             Assert.AreEqual("789", db.NameEn);
 
@@ -188,7 +182,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
                 .Where("Id=@0", 1990)
                 .Delete();
 
-            var db = helper.SingleOrDefaultById<DbArea>(1990);
+            var db = helper.FirstOrDefault<DbArea>(1990);
             Assert.AreEqual(null, db);
         }
 
@@ -198,7 +192,7 @@ namespace ToolGood.ReadyGo3.CoreTest.Tests
             var helper = Config.DbHelper;
 
             helper.Where<DbArea>(q => q.Id < 500).SelectInsert<DbArea3>("", "1 as Level");
-            await helper.Where<DbArea>(q => q.Id < 500).SelectInsertAsync<DbArea3>();
+            await helper.Where<DbArea>(q => q.Id < 500).FirstOrDefault_Async<DbArea3>();
 
         }
 

@@ -39,10 +39,10 @@ namespace ToolGood.ReadyGo3.CoreTest
             var table = "Area";
             var where = "id>120";
 
-            var tt13 = await helper.SQL_SelectAsync<DbArea>(1, 20, selectColumns, table, null, where);
-            var tt23 = await helper.SQL_SelectAsync<DbArea>(2, 20, selectColumns, table, null, where);
-            var tt33 = await helper.SQL_PageAsync<DbArea>(1, 20, selectColumns, table, null, where);
-            var tt43 = await helper.SQL_PageAsync<DbArea>(5, 20, selectColumns, table, null, where);
+            var tt13 = await helper.SQL_Select_Async<DbArea>(1, 20, selectColumns, table, null, where);
+            var tt23 = await helper.SQL_Select_Async<DbArea>(2, 20, selectColumns, table, null, where);
+            var tt33 = await helper.SQL_Page_Async<DbArea>(1, 20, selectColumns, table, null, where);
+            var tt43 = await helper.SQL_Page_Async<DbArea>(5, 20, selectColumns, table, null, where);
 
         }
     }
