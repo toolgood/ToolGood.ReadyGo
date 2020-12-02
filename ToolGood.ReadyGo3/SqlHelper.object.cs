@@ -358,17 +358,6 @@ namespace ToolGood.ReadyGo3
 #endif
 
 
-        private string BuildOrderBy(string orderField, string ascOrDesc)
-        {
-            if (orderField == null) {
-                return "";
-            }
-            if (!ascOrDesc.Equals("DESC", StringComparison.OrdinalIgnoreCase)) {
-                ascOrDesc = "ASC";
-            }
-            return " ORDER BY " + orderField + " " + ascOrDesc;
-        }
-
         private string ConditionObjectToWhere(object condition)
         {
             if (condition == null) { return ""; }
