@@ -857,7 +857,7 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
-        /// 删除
+        /// 根据ID 删除表数据, 注： 单独从delete方法，防止出错
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="primaryKey">主键</param>
@@ -867,7 +867,7 @@ namespace ToolGood.ReadyGo3
             return GetDatabase().Delete<T>(primaryKey);
         }
         /// <summary>
-        /// 删除
+        /// 根据ID 删除表数据, 注： 单独从delete方法，防止出错
         /// </summary>
         /// <param name="table"></param>
         /// <param name="primaryKey">主键</param>

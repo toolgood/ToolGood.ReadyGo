@@ -215,7 +215,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> Select_Async<T>(string table, int limit, int offset, string sql = "", params object[] args)
+        public async Task<List<T>> Select_Table_Async<T>(string table, int limit, int offset, string sql = "", params object[] args)
         {
             sql = FormatSql(sql);
             return (await GetDatabase().Query_Async<T>(table, offset, limit, sql, args)).ToList();
@@ -672,7 +672,7 @@ namespace ToolGood.ReadyGo3
 
 
         /// <summary>
-        /// 删除
+        /// 根据ID 删除表数据, 注： 单独从delete方法，防止出错
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="primaryKey">主键</param>
@@ -683,7 +683,7 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
-        /// 删除
+        /// 根据ID 删除表数据, 注： 单独从delete方法，防止出错
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
