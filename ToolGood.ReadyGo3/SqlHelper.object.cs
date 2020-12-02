@@ -102,52 +102,7 @@ namespace ToolGood.ReadyGo3
         {
             return Select<T>(ConditionObjectToWhere(condition));
         }
-
-
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
-        /// <param name="limit">个数</param>
-        /// <param name="offset">位移</param>
-        /// <param name="condition">条件</param>
-        /// <param name="orderField">排序字段</param>
-        /// <param name="ascOrDesc">升序或降序</param>
-        /// <returns></returns>
-        public List<T> Select<T>(int limit, int offset, object condition, string orderField, string ascOrDesc = "ASC")
-             where T : class
-        {
-            return Select<T>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
-        }
-
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
-        /// <param name="limit">个数</param>
-        /// <param name="condition">条件</param>
-        /// <param name="orderField">排序字段</param>
-        /// <param name="ascOrDesc">升序或降序</param>
-        /// <returns></returns>
-        public List<T> Select<T>(int limit, object condition, string orderField, string ascOrDesc = "ASC")
-             where T : class
-        {
-            return Select<T>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
-        }
-
-
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="condition">条件</param>
-        /// <param name="orderField">排序字段</param>
-        /// <param name="ascOrDesc">升序或降序</param>
-        /// <returns></returns>
-        public List<T> Select<T>(object condition, string orderField, string ascOrDesc = "ASC")
-             where T : class
-        {
-            return Select<T>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
-        }
-
+ 
 
         /// <summary>
         /// 根据条件查询页
@@ -168,50 +123,12 @@ namespace ToolGood.ReadyGo3
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
-        /// <param name="orderField">排序字段</param>
-        /// <param name="ascOrDesc">升序或降序</param>
-        /// <returns></returns>
-        public List<T> SelectPage<T>(int page, int itemsPerPage, object condition, string orderField, string ascOrDesc = "ASC")
-            where T : class
-        {
-            return SelectPage<T>(page, itemsPerPage, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
-        }
-
-
-        /// <summary>
-        /// 根据条件查询页
-        /// </summary>
-        /// <param name="page">页数</param>
-        /// <param name="itemsPerPage">每页个数</param>
-        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Page<T> Page<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
             return Page<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
-
-
-        /// <summary>
-        /// 根据条件查询页
-        /// </summary>
-        /// <param name="page">页数</param>
-        /// <param name="itemsPerPage">每页个数</param>
-        /// <param name="condition">条件</param>
-        /// <param name="orderField">排序字段</param>
-        /// <param name="ascOrDesc">升序或降序</param>
-        /// <returns></returns>
-        public Page<T> Page<T>(int page, int itemsPerPage, object condition, string orderField, string ascOrDesc = "ASC")
-            where T : class
-        {
-            return this.Where<T>().Where(ConditionObjectToWhere(condition))
-                   .IfSet(orderField).OrderBy(BuildOrderBy(orderField, ascOrDesc))
-                   .Page(page, itemsPerPage);
-        }
-
-
-
-
 
 
         /// <summary>
@@ -361,45 +278,6 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
-        /// 根据条件查询，异步操作
-        /// </summary>
-        /// <param name="limit">个数</param>
-        /// <param name="offset">位移</param>
-        /// <param name="condition">条件</param>
-        /// <param name="orderField">排序字段</param>
-        /// <param name="ascOrDesc">升序或降序</param>
-        /// <returns></returns>
-        public Task<List<T>> Select_Async<T>(int limit, int offset, object condition, string orderField, string ascOrDesc = "ASC") where T : class
-        {
-            return Select_Async<T>(limit, offset, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
-        }
-
-        /// <summary>
-        /// 根据条件查询
-        /// </summary>
-        /// <param name="limit">个数</param>
-        /// <param name="condition">条件</param>
-        /// <param name="orderField">排序字段</param>
-        /// <param name="ascOrDesc">升序或降序</param>
-        /// <returns></returns>
-        public Task<List<T>> Select_Async<T>(int limit, object condition, string orderField, string ascOrDesc = "ASC") where T : class
-        {
-            return Select_Async<T>(limit, ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
-        }
-
-        /// <summary>
-        /// 根据条件查询，异步操作
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <param name="orderField">排序字段</param>
-        /// <param name="ascOrDesc">升序或降序</param>
-        /// <returns></returns>
-        public Task<List<T>> Select_Async<T>(object condition, string orderField, string ascOrDesc = "ASC") where T : class
-        {
-            return Select_Async<T>(ConditionObjectToWhere(condition) + BuildOrderBy(orderField, ascOrDesc));
-        }
-
-        /// <summary>
         ///  根据条件查询页，异步操作
         /// </summary>
         /// <param name="page">页数</param>
@@ -418,50 +296,12 @@ namespace ToolGood.ReadyGo3
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
-        /// <param name="orderField">排序字段</param>
-        /// <param name="ascOrDesc">升序或降序</param>
-        /// <returns></returns>
-        public Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, object condition, string orderField, string ascOrDesc = "ASC")
-            where T : class
-        {
-            return this.Where<T>().Where(ConditionObjectToWhere(condition))
-                   .IfSet(orderField).OrderBy(BuildOrderBy(orderField, ascOrDesc))
-                   .SelectPage_Async(page, itemsPerPage);
-        }
-
-
-        /// <summary>
-        ///  根据条件查询页，异步操作
-        /// </summary>
-        /// <param name="page">页数</param>
-        /// <param name="itemsPerPage">每页个数</param>
-        /// <param name="condition">条件</param>
         /// <returns></returns>
         public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
             return Page_Async<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
-
-
-        /// <summary>
-        ///  根据条件查询页，异步操作
-        /// </summary>
-        /// <param name="page">页数</param>
-        /// <param name="itemsPerPage">每页个数</param>
-        /// <param name="condition">条件</param>
-        /// <param name="orderField">排序字段</param>
-        /// <param name="ascOrDesc">升序或降序</param>
-        /// <returns></returns>
-        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, object condition, string orderField, string ascOrDesc = "ASC")
-             where T : class
-        {
-            return this.Where<T>().Where(ConditionObjectToWhere(condition))
-                       .IfSet(orderField).OrderBy(BuildOrderBy(orderField, ascOrDesc))
-                       .Page_Async(page, itemsPerPage);
-        }
-
-
 
         /// <summary>
         /// 根据条件更新对象
