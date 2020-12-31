@@ -323,7 +323,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> Select<T>(string sql = "", params object[] args) where T : class
+        public List<T> Select<T>(string sql = "", params object[] args)
         {
             sql = FormatSql(sql);
             return GetDatabase().Query<T>(sql, args).ToList();
@@ -487,7 +487,8 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> SQL_Select<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args) where T : class
+        public List<T> SQL_Select<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args) 
+            where T : class
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
@@ -515,7 +516,8 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Page<T> SQL_Page<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args) where T : class
+        public Page<T> SQL_Page<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args) 
+            where T : class
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
@@ -588,7 +590,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public T FirstOrDefault<T>(string sql = "", params object[] args) where T : class
+        public T FirstOrDefault<T>(string sql = "", params object[] args)
         {
             sql = FormatSql(sql);
             if (_sql_firstWithLimit1 == false) {

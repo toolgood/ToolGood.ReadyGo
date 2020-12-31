@@ -157,7 +157,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> Select_Table_Async<T>(string table, string sql = "", params object[] args)
+        public async Task<List<T>> Select_Table_Async<T>(string table, string sql = "", params object[] args) where T : class
         {
             sql = FormatSql(sql);
             return (await GetDatabase().Query_Async<T>(table, sql, args)).ToList();
@@ -171,7 +171,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> Select_Async<T>(int limit, string sql = "", params object[] args)
+        public async Task<List<T>> Select_Async<T>(int limit, string sql = "", params object[] args) where T : class
         {
             sql = FormatSql(sql);
             return (await GetDatabase().Query_Async<T>(0, limit, sql, args)).ToList();
@@ -185,7 +185,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> Select_Table_Async<T>(string table, int limit, string sql = "", params object[] args)
+        public async Task<List<T>> Select_Table_Async<T>(string table, int limit, string sql = "", params object[] args) where T : class
         {
             sql = FormatSql(sql);
             return (await GetDatabase().Query_Async<T>(table, 0, limit, sql, args)).ToList();
@@ -200,7 +200,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> Select_Async<T>(int limit, int offset, string sql = "", params object[] args)
+        public async Task<List<T>> Select_Async<T>(int limit, int offset, string sql = "", params object[] args) where T : class
         {
             sql = FormatSql(sql);
             return (await GetDatabase().Query_Async<T>(offset, limit, sql, args)).ToList();
@@ -215,7 +215,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> Select_Table_Async<T>(string table, int limit, int offset, string sql = "", params object[] args)
+        public async Task<List<T>> Select_Table_Async<T>(string table, int limit, int offset, string sql = "", params object[] args) where T : class
         {
             sql = FormatSql(sql);
             return (await GetDatabase().Query_Async<T>(table, offset, limit, sql, args)).ToList();
@@ -231,6 +231,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
         public async Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, string sql = "", params object[] args)
+             where T : class
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -249,6 +250,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
         public async Task<List<T>> SelectPage_Table_Async<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args)
+             where T : class
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -267,7 +269,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, string sql = "", params object[] args)
+        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, string sql = "", params object[] args) where T : class
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -285,7 +287,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<Page<T>> Page_Table_Async<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args)
+        public Task<Page<T>> Page_Table_Async<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args) where T : class
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -307,6 +309,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
         public async Task<List<T>> SQL_Select_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+            where T : class
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
@@ -335,6 +338,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
         public Task<Page<T>> SQL_Page_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+            where T : class
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
             if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
@@ -410,7 +414,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<T> FirstOrDefault_Table_Async<T>(string table, string sql = "", params object[] args)
+        public async Task<T> FirstOrDefault_Table_Async<T>(string table, string sql = "", params object[] args) where T : class
         {
             sql = FormatSql(sql);
             if (_sql_firstWithLimit1 == false) {
