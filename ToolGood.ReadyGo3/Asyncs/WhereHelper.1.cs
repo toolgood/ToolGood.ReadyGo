@@ -104,7 +104,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="limit"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<List<T>> Select_Async<T>(int limit, Expression<Func<T1, T>> columns)
+        public Task<List<T>> Select_Async<T>(int limit, Expression<Func<T1, T>> columns) where T : class
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select_Async<T>(limit, GetFullSelectSql(sql), _args.ToArray());
@@ -117,7 +117,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="take"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<List<T>> Select_Async<T>(int skip, int take, Expression<Func<T1, T>> columns)
+        public Task<List<T>> Select_Async<T>(int skip, int take, Expression<Func<T1, T>> columns) where T : class
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select_Async<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
@@ -130,7 +130,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns)
+        public Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns) where T : class
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -159,7 +159,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="columns"></param>
         /// <returns></returns>
-        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns)
+        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, Expression<Func<T1, T>> columns) where T : class
         {
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Page_Async<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
@@ -206,7 +206,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="limit"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<List<T>> Select_Async<T>(int limit, string selectSql = null)
+        public Task<List<T>> Select_Async<T>(int limit, string selectSql = null) where T : class
         {
             var sql = getSelect<T>(selectSql);
             return _sqlhelper.Select_Async<T>(limit, 0, GetFullSelectSql(sql), _args.ToArray());
@@ -219,7 +219,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="take"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<List<T>> Select_Async<T>(int skip, int take, string selectSql = null)
+        public Task<List<T>> Select_Async<T>(int skip, int take, string selectSql = null) where T : class
         {
             var sql = getSelect<T>(selectSql);
             return _sqlhelper.Select_Async<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
@@ -232,7 +232,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, string selectSql = null)
+        public Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, string selectSql = null) where T : class
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
@@ -252,6 +252,7 @@ namespace ToolGood.ReadyGo3.LinQ
             var sql = getSelect<T>(selectSql);
             return _sqlhelper.FirstOrDefault_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
+
         /// <summary>
         /// 返回页，page类
         /// </summary>
@@ -259,7 +260,7 @@ namespace ToolGood.ReadyGo3.LinQ
         /// <param name="itemsPerPage"></param>
         /// <param name="selectSql"></param>
         /// <returns></returns>
-        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, string selectSql = null)
+        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, string selectSql = null) where T : class
         {
             var sql = getSelect<T>(selectSql);
             return _sqlhelper.Page_Async<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
