@@ -93,6 +93,32 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="columnSql"></param>
+        /// <param name="fromtable"></param>
+        /// <param name="order"></param>
+        /// <param name="where"></param>
+        /// <returns></returns>
+        public override string CreateSql(string columnSql, string fromtable, string order, string where)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT ");
+            sb.Append(columnSql);
+            sb.Append(" FROM ");
+            sb.Append(fromtable);
+            if (string.IsNullOrEmpty(where) == false) {
+                sb.Append(" WHERE ");
+                sb.Append(where);
+            }
+            if (string.IsNullOrEmpty(order) == false) {
+                sb.Append(" ORDER BY ");
+                sb.Append(order);
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
         /// <param name="function"></param>
         /// <param name="args"></param>
         /// <returns></returns>
@@ -127,7 +153,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 case SqlFunction.Upper: break;
                 //case SqlFunction.Ascii: break;
                 //case SqlFunction.Concat: break;
-                case SqlFunction.IndexOf:return CreateFunction("(POSITION({1} IN {0})-1)", args);
+                case SqlFunction.IndexOf: return CreateFunction("(POSITION({1} IN {0})-1)", args);
                 default: break;
             }
             return base.CreateFunction(function, args);

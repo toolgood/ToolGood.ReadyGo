@@ -313,7 +313,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         {
             throw new Exception("不支持！！！");
         }
-
+        public virtual string CreateSql(string columnSql, string fromtable, string order, string where)
+        {
+            throw new Exception("不支持！！！");
+        }
 
 
         /// <summary>
@@ -523,7 +526,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
             if (fieldType == typeof(TimeSpan)) return ((TimeSpan)value).Ticks.ToString(CultureInfo.InvariantCulture);
             if (fieldType == typeof(byte[])) {
-                var txt = BitConverter.ToString((byte[])value).Replace("-","");
+                var txt = BitConverter.ToString((byte[])value).Replace("-", "");
                 return "'" + txt + "'";
             }
             return "'" + value.ToString() + "'";

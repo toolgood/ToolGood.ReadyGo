@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo3.Internals;
+using ToolGood.ReadyGo3.PetaPoco;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3

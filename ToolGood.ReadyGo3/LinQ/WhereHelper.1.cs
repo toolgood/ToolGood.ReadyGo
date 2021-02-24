@@ -6,6 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using ToolGood.ReadyGo3.LinQ.Expressions;
+using ToolGood.ReadyGo3.PetaPoco;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.LinQ
@@ -1519,8 +1520,8 @@ namespace ToolGood.ReadyGo3.LinQ
                 }
             }
 
-            var pd = PetaPoco.Core.PocoData.ForType(type);
-            var pocoData = PetaPoco.Core.PocoData.ForType(typeof(T1));
+            var pd = PocoData.ForType(type);
+            var pocoData = PocoData.ForType(typeof(T1));
 
             StringBuilder sb = new StringBuilder();
             sb.Append("INSERT INTO ");

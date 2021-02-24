@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
 using ToolGood.ReadyGo3.Internals;
+using ToolGood.ReadyGo3.PetaPoco;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.Gadget.Internals

@@ -487,7 +487,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> SQL_Select<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args) 
+        public List<T> SQL_Select<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
@@ -504,6 +504,66 @@ namespace ToolGood.ReadyGo3
             sql = FormatSql(sql);
             return GetDatabase().Query<T>(sql, args).ToList();
         }
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="limit">每页数量</param>
+        /// <param name="columnSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> SQL_Select<T>(int limit, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+            where T : class
+        {
+            if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
+            if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
+            if (limit <= 0) { limit = 20; }
+
+            columnSql = RemoveStart(columnSql, "SELECT ");
+            tableSql = RemoveStart(tableSql, "FROM ");
+            orderSql = RemoveStart(orderSql, "ORDER BY ");
+            whereSql = RemoveStart(whereSql, "WHERE ");
+
+            var sql = _provider.CreateSql(limit, 0, columnSql, tableSql, orderSql, whereSql);
+            sql = FormatSql(sql);
+            return GetDatabase().Query<T>(sql, args).ToList();
+        }
+
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columnSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> SQL_Select<T>(string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+            where T : class
+        {
+            if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
+            if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
+
+            columnSql = RemoveStart(columnSql, "SELECT ");
+            tableSql = RemoveStart(tableSql, "FROM ");
+            orderSql = RemoveStart(orderSql, "ORDER BY ");
+            whereSql = RemoveStart(whereSql, "WHERE ");
+
+            var sql = _provider.CreateSql(columnSql, tableSql, orderSql, whereSql);
+            sql = FormatSql(sql);
+            return GetDatabase().Query<T>(sql, args).ToList();
+        }
+
+
+
+
+
         /// <summary>
         /// 执行SQL 查询,返回Page类型
         /// </summary>
@@ -516,7 +576,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Page<T> SQL_Page<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args) 
+        public Page<T> SQL_Page<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
@@ -957,19 +1017,7 @@ namespace ToolGood.ReadyGo3
             return new TableName<T>(typeof(T), _provider, asName);
         }
 
-        ///// <summary>
-        ///// 获取动态表名，适合绑定数据表列名
-        ///// <para>var so = helper.GetTableName(typeof(DbSaleOrder), "so");</para>
-        ///// <para>var select = $"select {so.Code} from {so} where {so.Id}='123'";</para>
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="asName"></param>
-        ///// <returns></returns>
-        //public dynamic GetTableName<T>(string asName = null) where T : class
-        //{
-        //    return GetTableName(typeof(T), asName);
-        //}
-
+ 
 
 
     }

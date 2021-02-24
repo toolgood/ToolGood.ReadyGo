@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo3.Gadget.Internals;
 using ToolGood.ReadyGo3.Internals;
+using ToolGood.ReadyGo3.PetaPoco;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 #if !NET40
@@ -325,6 +326,64 @@ namespace ToolGood.ReadyGo3
             sql = FormatSql(sql);
             return (await GetDatabase().Query_Async<T>(sql, args)).ToList();
         }
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="limit">每页数量</param>
+        /// <param name="columnSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<List<T>> SQL_Select_Async<T>(int limit, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+            where T : class
+        {
+            if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
+            if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
+            if (limit <= 0) { limit = 20; }
+
+            columnSql = RemoveStart(columnSql, "SELECT ");
+            tableSql = RemoveStart(tableSql, "FROM ");
+            orderSql = RemoveStart(orderSql, "ORDER BY ");
+            whereSql = RemoveStart(whereSql, "WHERE ");
+
+            var sql = _provider.CreateSql((int)limit, 0, columnSql, tableSql, orderSql, whereSql);
+            sql = FormatSql(sql);
+            return (await GetDatabase().Query_Async<T>(sql, args)).ToList();
+        }
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="columnSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<List<T>> SQL_Select_Async<T>(string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+            where T : class
+        {
+            if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
+            if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
+
+            columnSql = RemoveStart(columnSql, "SELECT ");
+            tableSql = RemoveStart(tableSql, "FROM ");
+            orderSql = RemoveStart(orderSql, "ORDER BY ");
+            whereSql = RemoveStart(whereSql, "WHERE ");
+
+            var sql = _provider.CreateSql(columnSql, tableSql, orderSql, whereSql);
+            sql = FormatSql(sql);
+            return (await GetDatabase().Query_Async<T>(sql, args)).ToList();
+        }
+
+
+
         /// <summary>
         /// 执行SQL 查询,返回Page类型
         /// </summary>

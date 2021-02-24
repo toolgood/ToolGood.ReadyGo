@@ -96,6 +96,24 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return sb.ToString();
         }
 
+        public override string CreateSql(string columnSql, string fromtable, string order, string where)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("SELECT ");
+            sb.Append(columnSql);
+            sb.Append(" FROM ");
+            sb.Append(fromtable);
+            if (string.IsNullOrEmpty(where) == false) {
+                sb.Append(" WHERE ");
+                sb.Append(where);
+            }
+            if (string.IsNullOrEmpty(order) == false) {
+                sb.Append(" ORDER BY ");
+                sb.Append(order);
+            }
+            return sb.ToString();
+        }
+
 
         /// <summary>
         /// 

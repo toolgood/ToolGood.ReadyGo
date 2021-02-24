@@ -7,9 +7,10 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using ToolGood.ReadyGo3.Internals;
+using ToolGood.ReadyGo3.PetaPoco.Core;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 
-namespace ToolGood.ReadyGo3.PetaPoco.Core
+namespace ToolGood.ReadyGo3.PetaPoco
 {
     /// <summary>
     /// PocoData
@@ -156,7 +157,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="countColumns"></param>
         /// <param name="reader"></param>
         /// <returns></returns>
-        public Delegate GetFactory(int firstColumn, int countColumns, IDataReader reader)
+        internal Delegate GetFactory(int firstColumn, int countColumns, IDataReader reader)
         {
             #region 创建Key
             StringBuilder sb = new StringBuilder();

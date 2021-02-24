@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using ToolGood.ReadyGo3.PetaPoco;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.Gadget.Internals
