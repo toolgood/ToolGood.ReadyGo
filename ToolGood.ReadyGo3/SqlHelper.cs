@@ -474,6 +474,30 @@ namespace ToolGood.ReadyGo3
             return GetDatabase().Page_Table<T>(table, page, itemsPerPage, sql, args);
         }
 
+        /// <summary>
+        /// 执行SQL 查询, 返回单个
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columnSql"></param>
+        /// <param name="tableSql"></param>
+        /// <param name="whereSql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public T SQL_FirstOrDefault<T>(string columnSql, string tableSql, string whereSql, params object[] args)
+            where T : class
+        {
+            if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
+            if (string.IsNullOrWhiteSpace(tableSql)) { throw new ArgumentNullException("tableSql is null."); }
+
+            columnSql = RemoveStart(columnSql, "SELECT ");
+            tableSql = RemoveStart(tableSql, "FROM ");
+            whereSql = RemoveStart(whereSql, "WHERE ");
+
+            var sql = $"SELECT {columnSql} FROM {tableSql} WHERE {whereSql}";
+            sql = FormatSql(sql);
+            return GetDatabase().Query<T>(sql, args).FirstOrDefault();
+        }
+
 
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -1017,7 +1041,7 @@ namespace ToolGood.ReadyGo3
             return new TableName<T>(typeof(T), _provider, asName);
         }
 
- 
+
 
 
     }
