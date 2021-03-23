@@ -68,7 +68,7 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public WhereHelper<T> Where_Table<T>(string table) where T : class
+        public WhereHelper<T> Table_Where<T>(string table) where T : class
         {
             var where = new WhereHelper<T>(this, table);
             return where;
@@ -82,7 +82,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="where"></param>
         /// <returns></returns>
-        public WhereHelper<T> Where_Table<T>(string table, string where) where T : class
+        public WhereHelper<T> Table_Where<T>(string table, string where) where T : class
         {
             var whereHelper = new WhereHelper<T>(this, table);
             whereHelper.Where(where);
@@ -98,7 +98,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="where"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public WhereHelper<T> Where_Table<T>(string table, string where, params object[] args) where T : class
+        public WhereHelper<T> Table_Where<T>(string table, string where, params object[] args) where T : class
         {
             var whereHelper = new WhereHelper<T>(this, table);
             if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
@@ -112,7 +112,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="where"></param>
         /// <returns></returns>
-        public WhereHelper<T> Where_Table<T>(string table, Expression<Func<T, bool>> where) where T : class
+        public WhereHelper<T> Table_Where<T>(string table, Expression<Func<T, bool>> where) where T : class
         {
             var whereHelper = new WhereHelper<T>(this, table);
             whereHelper.Where(where);

@@ -1481,97 +1481,97 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #endregion
 
-        #region 12 SelectInsert
-        /// <summary>
-        /// 查询插入
-        /// </summary>
-        /// <param name="insertTableName"></param>
-        /// <param name="replaceSelect"></param>
-        /// <param name="args"></param>
-        public void SelectInsert(string insertTableName = null, string replaceSelect = null, params object[] args)
-        {
-            var sql = CreateSelectInsertSql(typeof(T1), insertTableName, replaceSelect, args);
-            _sqlhelper.Execute(sql, _args.ToArray());
-        }
+        //#region 12 SelectInsert
+        ///// <summary>
+        ///// 查询插入
+        ///// </summary>
+        ///// <param name="insertTableName"></param>
+        ///// <param name="replaceSelect"></param>
+        ///// <param name="args"></param>
+        //public void SelectInsert(string insertTableName = null, string replaceSelect = null, params object[] args)
+        //{
+        //    var sql = CreateSelectInsertSql(typeof(T1), insertTableName, replaceSelect, args);
+        //    _sqlhelper.Execute(sql, _args.ToArray());
+        //}
 
-        /// <summary>
-        /// 查询插入
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="insertTableName"></param>
-        /// <param name="replaceSelect"></param>
-        /// <param name="args"></param>
-        public void SelectInsert<T>(string insertTableName = null, string replaceSelect = null, params object[] args)
-        {
-            var sql = CreateSelectInsertSql(typeof(T), insertTableName, replaceSelect, args);
-            _sqlhelper.Execute(sql, _args.ToArray());
-        }
+        ///// <summary>
+        ///// 查询插入
+        ///// </summary>
+        ///// <typeparam name="T"></typeparam>
+        ///// <param name="insertTableName"></param>
+        ///// <param name="replaceSelect"></param>
+        ///// <param name="args"></param>
+        //public void SelectInsert<T>(string insertTableName = null, string replaceSelect = null, params object[] args)
+        //{
+        //    var sql = CreateSelectInsertSql(typeof(T), insertTableName, replaceSelect, args);
+        //    _sqlhelper.Execute(sql, _args.ToArray());
+        //}
 
-        private string CreateSelectInsertSql(Type type, string insertTableName, string replaceColumns, object[] args)
-        {
-            Dictionary<string, string> replaceCols = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            var Provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
-            if (string.IsNullOrEmpty(replaceColumns) == false) {
-                var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var item in columnSqls) {
-                    var sp = item.Split(new char[] { '.', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                    var header = sp[sp.Length - 1].Replace("'", "").Replace("\"", "");
-                    replaceCols[header] = item;
-                }
-            }
+        //private string CreateSelectInsertSql(Type type, string insertTableName, string replaceColumns, object[] args)
+        //{
+        //    Dictionary<string, string> replaceCols = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        //    var Provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
+        //    if (string.IsNullOrEmpty(replaceColumns) == false) {
+        //        var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        //        foreach (var item in columnSqls) {
+        //            var sp = item.Split(new char[] { '.', ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        //            var header = sp[sp.Length - 1].Replace("'", "").Replace("\"", "");
+        //            replaceCols[header] = item;
+        //        }
+        //    }
 
-            var pd = PocoData.ForType(type);
-            var pocoData = PocoData.ForType(typeof(T1));
+        //    var pd = PocoData.ForType(type);
+        //    var pocoData = PocoData.ForType(typeof(T1));
 
-            StringBuilder sb = new StringBuilder();
-            sb.Append("INSERT INTO ");
-            if (string.IsNullOrEmpty(insertTableName)) {
-                sb.Append(Provider.GetTableName(pd));
-            } else {
-                sb.Append(insertTableName);
-            }
-            sb.Append("(");
-            Dictionary<string, string> selectColumns = new Dictionary<string, string>();
-            foreach (var item in pd.Columns) {
-                var colName = item.Key;
-                if (colName == pd.TableInfo.PrimaryKey) continue;
-                if (item.Value.ResultColumn) continue;
+        //    StringBuilder sb = new StringBuilder();
+        //    sb.Append("INSERT INTO ");
+        //    if (string.IsNullOrEmpty(insertTableName)) {
+        //        sb.Append(Provider.GetTableName(pd));
+        //    } else {
+        //        sb.Append(insertTableName);
+        //    }
+        //    sb.Append("(");
+        //    Dictionary<string, string> selectColumns = new Dictionary<string, string>();
+        //    foreach (var item in pd.Columns) {
+        //        var colName = item.Key;
+        //        if (colName == pd.TableInfo.PrimaryKey) continue;
+        //        if (item.Value.ResultColumn) continue;
 
-                if (replaceCols.TryGetValue(colName, out string sql)) {
-                    selectColumns[Provider.EscapeSqlIdentifier(colName)] = sql;
-                } else if (pocoData.Columns.ContainsKey(colName)) {
-                    var ci = pocoData.Columns[colName];
-                    selectColumns[Provider.EscapeSqlIdentifier(colName)] = _tableName + "." + ci.ColumnName;
-                }
-            }
-            sb.Append(string.Join(",", selectColumns.Keys));
-            sb.Append(") SELECT ");
-            if (_useDistinct) sb.Append("DISTINCT ");
-            sb.Append(string.Join(",", selectColumns.Values));
-            sb.Append(" ");
-            sb.Append(GetFromAndJoinOn());
+        //        if (replaceCols.TryGetValue(colName, out string sql)) {
+        //            selectColumns[Provider.EscapeSqlIdentifier(colName)] = sql;
+        //        } else if (pocoData.Columns.ContainsKey(colName)) {
+        //            var ci = pocoData.Columns[colName];
+        //            selectColumns[Provider.EscapeSqlIdentifier(colName)] = Table_Name + "." + ci.ColumnName;
+        //        }
+        //    }
+        //    sb.Append(string.Join(",", selectColumns.Keys));
+        //    sb.Append(") SELECT ");
+        //    if (_useDistinct) sb.Append("DISTINCT ");
+        //    sb.Append(string.Join(",", selectColumns.Values));
+        //    sb.Append(" ");
+        //    sb.Append(GetFromAndJoinOn());
 
-            if (_where.Length > 0) {
-                sb.Append(" WHERE ");
-                sb.Append(_where);
-            }
+        //    if (_where.Length > 0) {
+        //        sb.Append(" WHERE ");
+        //        sb.Append(_where);
+        //    }
 
-            if (_groupby.Length > 0) {
-                sb.Append(" GROUP BY ");
-                sb.Append(_groupby);
-                if (_having.Length > 0) {
-                    sb.Append(" HAVING ");
-                    sb.Append(_having);
-                }
-            }
-            if (_order.Length > 0) {
-                sb.Append(" ORDER BY ");
-                sb.Append(_order);
-            }
-            return sb.ToString();
-        }
+        //    if (_groupby.Length > 0) {
+        //        sb.Append(" GROUP BY ");
+        //        sb.Append(_groupby);
+        //        if (_having.Length > 0) {
+        //            sb.Append(" HAVING ");
+        //            sb.Append(_having);
+        //        }
+        //    }
+        //    if (_order.Length > 0) {
+        //        sb.Append(" ORDER BY ");
+        //        sb.Append(_order);
+        //    }
+        //    return sb.ToString();
+        //}
 
-        #endregion
+        //#endregion
 
 
         /// <summary>

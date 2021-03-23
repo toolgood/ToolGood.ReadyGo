@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
 
 namespace ToolGood.ReadyGo3
@@ -29,6 +30,55 @@ namespace ToolGood.ReadyGo3
             };
             this.Add(parameter);
         }
+
+        /// <summary>
+        /// 添加 LIKE 参数,前后加%，如： %{参数}%
+        /// </summary>
+        /// <param name="parameterName">不带前缀</param>
+        /// <param name="value">值</param>
+        public void Like(string parameterName, string value)
+        {
+            SqlParameter parameter = new SqlParameter {
+                ParameterName = parameterName,
+                Value = "%" + value + "%",
+                ParameterDirection = ParameterDirection.Input,
+            };
+            this.Add(parameter);
+        }
+
+        /// <summary>
+        /// 添加 开始日期 参数 ，格式化： yyyy-MM-dd 0:0:0
+        /// </summary>
+        /// <param name="parameterName">不带前缀</param>
+        /// <param name="value">值</param>
+        public void StartDate(string parameterName, DateTime value)
+        {
+            SqlParameter parameter = new SqlParameter {
+                ParameterName = parameterName,
+                Value = value.Date,
+                ParameterDirection = ParameterDirection.Input,
+            };
+            this.Add(parameter);
+        }
+
+        /// <summary>
+        /// 添加 结束日期 参数 ，格式化 yyyy-MM-dd 23:59:59
+        /// </summary>
+        /// <param name="parameterName">不带前缀</param>
+        /// <param name="value">值</param>
+        public void EndDate(string parameterName, DateTime value)
+        {
+            SqlParameter parameter = new SqlParameter {
+                ParameterName = parameterName,
+                Value = new DateTime(value.Year, value.Month, value.Day, 23, 59, 59),
+                ParameterDirection = ParameterDirection.Input,
+            };
+            this.Add(parameter);
+        }
+
+
+
+
     }
 
 
@@ -37,7 +87,6 @@ namespace ToolGood.ReadyGo3
     /// </summary>
     public class SqlParameter
     {
-
         /// <summary>
         /// 参数名字
         /// </summary>

@@ -17,7 +17,7 @@ namespace ToolGood.ReadyGo3
     /// <summary>
     /// 异步
     /// </summary>
-    public interface IAsyncSqlHelper
+    public interface IAsyncSqlHelper: IDisposable
     {
         Transaction UseTransaction();
 
@@ -142,7 +142,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<T> FirstOrDefault_Table_Async<T>(string table, int condition) where T : class;
+        Task<T> Table_FirstOrDefault_Async<T>(string table, int condition) where T : class;
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -150,7 +150,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<T> FirstOrDefault_Table_Async<T>(string table, uint condition) where T : class;
+        Task<T> Table_FirstOrDefault_Async<T>(string table, uint condition) where T : class;
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -158,7 +158,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<T> FirstOrDefault_Table_Async<T>(string table, long condition) where T : class;
+        Task<T> Table_FirstOrDefault_Async<T>(string table, long condition) where T : class;
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -166,7 +166,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<T> FirstOrDefault_Table_Async<T>(string table, ulong condition) where T : class;
+        Task<T> Table_FirstOrDefault_Async<T>(string table, ulong condition) where T : class;
 
         #endregion
 
@@ -176,7 +176,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<T> FirstOrDefault_Table_Async<T>(string table, object condition) where T : class;
+        Task<T> Table_FirstOrDefault_Async<T>(string table, object condition) where T : class;
 
         /// <summary>
         /// 根据条件查询，异步操作
@@ -186,7 +186,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="offset">位移</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<List<T>> Select_Table_Async<T>(string table, int limit, int offset, object condition) where T : class;
+        Task<List<T>> Table_Select_Async<T>(string table, int limit, int offset, object condition) where T : class;
 
         /// <summary>
         /// 根据条件查询
@@ -195,7 +195,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="limit">个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<List<T>> Select_Table_Async<T>(string table, int limit, object condition) where T : class;
+        Task<List<T>> Table_Select_Async<T>(string table, int limit, object condition) where T : class;
 
         /// <summary>
         /// 根据条件查询，异步操作
@@ -203,7 +203,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<List<T>> Select_Table_Async<T>(string table, object condition) where T : class;
+        Task<List<T>> Table_Select_Async<T>(string table, object condition) where T : class;
 
         /// <summary>
         ///  根据条件查询页，异步操作
@@ -213,7 +213,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<List<T>> SelectPage_Table_Async<T>(string table, int page, int itemsPerPage, object condition)
+        Task<List<T>> Table_SelectPage_Async<T>(string table, int page, int itemsPerPage, object condition)
            where T : class;
 
 
@@ -225,7 +225,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<Page<T>> Page_Table_Async<T>(string table, int page, int itemsPerPage, object condition)
+        Task<Page<T>> Table_Page_Async<T>(string table, int page, int itemsPerPage, object condition)
            where T : class;
 
         /// <summary>
@@ -236,7 +236,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition"></param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        Task<int> Update_Table_Async(string table, object set, object condition, IEnumerable<string> ignoreFields = null);
+        Task<int> Table_Update_Async(string table, object set, object condition, IEnumerable<string> ignoreFields = null);
 
         /// <summary>
         /// 删除
@@ -244,7 +244,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        Task<int> Delete_Table_Async(string table, object condition);
+        Task<int> Table_Delete_Async(string table, object condition);
 
 
         /// <summary>
@@ -253,7 +253,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<int> Count_Table_Async(string table, object condition);
+        Task<int> Table_Count_Async(string table, object condition);
 
         /// <summary>
         /// 根据条件是判断否存在，异步操作
@@ -261,7 +261,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Task<bool> Exists_Table_Async(string table, object condition);
+        Task<bool> Table_Exists_Async(string table, object condition);
 
 
 
@@ -288,7 +288,7 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns>返回 Data_Table</returns>
+        /// <returns>返回 Table_Data</returns>
         Task<DataTable> ExecuteDataTable_Async(string sql, params object[] args);
 
 
@@ -308,7 +308,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        Task<bool> Exists_Table_Async(string table, string sql, params object[] args);
+        Task<bool> Table_Exists_Async(string table, string sql, params object[] args);
         /// <summary>
         ///  执行SQL 查询,返回数量
         /// </summary>
@@ -331,7 +331,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        Task<int> Count_Table_Async(string table, string sql = "", params object[] args);
+        Task<int> Table_Count_Async(string table, string sql = "", params object[] args);
 
         #endregion Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
 
@@ -352,7 +352,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        Task<List<T>> Select_Table_Async<T>(string table, string sql = "", params object[] args) where T : class;
+        Task<List<T>> Table_Select_Async<T>(string table, string sql = "", params object[] args) where T : class;
 
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -372,7 +372,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        Task<List<T>> Select_Table_Async<T>(string table, int limit, string sql = "", params object[] args) where T : class;
+        Task<List<T>> Table_Select_Async<T>(string table, int limit, string sql = "", params object[] args) where T : class;
 
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -394,7 +394,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        Task<List<T>> Select_Table_Async<T>(string table, int limit, int offset, string sql = "", params object[] args) where T : class;
+        Task<List<T>> Table_Select_Async<T>(string table, int limit, int offset, string sql = "", params object[] args) where T : class;
 
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -417,7 +417,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        Task<List<T>> SelectPage_Table_Async<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args)
+        Task<List<T>> Table_SelectPage_Async<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args)
            where T : class;
 
 
@@ -441,7 +441,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        Task<Page<T>> Page_Table_Async<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args) where T : class;
+        Task<Page<T>> Table_Page_Async<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args) where T : class;
 
         /// <summary>
         /// 执行SQL 查询, 返回单个
@@ -535,7 +535,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        Task<T> FirstOrDefault_Table_Async<T>(string table, string sql = "", params object[] args) where T : class;
+        Task<T> Table_FirstOrDefault_Async<T>(string table, string sql = "", params object[] args) where T : class;
 
         #endregion Single SingleOrDefault First FirstOrDefault
 
@@ -554,7 +554,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="list"></param>
         /// <returns></returns>
-        Task InsertList_Table_Async<T>(string table, List<T> list) where T : class;
+        Task Table_InsertList_Async<T>(string table, List<T> list) where T : class;
 
         /// <summary>
         /// 插入，支持主键自动获取。
@@ -570,7 +570,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="poco">对象</param>
         /// <returns></returns>
-        Task<object> Insert_Table_Async<T>(string table, T poco) where T : class;
+        Task<object> Table_Insert_Async<T>(string table, T poco) where T : class;
 
 
         /// <summary>
@@ -580,7 +580,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="poco">对象</param>
         /// <param name="autoIncrement">是否自增，是，返回自增ID</param>
         /// <returns></returns>
-        Task<object> Insert_Table_Async(string table, object poco, bool autoIncrement);
+        Task<object> Table_Insert_Async(string table, object poco, bool autoIncrement);
 
         /// <summary>
         /// 插入
@@ -589,7 +589,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="poco"></param>
         /// <param name="ignoreFields">忽略字段，这里填类中的属性名</param>
         /// <returns></returns>
-        Task<object> Insert_Table_Async(string table, object poco, IEnumerable<string> ignoreFields);
+        Task<object> Table_Insert_Async(string table, object poco, IEnumerable<string> ignoreFields);
         /// <summary>
         /// 插入
         /// </summary>
@@ -598,7 +598,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="autoIncrement">是否自增，是，返回自增ID</param>
         /// <param name="ignoreFields">忽略字段，这里填类中的属性名</param>
         /// <returns></returns>
-        Task<object> Insert_Table_Async(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields);
+        Task<object> Table_Insert_Async(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields);
 
 
         /// <summary>
@@ -614,7 +614,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="poco">对象</param>
         /// <returns></returns>
-        Task<int> Update_Table_Async<T>(string table, T poco) where T : class;
+        Task<int> Table_Update_Async<T>(string table, T poco) where T : class;
         /// <summary>
         /// 删除
         /// </summary>
@@ -628,7 +628,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="poco">对象</param>
         /// <returns></returns>
-        Task<int> Delete_Table_Async<T>(string table, T poco) where T : class;
+        Task<int> Table_Delete_Async<T>(string table, T poco) where T : class;
         /// <summary>
         /// 删除
         /// </summary>
@@ -645,7 +645,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        Task<int> Delete_Table_Async(string table, string sql, params object[] args);
+        Task<int> Table_Delete_Async(string table, string sql, params object[] args);
 
 
         /// <summary>
@@ -663,7 +663,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="primaryKey">主键</param>
         /// <returns></returns>
-        Task<int> DeleteById_Table_Async<T>(string table, object primaryKey) where T : class;
+        Task<int> Table_DeleteById_Async<T>(string table, object primaryKey) where T : class;
 
 
 
@@ -679,7 +679,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="poco"></param>
         /// <returns></returns>
-        Task Save_Table_Async<T>(string table, T poco) where T : class;
+        Task Table_Save_Async<T>(string table, T poco) where T : class;
 
         /// <summary>
         /// 更新
@@ -698,7 +698,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        Task<int> Update_Table_Async<T>(string table, string sql, params object[] args) where T : class;
+        Task<int> Table_Update_Async<T>(string table, string sql, params object[] args) where T : class;
 
         #endregion Object  Insert Update Delete DeleteById Save
 

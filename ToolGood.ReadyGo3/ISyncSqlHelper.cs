@@ -14,7 +14,7 @@ namespace ToolGood.ReadyGo3
     /// <summary>
     /// 同步
     /// </summary>
-    public interface ISyncSqlHelper
+    public interface ISyncSqlHelper : IDisposable
     {
         Transaction UseTransaction();
 
@@ -151,14 +151,14 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        T FirstOrDefault_Table<T>(string table, int condition) where T : class;
+        T Table_FirstOrDefault<T>(string table, int condition) where T : class;
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        T FirstOrDefault_Table<T>(string table, uint condition) where T : class;
+        T Table_FirstOrDefault<T>(string table, uint condition) where T : class;
 
         /// <summary>
         /// 根据条件查询第一个
@@ -166,14 +166,14 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        T FirstOrDefault_Table<T>(string table, long condition) where T : class;
+        T Table_FirstOrDefault<T>(string table, long condition) where T : class;
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        T FirstOrDefault_Table<T>(string table, ulong condition) where T : class;
+        T Table_FirstOrDefault<T>(string table, ulong condition) where T : class;
 
         #endregion
 
@@ -183,7 +183,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        T FirstOrDefault_Table<T>(string table, object condition) where T : class;
+        T Table_FirstOrDefault<T>(string table, object condition) where T : class;
 
 
         /// <summary>
@@ -194,7 +194,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="offset">位移</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        List<T> Select_Table<T>(string table, int limit, int offset, object condition) where T : class;
+        List<T> Table_Select<T>(string table, int limit, int offset, object condition) where T : class;
 
         /// <summary>
         /// 根据条件查询
@@ -203,7 +203,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="limit">个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        List<T> Select_Table<T>(string table, int limit, object condition) where T : class;
+        List<T> Table_Select<T>(string table, int limit, object condition) where T : class;
 
         /// <summary>
         /// 根据条件查询
@@ -212,7 +212,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        List<T> Select_Table<T>(string table, object condition) where T : class;
+        List<T> Table_Select<T>(string table, object condition) where T : class;
 
 
 
@@ -224,7 +224,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        List<T> SelectPage_Table<T>(string table, int page, int itemsPerPage, object condition)
+        List<T> Table_SelectPage<T>(string table, int page, int itemsPerPage, object condition)
            where T : class;
 
 
@@ -236,7 +236,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        Page<T> Page_Table<T>(string table, int page, int itemsPerPage, object condition)
+        Page<T> Table_Page<T>(string table, int page, int itemsPerPage, object condition)
            where T : class;
 
 
@@ -248,7 +248,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition"></param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        int Update_Table(string table, object set, object condition, IEnumerable<string> ignoreFields = null);
+        int Table_Update(string table, object set, object condition, IEnumerable<string> ignoreFields = null);
 
         /// <summary>
         /// 删除
@@ -256,7 +256,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition"></param>
         /// <returns></returns>
-        int Delete_Table(string table, object condition);
+        int Table_Delete(string table, object condition);
 
 
         /// <summary>
@@ -265,7 +265,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        int Count_Table(string table, object condition);
+        int Table_Count(string table, object condition);
 
 
         /// <summary>
@@ -274,7 +274,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
-        bool Exists_Table(string table, object condition);
+        bool Table_Exists(string table, object condition);
 
 
         #region Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
@@ -300,7 +300,7 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns>返回 Data_Table</returns>
+        /// <returns>返回 DataTable</returns>
         DataTable ExecuteDataTable(string sql, params object[] args);
 
         /// <summary>
@@ -326,7 +326,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        bool Exists_Table(string table, string sql, params object[] args);
+        bool Table_Exists(string table, string sql, params object[] args);
 
         /// <summary>
         /// 执行SQL 查询,返回数量
@@ -335,7 +335,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        int Count_Table(string table, string sql, params object[] args);
+        int Table_Count(string table, string sql, params object[] args);
 
         /// <summary>
         ///  执行SQL 查询,返回数量
@@ -374,7 +374,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        List<T> Select_Table<T>(string table, string sql = "", params object[] args) where T : class;
+        List<T> Table_Select<T>(string table, string sql = "", params object[] args) where T : class;
 
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -394,7 +394,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        List<T> Select_Table<T>(string table, int limit, string sql = "", params object[] args) where T : class;
+        List<T> Table_Select<T>(string table, int limit, string sql = "", params object[] args) where T : class;
 
 
         /// <summary>
@@ -417,7 +417,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        List<T> Select_Table<T>(string table, int limit, int offset, string sql = "", params object[] args) where T : class;
+        List<T> Table_Select<T>(string table, int limit, int offset, string sql = "", params object[] args) where T : class;
 
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -439,7 +439,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        List<T> SelectPage_Table<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args) where T : class;
+        List<T> Table_SelectPage<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args) where T : class;
 
         /// <summary>
         /// 执行SQL 查询,返回Page类型
@@ -461,7 +461,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        Page<T> Page_Table<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args) where T : class;
+        Page<T> Table_Page<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args) where T : class;
 
         /// <summary>
         /// 执行SQL 查询, 返回单个
@@ -557,7 +557,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        T FirstOrDefault_Table<T>(string table, string sql = "", params object[] args) where T : class;
+        T Table_FirstOrDefault<T>(string table, string sql = "", params object[] args) where T : class;
 
 
         #endregion FirstOrDefault
@@ -592,7 +592,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="poco">对象</param>
         /// <returns></returns>
-        object Insert_Table<T>(string table, T poco) where T : class;
+        object Table_Insert<T>(string table, T poco) where T : class;
 
         /// <summary>
         /// 插入
@@ -601,7 +601,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="poco"></param>
         /// <param name="autoIncrement"></param>
         /// <returns></returns>
-        object Insert_Table(string table, object poco, bool autoIncrement);
+        object Table_Insert(string table, object poco, bool autoIncrement);
         /// <summary>
         /// 插入
         /// </summary>
@@ -609,7 +609,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="poco"></param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        object Insert_Table(string table, object poco, IEnumerable<string> ignoreFields);
+        object Table_Insert(string table, object poco, IEnumerable<string> ignoreFields);
         /// <summary>
         /// 插入
         /// </summary>
@@ -618,7 +618,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="autoIncrement"></param>
         /// <param name="ignoreFields"></param>
         /// <returns></returns>
-        object Insert_Table(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields);
+        object Table_Insert(string table, object poco, bool autoIncrement, IEnumerable<string> ignoreFields);
 
         /// <summary>
         /// 更新
@@ -633,7 +633,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="poco"></param>
         /// <returns></returns>
-        int Update_Table<T>(string table, T poco) where T : class;
+        int Table_Update<T>(string table, T poco) where T : class;
 
         /// <summary>
         /// 删除
@@ -648,7 +648,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="poco">对象</param>
         /// <returns></returns>
-        int Delete_Table<T>(string table, T poco) where T : class;
+        int Table_Delete<T>(string table, T poco) where T : class;
 
 
         /// <summary>
@@ -666,7 +666,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        int Delete_Table(string table, string sql, params object[] args);
+        int Table_Delete(string table, string sql, params object[] args);
 
         /// <summary>
         /// 根据ID 删除表数据, 注： 单独从delete方法，防止出错
@@ -681,7 +681,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="primaryKey">主键</param>
         /// <returns></returns>
-        int DeleteById_Table(string table, object primaryKey);
+        int Table_DeleteById(string table, object primaryKey);
 
 
         /// <summary>
@@ -695,7 +695,7 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
         /// <param name="poco"></param>
-        void Save_Table<T>(string table, T poco) where T : class;
+        void Table_Save<T>(string table, T poco) where T : class;
 
         /// <summary>
         /// 更新
@@ -712,7 +712,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        int Update_Table(string table, string sql, params object[] args);
+        int Table_Update(string table, string sql, params object[] args);
         #endregion Object  Insert Update Delete DeleteById Save
 
     }
