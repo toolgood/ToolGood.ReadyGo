@@ -22,6 +22,16 @@ namespace ToolGood.ReadyGo3
         {
             return Table_SingleOrDefaultById<T>(table, condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T Table_FirstOrDefault<T>(string table, int? condition) where T : class
+        {
+            return Table_SingleOrDefaultById<T>(table, condition ?? 0);
+        }
 
         /// <summary>
         /// 根据条件查询第一个
@@ -40,9 +50,31 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
+        public T Table_FirstOrDefault<T>(string table, uint? condition) where T : class
+        {
+            return Table_SingleOrDefaultById<T>(table, condition ?? 0);
+        }
+
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
         public T Table_FirstOrDefault<T>(string table, long condition) where T : class
         {
             return Table_SingleOrDefaultById<T>(table, condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T Table_FirstOrDefault<T>(string table, long? condition) where T : class
+        {
+            return Table_SingleOrDefaultById<T>(table, condition ?? 0);
         }
 
         /// <summary>
@@ -54,6 +86,17 @@ namespace ToolGood.ReadyGo3
         public T Table_FirstOrDefault<T>(string table, ulong condition) where T : class
         {
             return Table_SingleOrDefaultById<T>(table, condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T Table_FirstOrDefault<T>(string table, ulong? condition) where T : class
+        {
+            return Table_SingleOrDefaultById<T>(table, condition ?? 0);
         }
 
         #endregion
@@ -107,7 +150,7 @@ namespace ToolGood.ReadyGo3
             return Table_Select<T>(table, ConditionObjectToWhere(condition));
         }
 
-  
+
 
         /// <summary>
         /// 根据条件查询页
@@ -122,7 +165,7 @@ namespace ToolGood.ReadyGo3
         {
             return Table_SelectPage<T>(table, page, itemsPerPage, ConditionObjectToWhere(condition));
         }
- 
+
 
         /// <summary>
         /// 根据条件查询页
@@ -218,9 +261,32 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="condition">条件</param>
         /// <returns></returns>
+        public Task<T> Table_FirstOrDefault_Async<T>(string table, int? condition) where T : class
+        {
+            return Table_SingleOrDefaultById_Async<T>(table, condition ?? 0);
+        }
+
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
         public Task<T> Table_FirstOrDefault_Async<T>(string table, uint condition) where T : class
         {
             return Table_SingleOrDefaultById_Async<T>(table, condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> Table_FirstOrDefault_Async<T>(string table, uint? condition) where T : class
+        {
+            return Table_SingleOrDefaultById_Async<T>(table, condition ?? 0);
         }
 
         /// <summary>
@@ -233,6 +299,17 @@ namespace ToolGood.ReadyGo3
         {
             return Table_SingleOrDefaultById_Async<T>(table, condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> Table_FirstOrDefault_Async<T>(string table, long? condition) where T : class
+        {
+            return Table_SingleOrDefaultById_Async<T>(table, condition ?? 0);
+        }
+
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -243,6 +320,17 @@ namespace ToolGood.ReadyGo3
         public Task<T> Table_FirstOrDefault_Async<T>(string table, ulong condition) where T : class
         {
             return Table_SingleOrDefaultById_Async<T>(table, condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> Table_FirstOrDefault_Async<T>(string table, ulong? condition) where T : class
+        {
+            return Table_SingleOrDefaultById_Async<T>(table, condition ?? 0);
         }
 
         #endregion
@@ -308,7 +396,7 @@ namespace ToolGood.ReadyGo3
             return Table_SelectPage_Async<T>(table, page, itemsPerPage, ConditionObjectToWhere(condition));
         }
 
- 
+
         /// <summary>
         ///  根据条件查询页，异步操作
         /// </summary>

@@ -19,6 +19,10 @@ namespace ToolGood.ReadyGo3
     /// </summary>
     public interface IAsyncSqlHelper: IDisposable
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         Transaction UseTransaction();
 
         #region FirstOrDefault_Async PK
@@ -48,6 +52,107 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition">条件</param>
         /// <returns></returns>
         Task<T> FirstOrDefault_Async<T>(ulong condition) where T : class;
+        #endregion
+
+        #region FirstOrDefault_Async PK
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> FirstOrDefault_Async<T>(int? condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> FirstOrDefault_Async<T>(uint? condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> FirstOrDefault_Async<T>(long? condition) where T : class;
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> FirstOrDefault_Async<T>(ulong? condition) where T : class;
+        #endregion
+
+        #region Table_FirstOrDefault_Async PK
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> Table_FirstOrDefault_Async<T>(string table, int condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> Table_FirstOrDefault_Async<T>(string table, uint condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> Table_FirstOrDefault_Async<T>(string table, long condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> Table_FirstOrDefault_Async<T>(string table, ulong condition) where T : class;
+
+        #endregion
+
+        #region Table_FirstOrDefault_Async PK
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> Table_FirstOrDefault_Async<T>(string table, int? condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> Table_FirstOrDefault_Async<T>(string table, uint? condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> Table_FirstOrDefault_Async<T>(string table, long? condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        Task<T> Table_FirstOrDefault_Async<T>(string table, ulong? condition) where T : class;
+
         #endregion
 
         /// <summary>
@@ -134,41 +239,7 @@ namespace ToolGood.ReadyGo3
 
 
 
-        #region FirstOrDefault_Async PK
-
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        Task<T> Table_FirstOrDefault_Async<T>(string table, int condition) where T : class;
-
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        Task<T> Table_FirstOrDefault_Async<T>(string table, uint condition) where T : class;
-
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        Task<T> Table_FirstOrDefault_Async<T>(string table, long condition) where T : class;
-
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <param name="table"></param>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        Task<T> Table_FirstOrDefault_Async<T>(string table, ulong condition) where T : class;
-
-        #endregion
+        
 
         /// <summary>
         /// 根据条件查询第一个，异步操作

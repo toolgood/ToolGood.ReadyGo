@@ -31,6 +31,16 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
+        public T FirstOrDefault<T>(int? condition) where T : class
+        {
+            return SingleOrDefaultById<T>(condition ?? 0);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
         public T FirstOrDefault<T>(uint condition) where T : class
         {
             return SingleOrDefaultById<T>(condition);
@@ -42,9 +52,28 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
+        public T FirstOrDefault<T>(uint? condition) where T : class
+        {
+            return SingleOrDefaultById<T>(condition ?? 0);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
         public T FirstOrDefault<T>(long condition) where T : class
         {
             return SingleOrDefaultById<T>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T FirstOrDefault<T>(long? condition) where T : class
+        {
+            return SingleOrDefaultById<T>(condition ?? 0);
         }
 
         /// <summary>
@@ -55,6 +84,16 @@ namespace ToolGood.ReadyGo3
         public T FirstOrDefault<T>(ulong condition) where T : class
         {
             return SingleOrDefaultById<T>(condition);
+        }
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public T FirstOrDefault<T>(ulong? condition) where T : class
+        {
+            return SingleOrDefaultById<T>(condition ?? 0);
         }
 
 
@@ -103,7 +142,7 @@ namespace ToolGood.ReadyGo3
         {
             return Select<T>(ConditionObjectToWhere(condition));
         }
- 
+
 
         /// <summary>
         /// 根据条件查询页
@@ -202,6 +241,15 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultById_Async<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstOrDefault_Async<T>(int? condition) where T : class
+        {
+            return SingleOrDefaultById_Async<T>(condition ?? 0);
+        }
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -211,6 +259,15 @@ namespace ToolGood.ReadyGo3
         public Task<T> FirstOrDefault_Async<T>(uint condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition);
+        }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstOrDefault_Async<T>(uint? condition) where T : class
+        {
+            return SingleOrDefaultById_Async<T>(condition ?? 0);
         }
 
         /// <summary>
@@ -222,6 +279,15 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultById_Async<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstOrDefault_Async<T>(long? condition) where T : class
+        {
+            return SingleOrDefaultById_Async<T>(condition ?? 0);
+        }
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -232,6 +298,16 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultById_Async<T>(condition);
         }
+        /// <summary>
+        /// 根据条件查询第一个，异步操作
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        public Task<T> FirstOrDefault_Async<T>(ulong? condition) where T : class
+        {
+            return SingleOrDefaultById_Async<T>(condition ?? 0);
+        }
+
 
         #endregion
 

@@ -14,45 +14,14 @@ namespace ToolGood.ReadyGo3
     /// <summary>
     /// 同步
     /// </summary>
-    public interface ISyncSqlHelper : IDisposable
+    public partial interface ISyncSqlHelper : IDisposable
     {
         Transaction UseTransaction();
 
 
         #region Select Update
 
-        #region FirstOrDefault PK
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        T FirstOrDefault<T>(int condition) where T : class;
-
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        T FirstOrDefault<T>(uint condition) where T : class;
-
-
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        T FirstOrDefault<T>(long condition) where T : class;
-
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <param name="condition">条件</param>
-        /// <returns></returns>
-        T FirstOrDefault<T>(ulong condition) where T : class;
-
-
-        #endregion
+        
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -144,6 +113,72 @@ namespace ToolGood.ReadyGo3
         #endregion
 
         #region FirstOrDefault PK
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T FirstOrDefault<T>(int condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T FirstOrDefault<T>(uint condition) where T : class;
+
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T FirstOrDefault<T>(long condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T FirstOrDefault<T>(ulong condition) where T : class;
+
+
+        #endregion
+
+        #region FirstOrDefault PK
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T FirstOrDefault<T>(int? condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T FirstOrDefault<T>(uint? condition) where T : class;
+
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T FirstOrDefault<T>(long? condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T FirstOrDefault<T>(ulong? condition) where T : class;
+
+
+        #endregion
+
+        #region Table_FirstOrDefault PK
 
         /// <summary>
         /// 根据条件查询第一个
@@ -174,6 +209,40 @@ namespace ToolGood.ReadyGo3
         /// <param name="condition">条件</param>
         /// <returns></returns>
         T Table_FirstOrDefault<T>(string table, ulong condition) where T : class;
+
+        #endregion
+
+        #region Table_FirstOrDefault PK
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T Table_FirstOrDefault<T>(string table, int? condition) where T : class;
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T Table_FirstOrDefault<T>(string table, uint? condition) where T : class;
+
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T Table_FirstOrDefault<T>(string table, long? condition) where T : class;
+        /// <summary>
+        /// 根据条件查询第一个
+        /// </summary>
+        /// <param name="table"></param>
+        /// <param name="condition">条件</param>
+        /// <returns></returns>
+        T Table_FirstOrDefault<T>(string table, ulong? condition) where T : class;
 
         #endregion
 
@@ -714,6 +783,14 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         int Table_Update(string table, string sql, params object[] args);
         #endregion Object  Insert Update Delete DeleteById Save
+
+    }
+
+
+    public partial interface ISyncSqlHelper  
+    {
+
+
 
     }
 }
