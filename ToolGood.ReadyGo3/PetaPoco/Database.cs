@@ -54,7 +54,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             _factory = sqlHelper._factory;
             _provider = DatabaseProvider.Resolve(sqlHelper._sqlType);
             _paramPrefix = _provider.GetParameterPrefix(sqlHelper._connectionString);
-
+            _databaseName = sqlHelper._databaseName;
 
             _transactionDepth = 0;
             EnableAutoSelect = true;
@@ -85,8 +85,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 if (_sharedConnection.State == ConnectionState.Broken)
                     _sharedConnection.Close();
 
-                if (_sharedConnection.State == ConnectionState.Closed)
+                if (_sharedConnection.State == ConnectionState.Closed) {
                     _sharedConnection.Open();
+                    if (string.IsNullOrEmpty(_databaseName)==false) {
+                        _sharedConnection.ChangeDatabase(_databaseName);
+                    }
+                }
 
                 if (KeepConnectionAlive)
                     _sharedConnectionDepth++; // Make sure you call Dispose
@@ -94,8 +98,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 if (_sharedConnection.State == ConnectionState.Broken)
                     _sharedConnection.Close();
 
-                if (_sharedConnection.State == ConnectionState.Closed)
+                if (_sharedConnection.State == ConnectionState.Closed) {
                     _sharedConnection.Open();
+                    if (string.IsNullOrEmpty(_databaseName) == false) {
+                        _sharedConnection.ChangeDatabase(_databaseName);
+                    }
+                }
             }
             _sharedConnectionDepth++;
         }
@@ -1231,6 +1239,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private readonly string _paramPrefix;
         private readonly DbProviderFactory _factory;
         private bool _isDisposable;
+        private string _databaseName;
+
 
         #endregion
 

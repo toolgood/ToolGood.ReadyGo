@@ -385,7 +385,6 @@ namespace ToolGood.ReadyGo3
         /// 执行SQL 查询,返回集合
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="itemsPerPage">每页数量</param>
         /// <param name="columnSql">查询列 SQL语句</param>
         /// <param name="tableSql">TABLE SQL语句</param>
         /// <param name="orderSql">ORDER BY SQL语句</param>

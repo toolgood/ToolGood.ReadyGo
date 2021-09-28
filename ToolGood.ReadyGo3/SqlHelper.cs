@@ -1015,6 +1015,11 @@ namespace ToolGood.ReadyGo3
 
         #endregion Object  Insert Update Delete DeleteById Save
 
+        internal string _databaseName;
+        public void ChangeDatabase(string databaseName)
+        {
+            _databaseName = databaseName;
+        }
 
         /// <summary>
         /// 获取动态表名，适合绑定数据表列名
