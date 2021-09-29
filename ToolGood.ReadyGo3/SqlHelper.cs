@@ -121,56 +121,6 @@ namespace ToolGood.ReadyGo3
             return db;
         }
 
-        /// <summary>
-        /// 格式SQL语句
-        /// </summary>
-        /// <param name="sql"></param>
-        /// <returns></returns>
-        internal string FormatSql(string sql)
-        {
-            if (sql == null) { return ""; }
-            bool usedEscapeSql = false;
-            char escapeSql = '`';
-            if (_sqlType == SqlType.MySql || _sqlType == SqlType.MariaDb) {
-                usedEscapeSql = true;
-                escapeSql = '`';
-            } else if (_sqlType == SqlType.Oracle || _sqlType == SqlType.FirebirdDb || _sqlType == SqlType.PostgreSQL) {
-                usedEscapeSql = true;
-                escapeSql = '"';
-            }
-            if (usedEscapeSql == false) return sql;
-
-            StringBuilder _where = new StringBuilder();
-
-            bool isInText = false, isInTableColumn = false, jump = false;
-            var c = 'a';
-
-            for (int i = 0; i < sql.Length; i++) {
-                var t = sql[i];
-                if (jump) {
-                    jump = false;
-                } else if (isInText) {
-                    if (t == c) isInText = false;
-                    if (t == '\\') jump = true;
-                } else if (isInTableColumn) {
-                    if (t == ']') {
-                        isInTableColumn = false;
-                        _where.Append(escapeSql);
-                        continue;
-                    }
-                } else if (t == '[') {
-                    isInTableColumn = true;
-                    _where.Append(escapeSql);
-                    continue;
-                } else if ("\"'`".Contains(t)) {
-                    isInText = true;
-                    c = t;
-                }
-                _where.Append(t);
-            }
-
-            return _where.ToString();
-        }
         #endregion 私有方法
 
         #region UseTransaction 
@@ -195,7 +145,7 @@ namespace ToolGood.ReadyGo3
         public int Execute(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            sql = FormatSql(sql);
+            
             return GetDatabase().Execute(sql, args);
         }
 
@@ -209,7 +159,7 @@ namespace ToolGood.ReadyGo3
         public T ExecuteScalar<T>(string sql = "", params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            sql = FormatSql(sql);
+            
             return GetDatabase().ExecuteScalar<T>(sql, args);
         }
 
@@ -222,7 +172,7 @@ namespace ToolGood.ReadyGo3
         public DataTable ExecuteDataTable(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            sql = FormatSql(sql);
+            
             return GetDatabase().ExecuteDataTable(sql, args);
 
         }
@@ -236,7 +186,7 @@ namespace ToolGood.ReadyGo3
         public DataSet ExecuteDataSet(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            sql = FormatSql(sql);
+            
             return GetDatabase().ExecuteDataSet(sql, args);
         }
 
@@ -249,7 +199,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public bool Exists<T>(string sql, params object[] args)
         {
-            sql = FormatSql(sql);
+            
             return Count<T>(sql, args) > 0;
         }
         /// <summary>
@@ -261,7 +211,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public bool Table_Exists(string table, string sql, params object[] args)
         {
-            sql = FormatSql(sql);
+            
             return Count(table, sql, args) > 0;
         }
 
@@ -276,7 +226,7 @@ namespace ToolGood.ReadyGo3
         {
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
-                sql = FormatSql(sql);
+                
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
             return GetDatabase().ExecuteScalar<int>(sql, args);
@@ -295,7 +245,7 @@ namespace ToolGood.ReadyGo3
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 var pd = PocoData.ForType(typeof(T));
                 var table = _provider.GetTableName(pd);
-                sql = FormatSql(sql);
+                
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
             return GetDatabase().ExecuteScalar<int>(sql, args);
@@ -325,7 +275,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Select<T>(string sql = "", params object[] args)
         {
-            sql = FormatSql(sql);
+            
             return GetDatabase().Query<T>(sql, args).ToList();
         }
 
@@ -339,7 +289,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Table_Select<T>(string table, string sql = "", params object[] args) where T : class
         {
-            sql = FormatSql(sql);
+            
             return GetDatabase().Table_Query<T>(table, sql, args).ToList();
         }
 
@@ -353,7 +303,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Select<T>(int limit, string sql = "", params object[] args) where T : class
         {
-            sql = FormatSql(sql);
+            
             return GetDatabase().Query<T>(0, limit, sql, args).ToList();
         }
         /// <summary>
@@ -367,7 +317,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Table_Select<T>(string table, int limit, string sql = "", params object[] args) where T : class
         {
-            sql = FormatSql(sql);
+            
             return GetDatabase().Table_Query<T>(table, 0, limit, sql, args).ToList();
         }
 
@@ -383,7 +333,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Select<T>(int limit, int offset, string sql = "", params object[] args) where T : class
         {
-            sql = FormatSql(sql);
+            
             return GetDatabase().Query<T>(offset, limit, sql, args).ToList();
         }
         /// <summary>
@@ -398,7 +348,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Table_Select<T>(string table, int limit, int offset, string sql = "", params object[] args) where T : class
         {
-            sql = FormatSql(sql);
+            
             return GetDatabase().Table_Query<T>(table, offset, limit, sql, args).ToList();
         }
 
@@ -416,7 +366,7 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            sql = FormatSql(sql);
+            
             return GetDatabase().Query<T>((page - 1) * itemsPerPage, itemsPerPage, sql, args).ToList();
         }
         /// <summary>
@@ -434,7 +384,7 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            sql = FormatSql(sql);
+            
             return GetDatabase().Table_Query<T>(table, (page - 1) * itemsPerPage, itemsPerPage, sql, args).ToList();
         }
 
@@ -452,7 +402,7 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            sql = FormatSql(sql);
+            
             return GetDatabase().Page<T>(page, itemsPerPage, sql, args);
         }
         /// <summary>
@@ -470,7 +420,7 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            sql = FormatSql(sql);
+            
             return GetDatabase().Table_Page<T>(table, page, itemsPerPage, sql, args);
         }
 
@@ -494,7 +444,7 @@ namespace ToolGood.ReadyGo3
             whereSql = RemoveStart(whereSql, "WHERE ");
 
             var sql = $"SELECT {columnSql} FROM {tableSql} WHERE {whereSql}";
-            sql = FormatSql(sql);
+            
             return GetDatabase().Query<T>(sql, args).FirstOrDefault();
         }
 
@@ -525,7 +475,7 @@ namespace ToolGood.ReadyGo3
             whereSql = RemoveStart(whereSql, "WHERE ");
 
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
-            sql = FormatSql(sql);
+            
             return GetDatabase().Query<T>(sql, args).ToList();
         }
 
@@ -553,7 +503,7 @@ namespace ToolGood.ReadyGo3
             whereSql = RemoveStart(whereSql, "WHERE ");
 
             var sql = _provider.CreateSql(limit, 0, columnSql, tableSql, orderSql, whereSql);
-            sql = FormatSql(sql);
+            
             return GetDatabase().Query<T>(sql, args).ToList();
         }
 
@@ -580,7 +530,7 @@ namespace ToolGood.ReadyGo3
             whereSql = RemoveStart(whereSql, "WHERE ");
 
             var sql = _provider.CreateSql(columnSql, tableSql, orderSql, whereSql);
-            sql = FormatSql(sql);
+            
             return GetDatabase().Query<T>(sql, args).ToList();
         }
 
@@ -614,10 +564,9 @@ namespace ToolGood.ReadyGo3
             whereSql = RemoveStart(whereSql, "WHERE ");
 
             string countSql = string.IsNullOrEmpty(whereSql) ? $"SELECT COUNT(1) FROM {tableSql}" : $"SELECT COUNT(1) FROM {tableSql} WHERE {whereSql}";
-            countSql = FormatSql(countSql);
 
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
-            sql = FormatSql(sql);
+            
             return GetDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
         }
 
@@ -676,7 +625,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T FirstOrDefault<T>(string sql = "", params object[] args)
         {
-            sql = FormatSql(sql);
+            
             if (_sql_firstWithLimit1 == false) {
                 return GetDatabase().Query<T>(sql, args).FirstOrDefault();
             }
@@ -692,7 +641,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T Table_FirstOrDefault<T>(string table, string sql = "", params object[] args) where T : class
         {
-            sql = FormatSql(sql);
+            
             if (_sql_firstWithLimit1 == false) {
                 return GetDatabase().Table_Query<T>(table, sql, args).FirstOrDefault();
             }
@@ -925,7 +874,7 @@ namespace ToolGood.ReadyGo3
         public int Delete<T>(string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            sql = FormatSql(sql);
+            
             return GetDatabase().Delete<T>(sql, args);
         }
         /// <summary>
@@ -938,7 +887,7 @@ namespace ToolGood.ReadyGo3
         public int Table_Delete(string table, string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            sql = FormatSql(sql);
+            
             return GetDatabase().Table_Delete(table, sql, args);
         }
 
@@ -996,7 +945,7 @@ namespace ToolGood.ReadyGo3
         public int Update<T>(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            sql = FormatSql(sql);
+            
             return GetDatabase().Update<T>(sql, args);
         }
         /// <summary>
@@ -1009,7 +958,7 @@ namespace ToolGood.ReadyGo3
         public int Table_Update(string table, string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            sql = FormatSql(sql);
+            
             return GetDatabase().Table_Update(table, sql, args);
         }
 

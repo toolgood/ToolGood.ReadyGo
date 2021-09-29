@@ -405,7 +405,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public string FormatSql(string sql, object[] args)
+        public virtual string FormatSql(string sql, object[] args)
         {
             if (args == null || args.Length == 0) {
                 return sql;
