@@ -257,9 +257,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             var resultList = new List<T>();
             await OpenSharedConnection_Async().ConfigureAwait(false);
+            SqlDataReader r = null;
             try {
                 using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
-                    SqlDataReader r = null;
                     var pd = PocoData.ForType(typeof(T));
                     try {
                         DoPreExecute(cmd);
@@ -286,6 +286,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 }
                 return resultList;
             } finally {
+                if (r != null && r.IsClosed == false) {
+                    await r.CloseAsync();
+                }
                 CloseSharedConnection();
                 _Token = CancellationToken.None;
             }
@@ -297,9 +300,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, null, sql);
 
             await OpenSharedConnection_Async().ConfigureAwait(false);
+            SqlDataReader r = null;
             try {
                 using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
-                    SqlDataReader r = null;
                     var pd = PocoData.ForType(typeof(T));
                     try {
                         DoPreExecute(cmd);
@@ -325,6 +328,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     }
                 }
             } finally {
+                if (r != null && r.IsClosed == false) {
+                    await r.CloseAsync();
+                }
                 CloseSharedConnection();
                 _Token = CancellationToken.None;
             }
@@ -740,7 +746,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             return Execute_Async(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(table), sql), args);
         }
- 
+
         #endregion
 
         #region Save_Async
