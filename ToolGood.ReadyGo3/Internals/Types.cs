@@ -15,6 +15,15 @@ namespace ToolGood.ReadyGo3.Internals
                 if (type.IsEnum) return true;
                 if (type == typeof(byte[])) return true;
                 if (type == typeof(sbyte[])) return true;
+                if (type == typeof(UInt16[])) return true;
+                if (type == typeof(UInt32[])) return true;
+                if (type == typeof(UInt64[])) return true;
+                if (type == typeof(Int16[])) return true;
+                if (type == typeof(Int32[])) return true;
+                if (type == typeof(Int64[])) return true;
+                if (type == typeof(Single[])) return true;
+                if (type == typeof(Double[])) return true;
+
                 if (type.FullName == "Microsoft.SqlServer.Types.SqlGeography") return true;
                 if (type.FullName == "Microsoft.SqlServer.Types.SqlGeometry") return true;
 

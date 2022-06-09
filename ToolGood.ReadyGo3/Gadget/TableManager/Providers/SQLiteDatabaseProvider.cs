@@ -112,6 +112,15 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (type == typeof(string)) return CreateField(ti, ci, "Text", "", isRequired);
             if (type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
             if (type == typeof(SByte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(UInt16[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(UInt32[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(UInt64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(Int16[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(Int32[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(Int64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(Single[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(double[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "Text", ci.FieldLength, isRequired);
 
             //var isRequired = ColumnType.IsNullType(type) == false;

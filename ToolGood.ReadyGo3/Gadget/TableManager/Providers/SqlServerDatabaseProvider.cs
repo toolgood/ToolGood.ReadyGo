@@ -107,6 +107,15 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (type == typeof(string)) return CreateField(ti, ci, ci.IsText ? "Text" : "nvarchar", ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), isRequired);
             if (type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(SByte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(UInt16[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(UInt32[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(UInt64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(Int16[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(Int32[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(Int64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(Single[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(double[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "varchar", ci.FieldLength, isRequired);
 
 

@@ -101,7 +101,11 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             var isRequired = ci.Required;
             if (type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, true);
             if (type == typeof(string)) return CreateField(ti, ci, ci.IsText ? "Text" : "varchar", ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), isRequired);
-            if (type == typeof(Byte[]) || type == typeof(SByte[])) {
+            if (type == typeof(Byte[]) || type == typeof(SByte[])
+               || type == typeof(UInt16[]) || type == typeof(UInt32[]) || type == typeof(UInt64[])
+               || type == typeof(Int16[]) || type == typeof(Int32[]) || type == typeof(Int64[])
+               || type == typeof(Single[]) || type == typeof(Double[])
+                ) {
                 if (int.TryParse(ci.FieldLength, out int fieldLength)) {
                     if (fieldLength <= 255) {
                         return CreateField(ti, ci, "tinyblob", "", isRequired);

@@ -87,7 +87,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
                 if (_sharedConnection.State == ConnectionState.Closed) {
                     _sharedConnection.Open();
-                    if (string.IsNullOrEmpty(_databaseName)==false) {
+                    if (string.IsNullOrEmpty(_databaseName) == false) {
                         _sharedConnection.ChangeDatabase(_databaseName);
                     }
                 }
@@ -302,6 +302,22 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 } else if (t == typeof(DateTimeOffset) || t == typeof(DateTimeOffset?)) {
                     p.Value = value;
                     p.DbType = DbType.DateTimeOffset;
+                } else if (t == typeof(UInt16[])) {
+                    p.Value = ToByteArr((UInt16[])value);
+                } else if (t == typeof(UInt32[])) {
+                    p.Value = ToByteArr((UInt32[])value);
+                } else if (t == typeof(UInt64[])) {
+                    p.Value = ToByteArr((UInt64[])value);
+                } else if (t == typeof(Int16[])) {
+                    p.Value = ToByteArr((Int16[])value);
+                } else if (t == typeof(Int32[])) {
+                    p.Value = ToByteArr((Int32[])value);
+                } else if (t == typeof(Int64[])) {
+                    p.Value = ToByteArr((Int64[])value);
+                } else if (t == typeof(Single[])) {
+                    p.Value = ToByteArr((Single[])value);
+                } else if (t == typeof(Double[])) {
+                    p.Value = ToByteArr((Double[])value);
                 } else {
                     p.Value = value;
                 }
@@ -314,6 +330,64 @@ namespace ToolGood.ReadyGo3.PetaPoco
             // Add to the collection
             cmd.Parameters.Add(p);
         }
+        private byte[] ToByteArr(UInt16[] intArr)
+        {
+            Int32 intSize = sizeof(UInt16) * intArr.Length;
+            byte[] bytArr = new byte[intSize];
+            Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
+            return bytArr;
+        }
+        private byte[] ToByteArr(UInt32[] intArr)
+        {
+            Int32 intSize = sizeof(UInt32) * intArr.Length;
+            byte[] bytArr = new byte[intSize];
+            Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
+            return bytArr;
+        }
+        private byte[] ToByteArr(UInt64[] intArr)
+        {
+            Int32 intSize = sizeof(UInt64) * intArr.Length;
+            byte[] bytArr = new byte[intSize];
+            Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
+            return bytArr;
+        }
+        private byte[] ToByteArr(Int16[] intArr)
+        {
+            Int32 intSize = sizeof(Int16) * intArr.Length;
+            byte[] bytArr = new byte[intSize];
+            Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
+            return bytArr;
+        }
+        private byte[] ToByteArr(Int32[] intArr)
+        {
+            Int32 intSize = sizeof(Int32) * intArr.Length;
+            byte[] bytArr = new byte[intSize];
+            Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
+            return bytArr;
+        }
+        private byte[] ToByteArr(Int64[] intArr)
+        {
+            Int32 intSize = sizeof(Int64) * intArr.Length;
+            byte[] bytArr = new byte[intSize];
+            Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
+            return bytArr;
+        }
+
+        private byte[] ToByteArr(Single[] intArr)
+        {
+            Int32 intSize = sizeof(Single) * intArr.Length;
+            byte[] bytArr = new byte[intSize];
+            Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
+            return bytArr;
+        }
+        private byte[] ToByteArr(Double[] intArr)
+        {
+            Int32 intSize = sizeof(Double) * intArr.Length;
+            byte[] bytArr = new byte[intSize];
+            Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
+            return bytArr;
+        }
+
 
 
         // Create a command

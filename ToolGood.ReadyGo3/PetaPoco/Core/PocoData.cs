@@ -415,6 +415,22 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     return delegate (object src) { return EnumHelper.EnumFromString(dstType, (string)src); };
                 } else if (dstType == typeof(Guid) && srcType == typeof(string)) {
                     return delegate (object src) { return Guid.Parse((string)src); };
+                } else if (dstType == typeof(UInt16[]) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToUInt16Arr((byte[])src); };
+                } else if (dstType == typeof(UInt32[]) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToUInt32Arr((byte[])src); };
+                } else if (dstType == typeof(UInt64[]) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToUInt64Arr((byte[])src); };
+                } else if (dstType == typeof(Int16[]) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToInt16Arr((byte[])src); };
+                } else if (dstType == typeof(Int32[]) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToInt32Arr((byte[])src); };
+                } else if (dstType == typeof(Int64[]) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToInt64Arr((byte[])src); };
+                } else if (dstType == typeof(Single[]) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToSingleArr((byte[])src); };
+                } else if (dstType == typeof(Double[]) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToDoubleArr((byte[])src); };
                 } else {
                     return delegate (object src) { return Convert.ChangeType(src, dstType, null); };
                 }
@@ -422,6 +438,64 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             return null;
         }
+        private static UInt16[] ToUInt16Arr(byte[] btArr)
+        {
+            Int32 intSize = (int)Math.Ceiling(btArr.Length / (double)sizeof(UInt16));
+            UInt16[] intArr = new UInt16[intSize];
+            Buffer.BlockCopy(btArr, 0, intArr, 0, btArr.Length);
+            return intArr;
+        }
+        private static UInt32[] ToUInt32Arr(byte[] btArr)
+        {
+            Int32 intSize = (int)Math.Ceiling(btArr.Length / (double)sizeof(UInt32));
+            UInt32[] intArr = new UInt32[intSize];
+            Buffer.BlockCopy(btArr, 0, intArr, 0, btArr.Length);
+            return intArr;
+        }
+        private static UInt64[] ToUInt64Arr(byte[] btArr)
+        {
+            Int32 intSize = (int)Math.Ceiling(btArr.Length / (double)sizeof(UInt64));
+            UInt64[] intArr = new UInt64[intSize];
+            Buffer.BlockCopy(btArr, 0, intArr, 0, btArr.Length);
+            return intArr;
+        }
+        private static Int16[] ToInt16Arr(byte[] btArr)
+        {
+            Int32 intSize = (int)Math.Ceiling(btArr.Length / (double)sizeof(Int16));
+            Int16[] intArr = new Int16[intSize];
+            Buffer.BlockCopy(btArr, 0, intArr, 0, btArr.Length);
+            return intArr;
+        }
+        private static Int32[] ToInt32Arr(byte[] btArr)
+        {
+            Int32 intSize = (int)Math.Ceiling(btArr.Length / (double)sizeof(Int32));
+            Int32[] intArr = new Int32[intSize];
+            Buffer.BlockCopy(btArr, 0, intArr, 0, btArr.Length);
+            return intArr;
+        }
+        private static Int64[] ToInt64Arr(byte[] btArr)
+        {
+            Int32 intSize = (int)Math.Ceiling(btArr.Length / (double)sizeof(Int64));
+            Int64[] intArr = new Int64[intSize];
+            Buffer.BlockCopy(btArr, 0, intArr, 0, btArr.Length);
+            return intArr;
+        }
+
+        private static Single[] ToSingleArr(byte[] btArr)
+        {
+            Int32 intSize = (int)Math.Ceiling(btArr.Length / (double)sizeof(Single));
+            Single[] intArr = new Single[intSize];
+            Buffer.BlockCopy(btArr, 0, intArr, 0, btArr.Length);
+            return intArr;
+        }
+        private static Double[] ToDoubleArr(byte[] btArr)
+        {
+            Int32 intSize = (int)Math.Ceiling(btArr.Length / (double)sizeof(Double));
+            Double[] intArr = new Double[intSize];
+            Buffer.BlockCopy(btArr, 0, intArr, 0, btArr.Length);
+            return intArr;
+        }
+
 
         internal static void FlushCaches()
         {
