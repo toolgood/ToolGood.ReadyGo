@@ -121,6 +121,20 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (type == typeof(Single[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
             if (type == typeof(double[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
 
+
+            if (type == typeof(List<Byte>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(List<SByte>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(List<UInt16>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(List<UInt32>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(List<UInt64>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(List<Int16>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(List<Int32>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(List<Int64>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(List<Single>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(List<double>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+
+
+
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "Text", ci.FieldLength, isRequired);
 
             //var isRequired = ColumnType.IsNullType(type) == false;

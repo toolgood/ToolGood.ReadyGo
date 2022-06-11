@@ -318,6 +318,28 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     p.Value = ToByteArr((Single[])value);
                 } else if (t == typeof(Double[])) {
                     p.Value = ToByteArr((Double[])value);
+
+                } else if (t == typeof(List<UInt16>)) {
+                    p.Value = ToByteArr(((List<UInt16>)value).ToArray());
+                } else if (t == typeof(List<UInt32>)) {
+                    p.Value = ToByteArr(((List<UInt32>)value).ToArray());
+                } else if (t == typeof(List<UInt64>)) {
+                    p.Value = ToByteArr(((List<UInt64>)value).ToArray());
+                } else if (t == typeof(List<Int16>)) {
+                    p.Value = ToByteArr(((List<Int16>)value).ToArray());
+                } else if (t == typeof(List<Int32>)) {
+                    p.Value = ToByteArr(((List<Int32>)value).ToArray());
+                } else if (t == typeof(List<Int64>)) {
+                    p.Value = ToByteArr(((List<Int64>)value).ToArray());
+                } else if (t == typeof(List<Single>)) {
+                    p.Value = ToByteArr(((List<Single>)value).ToArray());
+                } else if (t == typeof(List<Double>)) {
+                    p.Value = ToByteArr(((List<Double>)value).ToArray());
+                } else if (t == typeof(List<byte>)) {
+                    p.Value = ((List<byte>)value).ToArray();
+                } else if (t == typeof(List<sbyte>)) {
+                    p.Value = ((List<sbyte>)value).ToArray();
+
                 } else {
                     p.Value = value;
                 }

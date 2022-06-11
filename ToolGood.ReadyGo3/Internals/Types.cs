@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ToolGood.ReadyGo3.Internals
 {
@@ -23,6 +24,19 @@ namespace ToolGood.ReadyGo3.Internals
                 if (type == typeof(Int64[])) return true;
                 if (type == typeof(Single[])) return true;
                 if (type == typeof(Double[])) return true;
+
+                if (type == typeof(List<byte>)) return true;
+                if (type == typeof(List<sbyte>)) return true;
+                if (type == typeof(List<UInt16>)) return true;
+                if (type == typeof(List<UInt32>)) return true;
+                if (type == typeof(List<UInt64>)) return true;
+                if (type == typeof(List<Int16>)) return true;
+                if (type == typeof(List<Int32>)) return true;
+                if (type == typeof(List<Int64>)) return true;
+                if (type == typeof(List<Single>)) return true;
+                if (type == typeof(List<Double>)) return true;
+
+
 
                 if (type.FullName == "Microsoft.SqlServer.Types.SqlGeography") return true;
                 if (type.FullName == "Microsoft.SqlServer.Types.SqlGeometry") return true;

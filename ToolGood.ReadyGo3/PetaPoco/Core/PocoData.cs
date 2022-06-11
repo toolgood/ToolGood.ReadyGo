@@ -415,6 +415,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     return delegate (object src) { return EnumHelper.EnumFromString(dstType, (string)src); };
                 } else if (dstType == typeof(Guid) && srcType == typeof(string)) {
                     return delegate (object src) { return Guid.Parse((string)src); };
+
                 } else if (dstType == typeof(UInt16[]) && srcType == typeof(byte[])) {
                     return delegate (object src) { return ToUInt16Arr((byte[])src); };
                 } else if (dstType == typeof(UInt32[]) && srcType == typeof(byte[])) {
@@ -431,6 +432,28 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     return delegate (object src) { return ToSingleArr((byte[])src); };
                 } else if (dstType == typeof(Double[]) && srcType == typeof(byte[])) {
                     return delegate (object src) { return ToDoubleArr((byte[])src); };
+
+                } else if (dstType == typeof(List<UInt16>) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToUInt16Arr((byte[])src).ToList(); };
+                } else if (dstType == typeof(List<UInt32>) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToUInt32Arr((byte[])src).ToList(); };
+                } else if (dstType == typeof(List<UInt64>) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToUInt64Arr((byte[])src).ToList(); };
+                } else if (dstType == typeof(List<Int16>) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToInt16Arr((byte[])src).ToList(); };
+                } else if (dstType == typeof(List<Int32>) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToInt32Arr((byte[])src).ToList(); };
+                } else if (dstType == typeof(List<Int64>) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToInt64Arr((byte[])src).ToList(); };
+                } else if (dstType == typeof(List<Single>) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToSingleArr((byte[])src).ToList(); };
+                } else if (dstType == typeof(List<Double>) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToDoubleArr((byte[])src).ToList(); };
+                } else if (dstType == typeof(List<byte>) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return  ((byte[])src).ToList(); };
+                } else if (dstType == typeof(List<sbyte>) && srcType == typeof(sbyte[])) {
+                    return delegate (object src) { return ((sbyte[])src).ToList(); };
+
                 } else {
                     return delegate (object src) { return Convert.ChangeType(src, dstType, null); };
                 }
