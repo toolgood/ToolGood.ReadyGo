@@ -109,29 +109,29 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             var type = ci.PropertyType;
             var isRequired = ci.Required;
             if (type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, true);
-            if (type == typeof(string)) return CreateField(ti, ci, "Text", "", isRequired);
-            if (type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(SByte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(UInt16[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(UInt32[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(UInt64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(Int16[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(Int32[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(Int64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(Single[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(double[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(string)) return CreateField(ti, ci, "Text", "", false);
+            if (type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(SByte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(UInt16[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(UInt32[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(UInt64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(Int16[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(Int32[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(Int64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(Single[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(double[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 
 
-            if (type == typeof(List<Byte>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(List<SByte>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(List<UInt16>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(List<UInt32>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(List<UInt64>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(List<Int16>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(List<Int32>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(List<Int64>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(List<Single>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
-            if (type == typeof(List<double>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, isRequired);
+            if (type == typeof(List<Byte>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(List<SByte>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(List<UInt16>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(List<UInt32>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(List<UInt64>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(List<Int16>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(List<Int32>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(List<Int64>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(List<Single>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(List<double>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 
 
 
