@@ -435,15 +435,15 @@ namespace ToolGood.ReadyGo3.PetaPoco
             cmd.CommandType = CommandType.Text;
             if (args != null) {
                 foreach (var item in args) {
-                    var items = item as IList;
-                    if (items != null) {
-                        foreach (var obj in items) {
-                            AddParam(cmd, obj, null);
-                        }
-                    } else {
-                        AddParam(cmd, item, null);
-
-                    }
+                    AddParam(cmd, item, null);
+                    //var items = item as IList;
+                    //if (items != null) {
+                    //    foreach (var obj in items) {
+                    //        AddParam(cmd, obj, null);
+                    //    }
+                    //} else {
+                    //    AddParam(cmd, item, null);
+                    //}
                 }
             }
 
