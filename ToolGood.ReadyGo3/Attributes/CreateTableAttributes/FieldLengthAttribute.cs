@@ -38,6 +38,14 @@ namespace ToolGood.ReadyGo3.Attributes
         /// 是否TEXT
         /// </summary>
         public bool IsText;
+        /// <summary>
+        /// 是否MediumText
+        /// </summary>
+        public bool IsMediumText;
+        /// <summary>
+        /// 是否LongText
+        /// </summary>
+        public bool IsLongText;
 
         /// <summary>
         ///
@@ -45,7 +53,7 @@ namespace ToolGood.ReadyGo3.Attributes
         public string FieldLength;
     }
     /// <summary>
-    /// 文本 长度无限
+    /// 文本  
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
     public class TextAttribute : FieldLengthAttribute
@@ -58,6 +66,40 @@ namespace ToolGood.ReadyGo3.Attributes
             IsText = true;
         }
     }
+
+    /// <summary>
+    /// 文本  
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public class MediumTextAttribute : FieldLengthAttribute
+    {
+        /// <summary>
+        /// 文本类型
+        /// </summary>
+        public MediumTextAttribute() : base()
+        {
+            IsText = true;
+            IsMediumText = true;
+        }
+    }
+
+    /// <summary>
+    /// 文本  
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public class LongTextAttribute : FieldLengthAttribute
+    {
+        /// <summary>
+        /// 文本类型
+        /// </summary>
+        public LongTextAttribute() : base()
+        {
+            IsText = true;
+            IsMediumText = true;
+            IsLongText = true;
+        }
+    }
+
 
     /// <summary>
     /// 手机长度 20位

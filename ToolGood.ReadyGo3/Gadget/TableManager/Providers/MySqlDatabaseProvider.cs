@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ToolGood.ReadyGo3.Attributes;
 
 namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 {
@@ -95,12 +96,26 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             return "TRUNCATE TABLE " + GetTableName(ti) + ";";
         }
 
+        private string GetText(ColumnInfo ci)
+        {
+            if (ci.IsLongText) {
+                return "longtext";
+            }
+            if (ci.IsMediumText) {
+                return "mediumtext";
+            }
+            if (ci.IsText) {
+                return "Text";
+            }
+            return "varchar";
+        }
+
         public string CreateColumn(TableInfo ti, ColumnInfo ci)
         {
             var type = ci.PropertyType;
             var isRequired = ci.Required;
             if (type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, true);
-            if (type == typeof(string)) return CreateField(ti, ci, ci.IsText ? "Text" : "varchar", ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), isRequired);
+            if (type == typeof(string)) return CreateField(ti, ci, GetText(ci), ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), isRequired);
             if (type == typeof(Byte[]) || type == typeof(SByte[])
                || type == typeof(UInt16[]) || type == typeof(UInt32[]) || type == typeof(UInt64[])
                || type == typeof(Int16[]) || type == typeof(Int32[]) || type == typeof(Int64[])

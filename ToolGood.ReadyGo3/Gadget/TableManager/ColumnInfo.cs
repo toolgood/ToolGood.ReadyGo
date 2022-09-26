@@ -20,6 +20,8 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
 
         public string FieldLength;
         public bool IsText;
+        public bool IsMediumText;
+        public bool IsLongText;
 
         internal static ColumnInfo FromProperty(PropertyInfo pi)
         {
@@ -46,6 +48,8 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             a = pi.GetCustomAttributes(typeof(FieldLengthAttribute), true);
             if (a.Length > 0) {
                 ci.IsText = (a[0] as FieldLengthAttribute).IsText;
+                ci.IsMediumText = (a[0] as FieldLengthAttribute).IsMediumText;
+                ci.IsLongText = (a[0] as FieldLengthAttribute).IsLongText;
                 ci.FieldLength = (a[0] as FieldLengthAttribute).FieldLength;
             }
             var atts = pi.GetCustomAttributes(typeof(RequiredAttribute), true);
