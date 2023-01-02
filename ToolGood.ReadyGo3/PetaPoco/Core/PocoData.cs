@@ -453,7 +453,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     return delegate (object src) { return  ((byte[])src).ToList(); };
                 } else if (dstType == typeof(List<sbyte>) && srcType == typeof(sbyte[])) {
                     return delegate (object src) { return ((sbyte[])src).ToList(); };
-
+                } else if (dstType == typeof(Int64) && srcType == typeof(double)) {
+                    return delegate (object src) { return ((double)(Int64)src); };
+                } else if (dstType == typeof(UInt64) && srcType == typeof(double)) {
+                    return delegate (object src) { return ((double)(UInt64)src); };
                 } else {
                     return delegate (object src) { return Convert.ChangeType(src, dstType, null); };
                 }
