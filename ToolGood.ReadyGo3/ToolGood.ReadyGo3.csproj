@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>A high performance Micro-ORM supporting SQL Server, MySQL, Sqlite, SqlCE, PostgreSQL, Firebird etc..</Description>
-    <Copyright>Copyright 2016-2022 ToolGood</Copyright>
+    <Copyright>Copyright 2016-2023 ToolGood</Copyright>
     <AssemblyTitle>ToolGood.ReadyGo</AssemblyTitle>
     <Authors>ToolGood</Authors>
     <TargetFrameworks>netstandard2.1</TargetFrameworks>
