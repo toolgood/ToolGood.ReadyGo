@@ -140,7 +140,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             //var isRequired = ColumnType.IsNullType(type) == false;
             //if (isRequired == false) type = ColumnType.GetBaseType(type);
 
-            if (type == typeof(bool)) return CreateField(ti, ci, "int", "1", isRequired);
+            if (type == typeof(bool)) return CreateField(ti, ci, "BOOLEAN", ci.FieldLength, isRequired);
             if (type == typeof(byte)) return CreateField(ti, ci, "int", "1", isRequired);
             if (type == typeof(char)) return CreateField(ti, ci, "char", "1", isRequired);
 
@@ -150,7 +150,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (type == typeof(Int16)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
             if (type == typeof(Int32)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
             if (type == typeof(Int64)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
-            if (type == typeof(Single)) return CreateField(ti, ci, "REAL", ci.FieldLength, isRequired);
+            if (type == typeof(Single)) return CreateField(ti, ci, "FLOAT", ci.FieldLength, isRequired);
             if (type == typeof(double)) return CreateField(ti, ci, "REAL", ci.FieldLength, isRequired);
             if (type == typeof(decimal)) return CreateField(ti, ci, "REAL", ci.FieldLength, isRequired);
             if (type == typeof(DateTime)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
