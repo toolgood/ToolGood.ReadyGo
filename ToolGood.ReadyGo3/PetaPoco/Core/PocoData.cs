@@ -457,12 +457,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     return delegate (object src) { return Convert.ChangeType(src, dstType, null); };
                 }
             }
-            if (dstType == typeof(double) && srcType == typeof(double)) {
-                return delegate (object src) {
-                    if (src is double) { return src; }
-                    return double.Parse(src.ToString());
-                };
-            }
+            //if (dstType == typeof(double) && srcType == typeof(double)) {
+            //    return delegate (object src) {
+            //        if (src is double) { return src; }
+            //        return double.Parse(src.ToString());
+            //    };
+            //}
             return null;
         }
         private static UInt16[] ToUInt16Arr(byte[] btArr)
