@@ -16,7 +16,8 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return GetFactory(
                 "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient",
                 "System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
-                "System.Data.SqlClient.SqlClientFactory, System.Data"
+                "System.Data.SqlClient.SqlClientFactory, System.Data",
+                "Microsoft.Data.SqlClient.SqlClientFactory, Microsoft.Data.SqlClient"
                 );
         }
         protected static readonly Regex SelectTopRegex = new Regex(@"^SELECT +TOP(\d+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
