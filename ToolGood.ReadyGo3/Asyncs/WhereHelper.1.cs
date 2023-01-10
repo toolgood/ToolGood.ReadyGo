@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-#if !NET40
 
 namespace ToolGood.ReadyGo3.LinQ
 {
@@ -384,4 +382,3 @@ namespace ToolGood.ReadyGo3.LinQ
         //#endregion
     }
 }
-#endif

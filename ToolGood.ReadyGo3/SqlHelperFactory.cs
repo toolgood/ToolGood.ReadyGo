@@ -10,20 +10,6 @@ namespace ToolGood.ReadyGo3
     /// </summary>
     public static class SqlHelperFactory
     {
-#if NET40 || NET45
-        /// <summary>
-        /// 根据config配置名打开数据据库
-        /// </summary>
-        /// <param name="name">配置名</param>
-        /// <param name="type">SqlType</param>
-        /// <returns></returns>
-        public static SqlHelper OpenFormConnStr(string name, SqlType type = SqlType.None)
-        {
-
-            var c = ConfigurationManager.ConnectionStrings[name];
-            return OpenDatabase(c.ConnectionString, c.ProviderName, type);
-        }
-#endif
         /// <summary>
         /// 打开数据据库
         /// </summary>
@@ -245,7 +231,6 @@ namespace ToolGood.ReadyGo3
         }
 
 
-#if !NETSTANDARD2_0
 
         /// <summary>
         /// 打开Access数据库 32位
@@ -276,7 +261,6 @@ namespace ToolGood.ReadyGo3
             }
             return OpenDatabase(connstr, "System.Data.OleDb", SqlType.MsAccessDb);
         }
-#endif
     }
 
 }

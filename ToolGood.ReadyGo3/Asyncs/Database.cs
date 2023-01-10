@@ -11,12 +11,8 @@ using System.Data.Common;
 using ToolGood.ReadyGo3.Internals;
 using System.Threading;
 
-#if !NET40
 using SqlCommand = System.Data.Common.DbCommand;
 using SqlDataReader = System.Data.Common.DbDataReader;
-#endif
-
-#if !NET40
 
 namespace ToolGood.ReadyGo3.PetaPoco
 {
@@ -791,4 +787,3 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
     }
 }
-#endif

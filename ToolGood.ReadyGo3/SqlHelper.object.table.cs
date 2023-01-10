@@ -239,7 +239,6 @@ namespace ToolGood.ReadyGo3
 
 
 
-#if !NET40
 
 
         #region FirstOrDefault_Async PK
@@ -464,7 +463,6 @@ namespace ToolGood.ReadyGo3
 
         }
 
-#endif
 
 
 

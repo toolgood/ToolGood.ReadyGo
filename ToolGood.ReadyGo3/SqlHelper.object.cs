@@ -228,7 +228,6 @@ namespace ToolGood.ReadyGo3
 
         #endregion
 
-#if !NET40
 
 
         #region FirstOrDefault_Async PK
@@ -431,8 +430,6 @@ namespace ToolGood.ReadyGo3
                 return await GetDatabase().ExecuteScalar_Async<int>(sql, args) > 0;
             }
         }
-
-#endif
 
 
         private string ConditionObjectToWhere(object condition)

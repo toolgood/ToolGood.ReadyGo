@@ -5,7 +5,7 @@
     <Copyright>Copyright 2016-2023 ToolGood</Copyright>
     <AssemblyTitle>ToolGood.ReadyGo</AssemblyTitle>
     <Authors>ToolGood</Authors>
-    <TargetFrameworks>netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net6.0;net7.0</TargetFrameworks>
     <AssemblyName>ToolGood.ReadyGo3</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <PackageId>ToolGood.ReadyGo3</PackageId>

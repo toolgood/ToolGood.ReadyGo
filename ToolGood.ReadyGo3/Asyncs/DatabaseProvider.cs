@@ -1,15 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Threading.Tasks;
-
-#if NET40 || NET45
-using System.Data.SqlClient;
-#endif
-
-#if !NET40
-
 using SqlCommand = System.Data.Common.DbCommand;
-
 
 namespace ToolGood.ReadyGo3.PetaPoco.Core
 {
@@ -123,4 +115,3 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
     }
 
 }
-#endif

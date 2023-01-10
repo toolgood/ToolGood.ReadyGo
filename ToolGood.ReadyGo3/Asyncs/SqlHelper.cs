@@ -3,15 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo3.Gadget.Internals;
-using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco;
-using ToolGood.ReadyGo3.PetaPoco.Core;
-
-#if !NET40
 
 namespace ToolGood.ReadyGo3
 {
@@ -838,4 +832,3 @@ namespace ToolGood.ReadyGo3
 
     }
 }
-#endif
