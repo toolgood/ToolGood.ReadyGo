@@ -124,6 +124,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
                || type == typeof(List<UInt16>) || type == typeof(List<UInt32>) || type == typeof(List<UInt64>)
                || type == typeof(List<Int16>) || type == typeof(List<Int32>) || type == typeof(List<Int64>)
                || type == typeof(List<Single>) || type == typeof(List<Double>) 
+               || type == typeof(List<bool>) || type == typeof(bool[])
 
                 ) {
                 if (int.TryParse(ci.FieldLength, out int fieldLength)) {

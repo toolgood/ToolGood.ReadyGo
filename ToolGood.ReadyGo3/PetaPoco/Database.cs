@@ -318,6 +318,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     p.Value = ToByteArr((Single[])value);
                 } else if (t == typeof(Double[])) {
                     p.Value = ToByteArr((Double[])value);
+                } else if (t == typeof(bool[])) {
+                    p.Value = ToByteArr((bool[])value);
 
                 } else if (t == typeof(List<UInt16>)) {
                     p.Value = ToByteArr(((List<UInt16>)value).ToArray());
@@ -339,6 +341,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     p.Value = ((List<byte>)value).ToArray();
                 } else if (t == typeof(List<sbyte>)) {
                     p.Value = ((List<sbyte>)value).ToArray();
+                } else if (t == typeof(List<bool>)) {
+                    p.Value = ToByteArr(((List<bool>)value).ToArray());
 
                 } else {
                     p.Value = value;
@@ -351,6 +355,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             // Add to the collection
             cmd.Parameters.Add(p);
+        }
+        private byte[] ToByteArr(bool[] intArr)
+        {
+            int intSize = sizeof(bool) * intArr.Length;
+            byte[] bytArr = new byte[intSize];
+            Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
+            return bytArr;
         }
         private byte[] ToByteArr(UInt16[] intArr)
         {

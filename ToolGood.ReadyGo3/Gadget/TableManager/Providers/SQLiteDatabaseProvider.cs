@@ -120,6 +120,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (type == typeof(Int64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(Single[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(double[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(bool[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 
 
             if (type == typeof(List<Byte>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
@@ -132,6 +133,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (type == typeof(List<Int64>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(List<Single>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(List<double>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(List<bool>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 
 
 

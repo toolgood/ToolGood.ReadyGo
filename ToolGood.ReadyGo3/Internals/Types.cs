@@ -24,6 +24,7 @@ namespace ToolGood.ReadyGo3.Internals
                 if (type == typeof(Int64[])) return true;
                 if (type == typeof(Single[])) return true;
                 if (type == typeof(Double[])) return true;
+                if (type == typeof(bool[])) return true;
 
                 if (type == typeof(List<byte>)) return true;
                 if (type == typeof(List<sbyte>)) return true;
@@ -35,6 +36,7 @@ namespace ToolGood.ReadyGo3.Internals
                 if (type == typeof(List<Int64>)) return true;
                 if (type == typeof(List<Single>)) return true;
                 if (type == typeof(List<Double>)) return true;
+                if (type == typeof(List<bool>)) return true;
 
 
 

@@ -432,6 +432,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     return delegate (object src) { return ToSingleArr((byte[])src); };
                 } else if (dstType == typeof(Double[]) && srcType == typeof(byte[])) {
                     return delegate (object src) { return ToDoubleArr((byte[])src); };
+                } else if (dstType == typeof(bool[]) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToBoolArr((byte[])src); };
 
                 } else if (dstType == typeof(List<UInt16>) && srcType == typeof(byte[])) {
                     return delegate (object src) { return ToUInt16Arr((byte[])src).ToList(); };
@@ -453,6 +455,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     return delegate (object src) { return  ((byte[])src).ToList(); };
                 } else if (dstType == typeof(List<sbyte>) && srcType == typeof(sbyte[])) {
                     return delegate (object src) { return ((sbyte[])src).ToList(); };
+                } else if (dstType == typeof(List<bool>) && srcType == typeof(byte[])) {
+                    return delegate (object src) { return ToBoolArr((byte[])src).ToList(); };
+
                 } else {
                     return delegate (object src) { return Convert.ChangeType(src, dstType, null); };
                 }
@@ -519,6 +524,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             Int32 intSize = (int)Math.Ceiling(btArr.Length / (double)sizeof(Double));
             Double[] intArr = new Double[intSize];
+            Buffer.BlockCopy(btArr, 0, intArr, 0, btArr.Length);
+            return intArr;
+        }
+        private static bool[] ToBoolArr(byte[] btArr)
+        {
+            Int32 intSize = (int)Math.Ceiling(btArr.Length / (double)sizeof(bool));
+            bool[] intArr = new bool[intSize];
             Buffer.BlockCopy(btArr, 0, intArr, 0, btArr.Length);
             return intArr;
         }
