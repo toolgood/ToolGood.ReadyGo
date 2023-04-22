@@ -22,7 +22,6 @@ namespace ToolGood.ReadyGo3
         internal bool _setGuidDefaultNew;
         internal bool _sql_firstWithLimit1;
 
-
         // 读写数据库
         internal readonly string _connectionString;
         internal readonly DbProviderFactory _factory;
@@ -100,7 +99,8 @@ namespace ToolGood.ReadyGo3
                 _database.Dispose();
                 _database = null;
 
-                _events=null;
+                _tableHelper = null;
+                _events = null;
                 _sqlConfig = null;
                 _sql = null;
             }
