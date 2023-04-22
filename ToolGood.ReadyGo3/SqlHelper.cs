@@ -33,11 +33,11 @@ namespace ToolGood.ReadyGo3
         internal int _oneTimeCommandTimeout;
         internal IsolationLevel? _isolationLevel;
 
-        internal readonly SqlEvents _events;
-        private readonly SqlConfig _sqlConfig;
+        internal SqlEvents _events;
+        private SqlConfig _sqlConfig;
         internal readonly SqlType _sqlType;
-        internal readonly SqlRecord _sql = new SqlRecord();
-        private readonly DatabaseProvider _provider;
+        internal SqlRecord _sql = new SqlRecord();
+        private DatabaseProvider _provider;
         internal bool _isDisposable;
 
 
@@ -99,6 +99,10 @@ namespace ToolGood.ReadyGo3
 
                 _database.Dispose();
                 _database = null;
+
+                _events=null;
+                _sqlConfig = null;
+                _sql = null;
             }
         }
 
@@ -145,7 +149,7 @@ namespace ToolGood.ReadyGo3
         public int Execute(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            
+
             return GetDatabase().Execute(sql, args);
         }
 
@@ -159,7 +163,7 @@ namespace ToolGood.ReadyGo3
         public T ExecuteScalar<T>(string sql = "", params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            
+
             return GetDatabase().ExecuteScalar<T>(sql, args);
         }
 
@@ -172,7 +176,7 @@ namespace ToolGood.ReadyGo3
         public DataTable ExecuteDataTable(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            
+
             return GetDatabase().ExecuteDataTable(sql, args);
 
         }
@@ -186,7 +190,7 @@ namespace ToolGood.ReadyGo3
         public DataSet ExecuteDataSet(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            
+
             return GetDatabase().ExecuteDataSet(sql, args);
         }
 
@@ -199,7 +203,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public bool Exists<T>(string sql, params object[] args)
         {
-            
+
             return Count<T>(sql, args) > 0;
         }
         /// <summary>
@@ -211,7 +215,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public bool Table_Exists(string table, string sql, params object[] args)
         {
-            
+
             return Count(table, sql, args) > 0;
         }
 
@@ -226,7 +230,7 @@ namespace ToolGood.ReadyGo3
         {
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
-                
+
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
             return GetDatabase().ExecuteScalar<int>(sql, args);
@@ -245,7 +249,7 @@ namespace ToolGood.ReadyGo3
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 var pd = PocoData.ForType(typeof(T));
                 var table = _provider.GetTableName(pd);
-                
+
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
             return GetDatabase().ExecuteScalar<int>(sql, args);
@@ -275,7 +279,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Select<T>(string sql = "", params object[] args)
         {
-            
+
             return GetDatabase().Query<T>(sql, args).ToList();
         }
 
@@ -289,7 +293,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Table_Select<T>(string table, string sql = "", params object[] args) where T : class
         {
-            
+
             return GetDatabase().Table_Query<T>(table, sql, args).ToList();
         }
 
@@ -303,7 +307,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Select<T>(int limit, string sql = "", params object[] args) where T : class
         {
-            
+
             return GetDatabase().Query<T>(0, limit, sql, args).ToList();
         }
         /// <summary>
@@ -317,7 +321,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Table_Select<T>(string table, int limit, string sql = "", params object[] args) where T : class
         {
-            
+
             return GetDatabase().Table_Query<T>(table, 0, limit, sql, args).ToList();
         }
 
@@ -333,7 +337,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Select<T>(int limit, int offset, string sql = "", params object[] args) where T : class
         {
-            
+
             return GetDatabase().Query<T>(offset, limit, sql, args).ToList();
         }
         /// <summary>
@@ -348,7 +352,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Table_Select<T>(string table, int limit, int offset, string sql = "", params object[] args) where T : class
         {
-            
+
             return GetDatabase().Table_Query<T>(table, offset, limit, sql, args).ToList();
         }
 
@@ -366,7 +370,7 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            
+
             return GetDatabase().Query<T>((page - 1) * itemsPerPage, itemsPerPage, sql, args).ToList();
         }
         /// <summary>
@@ -384,7 +388,7 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            
+
             return GetDatabase().Table_Query<T>(table, (page - 1) * itemsPerPage, itemsPerPage, sql, args).ToList();
         }
 
@@ -402,7 +406,7 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            
+
             return GetDatabase().Page<T>(page, itemsPerPage, sql, args);
         }
         /// <summary>
@@ -420,7 +424,7 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            
+
             return GetDatabase().Table_Page<T>(table, page, itemsPerPage, sql, args);
         }
 
@@ -444,7 +448,7 @@ namespace ToolGood.ReadyGo3
             whereSql = RemoveStart(whereSql, "WHERE ");
 
             var sql = $"SELECT {columnSql} FROM {tableSql} WHERE {whereSql}";
-            
+
             return GetDatabase().Query<T>(sql, args).FirstOrDefault();
         }
 
@@ -475,7 +479,7 @@ namespace ToolGood.ReadyGo3
             whereSql = RemoveStart(whereSql, "WHERE ");
 
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
-            
+
             return GetDatabase().Query<T>(sql, args).ToList();
         }
 
@@ -503,7 +507,7 @@ namespace ToolGood.ReadyGo3
             whereSql = RemoveStart(whereSql, "WHERE ");
 
             var sql = _provider.CreateSql(limit, 0, columnSql, tableSql, orderSql, whereSql);
-            
+
             return GetDatabase().Query<T>(sql, args).ToList();
         }
 
@@ -530,7 +534,7 @@ namespace ToolGood.ReadyGo3
             whereSql = RemoveStart(whereSql, "WHERE ");
 
             var sql = _provider.CreateSql(columnSql, tableSql, orderSql, whereSql);
-            
+
             return GetDatabase().Query<T>(sql, args).ToList();
         }
 
@@ -566,7 +570,7 @@ namespace ToolGood.ReadyGo3
             string countSql = string.IsNullOrEmpty(whereSql) ? $"SELECT COUNT(1) FROM {tableSql}" : $"SELECT COUNT(1) FROM {tableSql} WHERE {whereSql}";
 
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
-            
+
             return GetDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
         }
 
@@ -625,7 +629,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T FirstOrDefault<T>(string sql = "", params object[] args)
         {
-            
+
             if (_sql_firstWithLimit1 == false) {
                 return GetDatabase().Query<T>(sql, args).FirstOrDefault();
             }
@@ -641,7 +645,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T Table_FirstOrDefault<T>(string table, string sql = "", params object[] args) where T : class
         {
-            
+
             if (_sql_firstWithLimit1 == false) {
                 return GetDatabase().Table_Query<T>(table, sql, args).FirstOrDefault();
             }
@@ -874,7 +878,7 @@ namespace ToolGood.ReadyGo3
         public int Delete<T>(string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            
+
             return GetDatabase().Delete<T>(sql, args);
         }
         /// <summary>
@@ -887,7 +891,7 @@ namespace ToolGood.ReadyGo3
         public int Table_Delete(string table, string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            
+
             return GetDatabase().Table_Delete(table, sql, args);
         }
 
@@ -945,7 +949,7 @@ namespace ToolGood.ReadyGo3
         public int Update<T>(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            
+
             return GetDatabase().Update<T>(sql, args);
         }
         /// <summary>
@@ -958,7 +962,7 @@ namespace ToolGood.ReadyGo3
         public int Table_Update(string table, string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            
+
             return GetDatabase().Table_Update(table, sql, args);
         }
 
