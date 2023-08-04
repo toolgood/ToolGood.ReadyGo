@@ -451,7 +451,20 @@ namespace ToolGood.ReadyGo3
 
             return GetDatabase().Query<T>(sql, args).FirstOrDefault();
         }
-
+        /// <summary>
+        /// 执行SQL 查询, 返回单个
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columnSql"></param>
+        /// <param name="tableSql"></param>
+        /// <param name="whereSql"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public T SQL_FirstOrDefault<T>(string columnSql, string tableSql, string whereSql, SqlParameterCollection args)
+            where T : class
+        {
+            return SQL_FirstOrDefault<T>(columnSql, tableSql, whereSql, args.ToArray());
+        }
 
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -482,7 +495,23 @@ namespace ToolGood.ReadyGo3
 
             return GetDatabase().Query<T>(sql, args).ToList();
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="columnSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> SQL_Select<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
+            where T : class
+        {
+            return SQL_Select<T>(page, itemsPerPage, columnSql, tableSql, orderSql, whereSql, args.ToArray());
+        }
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -510,7 +539,22 @@ namespace ToolGood.ReadyGo3
 
             return GetDatabase().Query<T>(sql, args).ToList();
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="limit">每页数量</param>
+        /// <param name="columnSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> SQL_Select<T>(int limit, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
+            where T : class
+        {
+            return SQL_Select<T>(limit, columnSql, tableSql, orderSql, whereSql, args.ToArray());
+        }
 
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -537,10 +581,21 @@ namespace ToolGood.ReadyGo3
 
             return GetDatabase().Query<T>(sql, args).ToList();
         }
-
-
-
-
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="columnSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> SQL_Select<T>(string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
+            where T : class
+        {
+            return SQL_Select<T>(columnSql, tableSql, orderSql, whereSql, args.ToArray());
+        }
 
         /// <summary>
         /// 执行SQL 查询,返回Page类型
@@ -573,7 +628,23 @@ namespace ToolGood.ReadyGo3
 
             return GetDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, args);
         }
-
+        /// <summary>
+        /// 执行SQL 查询,返回Page类型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="columnSql">查询列 SQL语句</param>
+        /// <param name="tableSql">TABLE SQL语句</param>
+        /// <param name="orderSql">ORDER BY SQL语句</param>
+        /// <param name="whereSql">WHERE SQL语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public Page<T> SQL_Page<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
+            where T : class
+        {
+            return SQL_Page<T>(page, itemsPerPage, columnSql, tableSql, orderSql, whereSql, args.ToArray());
+        }
 
         private string RemoveStart(string txt, string startsText)
         {
