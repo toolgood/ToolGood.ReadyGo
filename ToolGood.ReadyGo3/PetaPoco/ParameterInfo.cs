@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
-using static System.Formats.Asn1.AsnWriter;
-using System.Drawing;
-using System.Runtime.InteropServices.JavaScript;
 
 namespace ToolGood.ReadyGo3
 {
@@ -33,6 +30,11 @@ namespace ToolGood.ReadyGo3
             };
             this.Add(parameter);
         }
+        /// <summary>
+        /// 添加 like 参数
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="value"></param>
         public void AddLike(string parameterName, string value)
         {
             SqlParameter parameter = new SqlParameter {
@@ -43,6 +45,11 @@ namespace ToolGood.ReadyGo3
             };
             this.Add(parameter);
         }
+        /// <summary>
+        ///  添加 like 参数
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="value"></param>
         public void AddLikeStart(string parameterName, string value)
         {
             SqlParameter parameter = new SqlParameter {
@@ -55,11 +62,16 @@ namespace ToolGood.ReadyGo3
             };
             this.Add(parameter);
         }
+        /// <summary>
+        ///  添加 like 参数
+        /// </summary>
+        /// <param name="parameterName"></param>
+        /// <param name="value"></param>
         public void AddLikeEnd(string parameterName, string value)
         {
             SqlParameter parameter = new SqlParameter {
                 ParameterName = parameterName,
-                Value = value.ToEscapeLikeParam() + "End",
+                Value = value.ToEscapeLikeParam() + "%",
                 DbType = DbType.String,
                 ParameterDirection = ParameterDirection.Input,
             };
@@ -71,11 +83,12 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="parameterName">不带前缀</param>
         /// <param name="value">值</param>
-        public void StartDate(string parameterName, DateTime value)
+        public void AddDateStart(string parameterName, DateTime value)
         {
             SqlParameter parameter = new SqlParameter {
                 ParameterName = parameterName,
                 Value = value.Date,
+                DbType= DbType.DateTime,
                 ParameterDirection = ParameterDirection.Input,
             };
             this.Add(parameter);
@@ -86,11 +99,12 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         /// <param name="parameterName">不带前缀</param>
         /// <param name="value">值</param>
-        public void EndDate(string parameterName, DateTime value)
+        public void AddDateEnd(string parameterName, DateTime value)
         {
             SqlParameter parameter = new SqlParameter {
                 ParameterName = parameterName,
                 Value = new DateTime(value.Year, value.Month, value.Day, 23, 59, 59),
+                DbType = DbType.DateTime,
                 ParameterDirection = ParameterDirection.Input,
             };
             this.Add(parameter);

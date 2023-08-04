@@ -29,6 +29,10 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         {
             this.provider = DatabaseProvider.Resolve(type);
         }
+        /// <summary>
+        /// SqlExpression
+        /// </summary>
+        /// <param name="provider"></param>
         public SqlExpression(DatabaseProvider provider)
         {
             this.provider = provider;

@@ -350,35 +350,5 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #endregion
 
-        //#region 12 SelectInsert_Async
-        ///// <summary>
-        ///// 查询插入
-        ///// </summary>
-        ///// <param name="insertTableName"></param>
-        ///// <param name="replaceSelect"></param>
-        ///// <param name="args"></param>
-        ///// <returns></returns>
-        //public Task SelectInsert_Async(string insertTableName = null, string replaceSelect = null, params object[] args)
-        //{
-        //    var sql = CreateSelectInsertSql(typeof(T1), insertTableName, replaceSelect, args);
-        //    return _sqlhelper.Execute_Async(sql, _args.ToArray());
-        //}
-
-        ///// <summary>
-        ///// 查询插入
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="insertTableName"></param>
-        ///// <param name="replaceSelect"></param>
-        ///// <param name="args"></param>
-        ///// <returns></returns>
-        //public Task SelectInsert_Async<T>(string insertTableName = null, string replaceSelect = null, params object[] args)
-        //{
-        //    var sql = CreateSelectInsertSql(typeof(T), insertTableName, replaceSelect, args);
-        //    return _sqlhelper.Execute_Async(sql, _args.ToArray());
-        //}
-
-
-        //#endregion
     }
 }

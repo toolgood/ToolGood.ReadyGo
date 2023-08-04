@@ -23,7 +23,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this._paramPrefix = DatabaseProvider.Resolve(_sqlhelper._sqlType).GetParameterPrefix(_sqlhelper._connectionString);
             _sqlExpression = new Expressions.SqlExpression(_sqlhelper._sqlType);
         }
-        internal WhereHelper(SqlHelper helper,string table)
+        internal WhereHelper(SqlHelper helper, string table)
         {
             this._sqlhelper = helper;
             this._paramPrefix = DatabaseProvider.Resolve(_sqlhelper._sqlType).GetParameterPrefix(_sqlhelper._connectionString);
@@ -45,9 +45,7 @@ namespace ToolGood.ReadyGo3.LinQ
         private string _groupby = "";
         private string _having = "";
         private bool _useDistinct = false;
-        //private bool _useTableName = false;
         private string _tableName = "t1";
-
         private string _table;
         #endregion
 
@@ -69,13 +67,72 @@ namespace ToolGood.ReadyGo3.LinQ
             _doNext = iftrue;
         }
 
+        #region whereLike whereLikeStart whereLikeEnd
+        private void whereLikeEnd(LambdaExpression field, string args)
+        {
+            if (jump()) return;
+            var column = _sqlExpression.GetColumnName(field);
+            whereLikeEnd(column, args);
+        }
+        private void whereLikeEnd(string field, string args)
+        {
+            if (jump()) return;
+            if (string.IsNullOrEmpty(args)) { return; }
+
+            if (_where.Length > 0) {
+                _where.Append(" AND ");
+            }
+            _where.Append(field);
+            _where.Append(" LIKE '");
+            _where.Append(args.ToEscapeLikeParam());
+            _where.Append("%'");
+        }
+        private void whereLikeStart(LambdaExpression field, string args)
+        {
+            if (jump()) return;
+            var column = _sqlExpression.GetColumnName(field);
+            whereLikeStart(column, args);
+        }
+        private void whereLikeStart(string field, string args)
+        {
+            if (jump()) return;
+            if (string.IsNullOrEmpty(args)) { return; }
+
+            if (_where.Length > 0) {
+                _where.Append(" AND ");
+            }
+            _where.Append(field);
+            _where.Append(" LIKE '%");
+            _where.Append(args.ToEscapeLikeParam());
+            _where.Append("'");
+        }
+        private void whereLike(LambdaExpression field, string args)
+        {
+            if (jump()) return;
+            var column = _sqlExpression.GetColumnName(field);
+            whereLike(column, args);
+        }
+        private void whereLike(string field, string args)
+        {
+            if (jump()) return;
+            if (string.IsNullOrEmpty(args)) { return; }
+
+            if (_where.Length > 0) {
+                _where.Append(" AND ");
+            }
+            _where.Append(field);
+            _where.Append(" LIKE '%");
+            _where.Append(args.ToEscapeLikeParam());
+            _where.Append("%'");
+        }
+        #endregion
+        #region whereIn whereNotIn
         private void whereNotIn(LambdaExpression field, ICollection args)
         {
             if (jump()) return;
             var column = _sqlExpression.GetColumnName(field);
             whereNotIn(column, args);
         }
-
         private void whereNotIn(string column, ICollection args)
         {
             if (jump()) return;
@@ -107,14 +164,12 @@ namespace ToolGood.ReadyGo3.LinQ
                 _args.Add(item);
             }
         }
-
         private void whereIn(LambdaExpression field, ICollection args)
         {
             if (jump()) return;
             var column = _sqlExpression.GetColumnName(field);
             whereIn(column, args);
         }
-
         private void whereIn(string column, ICollection args)
         {
             if (jump()) return;
@@ -145,8 +200,8 @@ namespace ToolGood.ReadyGo3.LinQ
             foreach (var item in args) {
                 _args.Add(item);
             }
-        }
-
+        } 
+        #endregion
 
         internal void where(string where, ICollection args)
         {
@@ -497,7 +552,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> WhereNotExists(string where, params object[] args)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
             where = where.TrimStart();
             if (where.StartsWith("NOT EXISTS ", StringComparison.CurrentCultureIgnoreCase) == false) {
@@ -519,7 +574,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> WhereExists(string where, params object[] args)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
             where = where.TrimStart();
             if (where.StartsWith("EXISTS ", StringComparison.CurrentCultureIgnoreCase) == false) {
@@ -541,7 +596,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> Where(string where, params object[] args)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(where)) throw new ArgumentNullException("where");
             this.where(where, args);
             return this;
@@ -554,7 +609,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> OrderBy(string order)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(order)) throw new ArgumentNullException("order");
             this.orderBySql(order);
             return this;
@@ -569,7 +624,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> OrderBy(string order, string ascORdesc)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(order)) throw new ArgumentNullException("order");
             if (string.IsNullOrWhiteSpace(ascORdesc)) {
                 this.orderBySql(order);
@@ -587,7 +642,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> GroupBy(string groupby)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(groupby)) throw new ArgumentNullException("groupby");
             this.groupBy(groupby);
             return this;
@@ -600,7 +655,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> Having(string having)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(having)) throw new ArgumentNullException("having");
             this.having(having);
             return this;
@@ -613,7 +668,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> JoinOn(string joinWithOn)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(joinWithOn)) throw new ArgumentNullException("joinWithOn");
             this.join(joinWithOn);
             return this;
@@ -628,7 +683,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> WhereNotIn(string field, ICollection args)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
             this.whereNotIn(field, args);
             return this;
@@ -643,7 +698,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> WhereNotIn(string field, params object[] args)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
             this.whereNotIn(field, args);
             return this;
@@ -658,7 +713,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> WhereIn(string field, ICollection args)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
             this.whereIn(field, args);
             return this;
@@ -673,7 +728,7 @@ namespace ToolGood.ReadyGo3.LinQ
         public WhereHelper<T1> WhereIn(string field, params object[] args)
         {
             if (jump()) return this;
-            
+
             if (string.IsNullOrEmpty(field)) throw new ArgumentNullException("field");
             this.whereIn(field, args);
             return this;
@@ -683,7 +738,7 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #region 05 Sql拼接 LINQ WhereIn Where OrderBy Having
         /// <summary>
-        /// Where not In
+        /// Where {field} not In ({args})
         /// </summary>
         /// <param name="field"></param>
         /// <param name="args"></param>
@@ -694,7 +749,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
         /// <summary>
-        /// Where not In
+        /// Where {field} not In ({args})
         /// </summary>
         /// <param name="field"></param>
         /// <param name="args"></param>
@@ -704,7 +759,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return WhereNotIn(field, (ICollection)args);
         }
         /// <summary>
-        /// Where  In
+        /// Where {field} In ({args})
         /// </summary>
         /// <param name="field"></param>
         /// <param name="args"></param>
@@ -715,7 +770,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
         /// <summary>
-        /// Where  In
+        /// Where {field} In ({args})
         /// </summary>
         /// <param name="field"></param>
         /// <param name="args"></param>
@@ -725,7 +780,82 @@ namespace ToolGood.ReadyGo3.LinQ
             return WhereIn(field, (ICollection)args);
         }
         /// <summary>
-        /// Where
+        /// Where {field} Like '%{args}%' 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> WhereLike<T>(Expression<Func<T1, T>> field, string args)
+        {
+            whereLike(field, args);
+            return this;
+
+        }
+        /// <summary>
+        /// Where {field} Like '%{args}%' 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> WhereLike(string field, string args)
+        {
+            whereLike(field, args);
+            return this;
+        }
+        /// <summary>
+        /// Where {field} Like '%{args}' 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> WhereLikeStart<T>(Expression<Func<T1, T>> field, string args)
+        {
+            whereLikeStart(field, args);
+            return this;
+        }
+        /// <summary>
+        /// Where {field} Like '%{args}' 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> WhereLikeStart(string field, string args)
+        {
+            whereLikeStart(field, args);
+            return this;
+        }
+        /// <summary>
+        /// Where {field} Like '{args}%' 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> WhereLikeEnd<T>(Expression<Func<T1, T>> field, string args)
+        {
+            whereLikeEnd(field, args);
+            return this;
+
+        }
+        /// <summary>
+        /// Where {field} Like '{args}%' 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="field"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public WhereHelper<T1> WhereLikeEnd(string field, string args)
+        {
+            whereLikeEnd(field, args);
+            return this;
+        }
+
+        /// <summary>
+        /// Where {where}
         /// </summary>
         /// <param name="where"></param>
         /// <returns></returns>
@@ -840,7 +970,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return _sqlhelper.Page<T1>(page, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
         }
-  
+
         /// <summary>
         /// 返回第一列
         /// </summary>
@@ -907,7 +1037,7 @@ namespace ToolGood.ReadyGo3.LinQ
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>((page - 1) * itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
-         
+
         /// <summary>
         /// 返回第一列
         /// </summary>
@@ -1018,7 +1148,7 @@ namespace ToolGood.ReadyGo3.LinQ
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Select<T>((page - 1) * itemsPerPage, itemsPerPage, this.GetFullSelectSql(sql), this._args.ToArray());
         }
-         
+
         /// <summary>
         /// 返回第一列
         /// </summary>
