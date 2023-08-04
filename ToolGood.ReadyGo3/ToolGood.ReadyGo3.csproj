@@ -16,7 +16,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Product>ToolGood.ReadyGo3</Product>
     <DelaySign>false</DelaySign>
-    <Version>4.0.7</Version>
+    <Version>4.0.8</Version>
     <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\ToolGood.ReadyGo3.xml</DocumentationFile>

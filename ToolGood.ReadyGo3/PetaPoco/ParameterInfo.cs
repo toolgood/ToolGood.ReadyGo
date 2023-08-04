@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using static System.Formats.Asn1.AsnWriter;
+using System.Drawing;
+using System.Runtime.InteropServices.JavaScript;
 
 namespace ToolGood.ReadyGo3
 {
@@ -30,17 +33,34 @@ namespace ToolGood.ReadyGo3
             };
             this.Add(parameter);
         }
-
-        /// <summary>
-        /// 添加 LIKE 参数,前后加%，如： %{参数}%
-        /// </summary>
-        /// <param name="parameterName">不带前缀</param>
-        /// <param name="value">值</param>
-        public void Like(string parameterName, string value)
+        public void AddLike(string parameterName, string value)
         {
             SqlParameter parameter = new SqlParameter {
                 ParameterName = parameterName,
-                Value = "%" + value + "%",
+                Value = "%" + value.ToEscapeLikeParam() + "%",
+                DbType = DbType.String,
+                ParameterDirection = ParameterDirection.Input,
+            };
+            this.Add(parameter);
+        }
+        public void AddLikeStart(string parameterName, string value)
+        {
+            SqlParameter parameter = new SqlParameter {
+                ParameterName = parameterName,
+                Value = "%" + value.ToEscapeLikeParam(),
+                DbType = DbType.String,
+                ParameterDirection = ParameterDirection.Input,
+
+
+            };
+            this.Add(parameter);
+        }
+        public void AddLikeEnd(string parameterName, string value)
+        {
+            SqlParameter parameter = new SqlParameter {
+                ParameterName = parameterName,
+                Value = value.ToEscapeLikeParam() + "End",
+                DbType = DbType.String,
                 ParameterDirection = ParameterDirection.Input,
             };
             this.Add(parameter);
