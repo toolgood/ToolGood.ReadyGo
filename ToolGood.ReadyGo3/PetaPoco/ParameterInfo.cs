@@ -39,7 +39,7 @@ namespace ToolGood.ReadyGo3
         {
             SqlParameter parameter = new SqlParameter {
                 ParameterName = parameterName,
-                Value = "%" + value.ToEscapeLikeParam() + "%",
+                Value = "%" + SqlUtil.ToEscapeLikeParam(value) + "%",
                 DbType = DbType.String,
                 ParameterDirection = ParameterDirection.Input,
             };
@@ -54,7 +54,7 @@ namespace ToolGood.ReadyGo3
         {
             SqlParameter parameter = new SqlParameter {
                 ParameterName = parameterName,
-                Value = "%" + value.ToEscapeLikeParam(),
+                Value = "%" + SqlUtil.ToEscapeLikeParam(value),
                 DbType = DbType.String,
                 ParameterDirection = ParameterDirection.Input,
 
@@ -71,7 +71,7 @@ namespace ToolGood.ReadyGo3
         {
             SqlParameter parameter = new SqlParameter {
                 ParameterName = parameterName,
-                Value = value.ToEscapeLikeParam() + "%",
+                Value = SqlUtil.ToEscapeLikeParam(value) + "%",
                 DbType = DbType.String,
                 ParameterDirection = ParameterDirection.Input,
             };

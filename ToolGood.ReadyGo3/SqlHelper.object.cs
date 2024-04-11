@@ -533,7 +533,7 @@ namespace ToolGood.ReadyGo3
             var fieldType = value.GetType();
             if (fieldType.IsEnum) {
                 if (EnumHelper.UseEnumString(fieldType)) {
-                    var txt = (value.ToString()).ToEscapeParam();
+                    var txt = SqlUtil.ToEscapeParam(value.ToString());
                     return "'" + txt + "'";
                 }
                 return $"'{Convert.ToInt64(value)}'";
@@ -563,7 +563,7 @@ namespace ToolGood.ReadyGo3
                 default: break;
             }
             if (value is string || value is char) {
-                var txt = (value.ToString()).ToEscapeParam();
+                var txt = SqlUtil.ToEscapeParam(value.ToString());
                 return "'" + txt + "'";
             }
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";

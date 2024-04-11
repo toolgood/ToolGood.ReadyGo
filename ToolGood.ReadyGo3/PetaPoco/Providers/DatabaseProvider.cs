@@ -520,7 +520,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                 default: break;
             }
             if (value is string || value is char) {
-                var txt = (value.ToString()).ToEscapeParam();
+                var txt = SqlUtil.ToEscapeParam(value.ToString());
                 return "'" + txt + "'";
             }
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";

@@ -84,7 +84,7 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             _where.Append(field);
             _where.Append(" LIKE '");
-            _where.Append(args.ToEscapeLikeParam());
+            _where.Append(SqlUtil.ToEscapeLikeParam(args));
             _where.Append("%'");
         }
         private void whereLikeStart(LambdaExpression field, string args)
@@ -103,7 +103,7 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             _where.Append(field);
             _where.Append(" LIKE '%");
-            _where.Append(args.ToEscapeLikeParam());
+            _where.Append(SqlUtil.ToEscapeLikeParam(args));
             _where.Append("'");
         }
         private void whereLike(LambdaExpression field, string args)
@@ -122,7 +122,7 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             _where.Append(field);
             _where.Append(" LIKE '%");
-            _where.Append(args.ToEscapeLikeParam());
+            _where.Append(SqlUtil.ToEscapeLikeParam(args));
             _where.Append("%'");
         }
         #endregion
@@ -1392,7 +1392,7 @@ namespace ToolGood.ReadyGo3.LinQ
                     sb.Append(h.QuerySql);
                     if (h.UseAsName || asNames.Contains(h.AsName)) {
                         sb.Append(" As '");
-                        sb.Append(h.AsName.ToEscapeParam());
+                        sb.Append(SqlUtil.ToEscapeParam(h.AsName));
                         if (asNames.Contains(h.AsName)) {
                             sb.Append("_");
                             sb.Append(asNames.Count(q => q == h.AsName).ToString());
@@ -1413,7 +1413,7 @@ namespace ToolGood.ReadyGo3.LinQ
                         sb.Append(h.QuerySql);
                         if (h.UseAsName) {
                             sb.Append(" As '");
-                            sb.Append(h.AsName.ToEscapeParam());
+                            sb.Append(SqlUtil.ToEscapeParam(h.AsName));
                             sb.Append("'");
                         }
                     }

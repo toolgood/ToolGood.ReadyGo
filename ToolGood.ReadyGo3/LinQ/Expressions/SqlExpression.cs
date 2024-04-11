@@ -42,7 +42,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         #region 可重写的方法
         private string GetQuotedValue(string paramValue)
         {
-            var txt = (paramValue.ToString()).ToEscapeParam();
+            var txt = SqlUtil.ToEscapeParam(paramValue.ToString());
             return "'" + txt + "'";
         }
         private string GetQuotedValue(object value, Type fieldType)
@@ -51,7 +51,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
             if (fieldType.IsEnum) {
                 if (EnumHelper.UseEnumString(fieldType)) {
-                    var txt = (value.ToString()).ToEscapeParam();
+                    var txt = SqlUtil.ToEscapeParam(value.ToString());
                     return "'" + txt + "'";
                 }
                 return $"'{Convert.ToInt64(value)}'";
@@ -156,9 +156,9 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 case "TrimEnd": statement = provider.CreateFunction(SqlFunction.RTrim, quotedColName); break;
                 case "ToUpper": statement = provider.CreateFunction(SqlFunction.Upper, quotedColName); break;
                 case "ToLower": statement = provider.CreateFunction(SqlFunction.Lower, quotedColName); break;
-                case "StartsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, wildcardArg.ToEscapeLikeParam() + "%"); break;
-                case "EndsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + wildcardArg.ToEscapeLikeParam()); break;
-                case "Contains": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + wildcardArg.ToEscapeLikeParam() + "%"); break;
+                case "StartsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, SqlUtil.ToEscapeLikeParam(wildcardArg) + "%"); break;
+                case "EndsWith": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + SqlUtil.ToEscapeLikeParam(wildcardArg)); break;
+                case "Contains": statement = provider.CreateFunction(SqlFunction.Fuction, "{0} LIKE {1}", quotedColName, "%" + SqlUtil.ToEscapeLikeParam(wildcardArg) + "%"); break;
                 case "Substring":
                     var startIndex = Int32.Parse(_args[0].ToString()) + 1;
                     if (_args.Count == 1) {
