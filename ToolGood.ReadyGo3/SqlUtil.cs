@@ -45,13 +45,8 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereLike(string columnName, string param, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
-            if (and) {
-                return $" AND {columnName} LIKE '{ToEscapeLikeParam(param)}'";
-            }
-            return $" {columnName} LIKE '{ToEscapeLikeParam(param)}'";
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
+            return $"{(and ? " AND" : "")} {columnName} LIKE '{ToEscapeLikeParam(param)}'";
         }
 
         /// <summary>
@@ -63,13 +58,8 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereLikeStart(string columnName, string param, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
-            if (and) {
-                return $" AND {columnName} LIKE '%{ToEscapeLikeParam(param)}'";
-            }
-            return $" {columnName} LIKE '%{ToEscapeLikeParam(param)}'";
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
+            return $"{(and ? " AND" : "")} {columnName} LIKE '%{ToEscapeLikeParam(param)}'";
         }
 
         /// <summary>
@@ -81,13 +71,8 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereLikeEnd(string columnName, string param, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
-            if (and) {
-                return $" AND {columnName} LIKE '{ToEscapeLikeParam(param)}%'";
-            }
-            return $" {columnName} LIKE '{ToEscapeLikeParam(param)}%'";
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
+            return $"{(and ? " AND" : "")} {columnName} LIKE '{ToEscapeLikeParam(param)}%'";
         }
 
         /// <summary>
@@ -99,13 +84,8 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereNotLike(string columnName, string param, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
-            if (and) {
-                return $" AND {columnName} NOT LIKE '{ToEscapeLikeParam(param)}'";
-            }
-            return $" {columnName} NOT LIKE '{ToEscapeLikeParam(param)}'";
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
+            return $"{(and ? " AND" : "")} {columnName} NOT LIKE '{ToEscapeLikeParam(param)}'";
         }
 
         /// <summary>
@@ -117,13 +97,8 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereNotLikeStart(string columnName, string param, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
-            if (and) {
-                return $" AND {columnName} NOT LIKE '%{ToEscapeLikeParam(param)}'";
-            }
-            return $" {columnName} NOT LIKE '%{ToEscapeLikeParam(param)}'";
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
+            return $"{(and ? " AND" : "")} {columnName} NOT LIKE '%{ToEscapeLikeParam(param)}'";
         }
 
         /// <summary>
@@ -135,13 +110,8 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereNotLikeEnd(string columnName, string param, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
-            if (and) {
-                return $" AND {columnName} NOT LIKE '{ToEscapeLikeParam(param)}%'";
-            }
-            return $" {columnName} NOT LIKE '{ToEscapeLikeParam(param)}%'";
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
+            return $"{(and ? " AND" : "")} {columnName} NOT LIKE '{ToEscapeLikeParam(param)}%'";
         }
 
 
@@ -154,25 +124,25 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereIn(string columnName, List<string> param, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
             if (param != null && param.Count > 0) {
                 StringBuilder sql = new StringBuilder();
                 sql.Append(' ');
-                if (!and) {
+                if (and) {
                     sql.Append("AND ");
                 }
                 sql.Append(columnName);
-                sql.Append(" IN ('");
-                foreach (var item in param) {
-                    sql.Append(SqlUtil.ToEscapeParam(item));
-                    sql.Append("','");
+                sql.Append(" IN (");
+                for (global::System.Int32 i = 0; i < param.Count; i++) {
+                    if (i > 0) { sql.Append(','); }
+                    sql.Append('\'');
+                    sql.Append(SqlUtil.ToEscapeParam(param[i]));
+                    sql.Append('\'');
                 }
-                sql.Append("')");
+                sql.Append(")");
                 return sql.ToString();
             }
-            return "";
+            return $"{(and?" AND":"")} 1=2";
         }
         /// <summary>
         /// 拼接in字符串
@@ -183,25 +153,23 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereIn(string columnName, List<int> numbers, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
             if (numbers != null && numbers.Count > 0) {
                 StringBuilder sql = new StringBuilder();
                 sql.Append(' ');
-                if (!and) {
+                if (and) {
                     sql.Append("AND ");
                 }
                 sql.Append(columnName);
                 sql.Append(" IN (");
-                foreach (var item in numbers) {
-                    sql.Append(item);
-                    sql.Append(',');
+                for (int i = 0; i < numbers.Count; i++) {
+                    if (i > 0) { sql.Append(','); }
+                    sql.Append(numbers[i]);
                 }
                 sql.Append(')');
                 return sql.ToString();
             }
-            return "";
+            return $"{(and ? " AND" : "")} 1=2";
         }
         /// <summary>
         /// 拼接in字符串
@@ -212,25 +180,23 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereIn(string columnName, List<long> numbers, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
             if (numbers != null && numbers.Count > 0) {
                 StringBuilder sql = new StringBuilder();
                 sql.Append(' ');
-                if (!and) {
+                if (and) {
                     sql.Append("AND ");
                 }
                 sql.Append(columnName);
                 sql.Append(" IN (");
-                foreach (var item in numbers) {
-                    sql.Append(item);
-                    sql.Append(',');
+                for (int i = 0; i < numbers.Count; i++) {
+                    if (i > 0) { sql.Append(','); }
+                    sql.Append(numbers[i]);
                 }
                 sql.Append(')');
                 return sql.ToString();
             }
-            return "";
+            return $"{(and ? " AND" : "")} 1=2";
         }
 
         /// <summary>
@@ -242,22 +208,22 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereNotIn(string columnName, List<string> param, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
             if (param != null && param.Count > 0) {
                 StringBuilder sql = new StringBuilder();
                 sql.Append(' ');
-                if (!and) {
+                if (and) {
                     sql.Append("AND ");
                 }
                 sql.Append(columnName);
-                sql.Append(" NOT IN ('");
-                foreach (var item in param) {
-                    sql.Append(SqlUtil.ToEscapeParam(item));
-                    sql.Append("','");
+                sql.Append(" NOT IN (");
+                for (global::System.Int32 i = 0; i < param.Count; i++) {
+                    if (i > 0) { sql.Append(','); }
+                    sql.Append('\'');
+                    sql.Append(SqlUtil.ToEscapeParam(param[i]));
+                    sql.Append('\'');
                 }
-                sql.Append("')");
+                sql.Append(")");
                 return sql.ToString();
             }
             return "";
@@ -272,20 +238,18 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereNotIn(string columnName, List<int> numbers, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
             if (numbers != null && numbers.Count > 0) {
                 StringBuilder sql = new StringBuilder();
                 sql.Append(' ');
-                if (!and) {
+                if (and) {
                     sql.Append("AND ");
                 }
                 sql.Append(columnName);
                 sql.Append(" NOT IN (");
-                foreach (var item in numbers) {
-                    sql.Append(item);
-                    sql.Append(',');
+                for (int i = 0; i < numbers.Count; i++) {
+                    if (i > 0) { sql.Append(','); }
+                    sql.Append(numbers[i]);
                 }
                 sql.Append(')');
                 return sql.ToString();
@@ -302,20 +266,18 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string WhereNotIn(string columnName, List<long> numbers, bool and = false)
         {
-            if (string.IsNullOrEmpty(columnName)) {
-                throw new Exception("columnName is null or empty");
-            }
+            if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
             if (numbers != null && numbers.Count > 0) {
                 StringBuilder sql = new StringBuilder();
                 sql.Append(' ');
-                if (!and) {
+                if (and) {
                     sql.Append("AND ");
                 }
                 sql.Append(columnName);
                 sql.Append(" NOT IN (");
-                foreach (var item in numbers) {
-                    sql.Append(item);
-                    sql.Append(',');
+                for (int i = 0; i < numbers.Count; i++) {
+                    if (i > 0) { sql.Append(','); }
+                    sql.Append(numbers[i]);
                 }
                 sql.Append(')');
                 return sql.ToString();
