@@ -17,7 +17,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string ToEscapeParam(string stringValue)
         {
-            return stringValue.Replace(@"\", @"\\").Replace("'", "''")
+            return stringValue.Replace(@"\", @"\\").Replace("'", "\\'")
                                   .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
                                   .Replace("\f", "\\f").Replace("\n", "\\n").Replace("\r", "\\r")
                                   .Replace("\t", "\\t").Replace("\v", "\\v");
@@ -32,7 +32,6 @@ namespace ToolGood.ReadyGo3
             return ToEscapeParam(param)
                 .Replace("_", @"\_")
                 .Replace("%", @"\%")
-                .Replace("'", @"\'")
                 .Replace("[", @"\[")
                 .Replace("]", @"\]");
         }
