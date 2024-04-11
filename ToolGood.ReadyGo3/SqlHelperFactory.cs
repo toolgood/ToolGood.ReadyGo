@@ -224,7 +224,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="useSynchronous">使用同步，为False则更快</param>
         /// <param name="journalMode">Journal模式</param>
         /// <returns></returns>
-        public static SqlHelper OpenSqliteFile(string filePath, string pwd = "", bool useSynchronous = true, JournalMode journalMode = JournalMode.None)
+        public static SqlHelper OpenSqliteFile(string filePath, string pwd = null, bool useSynchronous = true, JournalMode journalMode = JournalMode.None)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Data Source={0};", filePath);
@@ -250,7 +250,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="filePath"></param>
         /// <param name="pwd"></param>
         /// <returns></returns>
-        public static SqlHelper OpenMsSqliteFile(string filePath, string pwd = "")
+        public static SqlHelper OpenMsSqliteFile(string filePath, string pwd = null)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Data Source={0};", filePath);

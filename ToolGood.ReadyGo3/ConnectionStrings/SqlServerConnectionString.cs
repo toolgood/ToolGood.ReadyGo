@@ -100,6 +100,11 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         public string WorkstationID { set { SetValue("Workstation ID", value); } }
 
+        /// <summary>
+        /// 信任的颁发机构颁发的证书
+        /// </summary>
+        public bool? TrustServerCertificate { set { SetValue("TrustServerCertificate", value); } }
+
 
         private readonly Dictionary<string, string> _dict = new Dictionary<string, string>();
         /// <summary>
