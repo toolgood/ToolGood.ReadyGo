@@ -500,10 +500,12 @@ namespace ToolGood.ReadyGo3
                             if (objs.Count == 0) {
                                 stringBuilder.Append($"1=2");
                             } else if (objs.Count == 1) {
-                                stringBuilder.Append($"[{pi.Name}]=");
+                                stringBuilder.Append(_provider.EscapeSqlIdentifier(pi.Name));
+                                stringBuilder.Append('=');
                                 stringBuilder.Append(EscapeParam(objs[0]));
                             } else {
-                                stringBuilder.Append($"[{pi.Name}] in (");
+                                stringBuilder.Append(_provider.EscapeSqlIdentifier(pi.Name));
+                                stringBuilder.Append(" in (");
                                 for (int j = 0; j < objs.Count; j++) {
                                     if (j > 0) { stringBuilder.Append(","); }
                                     stringBuilder.Append(EscapeParam(objs[j]));
@@ -511,12 +513,14 @@ namespace ToolGood.ReadyGo3
                                 stringBuilder.Append($")");
                             }
                         } else {
-                            stringBuilder.Append($"[{pi.Name}]=");
+                            stringBuilder.Append(_provider.EscapeSqlIdentifier(pi.Name));
+                            stringBuilder.Append('=');
                             stringBuilder.Append(EscapeParam(value));
                         }
                     }
                 } else {
-                    stringBuilder.Append($"[{pi.Name}]=");
+                    stringBuilder.Append(_provider.EscapeSqlIdentifier(pi.Name));
+                    stringBuilder.Append('=');
                     stringBuilder.Append(EscapeParam(value));
                 }
             }

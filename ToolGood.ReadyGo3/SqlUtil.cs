@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ToolGood.ReadyGo3.Exceptions;
 
 namespace ToolGood.ReadyGo3
 {
@@ -141,7 +140,7 @@ namespace ToolGood.ReadyGo3
                 sql.Append(")");
                 return sql.ToString();
             }
-            return $"{(and?" AND":"")} 1=2";
+            return $"{(and ? " AND" : "")} 1=2";
         }
         /// <summary>
         /// 拼接in字符串
