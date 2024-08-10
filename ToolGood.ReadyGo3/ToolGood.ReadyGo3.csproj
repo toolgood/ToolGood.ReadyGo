@@ -5,7 +5,7 @@
     <Copyright>Copyright 2016-2024 ToolGood</Copyright>
     <AssemblyTitle>ToolGood.ReadyGo</AssemblyTitle>
     <Authors>ToolGood</Authors>
-    <TargetFrameworks>netstandard2.1;net6.0;net7.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;net8.0</TargetFrameworks>
     <AssemblyName>ToolGood.ReadyGo3</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <PackageId>ToolGood.ReadyGo3</PackageId>
@@ -16,7 +16,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Product>ToolGood.ReadyGo3</Product>
     <DelaySign>false</DelaySign>
-    <Version>4.0.13</Version>
+    <Version>4.0.14</Version>
     <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\ToolGood.ReadyGo3.xml</DocumentationFile>

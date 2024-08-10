@@ -116,6 +116,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (_sharedConnectionDepth > 0) {
                 _sharedConnectionDepth--;
                 if (_sharedConnectionDepth == 0) {
+                    if (_sharedConnection.State != ConnectionState.Closed) {
+                        _sharedConnection.Close();
+                    }
                     _sharedConnection.Dispose();
                     _sharedConnection = null;
                 }

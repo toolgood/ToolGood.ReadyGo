@@ -95,7 +95,6 @@ namespace ToolGood.ReadyGo3
         {
             _isDisposable = true;
             if (_database != null) {
-
                 _database.Dispose();
                 _database = null;
 
