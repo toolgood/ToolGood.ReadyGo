@@ -18,8 +18,9 @@ namespace ToolGood.ReadyGo3.Gadget.Events
             Cancel = false;
             SqlHelper = sqlHelper;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public SqlHelper SqlHelper;
 
@@ -33,24 +34,28 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         /// </summary>
         public object Obj;
     }
+
     /// <summary>
     /// 插入之前
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
     public delegate void BeforeInsertEventHandler(object sender, DataEventArgs args);
+
     /// <summary>
     /// 更新之前
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
     public delegate void BeforeUpdateEventHandler(object sender, DataEventArgs args);
+
     /// <summary>
     /// 删除之前
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
     public delegate void BeforeDeleteEventHandler(object sender, DataEventArgs args);
+
     /// <summary>
     /// 数据事件参数
     /// </summary>
@@ -66,27 +71,32 @@ namespace ToolGood.ReadyGo3.Gadget.Events
             Obj = obj;
             SqlHelper = sqlHelper;
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public SqlHelper SqlHelper;
+
         /// <summary>
         /// 操作对象
         /// </summary>
         public object Obj;
     }
+
     /// <summary>
     /// 插入之后
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
     public delegate void AfterInsertEventHandler(object sender, Data2EventArgs args);
+
     /// <summary>
     /// 更新之后
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
     public delegate void AfterUpdateEventHandler(object sender, Data2EventArgs args);
+
     /// <summary>
     /// 删除之后
     /// </summary>
@@ -99,7 +109,7 @@ namespace ToolGood.ReadyGo3.Gadget.Events
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>
-    public delegate void BeforeTransactionEventHandler(object sender,  EventArgs args);
+    public delegate void BeforeTransactionEventHandler(object sender, EventArgs args);
 
     /// <summary>
     /// 事务之后
@@ -107,5 +117,4 @@ namespace ToolGood.ReadyGo3.Gadget.Events
     /// <param name="sender"></param>
     /// <param name="args"></param>
     public delegate void AfterTransactionEventHandler(object sender, EventArgs args);
-
 }

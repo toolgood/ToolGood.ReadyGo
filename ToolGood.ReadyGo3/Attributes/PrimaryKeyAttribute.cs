@@ -32,6 +32,7 @@ namespace ToolGood.ReadyGo3.Attributes
             PrimaryKey = primaryKey;
             AutoIncrement = true;
         }
+
         /// <summary>
         /// 主键
         /// </summary>
@@ -42,6 +43,7 @@ namespace ToolGood.ReadyGo3.Attributes
             PrimaryKey = primaryKey.Trim();
             AutoIncrement = autoIncrement;
         }
+
         /// <summary>
         /// 主键
         /// </summary>

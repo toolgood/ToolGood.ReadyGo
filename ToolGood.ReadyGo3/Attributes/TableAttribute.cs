@@ -36,6 +36,7 @@ namespace ToolGood.ReadyGo3.Attributes
         {
             TableName = tableName.Trim();
         }
+
         /// <summary>
         /// 数据表
         /// </summary>
@@ -59,7 +60,5 @@ namespace ToolGood.ReadyGo3.Attributes
             TableName = tableName.Trim();
             DatabaseName = databaseName.Trim();
         }
-
-
     }
 }

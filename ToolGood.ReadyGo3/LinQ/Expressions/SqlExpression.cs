@@ -14,7 +14,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 namespace ToolGood.ReadyGo3.LinQ.Expressions
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class SqlExpression
     {
@@ -29,6 +29,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         {
             this.provider = DatabaseProvider.Resolve(type);
         }
+
         /// <summary>
         /// SqlExpression
         /// </summary>
@@ -38,13 +39,14 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             this.provider = provider;
         }
 
-
         #region 可重写的方法
+
         private string GetQuotedValue(string paramValue)
         {
             var txt = SqlUtil.ToEscapeParam(paramValue.ToString());
             return "'" + txt + "'";
         }
+
         private string GetQuotedValue(object value, Type fieldType)
         {
             if (value == null) return "NULL";
@@ -88,17 +90,19 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
             if (fieldType == typeof(TimeSpan)) return ((TimeSpan)value).Ticks.ToString(CultureInfo.InvariantCulture);
             if (fieldType == typeof(byte[])) {
-                var txt = BitConverter.ToString((byte[])value).Replace("-","");
+                var txt = BitConverter.ToString((byte[])value).Replace("-", "");
                 return "X'" + txt + "'";
             }
             // TO： add 用于sqlite
 
             return GetQuotedValue(value.ToString());
         }
+
         private object GetQuotedTrueValue()
         {
             return new PartialSqlString("1");
         }
+
         private object GetQuotedFalseValue()
         {
             return new PartialSqlString("0");
@@ -120,6 +124,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
             return Expression.Lambda(m).Compile().DynamicInvoke();
         }
+
         private string VisitSqlMethodCall(MethodCallExpression call)
         {
             var callName = call.Method.Name;
@@ -168,6 +173,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                     var length = Int32.Parse(_args[1].ToString());
                     statement = provider.CreateFunction(SqlFunction.SubString3, quotedColName, startIndex, length);
                     break;
+
                 case "Equals":
                     wildcardArg = GetQuotedValue(wildcardArg);
                     statement = $"({quotedColName} = {wildcardArg})"; break;
@@ -184,11 +190,10 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             return new PartialSqlString(statement);
         }
 
-
-        #endregion
-
+        #endregion 可重写的方法
 
         #region Analysis getColumnName
+
         /// <summary>
         /// 获取所有列
         /// </summary>
@@ -200,15 +205,14 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 sql = Visit(exp).ToString();
             } else if (exp.Body.NodeType == ExpressionType.MemberAccess) {
                 sql = getColumnName(exp.Body as MemberExpression);
-
             } else if (exp.Body.NodeType != ExpressionType.Call) {
                 sql = getColumnName((exp.Body as UnaryExpression).Operand.Reduce() as MemberExpression);
-
             } else {
                 var call = exp.Body as MethodCallExpression;
                 sql = VisitSqlMethodCall(call);
             }
         }
+
         /// <summary>
         /// 分析LambdaExpression
         /// </summary>
@@ -218,6 +222,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         {
             sql = Visit(exp).ToString();
         }
+
         /// <summary>
         /// 获取列名
         /// </summary>
@@ -249,7 +254,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             return provider.EscapeSqlIdentifier(colName);
         }
 
-        #endregion getColumnName
+        #endregion Analysis getColumnName
 
         #region GetSelectSql
 
@@ -262,8 +267,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         {
             return new PartialSqlString($"({GetQuotedTrueValue().ToString()}={GetQuotedFalseValue().ToString()})");
         }
-
-
 
         #endregion GetSelectSql
 
@@ -315,9 +318,11 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 case ExpressionType.MemberInit: return VisitMemberInit(exp as MemberInitExpression);
                 case ExpressionType.Conditional:
                     return VisitConditional(exp as ConditionalExpression);
+
                 default: return exp.ToString();
             }
         }
+
         private object VisitConditional(ConditionalExpression conditional)
         {
             var test = Visit(conditional.Test);
@@ -326,6 +331,7 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
 
             return new PartialSqlString($"(case when {test} then {trueSql} else {falseSql} end)");
         }
+
         private object VisitLambda(LambdaExpression lambda)
         {
             if (lambda.Body.NodeType == ExpressionType.MemberAccess) {
@@ -529,7 +535,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
             return Visit(u.Operand);
         }
 
-
         private string BindOperant(ExpressionType e)
         {
             switch (e) {
@@ -550,7 +555,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 default: return e.ToString();
             }
         }
-
 
         #endregion Expression Visit
 
@@ -592,7 +596,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         #endregion IsNumericType IsOrHasGenericInterfaceTypeOf
 
         #region 分析方法调用
-
 
         private bool IsStaticArrayMethod(MethodCallExpression m)
         {
@@ -692,7 +695,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                    && exp.Expression.NodeType == ExpressionType.Parameter;
         }
 
-
         private object VisitObjectExtendMethodCall(MethodCallExpression m)
         {
             if (m.Arguments[0].NodeType != ExpressionType.MemberAccess) {
@@ -731,6 +733,5 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
         }
 
         #endregion 获取 集合
-
     }
 }

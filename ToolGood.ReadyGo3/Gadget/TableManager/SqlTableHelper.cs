@@ -16,6 +16,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
             return dp.GetTryCreateTable(type, withIndex);
         }
+
         public string GetCreateTable(Type type, bool withIndex = true)
         {
             var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
@@ -33,13 +34,12 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
             return dp.GetDropTable(type);
         }
+
         public string GetTruncateTable(Type type)
         {
             var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
             return dp.GetTruncateTable(type);
         }
-
-
 
         public void TryCreateTable(Type type, bool withIndex = true)
         {
@@ -52,7 +52,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             var sql = GetCreateTable(type, withIndex);
             _sqlHelper.Execute(sql);
         }
-
 
         public void CreateTableIndex(Type type)
         {
@@ -72,7 +71,5 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             var sql = GetTruncateTable(type);
             _sqlHelper.Execute(sql);
         }
-
-
     }
 }

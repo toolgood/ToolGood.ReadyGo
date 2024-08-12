@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
-using System.Text;
 using ToolGood.ReadyGo3.Gadget.Events;
 using ToolGood.ReadyGo3.Gadget.Internals;
 using ToolGood.ReadyGo3.Internals;
@@ -38,7 +37,6 @@ namespace ToolGood.ReadyGo3
         internal SqlRecord _sql = new SqlRecord();
         private DatabaseProvider _provider;
         internal bool _isDisposable;
-
 
         #endregion 私有变量
 
@@ -105,7 +103,6 @@ namespace ToolGood.ReadyGo3
             }
         }
 
-
         #endregion 构造方法 释放方法
 
         #region 私有方法
@@ -126,7 +123,7 @@ namespace ToolGood.ReadyGo3
 
         #endregion 私有方法
 
-        #region UseTransaction 
+        #region UseTransaction
         /// <summary>
         /// 使用事务
         /// </summary>
@@ -135,7 +132,7 @@ namespace ToolGood.ReadyGo3
         {
             return new Transaction(GetDatabase());
         }
-        #endregion UseTransaction UseCache UseRecord
+        #endregion UseTransaction
 
         #region Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
 
@@ -177,7 +174,6 @@ namespace ToolGood.ReadyGo3
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 
             return GetDatabase().ExecuteDataTable(sql, args);
-
         }
 
         /// <summary>
@@ -202,7 +198,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public bool Exists<T>(string sql, params object[] args)
         {
-
             return Count<T>(sql, args) > 0;
         }
         /// <summary>
@@ -214,7 +209,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public bool Table_Exists(string table, string sql, params object[] args)
         {
-
             return Count(table, sql, args) > 0;
         }
 
@@ -229,7 +223,6 @@ namespace ToolGood.ReadyGo3
         {
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
-
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
             return GetDatabase().ExecuteScalar<int>(sql, args);
@@ -278,7 +271,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Select<T>(string sql = "", params object[] args)
         {
-
             return GetDatabase().Query<T>(sql, args).ToList();
         }
 
@@ -292,7 +284,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Table_Select<T>(string table, string sql = "", params object[] args) where T : class
         {
-
             return GetDatabase().Table_Query<T>(table, sql, args).ToList();
         }
 
@@ -306,7 +297,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Select<T>(int limit, string sql = "", params object[] args) where T : class
         {
-
             return GetDatabase().Query<T>(0, limit, sql, args).ToList();
         }
         /// <summary>
@@ -320,10 +310,8 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Table_Select<T>(string table, int limit, string sql = "", params object[] args) where T : class
         {
-
             return GetDatabase().Table_Query<T>(table, 0, limit, sql, args).ToList();
         }
-
 
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -336,7 +324,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Select<T>(int limit, int offset, string sql = "", params object[] args) where T : class
         {
-
             return GetDatabase().Query<T>(offset, limit, sql, args).ToList();
         }
         /// <summary>
@@ -351,7 +338,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public List<T> Table_Select<T>(string table, int limit, int offset, string sql = "", params object[] args) where T : class
         {
-
             return GetDatabase().Table_Query<T>(table, offset, limit, sql, args).ToList();
         }
 
@@ -368,7 +354,6 @@ namespace ToolGood.ReadyGo3
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
-
 
             return GetDatabase().Query<T>((page - 1) * itemsPerPage, itemsPerPage, sql, args).ToList();
         }
@@ -387,7 +372,6 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-
             return GetDatabase().Table_Query<T>(table, (page - 1) * itemsPerPage, itemsPerPage, sql, args).ToList();
         }
 
@@ -405,7 +389,6 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-
             return GetDatabase().Page<T>(page, itemsPerPage, sql, args);
         }
         /// <summary>
@@ -422,7 +405,6 @@ namespace ToolGood.ReadyGo3
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
-
 
             return GetDatabase().Table_Page<T>(table, page, itemsPerPage, sql, args);
         }
@@ -687,7 +669,6 @@ namespace ToolGood.ReadyGo3
             var pk = _provider.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
             var sql = $"WHERE {pk}=@0";
             return GetDatabase().Table_Query<T>(table, sql, new object[] { primaryKey }).FirstOrDefault();
-
         }
 
         /// <summary>
@@ -699,7 +680,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T FirstOrDefault<T>(string sql = "", params object[] args)
         {
-
             if (_sql_firstWithLimit1 == false) {
                 return GetDatabase().Query<T>(sql, args).FirstOrDefault();
             }
@@ -715,13 +695,11 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public T Table_FirstOrDefault<T>(string table, string sql = "", params object[] args) where T : class
         {
-
             if (_sql_firstWithLimit1 == false) {
                 return GetDatabase().Table_Query<T>(table, sql, args).FirstOrDefault();
             }
             return GetDatabase().Table_Query<T>(table, 0, 1, sql, args).FirstOrDefault();
         }
-
 
         #endregion FirstOrDefault
 
@@ -767,7 +745,6 @@ namespace ToolGood.ReadyGo3
             _Events.OnAfterInsert(list);
         }
 
-
         /// <summary>
         /// 插入，支持主键自动获取。
         /// </summary>
@@ -808,7 +785,6 @@ namespace ToolGood.ReadyGo3
             _Events.OnAfterInsert(poco);
             return obj;
         }
-
 
         /// <summary>
         /// 插入
@@ -937,7 +913,6 @@ namespace ToolGood.ReadyGo3
             return t;
         }
 
-
         /// <summary>
         /// 删除
         /// </summary>
@@ -986,7 +961,6 @@ namespace ToolGood.ReadyGo3
             return GetDatabase().Table_Delete(table, primaryKey);
         }
 
-
         /// <summary>
         /// 保存
         /// </summary>
@@ -1007,7 +981,6 @@ namespace ToolGood.ReadyGo3
             if (poco == null) throw new ArgumentNullException("poco is null");
             GetDatabase().SaveTable(table, poco);
         }
-
 
         /// <summary>
         /// 更新
@@ -1057,7 +1030,6 @@ namespace ToolGood.ReadyGo3
             return new TableName(type, _provider, asName);
         }
 
-
         /// <summary>
         /// 获取动态表名，适合绑定数据表列名
         /// </summary>
@@ -1068,9 +1040,5 @@ namespace ToolGood.ReadyGo3
         {
             return new TableName<T>(typeof(T), _provider, asName);
         }
-
-
-
-
     }
 }

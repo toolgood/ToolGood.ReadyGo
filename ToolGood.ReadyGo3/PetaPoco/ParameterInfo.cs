@@ -30,6 +30,7 @@ namespace ToolGood.ReadyGo3
             };
             this.Add(parameter);
         }
+
         /// <summary>
         /// 添加 like 参数
         /// </summary>
@@ -45,6 +46,7 @@ namespace ToolGood.ReadyGo3
             };
             this.Add(parameter);
         }
+
         /// <summary>
         ///  添加 like 参数
         /// </summary>
@@ -57,11 +59,10 @@ namespace ToolGood.ReadyGo3
                 Value = "%" + SqlUtil.ToEscapeLikeParam(value),
                 DbType = DbType.String,
                 ParameterDirection = ParameterDirection.Input,
-
-
             };
             this.Add(parameter);
         }
+
         /// <summary>
         ///  添加 like 参数
         /// </summary>
@@ -88,7 +89,7 @@ namespace ToolGood.ReadyGo3
             SqlParameter parameter = new SqlParameter {
                 ParameterName = parameterName,
                 Value = value.Date,
-                DbType= DbType.DateTime,
+                DbType = DbType.DateTime,
                 ParameterDirection = ParameterDirection.Input,
             };
             this.Add(parameter);
@@ -109,12 +110,7 @@ namespace ToolGood.ReadyGo3
             };
             this.Add(parameter);
         }
-
-
-
-
     }
-
 
     /// <summary>
     /// SQL 参数
@@ -125,6 +121,7 @@ namespace ToolGood.ReadyGo3
         /// 参数名字
         /// </summary>
         public string ParameterName { get; set; }
+
         /// <summary>
         /// 参数值
         /// </summary>
@@ -149,6 +146,5 @@ namespace ToolGood.ReadyGo3
         /// 获取或设置所解析的 Value 的小数位数。
         /// </summary>
         public byte? Scale { get; set; }
-
     }
 }

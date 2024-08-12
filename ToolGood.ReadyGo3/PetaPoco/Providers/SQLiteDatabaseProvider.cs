@@ -45,6 +45,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             return $"[{tableName}]";
         }
+
         public override string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
         {
             StringBuilder sb = new StringBuilder();
@@ -89,9 +90,8 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return sb.ToString();
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="function"></param>
         /// <param name="args"></param>

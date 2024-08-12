@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3
 {
-    partial class SqlHelper
+    public partial class SqlHelper
     {
-
         #region FirstOrDefault PK
 
         /// <summary>
@@ -55,7 +51,6 @@ namespace ToolGood.ReadyGo3
             return Table_SingleOrDefaultById<T>(table, condition ?? 0);
         }
 
-
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -99,7 +94,7 @@ namespace ToolGood.ReadyGo3
             return Table_SingleOrDefaultById<T>(table, condition ?? 0);
         }
 
-        #endregion
+        #endregion FirstOrDefault PK
 
         /// <summary>
         /// 根据条件查询第一个
@@ -111,7 +106,6 @@ namespace ToolGood.ReadyGo3
         {
             return Table_FirstOrDefault<T>(table, ConditionObjectToWhere(condition));
         }
-
 
         /// <summary>
         /// 根据条件查询
@@ -150,8 +144,6 @@ namespace ToolGood.ReadyGo3
             return Table_Select<T>(table, ConditionObjectToWhere(condition));
         }
 
-
-
         /// <summary>
         /// 根据条件查询页
         /// </summary>
@@ -166,7 +158,6 @@ namespace ToolGood.ReadyGo3
             return Table_SelectPage<T>(table, page, itemsPerPage, ConditionObjectToWhere(condition));
         }
 
-
         /// <summary>
         /// 根据条件查询页
         /// </summary>
@@ -180,7 +171,6 @@ namespace ToolGood.ReadyGo3
         {
             return Table_Page<T>(table, page, itemsPerPage, ConditionObjectToWhere(condition));
         }
-
 
         /// <summary>
         /// 更新表
@@ -211,7 +201,6 @@ namespace ToolGood.ReadyGo3
             return Delete("DELETE FROM " + tbn + " " + ConditionObjectToWhere(condition));
         }
 
-
         /// <summary>
         /// 根据条件查询个数
         /// </summary>
@@ -223,7 +212,6 @@ namespace ToolGood.ReadyGo3
             return Table_Count(table, ConditionObjectToWhere(condition));
         }
 
-
         /// <summary>
         /// 根据条件判断是否存在
         /// </summary>
@@ -234,12 +222,6 @@ namespace ToolGood.ReadyGo3
         {
             return Table_Count(table, ConditionObjectToWhere(condition)) > 0;
         }
-
-
-
-
-
-
 
         #region FirstOrDefault_Async PK
 
@@ -264,7 +246,6 @@ namespace ToolGood.ReadyGo3
         {
             return Table_SingleOrDefaultById_Async<T>(table, condition ?? 0);
         }
-
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -309,7 +290,6 @@ namespace ToolGood.ReadyGo3
             return Table_SingleOrDefaultById_Async<T>(table, condition ?? 0);
         }
 
-
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
@@ -332,7 +312,7 @@ namespace ToolGood.ReadyGo3
             return Table_SingleOrDefaultById_Async<T>(table, condition ?? 0);
         }
 
-        #endregion
+        #endregion FirstOrDefault_Async PK
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -395,7 +375,6 @@ namespace ToolGood.ReadyGo3
             return Table_SelectPage_Async<T>(table, page, itemsPerPage, ConditionObjectToWhere(condition));
         }
 
-
         /// <summary>
         ///  根据条件查询页，异步操作
         /// </summary>
@@ -439,7 +418,6 @@ namespace ToolGood.ReadyGo3
             return Delete_Async("DELETE FROM " + tbn + " " + ConditionObjectToWhere(condition));
         }
 
-
         /// <summary>
         /// 根据条件查询个数，异步操作
         /// </summary>
@@ -460,12 +438,6 @@ namespace ToolGood.ReadyGo3
         public async Task<bool> Table_Exists_Async(string table, object condition)
         {
             return await Table_Count_Async(table, ConditionObjectToWhere(condition)) > 0;
-
         }
-
-
-
-
-
     }
 }

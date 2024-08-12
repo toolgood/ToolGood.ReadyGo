@@ -21,6 +21,7 @@ namespace ToolGood.ReadyGo3
                                   .Replace("\f", "\\f").Replace("\n", "\\n").Replace("\r", "\\r")
                                   .Replace("\t", "\\t").Replace("\v", "\\v");
         }
+
         /// <summary>
         /// 格式化like字符串
         /// </summary>
@@ -34,6 +35,7 @@ namespace ToolGood.ReadyGo3
                 .Replace("[", @"\[")
                 .Replace("]", @"\]");
         }
+
         /// <summary>
         /// 拼接like字符串
         /// </summary>
@@ -112,7 +114,6 @@ namespace ToolGood.ReadyGo3
             return $"{(and ? " AND" : "")} {columnName} NOT LIKE '{ToEscapeLikeParam(param)}%'";
         }
 
-
         /// <summary>
         /// 拼接in字符串
         /// </summary>
@@ -142,6 +143,7 @@ namespace ToolGood.ReadyGo3
             }
             return $"{(and ? " AND" : "")} 1=2";
         }
+
         /// <summary>
         /// 拼接in字符串
         /// </summary>
@@ -169,6 +171,7 @@ namespace ToolGood.ReadyGo3
             }
             return $"{(and ? " AND" : "")} 1=2";
         }
+
         /// <summary>
         /// 拼接in字符串
         /// </summary>

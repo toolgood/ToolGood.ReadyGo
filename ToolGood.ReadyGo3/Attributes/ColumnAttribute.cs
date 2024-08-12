@@ -26,7 +26,8 @@ namespace ToolGood.ReadyGo3.Attributes
         /// <summary>
         /// 列标签
         /// </summary>
-        public ColumnAttribute() { }
+        public ColumnAttribute()
+        { }
 
         /// <summary>
         /// 列标签

@@ -4,7 +4,9 @@ using System.Text;
 
 namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 {
-    public class SqlServer2012DatabaseProvider : SqlServerDatabaseProvider { }
+    public class SqlServer2012DatabaseProvider : SqlServerDatabaseProvider
+    { }
+
     public class SqlServerDatabaseProvider : DatabaseProvider
     {
         // http://www.cnblogs.com/gouchaonan/p/6127799.html
@@ -75,6 +77,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             }
             return sql;
         }
+
         private string BuildColumns(List<string> columnList)
         {
             var columns = "";
@@ -83,7 +86,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             }
             return columns.Replace("[[", "[").Replace("]]", "]").Trim(',');
         }
-
 
         public override string GetDropTable(Type type)
         {
@@ -96,8 +98,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             var ti = TableInfo.FromType(type);
             return "TRUNCATE TABLE " + GetTableName(ti) + ";";
         }
-
-
 
         public string CreateColumn(TableInfo ti, ColumnInfo ci)
         {
@@ -130,7 +130,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (type == typeof(List<bool>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "varchar", ci.FieldLength, isRequired);
-
 
             //var isRequired = ColumnType.IsNullType(type) == false;
             //if (isRequired == false) type = ColumnType.GetBaseType(type);

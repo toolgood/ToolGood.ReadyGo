@@ -7,15 +7,15 @@ using System.Text;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco;
-using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3
 {
-    partial class SqlHelper
+    public partial class SqlHelper
     {
         #region Select Update
 
         #region FirstOrDefault PK
+
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -46,7 +46,6 @@ namespace ToolGood.ReadyGo3
             return SingleOrDefaultById<T>(condition);
         }
 
-
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -66,6 +65,7 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultById<T>(condition);
         }
+
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -96,8 +96,8 @@ namespace ToolGood.ReadyGo3
             return SingleOrDefaultById<T>(condition ?? 0);
         }
 
+        #endregion FirstOrDefault PK
 
-        #endregion
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
@@ -120,7 +120,6 @@ namespace ToolGood.ReadyGo3
             return Select<T>(limit, offset, ConditionObjectToWhere(condition));
         }
 
-
         /// <summary>
         /// 根据条件查询
         /// </summary>
@@ -142,7 +141,6 @@ namespace ToolGood.ReadyGo3
         {
             return Select<T>(ConditionObjectToWhere(condition));
         }
-
 
         /// <summary>
         /// 根据条件查询页
@@ -170,7 +168,6 @@ namespace ToolGood.ReadyGo3
             return Page<T>(page, itemsPerPage, ConditionObjectToWhere(condition));
         }
 
-
         /// <summary>
         /// 根据条件更新对象
         /// </summary>
@@ -182,8 +179,6 @@ namespace ToolGood.ReadyGo3
         {
             return Update<T>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
         }
-
-
 
         /// <summary>
         /// 根据条件从数据库中删除对象
@@ -225,12 +220,10 @@ namespace ToolGood.ReadyGo3
             }
         }
 
-
-        #endregion
-
-
+        #endregion Select Update
 
         #region FirstOrDefault_Async PK
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
@@ -240,6 +233,7 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultById_Async<T>(condition);
         }
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
@@ -259,6 +253,7 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultById_Async<T>(condition);
         }
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
@@ -278,6 +273,7 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultById_Async<T>(condition);
         }
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
@@ -297,6 +293,7 @@ namespace ToolGood.ReadyGo3
         {
             return SingleOrDefaultById_Async<T>(condition);
         }
+
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
@@ -307,8 +304,7 @@ namespace ToolGood.ReadyGo3
             return SingleOrDefaultById_Async<T>(condition ?? 0);
         }
 
-
-        #endregion
+        #endregion FirstOrDefault_Async PK
 
         /// <summary>
         /// 根据条件查询第一个，异步操作
@@ -392,7 +388,7 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
-        /// 根据条件从数据库中删除对象 
+        /// 根据条件从数据库中删除对象
         /// </summary>
         /// <param name="condition">条件</param>
         /// <returns></returns>
@@ -431,12 +427,10 @@ namespace ToolGood.ReadyGo3
             }
         }
 
-
         private string ConditionObjectToWhere(object condition)
         {
             if (condition == null) { return ""; }
             if (condition.GetType() == typeof(string)) { return (string)condition; }
-
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("WHERE ");
@@ -525,8 +519,9 @@ namespace ToolGood.ReadyGo3
                 }
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -578,6 +573,5 @@ namespace ToolGood.ReadyGo3
             }
             return "'" + value.ToString() + "'";
         }
-
     }
 }

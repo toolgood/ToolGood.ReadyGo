@@ -5,9 +5,9 @@ namespace ToolGood.ReadyGo3.Internals
 {
     internal class Types
     {
-        readonly static Cache<Type, bool> IsAllowTypeCache = new Cache<Type, bool>();
-        readonly static Cache<Type, bool> IsNullTypeCache = new Cache<Type, bool>();
-        readonly static Cache<Type, Type> GetBaseTypeCache = new Cache<Type, Type>();
+        private static readonly Cache<Type, bool> IsAllowTypeCache = new Cache<Type, bool>();
+        private static readonly Cache<Type, bool> IsNullTypeCache = new Cache<Type, bool>();
+        private static readonly Cache<Type, Type> GetBaseTypeCache = new Cache<Type, Type>();
 
         public static bool IsAllowType(Type type)
         {
@@ -37,8 +37,6 @@ namespace ToolGood.ReadyGo3.Internals
                 if (type == typeof(List<Single>)) return true;
                 if (type == typeof(List<Double>)) return true;
                 if (type == typeof(List<bool>)) return true;
-
-
 
                 if (type.FullName == "Microsoft.SqlServer.Types.SqlGeography") return true;
                 if (type.FullName == "Microsoft.SqlServer.Types.SqlGeometry") return true;
@@ -109,9 +107,5 @@ namespace ToolGood.ReadyGo3.Internals
                 return type;
             });
         }
-
-
-
-
     }
 }

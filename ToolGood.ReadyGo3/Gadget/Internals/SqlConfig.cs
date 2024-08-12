@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using ToolGood.ReadyGo3.PetaPoco;
-using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.Gadget.Internals
 {
@@ -15,11 +14,14 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         {
             _sqlHelper = helper;
         }
+
         #region 属性
+
         /// <summary>
         /// 插入操作时，默认时间为现在时间
         /// </summary>
         public bool Insert_DateTime_Default_Now { get { return _sqlHelper._setDateTimeDefaultNow; } set { _sqlHelper._setDateTimeDefaultNow = value; } }
+
         /// <summary>
         /// 插入操作时，默认字符串非Null
         /// </summary>
@@ -49,12 +51,13 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         /// 数据库执行超出时间
         /// </summary>
         public int CommandTimeout { get { return _sqlHelper._commandTimeout; } set { _sqlHelper._commandTimeout = value; } }
+
         /// <summary>
         /// 事务级别
         /// </summary>
         public IsolationLevel? IsolationLevel { get { return _sqlHelper._isolationLevel; } set { _sqlHelper._isolationLevel = value; } }
 
-        #endregion
+        #endregion 属性
 
         /// <summary>
         /// 清空缓存
@@ -63,6 +66,5 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
         {
             PocoData.FlushCaches();
         }
-
     }
 }

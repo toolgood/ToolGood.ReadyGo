@@ -1,9 +1,7 @@
 ﻿namespace ToolGood.ReadyGo3
 {
-
-
     /// <summary>
-    /// Sqlite 
+    /// Sqlite
     /// </summary>
     public enum JournalMode
     {

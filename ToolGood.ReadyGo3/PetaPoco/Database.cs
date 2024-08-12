@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Dynamic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using ToolGood.ReadyGo3.Exceptions;
 using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Core;
@@ -41,9 +38,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
             _isDisposable = true;
         }
 
-        #endregion
+        #endregion IDisposable
 
         #region Constructors
+
         /// <summary>
         /// PetaPoco数据库链接库
         /// </summary>
@@ -61,7 +59,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             KeepConnectionAlive = true;
         }
 
-        #endregion
+        #endregion Constructors
 
         #region Connection Management
 
@@ -125,7 +123,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        #endregion
+        #endregion Connection Management
 
         #region Transaction Management
 
@@ -208,7 +206,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        #endregion
+        #endregion Transaction Management
 
         #region Command Management
 
@@ -243,12 +241,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
             CreateParam(cmd, value, cmd.Parameters.Count.ToString(), pi, null, null, null, null);
         }
+
         private void CreateParam(IDbCommand cmd, object value, string name, PropertyInfo pi, int? size, byte? scale, DbType? dbType, ParameterDirection? parameterDirection)
         {
             // Create the parameter
             var p = cmd.CreateParameter();
             p.ParameterName = string.Format("{0}{1}", _paramPrefix, name);
-
 
             // Assign the parmeter value
             if (value == null) {
@@ -296,7 +294,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     p.GetType().GetProperty("UdtTypeName").SetValue(p, "geometry", null); //geography is the equivalent SQL Server Type
                     p.Value = value;
                 } else if (t == typeof(DateTime) || t == typeof(DateTime?)) {
-                    // 在sql server 内会影响查询速度 
+                    // 在sql server 内会影响查询速度
                     p.Value = value;
                     p.DbType = DbType.DateTime;
                 } else if (t == typeof(TimeSpan) || t == typeof(TimeSpan?)) {
@@ -323,7 +321,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     p.Value = ToByteArr((Double[])value);
                 } else if (t == typeof(bool[])) {
                     p.Value = ToByteArr((bool[])value);
-
                 } else if (t == typeof(List<UInt16>)) {
                     p.Value = ToByteArr(((List<UInt16>)value).ToArray());
                 } else if (t == typeof(List<UInt32>)) {
@@ -346,7 +343,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     p.Value = ((List<sbyte>)value).ToArray();
                 } else if (t == typeof(List<bool>)) {
                     p.Value = ToByteArr(((List<bool>)value).ToArray());
-
                 } else {
                     p.Value = value;
                 }
@@ -359,6 +355,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             // Add to the collection
             cmd.Parameters.Add(p);
         }
+
         private byte[] ToByteArr(bool[] intArr)
         {
             int intSize = sizeof(bool) * intArr.Length;
@@ -366,6 +363,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
             return bytArr;
         }
+
         private byte[] ToByteArr(UInt16[] intArr)
         {
             Int32 intSize = sizeof(UInt16) * intArr.Length;
@@ -373,6 +371,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
             return bytArr;
         }
+
         private byte[] ToByteArr(UInt32[] intArr)
         {
             Int32 intSize = sizeof(UInt32) * intArr.Length;
@@ -380,6 +379,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
             return bytArr;
         }
+
         private byte[] ToByteArr(UInt64[] intArr)
         {
             Int32 intSize = sizeof(UInt64) * intArr.Length;
@@ -387,6 +387,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
             return bytArr;
         }
+
         private byte[] ToByteArr(Int16[] intArr)
         {
             Int32 intSize = sizeof(Int16) * intArr.Length;
@@ -394,6 +395,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
             return bytArr;
         }
+
         private byte[] ToByteArr(Int32[] intArr)
         {
             Int32 intSize = sizeof(Int32) * intArr.Length;
@@ -401,6 +403,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
             return bytArr;
         }
+
         private byte[] ToByteArr(Int64[] intArr)
         {
             Int32 intSize = sizeof(Int64) * intArr.Length;
@@ -416,6 +419,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             Buffer.BlockCopy(intArr, 0, bytArr, 0, intSize);
             return bytArr;
         }
+
         private byte[] ToByteArr(Double[] intArr)
         {
             Int32 intSize = sizeof(Double) * intArr.Length;
@@ -424,12 +428,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return bytArr;
         }
 
-
-
         // Create a command
         private static readonly Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="connection"></param>
         /// <param name="sql"></param>
@@ -461,14 +464,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 }
             }
 
-
             // Notify the DB type
             _provider.PreExecute(cmd);
 
             return cmd;
         }
 
-        #endregion
+        #endregion Command Management
 
         #region Exception Reporting and Logging
 
@@ -511,7 +513,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             _sqlHelper._events.OnExecutedCommand(cmd.CommandText, objs);
         }
 
-        #endregion
+        #endregion Exception Reporting and Logging
 
         #region operation: Execute  ExecuteScalar ExecuteDataTable ExecuteDataSet
 
@@ -575,8 +577,9 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 return default;
             }
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
@@ -623,7 +626,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
@@ -653,7 +656,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        #endregion
+        #endregion operation: Execute  ExecuteScalar ExecuteDataTable ExecuteDataSet
 
         #region operation: Page
 
@@ -661,6 +664,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         {
             Table_BuildPageQueries<T>(null, skip, take, sql, ref args, out sqlCount, out sqlPage);
         }
+
         private void Table_BuildPageQueries<T>(string table, int skip, int take, string sql, ref object[] args, out string sqlCount, out string sqlPage)
         {
             // Add auto select clause
@@ -675,11 +679,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
             sqlCount = parts.SqlCount;
         }
 
-
         public Page<T> Page<T>(int page, int itemsPerPage, string sql, object[] args)
         {
             return Table_Page<T>(null, page, itemsPerPage, sql, args);
         }
+
         public Page<T> Table_Page<T>(string table, int page, int itemsPerPage, string sql, object[] args)
         {
             Table_BuildPageQueries<T>(table, (page - 1) * itemsPerPage, itemsPerPage, sql, ref args, out string sqlCount, out string sqlPage);
@@ -700,19 +704,20 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return result;
         }
 
-        #endregion
+        #endregion operation: Page
 
         #region operation: Query
+
         public IEnumerable<T> Query<T>(int skip, int take, string sql, object[] args)
         {
             return Table_Query<T>(null, skip, take, sql, args);
         }
+
         public IEnumerable<T> Table_Query<T>(string table, int skip, int take, string sql, object[] args)
         {
             Table_BuildPageQueries<T>(table, skip, take, sql, ref args, out _, out string sqlPage);
             return Query<T>(sqlPage, args);
         }
-
 
         public IEnumerable<T> Query<T>(string sql, object[] args)
         {
@@ -761,7 +766,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        #endregion
+        #endregion operation: Query
 
         #region operation: Exists
 
@@ -775,7 +780,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         //    return ExecuteScalar<int>(string.Format(_provider.GetExistsSql(), _provider.GetTableName(table), sqlCondition), args) != 0;
         //}
 
-
         //public bool Exists<T>(string sqlCondition, params object[] args)
         //{
         //    var poco = PocoData.ForType(typeof(T)).TableInfo;
@@ -785,7 +789,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         //    return ExecuteScalar<int>(string.Format(_provider.GetExistsSql(), _provider.GetTableName(poco.TableName), sqlCondition), args) != 0;
         //}
-
 
         //public bool Table_Exists<T>(string table, object primaryKey)
         //{
@@ -797,7 +800,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         //    return Exists<T>(string.Format("{0}=@0", _provider.EscapeSqlIdentifier(PocoData.ForType(typeof(T)).TableInfo.PrimaryKey)), primaryKey);
         //}
 
-        #endregion
+        #endregion operation: Exists
 
         #region operation: Insert
 
@@ -809,6 +812,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(poco.GetType());
             return ExecuteInsert(table, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, poco);
         }
+
         public object Insert(object poco)
         {
             if (poco == null)
@@ -988,8 +992,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-
-        #endregion
+        #endregion operation: Insert
 
         #region operation: Update
 
@@ -1026,6 +1029,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(typeof(T));
             return Execute(string.Format("UPDATE {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
         }
+
         public int Table_Update(string table, string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql))
@@ -1066,7 +1070,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                         }
                         AddParam(cmd, primaryKeyValue, pkpi);
 
-
                         DoPreExecute(cmd);
                         var retv = cmd.ExecuteNonQuery();
                         OnExecutedCommand(cmd);
@@ -1082,7 +1085,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        #endregion
+        #endregion operation: Update
 
         #region operation: Delete
 
@@ -1125,13 +1128,12 @@ namespace ToolGood.ReadyGo3.PetaPoco
             var pd = PocoData.ForType(poco.GetType());
             return Delete(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, poco, null);
         }
+
         public int Table_Delete(string table, object poco)
         {
             var pd = PocoData.ForType(poco.GetType());
             return Delete(table, pd.TableInfo.PrimaryKey, poco, null);
         }
-
-
 
         /// <summary>
         ///     Performs an SQL Delete
@@ -1157,6 +1159,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
             return Delete(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
         }
+
         //public int Table_Delete<T>(string table, object pocoOrPrimaryKey)
         //{
         //    if (pocoOrPrimaryKey.GetType() == typeof(T))
@@ -1176,21 +1179,21 @@ namespace ToolGood.ReadyGo3.PetaPoco
         //    return Delete(table, pd.TableInfo.PrimaryKey, null, pocoOrPrimaryKey);
         //}
 
-
-
         public int Delete<T>(string sql, params object[] args)
         {
             var pd = PocoData.ForType(typeof(T));
             return Execute(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(pd.TableInfo.TableName), sql), args);
         }
+
         public int Table_Delete(string table, string sql, params object[] args)
         {
             return Execute(string.Format("DELETE FROM {0} {1}", _provider.GetTableName(table), sql), args);
         }
 
-        #endregion
+        #endregion operation: Delete
 
         #region operation: Save
+
         /// <summary>
         ///     Saves a POCO by either performing either an SQL Insert or SQL Update
         /// </summary>
@@ -1213,6 +1216,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 ExecuteUpdate(tableName, primaryKeyName, poco, null);
             }
         }
+
         public void SaveTable(string tableName, object poco)
         {
             if (poco == null)
@@ -1277,8 +1281,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             return pk == Activator.CreateInstance(pk.GetType());
         }
 
-
-        #endregion
+        #endregion operation: Save
 
         #region FormatCommand
 
@@ -1314,7 +1317,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         //    return sb.ToString();
         //}
 
-        #endregion
+        #endregion FormatCommand
 
         #region Public Properties
 
@@ -1334,12 +1337,13 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         public int OneTimeCommandTimeout;
 
-        #endregion
+        #endregion Public Properties
 
         #region Member Fields
 
         // Member variables
         private readonly SqlHelper _sqlHelper;
+
         private readonly DatabaseProvider _provider;
         private IDbConnection _sharedConnection;
         private IDbTransaction _transaction;
@@ -1351,8 +1355,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private bool _isDisposable;
         private string _databaseName;
 
-
-        #endregion
+        #endregion Member Fields
 
         #region Internal operations
 
@@ -1385,6 +1388,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             OnExecutingCommand(cmd);
         }
 
-        #endregion
+        #endregion Internal operations
     }
 }

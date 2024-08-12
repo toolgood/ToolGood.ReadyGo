@@ -7,14 +7,14 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
 {
     public class ColumnInfo
     {
-        private ColumnInfo() { }
+        private ColumnInfo()
+        { }
 
         public string ColumnName;
         public string Comment;
 
         public string DefaultValue;
         public bool Required;
-
 
         public Type PropertyType;
 
@@ -44,7 +44,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             a = pi.GetCustomAttributes(typeof(DefaultValueAttribute), true);
             ci.DefaultValue = a.Length == 0 ? null : (a[0] as DefaultValueAttribute).DefaultValue;
 
-
             a = pi.GetCustomAttributes(typeof(FieldLengthAttribute), true);
             if (a.Length > 0) {
                 ci.IsText = (a[0] as FieldLengthAttribute).IsText;
@@ -65,6 +64,5 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             ci.PropertyType = Types.GetBaseType(ci.PropertyType);
             return ci;
         }
-
     }
 }

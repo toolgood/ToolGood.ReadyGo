@@ -5,10 +5,10 @@ using SqlCommand = System.Data.Common.DbCommand;
 
 namespace ToolGood.ReadyGo3.PetaPoco.Core
 {
-    partial class DatabaseProvider
+    public partial class DatabaseProvider
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="db"></param>
         /// <param name="cmd"></param>
@@ -37,6 +37,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return database.ExecuteScalarHelper_Async(cmd);
         }
     }
+
     public partial class MsAccessDbDatabaseProvider
     {
         public override async Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
@@ -46,13 +47,13 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return await database.ExecuteScalarHelper_Async(cmd);
         }
     }
+
     public partial class MySqlDatabaseProvider
     {
- 
     }
+
     public partial class OracleDatabaseProvider
     {
-
         public override async Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
         {
             if (primaryKeyName != null) {
@@ -85,6 +86,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             }
         }
     }
+
     public partial class SQLiteDatabaseProvider
     {
         public override async Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
@@ -98,14 +100,15 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             }
         }
     }
+
     public partial class SqlServer2012DatabaseProvider
     {
-
     }
+
     public partial class SqlServerCEDatabaseProviders
     {
-
     }
+
     public partial class SqlServerDatabaseProvider
     {
         public override Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
@@ -113,5 +116,4 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return database.ExecuteScalarHelper_Async(cmd);
         }
     }
-
 }

@@ -17,7 +17,7 @@ namespace ToolGood.ReadyGo3.Internals
         public static string GetInsertSql(DatabaseProvider _provider, string _paramPrefix, PocoData pd, int size, string tableName, string primaryKeyName, bool autoIncrement, IEnumerable<string> ignoreFields = null)
         {
             var ignore = ignoreFields == null ? "" : string.Join(",", ignoreFields);
-            return _insert.Get($"{_provider.ToString()}|{_paramPrefix}|{size}|{pd.ToString()}|{tableName}|{primaryKeyName}|{(autoIncrement?"1":"0")}|{ignore}", () => {
+            return _insert.Get($"{_provider.ToString()}|{_paramPrefix}|{size}|{pd.ToString()}|{tableName}|{primaryKeyName}|{(autoIncrement ? "1" : "0")}|{ignore}", () => {
                 var names = new List<string>();
                 var values = new List<string>();
                 var index = 0;
@@ -81,7 +81,7 @@ namespace ToolGood.ReadyGo3.Internals
                     if (index > 0) sb.Append(", ");
                     sb.AppendFormat("{0} = {1}{2}", _provider.EscapeSqlIdentifier(i.Value.ColumnName), _paramPrefix, index++);
                 }
-                return $"UPDATE {_provider.GetTableName(tableName)} SET {sb.ToString()} WHERE { _provider.EscapeSqlIdentifier(primaryKeyName)} = { _paramPrefix}{ index++}";
+                return $"UPDATE {_provider.GetTableName(tableName)} SET {sb.ToString()} WHERE {_provider.EscapeSqlIdentifier(primaryKeyName)} = {_paramPrefix}{index++}";
             });
         }
 
@@ -113,7 +113,5 @@ namespace ToolGood.ReadyGo3.Internals
                 return stringBuilder.ToString();
             });
         }
-
-
     }
 }

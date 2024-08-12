@@ -73,10 +73,8 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return sb.ToString();
         }
 
-
-
         /// <summary>
-        /// 
+        ///
         /// https://support.office.com/zh-cn/article/%E8%A1%A8%E8%BE%BE%E5%BC%8F%E8%AF%AD%E6%B3%95%E6%8C%87%E5%8D%97-ebc770bc-8486-4adc-a9ec-7427cce39a90#bm3
         /// </summary>
         /// <param name="function"></param>

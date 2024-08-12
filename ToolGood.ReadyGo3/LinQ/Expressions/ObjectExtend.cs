@@ -3,7 +3,7 @@
 namespace ToolGood.ReadyGo3.LinQ
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static partial class ObjectExtend
     {
@@ -19,6 +19,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return IsIn(o, (ICollection<T>)c);
         }
+
         /// <summary>
         /// 在……之中，支持Where方法
         /// </summary>
@@ -33,6 +34,7 @@ namespace ToolGood.ReadyGo3.LinQ
                 if (i.Equals(o)) return true;
             return false;
         }
+
         /// <summary>
         /// 不在……之中，支持Where方法
         /// </summary>
@@ -45,6 +47,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return IsNotIn(o, (ICollection<T>)c);
         }
+
         /// <summary>
         /// 不在……之中，支持Where方法
         /// </summary>
@@ -59,6 +62,7 @@ namespace ToolGood.ReadyGo3.LinQ
                 if (i.Equals(o)) return false;
             return true;
         }
+
         /// <summary>
         /// 在……之中，支持Where方法
         /// </summary>
@@ -69,6 +73,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return IsIn(o, (ICollection<string>)c);
         }
+
         /// <summary>
         /// 在……之中，支持Where方法
         /// </summary>
@@ -81,6 +86,7 @@ namespace ToolGood.ReadyGo3.LinQ
                 if (i.Equals(o)) return true;
             return false;
         }
+
         /// <summary>
         /// 不在……之中，支持Where方法
         /// </summary>
@@ -91,6 +97,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return IsNotIn(o, (ICollection<string>)c);
         }
+
         /// <summary>
         /// 不在……之中，支持Where方法
         /// </summary>

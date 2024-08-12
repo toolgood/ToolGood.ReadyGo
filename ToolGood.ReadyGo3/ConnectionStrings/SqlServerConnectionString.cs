@@ -43,18 +43,22 @@ namespace ToolGood.ReadyGo3
         ///     Data Source（数据源）／Server（服务器）／Address（地址）／Addr（地址）／Network Address（网络地址）：SQL Server实例的名称或网络地址。
         /// </summary>
         public string Server { set { SetValue("Server", value); } }
+
         /// <summary>
         ///     Encrypt（加密）：当值为真时，如果服务器安装了授权证书，SQL Server就会对所有在客户和服务器之间传输的数据使用SSL加密。被接受的值有true（真）、false（伪）、yes（是）和no（否）。
         /// </summary>
         public bool? Encrypt { set { SetValue("Encrypt", value); } }
+
         /// <summary>
         /// Enlist（登记）：表示连接池程序是否会自动登记创建线程的当前事务语境中的连接，其缺省值为真。
         /// </summary>
         public bool? Enlist { set { SetValue("Enlist", value); } }
+
         /// <summary>
         /// Database（数据库）／Initial Catalog（初始编目）：数据库的名称。
         /// </summary>
         public string Database { set { SetValue("Database", value); } }
+
         /// <summary>
         ///    Integrated Security（集成安全）／Trusted Connection（受信连接）：表示Windows认证是否被用来连接数据库。它可以被设置成真、伪或者是和真对等的sspi，其缺省值为伪。
         /// </summary>
@@ -64,10 +68,12 @@ namespace ToolGood.ReadyGo3
         /// Max Pool Size（连接池的最大容量）：连接池允许的连接数的最大值，其缺省值为100。
         /// </summary>
         public int? MaxPoolSize { set { SetValue("Max Pool Size", value); } }
+
         /// <summary>
         /// Min Pool Size（连接池的最小容量）：连接池允许的连接数的最小值，其缺省值为0。
         /// </summary>
         public int? MinPoolSize { set { SetValue("Min Pool Size", value); } }
+
         /// <summary>
         ///     Network Library（网络库）／Net（网络）：用来建立到一个SQL Server实例的连接的网络库。支持的值包括： dbnmpntw(Named Pipes)、dbmsrpcn(Multiprotocol／RPC)、dbmsvinn(Banyan Vines)、dbmsspxn(IPX／SPX)和dbmssocn(TCP／IP)。协议的动态链接库必须被安装到适当的连接，其缺省值为TCP／IP。
         /// </summary>
@@ -77,6 +83,7 @@ namespace ToolGood.ReadyGo3
         /// Packet Size（数据包大小）：用来和数据库通信的网络数据包的大小。其缺省值为8192。
         /// </summary>
         public int? PacketSize { set { SetValue("Packet Size", value); } }
+
         /// <summary>
         ///  Password（密码）／Pwd：与帐户名相对应的密码。
         /// </summary>
@@ -91,12 +98,14 @@ namespace ToolGood.ReadyGo3
         ///     Pooling（池）：确定是否使用连接池。如果值为真的话，连接就要从适当的连接池中获得，或者，如果需要的话，连接将被创建，然后被加入合适的连接池中。其缺省值为真。
         /// </summary>
         public bool? Pooling { set { SetValue("Pooling", value); } }
+
         /// <summary>
         /// User ID（用户ID）：用来登陆数据库的帐户名。
         /// </summary>
         public string UserID { set { SetValue("User ID", value); } }
+
         /// <summary>
-        /// Workstation ID（工作站ID）：连接到SQL Server的工作站的名称。其缺省值为本地计算机的名称。 
+        /// Workstation ID（工作站ID）：连接到SQL Server的工作站的名称。其缺省值为本地计算机的名称。
         /// </summary>
         public string WorkstationID { set { SetValue("Workstation ID", value); } }
 
@@ -105,8 +114,8 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         public bool? TrustServerCertificate { set { SetValue("TrustServerCertificate", value); } }
 
-
         private readonly Dictionary<string, string> _dict = new Dictionary<string, string>();
+
         /// <summary>
         /// 设置值, value为null时删除值
         /// </summary>
@@ -125,7 +134,7 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -136,6 +145,5 @@ namespace ToolGood.ReadyGo3
             }
             return stringBuilder.ToString();
         }
-
     }
 }

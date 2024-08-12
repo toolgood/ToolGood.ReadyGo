@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Dynamic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using ToolGood.ReadyGo3.LinQ.Expressions;
 using ToolGood.ReadyGo3.PetaPoco;
 using ToolGood.ReadyGo3.PetaPoco.Core;
@@ -19,9 +16,6 @@ namespace ToolGood.ReadyGo3.Internals
         internal PocoData _pocoData;
         internal DatabaseProvider _provider;
 
-
-
-
         public TableName(Type type, DatabaseProvider provider, string asName)
         {
             _pocoData = PocoData.ForType(type);
@@ -32,51 +26,32 @@ namespace ToolGood.ReadyGo3.Internals
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             var fieldName = binder.Name;
-            if (_pocoData.Columns.ContainsKey(fieldName))
-            {
-                if (_provider != null)
-                {
-                    if (string.IsNullOrEmpty(_asName))
-                    {
+            if (_pocoData.Columns.ContainsKey(fieldName)) {
+                if (_provider != null) {
+                    if (string.IsNullOrEmpty(_asName)) {
                         result = _provider.EscapeSqlIdentifier(_pocoData.Columns[fieldName].ColumnName);
-                    }
-                    else
-                    {
+                    } else {
                         result = _asName + "." + _provider.EscapeSqlIdentifier(_pocoData.Columns[fieldName].ColumnName);
                     }
-                }
-                else if (string.IsNullOrEmpty(_asName))
-                {
+                } else if (string.IsNullOrEmpty(_asName)) {
                     result = _pocoData.Columns[fieldName].ColumnName;
-                }
-                else
-                {
+                } else {
                     result = _asName + "." + _pocoData.Columns[fieldName].ColumnName;
                 }
                 return true;
             }
             fieldName = fieldName.Replace("_", "");
-            foreach (var item in _pocoData.Columns)
-            {
-                if (item.Value.PropertyName.Replace("_", "").Equals(fieldName, StringComparison.OrdinalIgnoreCase))
-                {
-                    if (_provider != null)
-                    {
-                        if (string.IsNullOrEmpty(_asName))
-                        {
+            foreach (var item in _pocoData.Columns) {
+                if (item.Value.PropertyName.Replace("_", "").Equals(fieldName, StringComparison.OrdinalIgnoreCase)) {
+                    if (_provider != null) {
+                        if (string.IsNullOrEmpty(_asName)) {
                             result = _provider.EscapeSqlIdentifier(item.Value.ColumnName);
-                        }
-                        else
-                        {
+                        } else {
                             result = _asName + "." + _provider.EscapeSqlIdentifier(item.Value.ColumnName);
                         }
-                    }
-                    else if (string.IsNullOrEmpty(_asName))
-                    {
+                    } else if (string.IsNullOrEmpty(_asName)) {
                         result = item.Value.ColumnName;
-                    }
-                    else
-                    {
+                    } else {
                         result = _asName + "." + item.Value.ColumnName;
                     }
                     return true;
@@ -88,24 +63,18 @@ namespace ToolGood.ReadyGo3.Internals
 
         public override string ToString()
         {
-            if (_provider != null)
-            {
-                if (string.IsNullOrEmpty(_asName))
-                {
+            if (_provider != null) {
+                if (string.IsNullOrEmpty(_asName)) {
                     return _provider.EscapeSqlIdentifier(_pocoData.TableInfo.TableName);
-                }
-                else
-                {
+                } else {
                     return _provider.EscapeSqlIdentifier(_pocoData.TableInfo.TableName) + " " + _asName;
                 }
             }
-            if (string.IsNullOrEmpty(_asName))
-            {
+            if (string.IsNullOrEmpty(_asName)) {
                 return _pocoData.TableInfo.TableName;
             }
             return _pocoData.TableInfo.TableName + " " + _asName;
         }
-
     }
     public class TableName<T> : TableName
         where T : class, new()
@@ -126,14 +95,10 @@ namespace ToolGood.ReadyGo3.Internals
         public string F<T1>(Expression<Func<T, T1>> field)
         {
             var fieldName = _sqlExpression.GetColumnName(field);
-            if (string.IsNullOrEmpty(_asName))
-            {
+            if (string.IsNullOrEmpty(_asName)) {
                 return fieldName;
             }
             return _asName + "." + fieldName;
         }
-
-
     }
-
 }

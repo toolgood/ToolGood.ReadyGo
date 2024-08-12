@@ -9,7 +9,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
     /// </summary>
     public class TableInfo
     {
-        internal TableInfo() { }
+        internal TableInfo()
+        { }
 
         /// <summary>
         /// 数据库名
@@ -45,7 +46,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         ///     自增长
         /// </summary>
         public bool AutoIncrement;
-
 
         /// <summary>
         ///     Creates and populates a TableInfo from the attributes of a POCO
@@ -91,7 +91,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     ti.AutoIncrement = prop.PropertyType.IsValueType;
                 }
             }
-
 
             return ti;
         }

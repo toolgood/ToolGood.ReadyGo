@@ -7,8 +7,8 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
     /// </summary>
     public class SqlRecord
     {
-        internal SqlRecord() { }
-
+        internal SqlRecord()
+        { }
 
         /// <summary>
         /// 上次Sql语句

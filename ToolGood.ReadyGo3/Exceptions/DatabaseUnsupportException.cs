@@ -10,7 +10,8 @@ namespace ToolGood.ReadyGo3.Exceptions
         /// <summary>
         /// 【数据库不支持】异常
         /// </summary>
-        public DatabaseUnsupportException() { }
+        public DatabaseUnsupportException()
+        { }
 
         ///// <summary>
         ///// 数据库不支付异常
@@ -19,9 +20,6 @@ namespace ToolGood.ReadyGo3.Exceptions
         ///// <param name="type"></param>
         //public DatabaseUnsupportException(string databaseName, string type)
         //{
-
         //}
-
-
     }
 }

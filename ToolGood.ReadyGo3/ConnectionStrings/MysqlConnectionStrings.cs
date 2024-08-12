@@ -113,22 +113,27 @@ namespace ToolGood.ReadyGo3
         /// 日期时间能否为零，默认 false
         /// </summary>
         public bool? AllowZeroDateTime { set { SetValue("AllowZeroDateTime", value); } }
+
         /// <summary>
         /// 为零的日期时间是否转化为 DateTime.MinValue，默认 false
         /// </summary>
         public bool? ConvertZeroDateTime { set { SetValue("ConvertZeroDateTime", value); } }
+
         /// <summary>
         /// 是否启用助手，会影响数据库性能，默认 false
         /// </summary>
         public bool? UseUsageAdvisor { set { SetValue("UseUsageAdvisor", value); } }
+
         /// <summary>
         /// 同一时间能缓存几条存储过程，0为禁止，默认 25
         /// </summary>
         public int? ProcedureCacheSize { set { SetValue("ProcedureCacheSize", value); } }
+
         /// <summary>
         /// 是否启用性能监视，默认 false
         /// </summary>
         public bool? UsePerformanceMonitor { set { SetValue("UsePerformanceMonitor", value); } }
+
         /// <summary>
         /// 是否忽略 Prepare() 调用，默认 true
         /// </summary>
@@ -138,6 +143,7 @@ namespace ToolGood.ReadyGo3
         /// 是否检查存储过程体、参数的有效性，默认 true
         /// </summary>
         public bool? UseProcedureBodies { set { SetValue("UseProcedureBodies", value); } }
+
         /// <summary>
         ///  是否自动使用活动的连接，默认 true
         /// </summary>
@@ -162,26 +168,32 @@ namespace ToolGood.ReadyGo3
         /// 会话是否允许交互，默认 false
         /// </summary>
         public bool? InteractiveSession { set { SetValue("InteractiveSession", value); } }
+
         /// <summary>
         /// 所有服务器函数是否按返回字符串处理，默认 false
         /// </summary>
         public bool? FunctionsReturnString { set { SetValue("FunctionsReturnString", value); } }
+
         /// <summary>
         /// 是否用受影响的行数替代查找到的行数来返回数据，默认 false
         /// </summary>
         public bool? UseAffectedRows { set { SetValue("UseAffectedRows", value); } }
+
         /// <summary>
         /// 是否将 binary(16) 列作为 Guids，默认 false
         /// </summary>
         public bool? OldGuids { set { SetValue("OldGuids", value); } }
+
         /// <summary>
         /// 保持 TCP 连接的秒数，默认0，不保持。
         /// </summary>
         public int? Keepalive { set { SetValue("Keepalive", value); } }
+
         /// <summary>
         /// 连接被销毁前在连接池中保持的最少时间（秒）。默认 0
         /// </summary>
         public int? ConnectionLifeTime { set { SetValue("ConnectionLifeTime", value); } }
+
         /// <summary>
         ///  是否使用线程池，默认 true
         /// </summary>
@@ -191,6 +203,7 @@ namespace ToolGood.ReadyGo3
         /// 线程池中允许的最少线程数，默认 0
         /// </summary>
         public int? MinimumPoolSize { set { SetValue("MinimumPoolSize", value); } }
+
         /// <summary>
         /// 线程池中允许的最多线程数，默认 100
         /// </summary>
@@ -200,6 +213,7 @@ namespace ToolGood.ReadyGo3
         /// 连接过期后是否自动复位，默认 false
         /// </summary>
         public bool? ConnectionReset { set { SetValue("ConnectionReset", value); } }
+
         /// <summary>
         /// 向服务器请求连接所使用的字符集，默认：无
         /// </summary>
@@ -215,9 +229,8 @@ namespace ToolGood.ReadyGo3
         /// </summary>
         public string SslMode { set { SetValue("SslMode", value); } }
 
-
-
         private readonly Dictionary<string, string> _dict = new Dictionary<string, string>();
+
         /// <summary>
         /// 设置值, value为null时删除值
         /// </summary>
@@ -236,7 +249,7 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public override string ToString()

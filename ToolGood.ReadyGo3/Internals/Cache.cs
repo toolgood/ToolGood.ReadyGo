@@ -6,13 +6,14 @@ namespace ToolGood.ReadyGo3.Internals
 {
     internal class Cache<TKey, TValue>
     {
-        private int _lastTicks=0;//最后Ticks
+        private int _lastTicks = 0;//最后Ticks
         private readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         private readonly ReaderWriterLockSlim _slimLock = new ReaderWriterLockSlim();
         private readonly Dictionary<TKey, TValue> _map = new Dictionary<TKey, TValue>();
         private readonly Dictionary<TKey, AntiDupLockSlim> _lockDict = new Dictionary<TKey, AntiDupLockSlim>();
-        class AntiDupLockSlim : ReaderWriterLockSlim { public int UseCount; }
 
+        private class AntiDupLockSlim : ReaderWriterLockSlim
+        { public int UseCount; }
 
         //public int Count {
         //    get { return _map.Count; }
@@ -50,7 +51,6 @@ namespace ToolGood.ReadyGo3.Internals
                     slim.UseCount++;
                 } finally { _slimLock.ExitWriteLock(); }
             } finally { _slimLock.ExitUpgradeableReadLock(); }
-
 
             slim.EnterWriteLock();
             try {

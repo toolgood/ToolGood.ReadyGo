@@ -7,13 +7,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
     public partial class MySqlDatabaseProvider : DatabaseProvider
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public MySqlDatabaseProvider()
         {
             usedEscapeSql = true;
             escapeSql = '`';
         }
+
         public override DbProviderFactory GetFactory()
         {
             return GetFactory(
@@ -51,6 +52,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             return "SELECT EXISTS (SELECT 1 FROM {0} WHERE {1})";
         }
+
         public override string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
         {
             StringBuilder sb = new StringBuilder();
@@ -76,6 +78,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             }
             return sb.ToString();
         }
+
         public override string CreateSql(string columnSql, string fromtable, string order, string where)
         {
             StringBuilder sb = new StringBuilder();
@@ -93,8 +96,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             }
             return sb.ToString();
         }
-
-
 
         public override string ToString()
         {

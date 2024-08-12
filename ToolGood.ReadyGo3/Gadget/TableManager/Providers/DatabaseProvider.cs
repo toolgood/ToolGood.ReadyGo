@@ -1,5 +1,4 @@
 ﻿using System;
-using ToolGood.ReadyGo3.Gadget.Internals;
 using ToolGood.ReadyGo3.Gadget.TableManager.Providers;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 
@@ -22,20 +21,15 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             return null;
         }
 
-
         public virtual string GetDropTable(Type type)
         {
             return null;
-
         }
 
         public virtual string GetTruncateTable(Type type)
         {
             return null;
-
         }
-
-
 
         //protected virtual string EscapeSqlIdentifier(string name)
         //{
@@ -77,7 +71,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             return $"[{tableName}]";
         }
 
-
         internal static DatabaseProvider Resolve(SqlType type)
         {
             switch (type) {
@@ -96,6 +89,5 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             throw new NotSupportedException();
             //return Singleton<SqlServerDatabaseProvider>.Instance;
         }
-
     }
 }

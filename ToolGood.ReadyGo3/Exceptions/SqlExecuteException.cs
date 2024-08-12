@@ -12,7 +12,7 @@ namespace ToolGood.ReadyGo3.Exceptions
         /// </summary>
         /// <param name="x"></param>
         /// <param name="sql"></param>
-        public SqlExecuteException(Exception x, string sql) : base(x.Message + "\r\nSQL: " + sql,x)
+        public SqlExecuteException(Exception x, string sql) : base(x.Message + "\r\nSQL: " + sql, x)
         {
         }
     }

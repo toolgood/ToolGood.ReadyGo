@@ -8,6 +8,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
     public class Transaction : IDisposable
     {
         private Database _db;
+
         /// <summary>
         /// Transaction
         /// </summary>
@@ -17,6 +18,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             _db = db;
             _db.BeginTransaction();
         }
+
         /// <summary>
         /// 提交
         /// </summary>
@@ -27,6 +29,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 _db = null;
             }
         }
+
         /// <summary>
         /// 释放
         /// </summary>

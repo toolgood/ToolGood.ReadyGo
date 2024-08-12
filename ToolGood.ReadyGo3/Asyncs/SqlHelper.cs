@@ -9,9 +9,8 @@ using ToolGood.ReadyGo3.PetaPoco;
 
 namespace ToolGood.ReadyGo3
 {
-    partial class SqlHelper
+    public partial class SqlHelper
     {
-
         #region Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
 
         /// <summary>
@@ -52,10 +51,7 @@ namespace ToolGood.ReadyGo3
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 
             return GetDatabase().ExecuteDataTable_Async(sql, args);
-
         }
-
-
 
         /// <summary>
         /// 执行SQL 查询,判断是否存在，返回bool类型
@@ -66,9 +62,9 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<bool> Exists_Async<T>(string sql, params object[] args)
         {
-
             return await Count_Async<T>(sql, args) > 0;
         }
+
         /// <summary>
         /// 执行SQL 查询,判断是否存在，返回bool类型
         /// </summary>
@@ -78,7 +74,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<bool> Table_Exists_Async(string table, string sql, params object[] args)
         {
-
             return await Table_Count_Async(table, sql, args) > 0;
         }
 
@@ -112,6 +107,7 @@ namespace ToolGood.ReadyGo3
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
             return GetDatabase().ExecuteScalar_Async<int>(sql, args);
         }
+
         /// <summary>
         /// 执行SQL 查询,返回数量
         /// </summary>
@@ -123,7 +119,6 @@ namespace ToolGood.ReadyGo3
         {
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
-
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
             return GetDatabase().ExecuteScalar_Async<int>(sql, args);
@@ -132,6 +127,7 @@ namespace ToolGood.ReadyGo3
         #endregion Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
 
         #region Select Page Select
+
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -141,9 +137,9 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<List<T>> Select_Async<T>(string sql = "", params object[] args)
         {
-
             return (await GetDatabase().Query_Async<T>(sql, args)).ToList();
         }
+
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -154,7 +150,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<List<T>> Table_Select_Async<T>(string table, string sql = "", params object[] args) where T : class
         {
-
             return (await GetDatabase().Query_Async<T>(table, sql, args)).ToList();
         }
 
@@ -168,9 +163,9 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<List<T>> Select_Async<T>(int limit, string sql = "", params object[] args) where T : class
         {
-
             return (await GetDatabase().Query_Async<T>(0, limit, sql, args)).ToList();
         }
+
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -182,7 +177,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<List<T>> Table_Select_Async<T>(string table, int limit, string sql = "", params object[] args) where T : class
         {
-
             return (await GetDatabase().Query_Async<T>(table, 0, limit, sql, args)).ToList();
         }
 
@@ -197,9 +191,9 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<List<T>> Select_Async<T>(int limit, int offset, string sql = "", params object[] args) where T : class
         {
-
             return (await GetDatabase().Query_Async<T>(offset, limit, sql, args)).ToList();
         }
+
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -212,7 +206,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<List<T>> Table_Select_Async<T>(string table, int limit, int offset, string sql = "", params object[] args) where T : class
         {
-
             return (await GetDatabase().Query_Async<T>(table, offset, limit, sql, args)).ToList();
         }
 
@@ -231,9 +224,9 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-
             return (await GetDatabase().Query_Async<T>((page - 1) * itemsPerPage, itemsPerPage, sql, args)).ToList();
         }
+
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -250,10 +243,8 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-
             return (await GetDatabase().Query_Async<T>(table, (page - 1) * itemsPerPage, itemsPerPage, sql, args)).ToList();
         }
-
 
         /// <summary>
         /// 执行SQL 查询,返回Page类型
@@ -269,9 +260,9 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-
             return GetDatabase().Page_Async<T>(page, itemsPerPage, sql, args);
         }
+
         /// <summary>
         /// 执行SQL 查询,返回Page类型
         /// </summary>
@@ -287,10 +278,8 @@ namespace ToolGood.ReadyGo3
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-
             return GetDatabase().Table_Page_Async<T>(table, page, itemsPerPage, sql, args);
         }
-
 
         /// <summary>
         /// 执行SQL 查询, 返回单个
@@ -315,6 +304,7 @@ namespace ToolGood.ReadyGo3
 
             return (await GetDatabase().Query_Async<T>(sql, args)).FirstOrDefault();
         }
+
         /// <summary>
         /// 执行SQL 查询, 返回单个
         /// </summary>
@@ -329,7 +319,6 @@ namespace ToolGood.ReadyGo3
         {
             return SQL_FirstOrDefault_Async<T>(columnSql, tableSql, whereSql, args.ToArray());
         }
-
 
         /// <summary>
         /// 执行SQL 查询,返回集合
@@ -360,6 +349,7 @@ namespace ToolGood.ReadyGo3
 
             return (await GetDatabase().Query_Async<T>(sql, args)).ToList();
         }
+
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -406,6 +396,7 @@ namespace ToolGood.ReadyGo3
 
             return (await GetDatabase().Query_Async<T>(sql, args)).ToList();
         }
+
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -422,6 +413,7 @@ namespace ToolGood.ReadyGo3
         {
             return SQL_Select_Async<T>(limit, columnSql, tableSql, orderSql, whereSql, args.ToArray());
         }
+
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -447,6 +439,7 @@ namespace ToolGood.ReadyGo3
 
             return (await GetDatabase().Query_Async<T>(sql, args)).ToList();
         }
+
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
@@ -462,7 +455,6 @@ namespace ToolGood.ReadyGo3
         {
             return SQL_Select_Async<T>(columnSql, tableSql, orderSql, whereSql, args.ToArray());
         }
-
 
         /// <summary>
         /// 执行SQL 查询,返回Page类型
@@ -493,9 +485,9 @@ namespace ToolGood.ReadyGo3
 
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
 
-
             return GetDatabase().PageSql_Async<T>(page, itemsPerPage, sql, countSql, args);
         }
+
         /// <summary>
         /// 执行SQL 查询,返回Page类型
         /// </summary>
@@ -513,6 +505,7 @@ namespace ToolGood.ReadyGo3
         {
             return SQL_Page_Async<T>(page, itemsPerPage, columnSql, tableSql, orderSql, whereSql, args.ToArray());
         }
+
         #endregion Select Page Select
 
         #region Single SingleOrDefault First FirstOrDefault
@@ -530,6 +523,7 @@ namespace ToolGood.ReadyGo3
             var sql = $"WHERE {pk}=@0";
             return (await GetDatabase().Query_Async<T>(sql, new object[] { primaryKey })).FirstOrDefault();
         }
+
         /// <summary>
         /// 获取唯一一个类型，若数量大于1，则抛出异常
         /// </summary>
@@ -554,12 +548,12 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<T> FirstOrDefault_Async<T>(string sql = "", params object[] args)
         {
-
             if (_sql_firstWithLimit1 == false) {
                 return (await GetDatabase().Query_Async<T>(sql, args)).FirstOrDefault();
             }
             return (await GetDatabase().Query_Async<T>(0, 1, sql, args)).FirstOrDefault();
         }
+
         /// <summary>
         /// 获取第一个类型
         /// </summary>
@@ -570,7 +564,6 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<T> Table_FirstOrDefault_Async<T>(string table, string sql = "", params object[] args) where T : class
         {
-
             if (_sql_firstWithLimit1 == false) {
                 return (await GetDatabase().Query_Async<T>(table, sql, args)).FirstOrDefault();
             }
@@ -600,6 +593,7 @@ namespace ToolGood.ReadyGo3
             await GetDatabase().Insert_Async(list);
             _Events.OnAfterInsert(list);
         }
+
         /// <summary>
         /// 插入集合，不返回主键
         /// </summary>
@@ -621,7 +615,6 @@ namespace ToolGood.ReadyGo3
             await GetDatabase().Table_Insert_Async(table, list);
             _Events.OnAfterInsert(list);
         }
-
 
         /// <summary>
         /// 插入，支持主键自动获取。
@@ -664,7 +657,6 @@ namespace ToolGood.ReadyGo3
             _Events.OnAfterInsert(poco);
             return obj;
         }
-
 
         /// <summary>
         /// 插入
@@ -709,6 +701,7 @@ namespace ToolGood.ReadyGo3
             _Events.OnAfterInsert(poco);
             return obj;
         }
+
         /// <summary>
         /// 插入
         /// </summary>
@@ -732,8 +725,6 @@ namespace ToolGood.ReadyGo3
             return obj;
         }
 
-
-
         /// <summary>
         /// 更新
         /// </summary>
@@ -749,6 +740,7 @@ namespace ToolGood.ReadyGo3
             _Events.OnAfterUpdate(poco);
             return r;
         }
+
         /// <summary>
         /// 更新
         /// </summary>
@@ -782,6 +774,7 @@ namespace ToolGood.ReadyGo3
             _Events.OnAfterDelete(poco);
             return t;
         }
+
         /// <summary>
         /// 删除
         /// </summary>
@@ -828,7 +821,6 @@ namespace ToolGood.ReadyGo3
             return GetDatabase().Table_Delete_Async(table, sql, args);
         }
 
-
         /// <summary>
         /// 根据ID 删除表数据, 注： 单独从delete方法，防止出错
         /// </summary>
@@ -852,8 +844,6 @@ namespace ToolGood.ReadyGo3
             return GetDatabase().Table_Delete_Async<T>(table, primaryKey);
         }
 
-
-
         /// <summary>
         /// 保存
         /// </summary>
@@ -863,6 +853,7 @@ namespace ToolGood.ReadyGo3
             if (poco == null) throw new ArgumentNullException("poco is null");
             await GetDatabase().Save_Async(poco);
         }
+
         /// <summary>
         /// 保存
         /// </summary>
@@ -906,6 +897,5 @@ namespace ToolGood.ReadyGo3
         }
 
         #endregion Object  Insert Update Delete DeleteById Save
-
     }
 }

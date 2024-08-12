@@ -1,5 +1,4 @@
-﻿using System.Configuration;
-using System.Data.Common;
+﻿using System.Data.Common;
 using System.Text;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
@@ -179,6 +178,7 @@ namespace ToolGood.ReadyGo3
             }
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
+
         /// <summary>
         /// 打开Mysql数据库,SslMode默认none
         /// </summary>
@@ -216,7 +216,7 @@ namespace ToolGood.ReadyGo3
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
 
-        /// <summary> 
+        /// <summary>
         /// 打开Sqlite数据库 使用System.Data.SQLite类库
         /// </summary>
         /// <param name="filePath">文件目录</param>
@@ -260,7 +260,6 @@ namespace ToolGood.ReadyGo3
             return OpenDatabase(sb.ToString(), "System.Data.SQLite", SqlType.SQLite);
         }
 
-
         /// <summary>
         /// 打开Access数据库 32位
         /// </summary>
@@ -291,5 +290,4 @@ namespace ToolGood.ReadyGo3
             return OpenDatabase(connstr, "System.Data.OleDb", SqlType.MsAccessDb);
         }
     }
-
 }

@@ -12,7 +12,7 @@ using ToolGood.ReadyGo3.PetaPoco.Core;
 namespace ToolGood.ReadyGo3.LinQ
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <typeparam name="T1"></typeparam>
     public partial class WhereHelper<T1> where T1 : class
@@ -23,6 +23,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this._paramPrefix = DatabaseProvider.Resolve(_sqlhelper._sqlType).GetParameterPrefix(_sqlhelper._connectionString);
             _sqlExpression = new Expressions.SqlExpression(_sqlhelper._sqlType);
         }
+
         internal WhereHelper(SqlHelper helper, string table)
         {
             this._sqlhelper = helper;
@@ -31,7 +32,8 @@ namespace ToolGood.ReadyGo3.LinQ
             _table = table;
         }
 
-        #region  01 私有变量
+        #region 01 私有变量
+
         private SqlExpression _sqlExpression;
         private readonly SqlHelper _sqlhelper;
         private List<object> _args = new List<object>();
@@ -47,7 +49,8 @@ namespace ToolGood.ReadyGo3.LinQ
         private bool _useDistinct = false;
         private string _tableName = "t1";
         private string _table;
-        #endregion
+
+        #endregion 01 私有变量
 
         #region 02 SQL拼接 基础方法
 
@@ -68,12 +71,14 @@ namespace ToolGood.ReadyGo3.LinQ
         }
 
         #region whereLike whereLikeStart whereLikeEnd
+
         private void whereLikeEnd(LambdaExpression field, string args)
         {
             if (jump()) return;
             var column = _sqlExpression.GetColumnName(field);
             whereLikeEnd(column, args);
         }
+
         private void whereLikeEnd(string field, string args)
         {
             if (jump()) return;
@@ -87,12 +92,14 @@ namespace ToolGood.ReadyGo3.LinQ
             _where.Append(SqlUtil.ToEscapeLikeParam(args));
             _where.Append("%'");
         }
+
         private void whereLikeStart(LambdaExpression field, string args)
         {
             if (jump()) return;
             var column = _sqlExpression.GetColumnName(field);
             whereLikeStart(column, args);
         }
+
         private void whereLikeStart(string field, string args)
         {
             if (jump()) return;
@@ -106,12 +113,14 @@ namespace ToolGood.ReadyGo3.LinQ
             _where.Append(SqlUtil.ToEscapeLikeParam(args));
             _where.Append("'");
         }
+
         private void whereLike(LambdaExpression field, string args)
         {
             if (jump()) return;
             var column = _sqlExpression.GetColumnName(field);
             whereLike(column, args);
         }
+
         private void whereLike(string field, string args)
         {
             if (jump()) return;
@@ -125,14 +134,18 @@ namespace ToolGood.ReadyGo3.LinQ
             _where.Append(SqlUtil.ToEscapeLikeParam(args));
             _where.Append("%'");
         }
-        #endregion
+
+        #endregion whereLike whereLikeStart whereLikeEnd
+
         #region whereIn whereNotIn
+
         private void whereNotIn(LambdaExpression field, ICollection args)
         {
             if (jump()) return;
             var column = _sqlExpression.GetColumnName(field);
             whereNotIn(column, args);
         }
+
         private void whereNotIn(string column, ICollection args)
         {
             if (jump()) return;
@@ -164,12 +177,14 @@ namespace ToolGood.ReadyGo3.LinQ
                 _args.Add(item);
             }
         }
+
         private void whereIn(LambdaExpression field, ICollection args)
         {
             if (jump()) return;
             var column = _sqlExpression.GetColumnName(field);
             whereIn(column, args);
         }
+
         private void whereIn(string column, ICollection args)
         {
             if (jump()) return;
@@ -200,8 +215,9 @@ namespace ToolGood.ReadyGo3.LinQ
             foreach (var item in args) {
                 _args.Add(item);
             }
-        } 
-        #endregion
+        }
+
+        #endregion whereIn whereNotIn
 
         internal void where(string where, ICollection args)
         {
@@ -241,11 +257,11 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             if (isStart) whereTranslate(_where, text);
 
-
             foreach (var item in args) {
                 _args.Add(item);
             }
         }
+
         private void whereTranslate(StringBuilder where, string text)
         {
             if (text == "@@") {
@@ -285,6 +301,7 @@ namespace ToolGood.ReadyGo3.LinQ
             var col = _sqlExpression.GetColumnName(column);
             includeColumn(col, asName);
         }
+
         private void includeColumn(string col, string asName)
         {
             if (jump()) return;
@@ -308,7 +325,6 @@ namespace ToolGood.ReadyGo3.LinQ
                     UseAsName = true,
                 });
             }
-
         }
 
         private void excludeColumn(LambdaExpression column)
@@ -317,6 +333,7 @@ namespace ToolGood.ReadyGo3.LinQ
             var col = _sqlExpression.GetColumnName(column);
             excludeColumn(col);
         }
+
         private void excludeColumn(string col)
         {
             if (jump()) return;
@@ -326,7 +343,6 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             _excludeColumns.Add(col);
         }
-
 
         private void orderBy(LambdaExpression order, OrderType type)
         {
@@ -367,12 +383,14 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             _groupby += groupby;
         }
+
         private void having(LambdaExpression having)
         {
             if (jump()) return;
             _sqlExpression.Analysis(having, out string sql);
             this.having(sql);
         }
+
         private void having(string having)
         {
             if (jump()) return;
@@ -386,7 +404,8 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             _having += having;
         }
-        #endregion SQL拼接方法
+
+        #endregion 02 SQL拼接 基础方法
 
         #region 03 判断
 
@@ -466,6 +485,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.ifTrue(txt > 0);
             return this;
         }
+
         /// <summary>
         /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
@@ -487,6 +507,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.ifTrue(txt > 0);
             return this;
         }
+
         /// <summary>
         /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
@@ -508,6 +529,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.ifTrue(null != txt && txt > 0);
             return this;
         }
+
         /// <summary>
         /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
@@ -529,6 +551,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.ifTrue(null != txt && txt > 0);
             return this;
         }
+
         /// <summary>
         /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
         /// </summary>
@@ -540,9 +563,10 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
 
-        #endregion 判断
+        #endregion 03 判断
 
         #region 04 Sql 拼接
+
         /// <summary>
         /// 自动添加 “NOT EXISTS ” 也会自动添加 “SELECT * ”
         /// </summary>
@@ -565,6 +589,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.where(where, args);
             return this;
         }
+
         /// <summary>
         /// 自动添加 “EXISTS ” 也会自动添加 “SELECT * ”
         /// </summary>
@@ -587,6 +612,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.where(where, args);
             return this;
         }
+
         /// <summary>
         /// 添加 Where
         /// </summary>
@@ -601,6 +627,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.where(where, args);
             return this;
         }
+
         /// <summary>
         /// 添加 Order By SQL语句
         /// </summary>
@@ -647,6 +674,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.groupBy(groupby);
             return this;
         }
+
         /// <summary>
         /// 添加 Having SQL语句
         /// </summary>
@@ -660,6 +688,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.having(having);
             return this;
         }
+
         /// <summary>
         /// 添加 Join On SQL语句
         /// </summary>
@@ -734,9 +763,10 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
 
-        #endregion Sql 拼接
+        #endregion 04 Sql 拼接
 
         #region 05 Sql拼接 LINQ WhereIn Where OrderBy Having
+
         /// <summary>
         /// Where {field} not In ({args})
         /// </summary>
@@ -748,6 +778,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.whereNotIn(field, args);
             return this;
         }
+
         /// <summary>
         /// Where {field} not In ({args})
         /// </summary>
@@ -758,6 +789,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return WhereNotIn(field, (ICollection)args);
         }
+
         /// <summary>
         /// Where {field} In ({args})
         /// </summary>
@@ -769,6 +801,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.whereIn(field, args);
             return this;
         }
+
         /// <summary>
         /// Where {field} In ({args})
         /// </summary>
@@ -779,8 +812,9 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return WhereIn(field, (ICollection)args);
         }
+
         /// <summary>
-        /// Where {field} Like '%{args}%' 
+        /// Where {field} Like '%{args}%'
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="field"></param>
@@ -790,10 +824,10 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             whereLike(field, args);
             return this;
-
         }
+
         /// <summary>
-        /// Where {field} Like '%{args}%' 
+        /// Where {field} Like '%{args}%'
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="field"></param>
@@ -804,8 +838,9 @@ namespace ToolGood.ReadyGo3.LinQ
             whereLike(field, args);
             return this;
         }
+
         /// <summary>
-        /// Where {field} Like '%{args}' 
+        /// Where {field} Like '%{args}'
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="field"></param>
@@ -816,8 +851,9 @@ namespace ToolGood.ReadyGo3.LinQ
             whereLikeStart(field, args);
             return this;
         }
+
         /// <summary>
-        /// Where {field} Like '%{args}' 
+        /// Where {field} Like '%{args}'
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="field"></param>
@@ -828,8 +864,9 @@ namespace ToolGood.ReadyGo3.LinQ
             whereLikeStart(field, args);
             return this;
         }
+
         /// <summary>
-        /// Where {field} Like '{args}%' 
+        /// Where {field} Like '{args}%'
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="field"></param>
@@ -839,10 +876,10 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             whereLikeEnd(field, args);
             return this;
-
         }
+
         /// <summary>
-        /// Where {field} Like '{args}%' 
+        /// Where {field} Like '{args}%'
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="field"></param>
@@ -864,6 +901,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.where(where);
             return this;
         }
+
         /// <summary>
         /// OrderBy
         /// </summary>
@@ -875,6 +913,7 @@ namespace ToolGood.ReadyGo3.LinQ
             this.orderBy(order, type);
             return this;
         }
+
         /// <summary>
         /// GroupBy
         /// </summary>
@@ -885,6 +924,7 @@ namespace ToolGood.ReadyGo3.LinQ
             groupBy(group);
             return this;
         }
+
         /// <summary>
         /// Having
         /// </summary>
@@ -907,12 +947,12 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
 
-        #endregion WhereIn Where OrderBy Having
+        #endregion 05 Sql拼接 LINQ WhereIn Where OrderBy Having
 
         #region 06 查询 Select Page SkipTake FirstOrDefault
 
-
         #region Select Page SkipTake First FirstOrDefault
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -922,6 +962,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return _sqlhelper.Select<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -932,6 +973,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return _sqlhelper.Select<T1>(limit, 0, GetFullSelectSql(selectSql), _args.ToArray());
         }
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -981,9 +1023,10 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.FirstOrDefault<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
 
-        #endregion Select Page SkipTake FirstOrDefault
+        #endregion Select Page SkipTake First FirstOrDefault
 
         #region Select Page SkipTake FirstOrDefault
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -995,6 +1038,7 @@ namespace ToolGood.ReadyGo3.LinQ
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>(GetFullSelectSql(sql), _args.ToArray());
         }
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -1007,6 +1051,7 @@ namespace ToolGood.ReadyGo3.LinQ
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select<T>(limit, GetFullSelectSql(sql), _args.ToArray());
         }
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -1064,10 +1109,12 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.Page<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
-        #endregion
-        #endregion
+        #endregion Select Page SkipTake FirstOrDefault
+
+        #endregion 06 查询 Select Page SkipTake FirstOrDefault
 
         #region 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page FirstOrDefault
+
         /// <summary>
         /// 获取数量
         /// </summary>
@@ -1078,6 +1125,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return this._sqlhelper.GetDatabase().ExecuteScalar<int>(this.GetCountSql(selectSql, distinct), this._args.ToArray());
         }
+
         /// <summary>
         /// 执行返回DataTable
         /// </summary>
@@ -1087,6 +1135,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return this._sqlhelper.ExecuteDataTable(this.GetFullSelectSql(selectSql), this._args.ToArray());
         }
+
         /// <summary>
         /// 执行返回DataSet
         /// </summary>
@@ -1096,6 +1145,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return this._sqlhelper.ExecuteDataSet(this.GetFullSelectSql(selectSql), this._args.ToArray());
         }
+
         //#endif
         /// <summary>
         /// 执行返回集合
@@ -1107,6 +1157,7 @@ namespace ToolGood.ReadyGo3.LinQ
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.Select<T>(this.GetFullSelectSql(sql), this._args.ToArray());
         }
+
         /// <summary>
         /// 执行返回集合
         /// </summary>
@@ -1159,6 +1210,7 @@ namespace ToolGood.ReadyGo3.LinQ
             var sql = getSelect<T>(selectSql);
             return this._sqlhelper.FirstOrDefault<T>(this.GetFullSelectSql(sql), this._args.ToArray());
         }
+
         /// <summary>
         /// 返回页，page类
         /// </summary>
@@ -1182,9 +1234,11 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             return CreateSelectHeader(typeof(T), this._includeColumns);
         }
-        #endregion
+
+        #endregion 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page FirstOrDefault
 
         #region 08 包含列 排除列
+
         /// <summary>
         /// 排除列
         /// </summary>
@@ -1197,6 +1251,7 @@ namespace ToolGood.ReadyGo3.LinQ
             excludeColumn(column);
             return this;
         }
+
         /// <summary>
         /// 排除列
         /// </summary>
@@ -1211,6 +1266,7 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             return this;
         }
+
         /// <summary>
         /// 包含列
         /// </summary>
@@ -1247,9 +1303,10 @@ namespace ToolGood.ReadyGo3.LinQ
             return this;
         }
 
-        #endregion
+        #endregion 08 包含列 排除列
 
         #region 09 获取Sql和args方法
+
         /// <summary>
         /// 获取 参数 数据
         /// </summary>
@@ -1335,11 +1392,9 @@ namespace ToolGood.ReadyGo3.LinQ
             return sb.ToString();
         }
 
-
         private string CreateSelectHeader(List<SelectHeader> defineHeader)
         {
             var headers = GetSelectHeader();
-
 
             if (defineHeader != null && defineHeader.Count > 0) {
                 foreach (var header in defineHeader) {
@@ -1428,7 +1483,6 @@ namespace ToolGood.ReadyGo3.LinQ
             List<SelectHeader> list = new List<SelectHeader>();
             var provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
 
-
             var pd = PocoData.ForType(typeof(T1));
             foreach (var col in pd.Columns) {
                 if (_excludeColumns.Contains(col.Value.ColumnName)) continue;
@@ -1478,9 +1532,10 @@ namespace ToolGood.ReadyGo3.LinQ
             return sb.ToString();
         }
 
-        #endregion
+        #endregion 09 获取Sql和args方法
 
         #region 10 Update
+
         /// <summary>
         /// 更新数据库,仅支持单一表格更新，WHERE条件为空报错
         /// </summary>
@@ -1527,7 +1582,6 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             var sql = BuildUpdateSql(sb.ToString(), args);
             return _sqlhelper.Update<T1>(sql, _args.ToArray());
-
         }
 
         /// <summary>
@@ -1590,14 +1644,15 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             if (isStart) whereTranslate(updateSb, text);
 
-
             foreach (var item in args) {
                 _args.Add(item);
             }
         }
-        #endregion
+
+        #endregion 10 Update
 
         #region 11 Delete
+
         /// <summary>
         /// 删除，只支持单一表格，WHERE条件为空报错
         /// </summary>
@@ -1608,7 +1663,7 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.Delete<T1>($"WHERE {_where.ToString()}", _args.ToArray());
         }
 
-        #endregion
+        #endregion 11 Delete
 
         //#region 12 SelectInsert
         ///// <summary>
@@ -1702,7 +1757,6 @@ namespace ToolGood.ReadyGo3.LinQ
 
         //#endregion
 
-
         /// <summary>
         /// 释放
         /// </summary>
@@ -1720,8 +1774,5 @@ namespace ToolGood.ReadyGo3.LinQ
             _includeColumns = null;
             _excludeColumns = null;
         }
-
-
-
     }
 }

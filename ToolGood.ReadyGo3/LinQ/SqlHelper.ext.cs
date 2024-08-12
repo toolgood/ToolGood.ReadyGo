@@ -7,6 +7,7 @@ namespace ToolGood.ReadyGo3
     public partial class SqlHelper
     {
         #region Where
+
         /// <summary>
         /// 动态Sql拼接
         /// </summary>
@@ -18,9 +19,8 @@ namespace ToolGood.ReadyGo3
             return where;
         }
 
-
         /// <summary>
-        /// 动态Sql拼接， 
+        /// 动态Sql拼接，
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="where"></param>
@@ -34,7 +34,7 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
-        /// 动态Sql拼接， 
+        /// 动态Sql拼接，
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="where"></param>
@@ -60,9 +60,10 @@ namespace ToolGood.ReadyGo3
             return whereHelper;
         }
 
-        #endregion
+        #endregion Where
 
         #region WhereTable
+
         /// <summary>
         /// 动态Sql拼接
         /// </summary>
@@ -74,9 +75,8 @@ namespace ToolGood.ReadyGo3
             return where;
         }
 
-
         /// <summary>
-        /// 动态Sql拼接， 
+        /// 动态Sql拼接，
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
@@ -91,7 +91,7 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
-        /// 动态Sql拼接， 
+        /// 动态Sql拼接，
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="table"></param>
@@ -117,9 +117,8 @@ namespace ToolGood.ReadyGo3
             var whereHelper = new WhereHelper<T>(this, table);
             whereHelper.Where(where);
             return whereHelper;
-        } 
-        #endregion
+        }
 
+        #endregion WhereTable
     }
-
 }

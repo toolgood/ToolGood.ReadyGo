@@ -3,7 +3,7 @@
 namespace ToolGood.ReadyGo3.PetaPoco.Utilities
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class PagingHelper
     {
@@ -25,7 +25,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Utilities
 
         internal Regex SimpleRegexGroupBy = new Regex(@"\bGROUP\s+BY\s+",
                                                     RegexOptions.RightToLeft | RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
-
 
         internal static PagingHelper Instance { get; private set; }
 
@@ -96,8 +95,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Utilities
         //    return true;
         //}
 
-
-
         /// <summary>
         ///     Splits the given <paramref name="sql" /> into <paramref name="parts" />;
         /// </summary>
@@ -135,6 +132,5 @@ namespace ToolGood.ReadyGo3.PetaPoco.Utilities
 
             return true;
         }
-
     }
 }

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ToolGood.ReadyGo3.Attributes;
 
 namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 {
     public class MariaDbDatabaseProvider : MySqlDatabaseProvider
     {
     }
+
     public class MySqlDatabaseProvider : DatabaseProvider
     {
         public override string GetTryCreateTable(Type type, bool withIndex = true)
@@ -74,6 +74,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             }
             return sql;
         }
+
         private string BuildColumns(List<string> columnList)
         {
             var columns = "";
@@ -82,7 +83,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             }
             return columns.Replace("[", "`").Replace("]", "`").Replace("``", "`").Trim(',');
         }
-
 
         public override string GetDropTable(Type type)
         {
@@ -123,7 +123,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
                || type == typeof(List<Byte>) || type == typeof(List<SByte>)
                || type == typeof(List<UInt16>) || type == typeof(List<UInt32>) || type == typeof(List<UInt64>)
                || type == typeof(List<Int16>) || type == typeof(List<Int32>) || type == typeof(List<Int64>)
-               || type == typeof(List<Single>) || type == typeof(List<Double>) 
+               || type == typeof(List<Single>) || type == typeof(List<Double>)
                || type == typeof(List<bool>) || type == typeof(bool[])
 
                 ) {
@@ -162,8 +162,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (type == typeof(DateTime)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
             if (type == typeof(TimeSpan)) return CreateField(ti, ci, "time", ci.FieldLength, isRequired);
             if (type == typeof(DateTimeOffset)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
-
-
 
             if (type == typeof(Guid)) return CreateField(ti, ci, "char", "40", isRequired);
 

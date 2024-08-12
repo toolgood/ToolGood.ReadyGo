@@ -3,14 +3,14 @@
 namespace ToolGood.ReadyGo3
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
-    partial class SqlHelper
+    public partial class SqlHelper
     {
         private SqlTableHelper _tableHelper;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public SqlTableHelper _TableHelper {
             get { return _tableHelper ?? (_tableHelper = new SqlTableHelper(this)); }

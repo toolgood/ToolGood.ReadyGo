@@ -7,7 +7,6 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.Enums;
-using ToolGood.ReadyGo3.Gadget.Internals;
 using ToolGood.ReadyGo3.PetaPoco.Internal;
 using ToolGood.ReadyGo3.PetaPoco.Providers;
 using ToolGood.ReadyGo3.PetaPoco.Utilities;
@@ -220,7 +219,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             return database.ExecuteScalarHelper(cmd);
         }
 
-
         private DbProviderFactory providerFactory = null;
         /// <summary>
         ///     Returns the .net standard conforming DbProviderFactory.
@@ -308,7 +306,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         //    return unwrapped == null ? factory : Unwrap(unwrapped);
         //}
 
-
         public virtual string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
         {
             throw new Exception("不支持！！！");
@@ -317,7 +314,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         {
             throw new Exception("不支持！！！");
         }
-
 
         /// <summary>
         /// 创建生成SQL Function
@@ -365,6 +361,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
                     }
                     stringBuilder[stringBuilder.Length - 1] = ')';
                     return stringBuilder.ToString();
+
                 case SqlFunction.IndexOf: return CreateFunction("(INSTR({0},{1})-1)", args);
                 case SqlFunction.Replace: return CreateFunction("REPLACE({0},{1},{2})", args);
                 default: break;
@@ -481,11 +478,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             }
         }
 
-
-
         /// <summary>
         /// 转化成SQL语言的片段，value不能为Null.
-        /// 
+        ///
         /// </summary>
         /// <param name="value"></param>
         /// <returns></returns>
@@ -531,6 +526,5 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
             }
             return "'" + value.ToString() + "'";
         }
-
     }
 }

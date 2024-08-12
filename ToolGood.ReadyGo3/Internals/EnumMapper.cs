@@ -29,8 +29,5 @@ namespace ToolGood.ReadyGo3.Internals
                 return atts.Length > 0;
             });
         }
-
-
-
     }
 }

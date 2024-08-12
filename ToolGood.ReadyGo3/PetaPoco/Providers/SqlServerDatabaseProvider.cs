@@ -20,8 +20,8 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 "Microsoft.Data.SqlClient.SqlClientFactory, Microsoft.Data.SqlClient"
                 );
         }
-        protected static readonly Regex SelectTopRegex = new Regex(@"^SELECT +TOP(\d+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
+        protected static readonly Regex SelectTopRegex = new Regex(@"^SELECT +TOP(\d+)", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
         public override string BuildPageQuery(int skip, int take, SQLParts parts, ref object[] args)
         {
@@ -68,6 +68,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             return $" OUTPUT INSERTED.[{primaryKeyName}]";
         }
+
         public override string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
         {
             if (offset <= 0) {
@@ -101,7 +102,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 sb.AppendFormat(")  peta_paged WHERE peta_rn>{0} AND peta_rn<={1}", offset, limit + offset);
                 return sb.ToString();
             }
-
         }
 
         public override string CreateSql(string columnSql, string fromtable, string order, string where)
@@ -122,10 +122,8 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return sb.ToString();
         }
 
-
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="function"></param>
         /// <param name="args"></param>
@@ -164,10 +162,8 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 default: break;
             }
 
-
             return base.CreateFunction(function, args);
         }
-
 
         public override string ToString()
         {

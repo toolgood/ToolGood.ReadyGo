@@ -1,12 +1,12 @@
 ﻿namespace ToolGood.ReadyGo3.Gadget.Events
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class SqlOperationEventArgs : System.EventArgs
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sql"></param>
         /// <param name="args"></param>
@@ -21,7 +21,7 @@
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public SqlHelper SqlHelper;
 
@@ -31,7 +31,7 @@
         public string Sql;
 
         /// <summary>
-        /// 参数 
+        /// 参数
         /// </summary>
         public object[] Args;
 
@@ -40,8 +40,9 @@
         /// </summary>
         public string SqlWithArgs;
     }
+
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="args"></param>

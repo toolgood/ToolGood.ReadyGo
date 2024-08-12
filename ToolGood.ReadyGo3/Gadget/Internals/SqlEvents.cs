@@ -9,8 +9,9 @@ namespace ToolGood.ReadyGo3.Gadget.Events
     public class SqlEvents
     {
         private readonly SqlHelper _sqlHelper;
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sqlHelper"></param>
         public SqlEvents(SqlHelper sqlHelper)
@@ -72,7 +73,6 @@ namespace ToolGood.ReadyGo3.Gadget.Events
         /// 事件：执行事务之后
         /// </summary>
         public event AfterTransactionEventHandler AfterTransaction;
-
 
         internal bool OnBeforeInsert(object obj)
         {
@@ -156,21 +156,19 @@ namespace ToolGood.ReadyGo3.Gadget.Events
             return true;
         }
 
-
         internal void OnBeforeTransaction()
         {
             if (BeforeTransaction != null) {
                 BeforeTransaction(this, System.EventArgs.Empty);
             }
         }
+
         internal void OnAfterTransaction()
         {
             if (AfterTransaction != null) {
                 AfterTransaction(this, System.EventArgs.Empty);
             }
         }
-
-
 
         internal static string FormatCommand(string sql, object[] args)
         {

@@ -14,6 +14,7 @@
         /// 查询SQL
         /// </summary>
         public string QuerySql;
+
         /// <summary>
         /// 表
         /// </summary>
@@ -24,7 +25,4 @@
         /// </summary>
         public bool UseAsName;
     }
-
-
-
 }

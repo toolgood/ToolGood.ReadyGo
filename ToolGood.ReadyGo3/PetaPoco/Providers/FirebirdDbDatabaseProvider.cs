@@ -18,6 +18,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             usedEscapeSql = true;
             escapeSql = '"';
         }
+
         public override DbProviderFactory GetFactory()
         {
             return GetFactory(
@@ -48,6 +49,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             return $"\"{sqlIdentifier}\"";
         }
+
         public override string GetTableName(string databaseName, string schemaName, string tableName)
         {
             if (string.IsNullOrEmpty(databaseName) == false) {
@@ -63,7 +65,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="limit"></param>
         /// <param name="offset"></param>
@@ -90,8 +92,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             sb.AppendFormat($" ROWS {offset + 1} TO {offset + limit}");
             return sb.ToString();
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="columnSql"></param>
         /// <param name="fromtable"></param>
@@ -117,7 +120,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="function"></param>
         /// <param name="args"></param>

@@ -4,7 +4,7 @@ using System.Reflection;
 namespace ToolGood.ReadyGo3.PetaPoco.Core
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class PocoColumn
     {
@@ -40,7 +40,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         public PropertyInfo PropertyInfo;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="target"></param>
         /// <param name="val"></param>
@@ -48,8 +48,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         {
             PropertyInfo.SetValue(target, val, null);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="target"></param>
         /// <returns></returns>
@@ -57,8 +58,9 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         {
             return PropertyInfo.GetValue(target, null);
         }
+
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="val"></param>
         /// <returns></returns>

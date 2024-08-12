@@ -30,6 +30,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             db.ExecuteNonQueryHelper(cmd);
             return db.ExecuteScalar<object>("SELECT @@IDENTITY AS NewID;", new object[0]);
         }
+
         public override string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
         {
             StringBuilder sb = new StringBuilder();
@@ -70,8 +71,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             }
             return sb.ToString();
         }
-
-
 
         public override string ToString()
         {

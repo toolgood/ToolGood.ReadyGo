@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 
 namespace ToolGood.ReadyGo3.LinQ
 {
-    partial class WhereHelper<T1>
+    public partial class WhereHelper<T1>
     {
-
         #region 06 查询 Select Page FirstOrDefault
 
-
         #region Select Page SkipTake FirstOrDefault
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -23,6 +22,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return _sqlhelper.Select_Async<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -33,6 +33,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return _sqlhelper.Select_Async<T1>(limit, 0, GetFullSelectSql(selectSql), _args.ToArray());
         }
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -44,6 +45,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return _sqlhelper.Select_Async<T1>(skip, take, GetFullSelectSql(selectSql), _args.ToArray());
         }
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -55,9 +57,8 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
-            return _sqlhelper.Select_Async<T1>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
+            return _sqlhelper.Select_Async<T1>((page - 1) * itemsPerPage, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
         }
-
 
         /// <summary>
         /// 查询 返回Page
@@ -70,7 +71,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return _sqlhelper.Page_Async<T1>(page, itemsPerPage, GetFullSelectSql(selectSql), _args.ToArray());
         }
-       
+
         /// <summary>
         /// 返回第一列
         /// </summary>
@@ -81,9 +82,10 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.FirstOrDefault_Async<T1>(GetFullSelectSql(selectSql), _args.ToArray());
         }
 
-        #endregion Select Page FirstOrDefault
+        #endregion Select Page SkipTake FirstOrDefault
 
         #region Select Page FirstOrDefault
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -95,6 +97,7 @@ namespace ToolGood.ReadyGo3.LinQ
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -107,6 +110,7 @@ namespace ToolGood.ReadyGo3.LinQ
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select_Async<T>(limit, GetFullSelectSql(sql), _args.ToArray());
         }
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -120,6 +124,7 @@ namespace ToolGood.ReadyGo3.LinQ
             _sqlExpression.GetColumns(columns, out string sql);
             return _sqlhelper.Select_Async<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
         }
+
         /// <summary>
         /// 查询 返回列表
         /// </summary>
@@ -134,9 +139,9 @@ namespace ToolGood.ReadyGo3.LinQ
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             _sqlExpression.GetColumns(columns, out string sql);
-            return _sqlhelper.Select_Async<T>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Select_Async<T>((page - 1) * itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
- 
+
         /// <summary>
         /// 返回第一列
         /// </summary>
@@ -163,11 +168,12 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.Page_Async<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
-        #endregion
+        #endregion Select Page FirstOrDefault
 
-        #endregion
+        #endregion 06 查询 Select Page FirstOrDefault
 
         #region 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page FirstOrDefault
+
         /// <summary>
         /// 获取数量
         /// </summary>
@@ -178,6 +184,7 @@ namespace ToolGood.ReadyGo3.LinQ
         {
             return _sqlhelper.GetDatabase().ExecuteScalar_Async<int>(GetCountSql(selectSql, distinct), _args.ToArray());
         }
+
         /// <summary>
         /// 执行返回DataTable
         /// </summary>
@@ -198,6 +205,7 @@ namespace ToolGood.ReadyGo3.LinQ
             var sql = getSelect<T>(selectSql);
             return _sqlhelper.Select_Async<T>(GetFullSelectSql(sql), _args.ToArray());
         }
+
         /// <summary>
         /// 执行返回集合
         /// </summary>
@@ -222,6 +230,7 @@ namespace ToolGood.ReadyGo3.LinQ
             var sql = getSelect<T>(selectSql);
             return _sqlhelper.Select_Async<T>(skip, take, GetFullSelectSql(sql), _args.ToArray());
         }
+
         /// <summary>
         /// 执行返回集合
         /// </summary>
@@ -236,9 +245,8 @@ namespace ToolGood.ReadyGo3.LinQ
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             var sql = getSelect<T>(selectSql);
-            return _sqlhelper.Select_Async<T>((page-1)* itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
+            return _sqlhelper.Select_Async<T>((page - 1) * itemsPerPage, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
-
 
         /// <summary>
         /// 返回第一列
@@ -264,9 +272,10 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.Page_Async<T>(page, itemsPerPage, GetFullSelectSql(sql), _args.ToArray());
         }
 
-        #endregion
+        #endregion 07 查询  Count ExecuteDataTable ExecuteDataSet Select Page FirstOrDefault
 
         #region 10 Update
+
         /// <summary>
         /// 更新数据库,仅支持单一表格更新，WHERE条件为空报错
         /// </summary>
@@ -313,7 +322,6 @@ namespace ToolGood.ReadyGo3.LinQ
             }
             var sql = BuildUpdateSql(sb.ToString(), args);
             return _sqlhelper.Update_Async<T1>(sql, _args.ToArray());
-
         }
 
         /// <summary>
@@ -335,9 +343,10 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.Update_Async<T1>(sql, _args.ToArray());
         }
 
-        #endregion
+        #endregion 10 Update
 
         #region 11 Delete_Async
+
         /// <summary>
         /// 删除，只支持单一表格，WHERE条件为空报错
         /// </summary>
@@ -348,7 +357,6 @@ namespace ToolGood.ReadyGo3.LinQ
             return _sqlhelper.Delete_Async<T1>($"WHERE {_where.ToString()}", _args.ToArray());
         }
 
-        #endregion
-
+        #endregion 11 Delete_Async
     }
 }

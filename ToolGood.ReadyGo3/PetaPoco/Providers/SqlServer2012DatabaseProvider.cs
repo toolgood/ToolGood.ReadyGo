@@ -6,12 +6,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
     public partial class SqlServer2012DatabaseProvider : SqlServerDatabaseProvider
     {
-
         //private static readonly Regex SelectTopRegex = new Regex(@"^SELECT +TOP(\d+)", RegexOptions.IgnoreCase);
 
         public override string BuildPageQuery(int skip, int take, SQLParts parts, ref object[] args)
         {
-            if (parts.Sql.IndexOf("order by",0, StringComparison.OrdinalIgnoreCase)==-1) {
+            if (parts.Sql.IndexOf("order by", 0, StringComparison.OrdinalIgnoreCase) == -1) {
                 return base.BuildPageQuery(skip, take, parts, ref args);
             }
 
@@ -28,6 +27,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             args = args.Concat(new object[] { skip, take }).ToArray();
             return sqlPage;
         }
+
         public override string GetAutoIncrementExpression(TableInfo tableInfo)
         {
             if (!string.IsNullOrEmpty(tableInfo.SequenceName))
@@ -39,6 +39,5 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             return "SqlServer2012DatabaseProvider";
         }
-
     }
 }

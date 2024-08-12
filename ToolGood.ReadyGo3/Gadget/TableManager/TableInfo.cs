@@ -10,7 +10,8 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
     /// </summary>
     public class TableInfo
     {
-        internal TableInfo() { }
+        internal TableInfo()
+        { }
 
         public string DatabaseName;
         public string SchemaName;
@@ -24,7 +25,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
         public List<List<string>> Indexs = new List<List<string>>();
         public List<List<string>> Uniques = new List<List<string>>();
         public List<ColumnInfo> Columns = new List<ColumnInfo>();
-
 
         /// <summary>
         /// 解析类型

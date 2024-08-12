@@ -12,13 +12,14 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
     public partial class OracleDatabaseProvider : DatabaseProvider
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public OracleDatabaseProvider()
         {
             usedEscapeSql = true;
             escapeSql = '"';
         }
+
         public override string GetParameterPrefix(string connectionString)
         {
             return ":";
@@ -60,6 +61,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             return $"\"{sqlIdentifier.ToUpperInvariant()}\"";
         }
+
         public override string GetTableName(string databaseName, string schemaName, string tableName)
         {
             if (string.IsNullOrEmpty(databaseName) == false) {
@@ -99,6 +101,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 return -1;
             }
         }
+
         public override string CreateSql(int limit, int offset, string columnSql, string fromtable, string order, string where)
         {
             StringBuilder sb = new StringBuilder();
@@ -134,6 +137,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             }
             return sb.ToString();
         }
+
         public override string CreateSql(string columnSql, string fromtable, string order, string where)
         {
             StringBuilder sb = new StringBuilder();
@@ -152,9 +156,8 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             return sb.ToString();
         }
 
-
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="function"></param>
         /// <param name="args"></param>

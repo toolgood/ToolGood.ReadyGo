@@ -11,7 +11,8 @@ namespace ToolGood.ReadyGo3.Attributes
         /// <summary>
         ///
         /// </summary>
-        public ResultColumnAttribute() { }
+        public ResultColumnAttribute()
+        { }
 
         /// <summary>
         ///

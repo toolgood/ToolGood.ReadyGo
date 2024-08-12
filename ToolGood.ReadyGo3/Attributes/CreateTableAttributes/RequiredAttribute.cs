@@ -3,7 +3,7 @@
 namespace ToolGood.ReadyGo3.Attributes
 {
     /// <summary>
-    /// 非空标签 
+    /// 非空标签
     /// </summary>
     public class RequiredAttribute : Attribute
     {
@@ -11,6 +11,7 @@ namespace ToolGood.ReadyGo3.Attributes
         /// 是否非空
         /// </summary>
         public bool Required;
+
         /// <summary>
         /// 非空标签
         /// </summary>

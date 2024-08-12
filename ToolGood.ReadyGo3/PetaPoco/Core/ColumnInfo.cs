@@ -9,7 +9,8 @@ namespace ToolGood.ReadyGo3.PetaPoco
     /// </summary>
     public class ColumnInfo
     {
-        private ColumnInfo() { }
+        private ColumnInfo()
+        { }
 
         /// <summary>
         ///     列名
@@ -36,9 +37,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// DateTime为Utc
         /// </summary>
         public bool ForceToUtc;
-
-
-
 
         /// <summary>
         ///     Creates and populates a ColumnInfo from the attributes of a POCO property.
@@ -85,6 +83,5 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
             return ci;
         }
-
     }
 }

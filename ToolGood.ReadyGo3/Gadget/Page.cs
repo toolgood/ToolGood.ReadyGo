@@ -50,6 +50,7 @@ namespace ToolGood.ReadyGo3
             TotalItems = page.TotalItems;
         }
     }
+
     /// <summary>
     /// 页
     /// </summary>
@@ -61,6 +62,5 @@ namespace ToolGood.ReadyGo3
         /// 列表
         /// </summary>
         public List<T> Items { get; set; }
-
     }
 }

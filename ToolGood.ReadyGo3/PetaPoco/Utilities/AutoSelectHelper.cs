@@ -8,6 +8,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
     {
         private static readonly Regex rxSelect = new Regex(@"^(SELECT|SQLEXEC|EXEC|EXECUTE|CALL|WITH|SET|DECLARE|USE|GO|PRINT)\s",
             RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
         //private static readonly Regex rxSelect = new Regex(@"\A\s*(SELECT|SQLEXEC|EXEC|EXECUTE|CALL|WITH|SET|DECLARE|USE|GO|PRINT)\s",
         //    RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
@@ -21,7 +22,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
             if (!rxSelect.IsMatch(sql)) {
                 var pd = PocoData.ForType(typeof(T));
                 var tableName = table;
-
 
                 if (sql.StartsWith("FROM ", System.StringComparison.CurrentCultureIgnoreCase)) {
                     var m = rxFrom.Match(sql);
@@ -48,8 +48,5 @@ namespace ToolGood.ReadyGo3.PetaPoco.Internal
             }
             return sql;
         }
-
-
-
     }
 }

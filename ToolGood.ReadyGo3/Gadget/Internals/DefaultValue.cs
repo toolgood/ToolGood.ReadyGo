@@ -5,14 +5,13 @@ using System.Reflection;
 using System.Reflection.Emit;
 using ToolGood.ReadyGo3.Internals;
 using ToolGood.ReadyGo3.PetaPoco;
-using ToolGood.ReadyGo3.PetaPoco.Core;
 
 namespace ToolGood.ReadyGo3.Gadget.Internals
 {
     /// <summary>
     /// 默认值生成
     /// </summary>
-    class DefaultValue
+    internal class DefaultValue
     {
         private static readonly Cache<Type, Delegate> _setDefault = new Cache<Type, Delegate>();
 
@@ -31,10 +30,10 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
             a(obj, setString, setDateTime, setGuid);
         }
 
-
         private static Delegate CreateDefaultFunction<T>()
         {
             #region 初始时间
+
             var pd = PocoData.ForType(typeof(T));
             List<PropertyInfo> datetimes = new List<PropertyInfo>();
             List<PropertyInfo> datetimeoffsets = new List<PropertyInfo>();
@@ -56,37 +55,36 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
                     ansiStrings.Add(pi);
                 }
             }
-            #endregion
+
+            #endregion 初始时间
 
             #region dateTimeType dateTimeOffsetType AnsiString
+
             var dateTimeType = typeof(DateTime);
             //var getYear = dateTimeType.GetProperty("Year");
             var getNow = dateTimeType.GetProperty("Now", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
             var getMinValue = dateTimeType.GetField("MinValue", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
             var getop_Equality = dateTimeType.GetMethod("op_Equality", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
 
-
-
             var dateTimeOffsetType = typeof(DateTimeOffset);
             var getNow2 = dateTimeOffsetType.GetProperty("Now", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
             var getMinValue2 = dateTimeOffsetType.GetField("MinValue", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
             var getop_Equality2 = dateTimeOffsetType.GetMethod("op_Equality", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
-
 
             var guidType = typeof(Guid);
             var getEmpty = guidType.GetField("Empty", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
             var getNewGuid = guidType.GetMethod("NewGuid", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
             var getop_Equality3 = guidType.GetMethod("op_Equality", BindingFlags.Public | BindingFlags.Static | BindingFlags.NonPublic);
 
-
             var asctor = typeof(AnsiString).GetConstructor(new Type[] { typeof(string) });
 
-            #endregion
+            #endregion dateTimeType dateTimeOffsetType AnsiString
 
             var m = new DynamicMethod("tg_def_" + Guid.NewGuid().ToString().Replace("-", ""), typeof(void), new Type[] { typeof(T), typeof(bool), typeof(bool), typeof(bool) }, true);
             var il = m.GetILGenerator();
 
             #region string
+
             if (strings.Count > 0) {
                 il.Emit(OpCodes.Ldarg_1);
                 var lab1 = il.DefineLabel();
@@ -103,7 +101,6 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
                     var lab = il.DefineLabel();
                     il.Emit(OpCodes.Brtrue_S, lab);
 
-
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldstr, "");
                     il.Emit(OpCodes.Callvirt, item.GetSetMethod());
@@ -111,9 +108,11 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
                 }
                 il.MarkLabel(lab1);
             }
-            #endregion
+
+            #endregion string
 
             #region AnsiString
+
             if (ansiStrings.Count > 0) {
                 il.Emit(OpCodes.Ldarg_1);
                 var lab1 = il.DefineLabel();
@@ -131,7 +130,6 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
                     il.Emit(OpCodes.Callvirt, item.GetGetMethod());
                     il.Emit(OpCodes.Brtrue_S, lab);
 
-
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldstr, "");
                     il.Emit(OpCodes.Newobj, asctor);
@@ -139,13 +137,12 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
                     il.MarkLabel(lab);
                 }
                 il.MarkLabel(lab1);
-
             }
 
-
-            #endregion
+            #endregion AnsiString
 
             #region date
+
             if (datetimes.Count + datetimeoffsets.Count > 0) {
                 il.Emit(OpCodes.Ldarg_2);
                 var lab2 = il.DefineLabel();
@@ -156,6 +153,7 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
                 }
 
                 #region datetimes
+
                 foreach (var item in datetimes) {
                     var lab = il.DefineLabel();
                     il.Emit(OpCodes.Ldarg_0);
@@ -170,9 +168,11 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
                     il.Emit(OpCodes.Callvirt, item.GetSetMethod());
                     il.MarkLabel(lab);
                 }
-                #endregion
+
+                #endregion datetimes
 
                 #region datetimeoffsets
+
                 foreach (var item in datetimeoffsets) {
                     var lab = il.DefineLabel();
                     il.Emit(OpCodes.Ldarg_0);
@@ -187,13 +187,16 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
                     il.Emit(OpCodes.Callvirt, item.GetSetMethod());
                     il.MarkLabel(lab);
                 }
-                #endregion
+
+                #endregion datetimeoffsets
+
                 il.MarkLabel(lab2);
             }
 
-            #endregion
+            #endregion date
 
             #region guid
+
             if (guids.Count > 0) {
                 il.Emit(OpCodes.Ldarg_3);
                 var lab3 = il.DefineLabel();
@@ -219,12 +222,11 @@ namespace ToolGood.ReadyGo3.Gadget.Internals
                 }
                 il.MarkLabel(lab3);
             }
-            #endregion
+
+            #endregion guid
 
             il.Emit(OpCodes.Ret);
             return m.CreateDelegate(Expression.GetActionType(typeof(T), typeof(bool), typeof(bool), typeof(bool)));
         }
-
     }
-
 }
