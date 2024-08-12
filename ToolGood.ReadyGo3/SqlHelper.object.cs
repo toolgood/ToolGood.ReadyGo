@@ -485,7 +485,8 @@ namespace ToolGood.ReadyGo3
                 var value = pi.GetGetMethod().Invoke(condition, null);
                 if (middelStr == " AND ") {
                     if (value == null) {
-                        stringBuilder.Append($"[{pi.Name}] is Null");
+                        stringBuilder.Append(_provider.EscapeSqlIdentifier(pi.Name));
+                        stringBuilder.Append(" is Null");
                     } else {
                         if (value is IEnumerable && !(value is string)) {
                             List<object> objs = new List<object>();
