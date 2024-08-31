@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 {
     public partial class FirebirdDbDatabaseProvider
     {
-        public override Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
+        public override async Task<object> ExecuteInsert_Async(Database database, SqlCommand cmd, string primaryKeyName)
         {
             cmd.CommandText = cmd.CommandText.TrimEnd();
 
@@ -34,7 +34,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 cmd.CommandText = cmd.CommandText.Substring(0, cmd.CommandText.Length - 1);
 
             cmd.CommandText += " RETURNING " + EscapeSqlIdentifier(primaryKeyName) + ";";
-            return database.ExecuteScalarHelper_Async(cmd);
+            return await database.ExecuteScalarHelper_Async(cmd);
         }
     }
 
