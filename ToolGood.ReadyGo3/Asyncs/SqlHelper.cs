@@ -19,11 +19,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns>返回受影响的行数</returns>
-        public Task<int> Execute_Async(string sql, params object[] args)
+        public async Task<int> Execute_Async(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 
-            return GetDatabase().Execute_Async(sql, args);
+            return await GetDatabase().Execute_Async(sql, args);
         }
 
         /// <summary>
@@ -33,11 +33,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns>返回查询所返回的结果集中第一行的第一列。忽略额外的列或行</returns>
-        public Task<T> ExecuteScalar_Async<T>(string sql = "", params object[] args)
+        public async Task<T> ExecuteScalar_Async<T>(string sql = "", params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 
-            return GetDatabase().ExecuteScalar_Async<T>(sql, args);
+            return await GetDatabase().ExecuteScalar_Async<T>(sql, args);
         }
 
         /// <summary>
@@ -46,11 +46,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns>返回 DataTable</returns>
-        public Task<DataTable> ExecuteDataTable_Async(string sql, params object[] args)
+        public async Task<DataTable> ExecuteDataTable_Async(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 
-            return GetDatabase().ExecuteDataTable_Async(sql, args);
+            return await GetDatabase().ExecuteDataTable_Async(sql, args);
         }
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<int> Count_Async<T>(string sql = "", params object[] args)
+        public async Task<int> Count_Async<T>(string sql = "", params object[] args)
         {
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
@@ -93,7 +93,18 @@ namespace ToolGood.ReadyGo3
 
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
-            return GetDatabase().ExecuteScalar_Async<int>(sql, args);
+            return await GetDatabase().ExecuteScalar_Async<int>(sql, args);
+        }
+        /// <summary>
+        ///  执行SQL 查询,返回数量
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<int> Select_Count_Async<T>(string sql = "", params object[] args)
+        {
+            return await Count_Async<int>(sql, args);
         }
 
         /// <summary>
@@ -102,10 +113,10 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<int> Count_Async(string sql, params object[] args)
+        public async Task<int> Count_Async(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
-            return GetDatabase().ExecuteScalar_Async<int>(sql, args);
+            return await GetDatabase().ExecuteScalar_Async<int>(sql, args);
         }
 
         /// <summary>
@@ -115,13 +126,13 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<int> Table_Count_Async(string table, string sql = "", params object[] args)
+        public async Task<int> Table_Count_Async(string table, string sql = "", params object[] args)
         {
             sql = sql.Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 sql = $"SELECT COUNT(*) FROM {table} {sql}";
             }
-            return GetDatabase().ExecuteScalar_Async<int>(sql, args);
+            return await GetDatabase().ExecuteScalar_Async<int>(sql, args);
         }
 
         #endregion Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
@@ -255,12 +266,12 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, string sql = "", params object[] args) where T : class
+        public async Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, string sql = "", params object[] args) where T : class
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            return GetDatabase().Page_Async<T>(page, itemsPerPage, sql, args);
+            return await GetDatabase().Page_Async<T>(page, itemsPerPage, sql, args);
         }
 
         /// <summary>
@@ -273,14 +284,130 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<Page<T>> Table_Page_Async<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args) where T : class
+        public async Task<Page<T>> Table_Page_Async<T>(string table, int page, int itemsPerPage, string sql = "", params object[] args) where T : class
         {
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            return GetDatabase().Table_Page_Async<T>(table, page, itemsPerPage, sql, args);
+            return await GetDatabase().Table_Page_Async<T>(table, page, itemsPerPage, sql, args);
         }
 
+        /// <summary>
+        /// 执行SQL 查询, 返回单个
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public async Task<T> FirstOrDefault_Async<T>(SelectSql<T> select)
+            where T : class
+        {
+            if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
+
+            var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
+            var tableSql = RemoveStart(select.TableSql, "FROM ");
+            var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
+            var sql = $"SELECT {columnSql} FROM {tableSql} WHERE {whereSql}";
+
+            return (await GetDatabase().Query_Async<T>(sql, select.SqlParameters.ToArray())).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        public async Task<List<T>> Select_Async<T>(int page, int itemsPerPage, SelectSql<T> select)
+            where T : class
+        {
+            if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
+
+            var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
+            var tableSql = RemoveStart(select.TableSql, "FROM ");
+            var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
+            var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");
+
+            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
+
+            return (await GetDatabase().Query_Async<T>(sql, select.SqlParameters.ToArray())).ToList();
+        }
+
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="limit">每页数量</param>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        public async Task<List<T>> Select_Async<T>(int limit, SelectSql<T> select)
+            where T : class
+        {
+            if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
+            if (limit <= 0) { limit = 20; }
+
+            var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
+            var tableSql = RemoveStart(select.TableSql, "FROM ");
+            var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
+            var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");
+
+            var sql = _provider.CreateSql(limit, 0, columnSql, tableSql, orderSql, whereSql);
+
+            return (await GetDatabase().Query_Async<T>(sql, select.SqlParameters.ToArray())).ToList();
+        }
+        /// <summary>
+        /// 执行SQL 查询,返回集合
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        public async Task<List<T>> Select_Async<T>(SelectSql<T> select)
+             where T : class
+        {
+            if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
+
+            var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
+            var tableSql = RemoveStart(select.TableSql, "FROM ");
+            var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
+            var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");
+
+            var sql = _provider.CreateSql(columnSql, tableSql, orderSql, whereSql);
+
+            return (await GetDatabase().Query_Async<T>(sql, select.SqlParameters.ToArray())).ToList();
+        }
+        /// <summary>
+        /// 执行SQL 查询,返回Page类型
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="select"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public async Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, SelectSql<T> select)
+          where T : class
+        {
+            if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
+            if (page <= 0) { page = 1; }
+            if (itemsPerPage <= 0) { itemsPerPage = 20; }
+
+            var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
+            var tableSql = RemoveStart(select.TableSql, "FROM ");
+            var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
+            var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");
+
+            string countSql = string.IsNullOrEmpty(whereSql) ? $"SELECT COUNT(1) FROM {tableSql}" : $"SELECT COUNT(1) FROM {tableSql} WHERE {whereSql}";
+
+            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
+
+            return await GetDatabase().PageSql_Async<T>(page, itemsPerPage, sql, countSql, select.SqlParameters.ToArray());
+        }
+
+        #region Obsolete
         /// <summary>
         /// 执行SQL 查询, 返回单个
         /// </summary>
@@ -290,6 +417,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
+        [Obsolete("use SelectSql class")]
         public async Task<T> SQL_FirstOrDefault_Async<T>(string columnSql, string tableSql, string whereSql, params object[] args)
             where T : class
         {
@@ -314,10 +442,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        public Task<T> SQL_FirstOrDefault_Async<T>(string columnSql, string tableSql, string whereSql, SqlParameterCollection args)
+        [Obsolete("use SelectSql class")]
+        public async Task<T> SQL_FirstOrDefault_Async<T>(string columnSql, string tableSql, string whereSql, SqlParameterCollection args)
             where T : class
         {
-            return SQL_FirstOrDefault_Async<T>(columnSql, tableSql, whereSql, args.ToArray());
+            return await SQL_FirstOrDefault_Async<T>(columnSql, tableSql, whereSql, args.ToArray());
         }
 
         /// <summary>
@@ -332,6 +461,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
+        [Obsolete("use SelectSql class")]
         public async Task<List<T>> SQL_Select_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -363,10 +493,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
 
-        public Task<List<T>> SQL_Select_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
+        [Obsolete("use SelectSql class")]
+        public async Task<List<T>> SQL_Select_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
             where T : class
         {
-            return SQL_Select_Async<T>(page, itemsPerPage, columnSql, tableSql, orderSql, whereSql, args.ToArray());
+            return await SQL_Select_Async<T>(page, itemsPerPage, columnSql, tableSql, orderSql, whereSql, args.ToArray());
         }
 
         /// <summary>
@@ -380,6 +511,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
+        [Obsolete("use SelectSql class")]
         public async Task<List<T>> SQL_Select_Async<T>(int limit, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -408,10 +540,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<List<T>> SQL_Select_Async<T>(int limit, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
+        [Obsolete("use SelectSql class")]
+        public async Task<List<T>> SQL_Select_Async<T>(int limit, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
             where T : class
         {
-            return SQL_Select_Async<T>(limit, columnSql, tableSql, orderSql, whereSql, args.ToArray());
+            return await SQL_Select_Async<T>(limit, columnSql, tableSql, orderSql, whereSql, args.ToArray());
         }
 
         /// <summary>
@@ -424,6 +557,7 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
+        [Obsolete("use SelectSql class")]
         public async Task<List<T>> SQL_Select_Async<T>(string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -450,10 +584,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<List<T>> SQL_Select_Async<T>(string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
+        [Obsolete("use SelectSql class")]
+        public async Task<List<T>> SQL_Select_Async<T>(string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
             where T : class
         {
-            return SQL_Select_Async<T>(columnSql, tableSql, orderSql, whereSql, args.ToArray());
+            return await SQL_Select_Async<T>(columnSql, tableSql, orderSql, whereSql, args.ToArray());
         }
 
         /// <summary>
@@ -468,7 +603,8 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<Page<T>> SQL_Page_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
+        [Obsolete("use SelectSql class")]
+        public async Task<Page<T>> SQL_Page_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
             if (string.IsNullOrWhiteSpace(columnSql)) { throw new ArgumentNullException("columnSql is null."); }
@@ -485,7 +621,7 @@ namespace ToolGood.ReadyGo3
 
             var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
 
-            return GetDatabase().PageSql_Async<T>(page, itemsPerPage, sql, countSql, args);
+            return await GetDatabase().PageSql_Async<T>(page, itemsPerPage, sql, countSql, args);
         }
 
         /// <summary>
@@ -500,11 +636,13 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<Page<T>> SQL_Page_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
+        [Obsolete("use SelectSql class")]
+        public async Task<Page<T>> SQL_Page_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
             where T : class
         {
-            return SQL_Page_Async<T>(page, itemsPerPage, columnSql, tableSql, orderSql, whereSql, args.ToArray());
+            return await SQL_Page_Async<T>(page, itemsPerPage, columnSql, tableSql, orderSql, whereSql, args.ToArray());
         }
+        #endregion
 
         #endregion Select Page Select
 
@@ -800,11 +938,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<int> Delete_Async<T>(string sql, params object[] args) where T : class
+        public async Task<int> Delete_Async<T>(string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 
-            return GetDatabase().Delete_Async<T>(sql, args);
+            return await GetDatabase().Delete_Async<T>(sql, args);
         }
 
         /// <summary>
@@ -814,11 +952,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<int> Table_Delete_Async(string table, string sql, params object[] args)
+        public async Task<int> Table_Delete_Async(string table, string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 
-            return GetDatabase().Table_Delete_Async(table, sql, args);
+            return await GetDatabase().Table_Delete_Async(table, sql, args);
         }
 
         /// <summary>
@@ -827,9 +965,9 @@ namespace ToolGood.ReadyGo3
         /// <typeparam name="T"></typeparam>
         /// <param name="primaryKey">主键</param>
         /// <returns></returns>
-        public Task<int> DeleteById_Async<T>(object primaryKey) where T : class
+        public async Task<int> DeleteById_Async<T>(object primaryKey) where T : class
         {
-            return GetDatabase().Delete_Async<T>(primaryKey);
+            return await GetDatabase().Delete_Async<T>(primaryKey);
         }
 
         /// <summary>
@@ -839,9 +977,9 @@ namespace ToolGood.ReadyGo3
         /// <param name="table"></param>
         /// <param name="primaryKey">主键</param>
         /// <returns></returns>
-        public Task<int> Table_DeleteById_Async<T>(string table, object primaryKey) where T : class
+        public async Task<int> Table_DeleteById_Async<T>(string table, object primaryKey) where T : class
         {
-            return GetDatabase().Table_Delete_Async<T>(table, primaryKey);
+            return await GetDatabase().Table_Delete_Async<T>(table, primaryKey);
         }
 
         /// <summary>
@@ -874,11 +1012,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<int> Update_Async<T>(string sql, params object[] args) where T : class
+        public async Task<int> Update_Async<T>(string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 
-            return GetDatabase().Update_Async<T>(sql, args);
+            return await GetDatabase().Update_Async<T>(sql, args);
         }
 
         /// <summary>
@@ -889,11 +1027,11 @@ namespace ToolGood.ReadyGo3
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public Task<int> Table_Update_Async<T>(string table, string sql, params object[] args) where T : class
+        public async Task<int> Table_Update_Async<T>(string table, string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 
-            return GetDatabase().Table_Update_Async<T>(table, sql, args);
+            return await GetDatabase().Table_Update_Async<T>(table, sql, args);
         }
 
         #endregion Object  Insert Update Delete DeleteById Save

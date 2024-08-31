@@ -22,46 +22,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         public CancellationToken _Token = CancellationToken.None;
 
-        /// <summary>
-        /// Open a connection that will be used for all subsequent queries.
-        /// </summary>
-        /// <remarks>
-        /// Calls to Open/CloseSharedConnection are reference counted and should be balanced
-        /// </remarks>
-        public async Task OpenSharedConnection_Async()
-        {
-            if (_sharedConnectionDepth == 0) {
-                _sharedConnection = _factory.CreateConnection();
-                _sharedConnection.ConnectionString = _sqlHelper._connectionString;
-
-                if (_sharedConnection.State == ConnectionState.Broken)
-                    _sharedConnection.Close();
-
-                if (_sharedConnection.State == ConnectionState.Closed) {
-                    var con = _sharedConnection as DbConnection;
-                    if (con != null)
-                        await con.OpenAsync(_Token).ConfigureAwait(false);
-                    else
-                        _sharedConnection.Open();
-                }
-
-                if (KeepConnectionAlive)
-                    _sharedConnectionDepth++; // Make sure you call Dispose
-            } else {
-                if (_sharedConnection.State == ConnectionState.Broken)
-                    _sharedConnection.Close();
-
-                if (_sharedConnection.State == ConnectionState.Closed) {
-                    var con = _sharedConnection as DbConnection;
-                    if (con != null)
-                        await con.OpenAsync(_Token).ConfigureAwait(false);
-                    else
-                        _sharedConnection.Open();
-                }
-            }
-            _sharedConnectionDepth++;
-        }
-
         internal async Task ExecuteNonQueryHelper_Async(SqlCommand cmd)
         {
             DoPreExecute(cmd);
@@ -88,7 +48,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public async Task<int> Execute_Async(string sql, object[] args)
         {
             try {
-                await OpenSharedConnection_Async().ConfigureAwait(false);
+                OpenSharedConnection();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
@@ -117,7 +77,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public async Task<T> ExecuteScalar_Async<T>(string sql, object[] args)
         {
             try {
-                await OpenSharedConnection_Async().ConfigureAwait(false);
+                OpenSharedConnection();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
@@ -151,7 +111,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public async Task<DataTable> ExecuteDataTable_Async(string sql, object[] args)
         {
             try {
-                await OpenSharedConnection_Async().ConfigureAwait(false);
+                OpenSharedConnection();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
@@ -188,38 +148,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
             }
         }
 
-        ///// <summary>
-        /////
-        ///// </summary>
-        ///// <param name="sql"></param>
-        ///// <param name="args"></param>
-        ///// <returns></returns>
-        //public async Task<DataSet> ExecuteDataSet_Async(string sql, object[] args)
-        //{
-        //    try {
-        //        await OpenSharedConnection_Async().ConfigureAwait(false);
-        //        try {
-        //            using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
-        //                using (var adapter = _factory.CreateDataAdapter()) {
-        //                    DoPreExecute(cmd);
-        //                    adapter.SelectCommand = (DbCommand)cmd;
-        //                    DataSet ds = new DataSet();
-        //                    adapter.Fill(ds);
-        //                    OnExecutedCommand(cmd);
-        //                    return ds;
-        //                }
-        //            }
-        //        } finally {
-        //            CloseSharedConnection();
-        //            _Token = CancellationToken.None;
-        //        }
-        //    } catch (Exception x) {
-        //        if (OnException(x))
-        //            throw new SqlExecuteException(x, _sqlHelper._sql.LastCommand);
-        //        return default;
-        //    }
-        //}
-
         #endregion Execute_Async ExecuteScalar_Async
 
         #region Query_Async
@@ -231,8 +159,6 @@ namespace ToolGood.ReadyGo3.PetaPoco
 
         public async Task<IList<T>> Query_Async<T>(string table, int skip, int take, string sql, object[] args)
         {
-            //string sqlCount, sqlPage;
-
             Table_BuildPageQueries<T>(table, skip, take, sql, ref args, out _, out string sqlPage);
 
             List<T> list = new List<T>(take);
@@ -251,7 +177,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, table, sql);
 
             var resultList = new List<T>();
-            await OpenSharedConnection_Async().ConfigureAwait(false);
+            OpenSharedConnection();
             SqlDataReader r = null;
             try {
                 using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
@@ -294,7 +220,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
             if (EnableAutoSelect)
                 sql = AutoSelectHelper.AddSelectClause<T>(_provider, null, sql);
 
-            await OpenSharedConnection_Async().ConfigureAwait(false);
+            OpenSharedConnection();
             SqlDataReader r = null;
             try {
                 using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
@@ -433,7 +359,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private async Task<object> ExecuteInsert_Async(string tableName, string primaryKeyName, bool autoIncrement, object poco, IEnumerable<string> ignoreFields = null)
         {
             try {
-                await OpenSharedConnection_Async().ConfigureAwait(false);
+                OpenSharedConnection();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var pd = PocoData.ForObject(poco, primaryKeyName);
@@ -531,7 +457,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private async Task ExecuteInsert_Async<T>(string tableName, string primaryKeyName, bool autoIncrement, List<T> list, int index2, int size)
         {
             try {
-                await OpenSharedConnection_Async().ConfigureAwait(false);
+                OpenSharedConnection();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = typeof(T);
@@ -606,7 +532,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         private async Task<int> ExecuteUpdate_Async(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
         {
             try {
-                await OpenSharedConnection_Async().ConfigureAwait(false);
+                OpenSharedConnection();
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, "", new object[0])) {
                         var type = poco.GetType();
