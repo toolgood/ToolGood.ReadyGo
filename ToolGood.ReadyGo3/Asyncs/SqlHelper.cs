@@ -305,6 +305,7 @@ namespace ToolGood.ReadyGo3
             if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
 
             var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
+            if (string.IsNullOrEmpty(columnSql)) { columnSql = "*"; }
             var tableSql = RemoveStart(select.TableSql, "FROM ");
             var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
             var sql = $"SELECT {columnSql} FROM {tableSql} WHERE {whereSql}";
@@ -328,6 +329,7 @@ namespace ToolGood.ReadyGo3
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
+            if (string.IsNullOrEmpty(columnSql)) { columnSql = "*"; }
             var tableSql = RemoveStart(select.TableSql, "FROM ");
             var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
             var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");
@@ -351,6 +353,7 @@ namespace ToolGood.ReadyGo3
             if (limit <= 0) { limit = 20; }
 
             var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
+            if (string.IsNullOrEmpty(columnSql)) { columnSql = "*"; }
             var tableSql = RemoveStart(select.TableSql, "FROM ");
             var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
             var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");
@@ -371,6 +374,7 @@ namespace ToolGood.ReadyGo3
             if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
 
             var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
+            if (string.IsNullOrEmpty(columnSql)) { columnSql = "*"; }
             var tableSql = RemoveStart(select.TableSql, "FROM ");
             var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
             var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");
@@ -396,6 +400,7 @@ namespace ToolGood.ReadyGo3
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
             var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
+            if (string.IsNullOrEmpty(columnSql)) { columnSql = "*"; }
             var tableSql = RemoveStart(select.TableSql, "FROM ");
             var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
             var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");

@@ -30,8 +30,10 @@ namespace ToolGood.ReadyGo3
         {
             StringBuilder stringBuilder = new StringBuilder();
             foreach (var sql in WhereSqls) {
-                while (stringBuilder.Length > 0) { stringBuilder.Append(" AND "); }
                 var x = RemoveStart(sql, "WHERE ");
+                if (string.IsNullOrEmpty(x)) { continue; }
+
+                while (stringBuilder.Length > 0) { stringBuilder.Append(" AND "); }
                 stringBuilder.Append(x);
             }
             return stringBuilder.ToString();
