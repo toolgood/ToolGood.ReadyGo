@@ -13,7 +13,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
 
         public virtual string GetCreateTable(Type type, bool withIndex = true)
         {
-            return null;
+            return GetTryCreateTable(type, withIndex);
         }
 
         public virtual string GetCreateIndex(Type type)

@@ -35,31 +35,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             sql += "\r\n);";
             return sql;
         }
-
-        public override string GetCreateTable(Type type, bool withIndex = true)
-        {
-            var ti = TableInfo.FromType(type);
-            var sql = "CREATE TABLE " + GetTableName(ti) + "(\r\n";
-            foreach (var item in ti.Columns) {
-                sql += "    " + CreateColumn(ti, item) + ",\r\n";
-            }
-            if (withIndex) {
-                foreach (var item in ti.Indexs) {
-                    var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
-                    var columns = BuildColumns(item);
-                    sql += "    INDEX " + txt + "(" + columns + "),\r\n";
-                }
-                foreach (var item in ti.Uniques) {
-                    var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
-                    var columns = BuildColumns(item);
-                    sql += "    CONSTRAINT " + txt + " UNIQUE (" + columns + "),\r\n  ";
-                }
-            }
-            sql = sql.Substring(0, sql.Length - 3);
-            sql += "\r\n);";
-            return sql;
-        }
-
+ 
         public override string GetCreateIndex(Type type)
         {
             //CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX 索引名 ON 表名（字段名[(长度)][ASC | DESC]）;

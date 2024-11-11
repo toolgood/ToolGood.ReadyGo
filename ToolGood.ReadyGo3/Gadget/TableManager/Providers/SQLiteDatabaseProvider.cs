@@ -32,32 +32,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             return sql;
         }
 
-        public override string GetCreateTable(Type type, bool withIndex = true)
-        {
-            var ti = TableInfo.FromType(type);
-            var sql = "CREATE TABLE [" + ti.TableName + "](\r\n";
-            foreach (var item in ti.Columns) {
-                sql += "    " + CreateColumn(ti, item) + ",\r\n";
-            }
-            sql = sql.Substring(0, sql.Length - 3);
-            sql += "\r\n);\r\n";
-            if (withIndex) {
-                foreach (var item in ti.Indexs) {
-                    var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
-                    var columns = BuildColumns(item);
-                    sql += "CREATE INDEX " + txt + " ON [" + ti.TableName + "](" + columns + ");\r\n";
-                }
-
-                foreach (var item in ti.Uniques) {
-                    var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
-                    var columns = BuildColumns(item);
-                    sql += "CREATE UNIQUE INDEX " + txt + " ON [" + ti.TableName + "]( " + columns + ");\r\n";
-                }
-            }
-            sql = sql.Substring(0, sql.Length - 2);
-            return sql;
-        }
-
         public override string GetCreateIndex(Type type)
         {
             //CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX 索引名 ON 表名（字段名[(长度)][ASC | DESC]）;
