@@ -17,6 +17,29 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 数据变动转成文本
         /// </summary>
+        /// <param name="right">新数据</param>
+        /// <returns></returns>
+        public static string Diff<T>(T right) where T : class
+        {
+            DataDiffTypeInfo myTypeInfo = new DataDiffTypeInfo(typeof(T));
+            return myTypeInfo.DiffMessage(right);
+        }
+        /// <summary>
+        /// 数据变动转成文本
+        /// </summary>
+        /// <param name="right">新数据</param>
+        /// <param name="sqlHelper"></param>
+        /// <returns></returns>
+        public static string Diff<T>(T right, SqlHelper sqlHelper) where T : class
+        {
+            DataDiffTypeInfo myTypeInfo = new DataDiffTypeInfo(typeof(T));
+            myTypeInfo.SetEnumNameFromDatabase(sqlHelper);
+            return myTypeInfo.DiffMessage(right);
+        }
+
+        /// <summary>
+        /// 数据变动转成文本
+        /// </summary>
         /// <param name="left">原数据</param>
         /// <param name="right">新数据</param>
         /// <returns></returns>
@@ -274,6 +297,36 @@ namespace ToolGood.ReadyGo3
                         propertyInfo.Diff(left, right, stringBuilder);
                     }
                 }
+            } else {
+                if (string.IsNullOrEmpty(Name)) {
+                    stringBuilder.Append($"修改");
+                } else {
+                    stringBuilder.Append($"修改[{Name}]");
+                }
+                foreach (var propertyInfo in PropertyInfos) {
+                    propertyInfo.Diff(left, right, stringBuilder);
+                }
+            }
+            return stringBuilder.ToString();
+        }
+        public string DiffMessage<T>(T right)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            if (IdPropertyInfo != null) {
+                var id = IdPropertyInfo.Property.GetValue(right);
+                stringBuilder.Append($"新增[{Name ?? "id"}]{id}");
+                foreach (var propertyInfo in PropertyInfos) {
+                    propertyInfo.NewValue(right, stringBuilder);
+                }
+            } else {
+                if (string.IsNullOrEmpty(Name)) {
+                    stringBuilder.Append($"新增");
+                } else {
+                    stringBuilder.Append($"新增[{Name}]");
+                }
+                foreach (var propertyInfo in PropertyInfos) {
+                    propertyInfo.NewValue(right, stringBuilder);
+                }
             }
             return stringBuilder.ToString();
         }
@@ -321,7 +374,7 @@ namespace ToolGood.ReadyGo3
                 } else if (Property.PropertyType == typeof(TimeOnly?)) {
                     stringBuilder.Append($"{DisplayName}：{(TimeOnly?)rightValue:HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateOnly?)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateOnly?)rightValue:yyyy-MM-dd}"); 
+                    stringBuilder.Append($"{DisplayName}：{(DateOnly?)rightValue:yyyy-MM-dd}");
 #endif
                 } else {
                     stringBuilder.Append($"{DisplayName}：{rightValue ?? "(NULL)"}");
@@ -433,7 +486,7 @@ namespace ToolGood.ReadyGo3
                 } else if (Property.PropertyType == typeof(TimeOnly?)) {
                     stringBuilder.Append($"{DisplayName}：{(TimeOnly?)leftValue:HH:mm:ss}->{(TimeOnly?)rightValue:HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateOnly?)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateOnly?)leftValue:yyyy-MM-dd}->{(DateOnly?)rightValue:yyyy-MM-dd}"); 
+                    stringBuilder.Append($"{DisplayName}：{(DateOnly?)leftValue:yyyy-MM-dd}->{(DateOnly?)rightValue:yyyy-MM-dd}");
 #endif
                 } else {
                     stringBuilder.Append($"{DisplayName}：{leftValue ?? "(NULL)"}->{rightValue ?? "(NULL)"}");
