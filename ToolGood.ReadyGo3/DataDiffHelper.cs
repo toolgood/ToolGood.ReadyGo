@@ -81,7 +81,7 @@ namespace ToolGood.ReadyGo3
             stringBuilder.Append(name);
             stringBuilder.Append('：');
             stringBuilder.AppendJoin('|', lefts);
-            stringBuilder.Append('→');
+            stringBuilder.Append("->");
             stringBuilder.AppendJoin('|', rights);
             return stringBuilder.ToString();
         }
@@ -102,7 +102,7 @@ namespace ToolGood.ReadyGo3
             stringBuilder.Append(name);
             stringBuilder.Append('：');
             stringBuilder.AppendJoin('|', lefts);
-            stringBuilder.Append('→');
+            stringBuilder.Append("->");
             stringBuilder.AppendJoin('|', rights);
             return stringBuilder.ToString();
         }
@@ -133,7 +133,7 @@ namespace ToolGood.ReadyGo3
                     }
                 }
             }
-            stringBuilder.Append('→');
+            stringBuilder.Append("->");
             for (int i = 0; i < removes.Count; i++) {
                 if (i > 0) { stringBuilder.Append('|'); }
                 stringBuilder.Append(removes[i]);
@@ -452,29 +452,29 @@ namespace ToolGood.ReadyGo3
 
             if (EnumNames == null) {
                 if (Property.PropertyType == typeof(DateTime)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTime)leftValue:yyyy-MM-dd HH:mm:ss}→{(DateTime)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{DisplayName}：{(DateTime)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTime)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateTimeOffset)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTimeOffset)leftValue:yyyy-MM-dd HH:mm:ss}→{(DateTimeOffset)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{DisplayName}：{(DateTimeOffset)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTimeOffset)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(TimeSpan)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeSpan)leftValue:d HH:mm:ss}→{(TimeSpan)rightValue:d HH:mm:ss}");
+                    stringBuilder.Append($"{DisplayName}：{(TimeSpan)leftValue:d HH:mm:ss}->{(TimeSpan)rightValue:d HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateTime?)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTime?)leftValue:yyyy-MM-dd HH:mm:ss}→{(DateTime?)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{DisplayName}：{(DateTime?)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTime?)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateTimeOffset?)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTimeOffset?)leftValue:yyyy-MM-dd HH:mm:ss}→{(DateTimeOffset?)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{DisplayName}：{(DateTimeOffset?)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTimeOffset?)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(TimeSpan?)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeSpan?)leftValue:d HH:mm:ss}→{(TimeSpan?)rightValue:d HH:mm:ss}");
+                    stringBuilder.Append($"{DisplayName}：{(TimeSpan?)leftValue:d HH:mm:ss}->{(TimeSpan?)rightValue:d HH:mm:ss}");
 #if NET8_0_OR_GREATER
                 } else if (Property.PropertyType == typeof(TimeOnly)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeOnly)leftValue:HH:mm:ss}→{(TimeOnly)rightValue:HH:mm:ss}");
+                    stringBuilder.Append($"{DisplayName}：{(TimeOnly)leftValue:HH:mm:ss}->{(TimeOnly)rightValue:HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateOnly)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateOnly)leftValue:yyyy-MM-dd}→{(DateOnly)rightValue:yyyy-MM-dd}");
+                    stringBuilder.Append($"{DisplayName}：{(DateOnly)leftValue:yyyy-MM-dd}->{(DateOnly)rightValue:yyyy-MM-dd}");
                 } else if (Property.PropertyType == typeof(TimeOnly?)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeOnly?)leftValue:HH:mm:ss}→{(TimeOnly?)rightValue:HH:mm:ss}");
+                    stringBuilder.Append($"{DisplayName}：{(TimeOnly?)leftValue:HH:mm:ss}->{(TimeOnly?)rightValue:HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateOnly?)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateOnly?)leftValue:yyyy-MM-dd}→{(DateOnly?)rightValue:yyyy-MM-dd}");
+                    stringBuilder.Append($"{DisplayName}：{(DateOnly?)leftValue:yyyy-MM-dd}->{(DateOnly?)rightValue:yyyy-MM-dd}");
 #endif
                 } else {
-                    stringBuilder.Append($"{DisplayName}：{leftValue ?? "(NULL)"}→{rightValue ?? "(NULL)"}");
+                    stringBuilder.Append($"{DisplayName}：{leftValue ?? "(NULL)"}->{rightValue ?? "(NULL)"}");
                 }
                 return;
             }
@@ -489,7 +489,7 @@ namespace ToolGood.ReadyGo3
                         stringBuilder.Append(lv);
                     }
                 }
-                stringBuilder.Append('→');
+                stringBuilder.Append("->");
 
                 stringBuilder.Append(rightValue);
                 if (EnumNames.TryGetValue(rightValue.ToString(), out string rv)) {
@@ -508,7 +508,7 @@ namespace ToolGood.ReadyGo3
                         stringBuilder.Append(lv);
                     }
                 }
-                stringBuilder.Append('→');
+                stringBuilder.Append("->");
 
                 stringBuilder.Append(rightValue ?? "(NULL)");
                 if (null != rightValue && EnumNames.TryGetValue(((bool)rightValue ? "1" : "0"), out string rv)) {
@@ -536,7 +536,7 @@ namespace ToolGood.ReadyGo3
                         }
                     }
                 }
-                stringBuilder.Append('→');
+                stringBuilder.Append("->");
 
                 if (null == rightValue) {
                     stringBuilder.Append("(NULL)");
@@ -587,7 +587,7 @@ namespace ToolGood.ReadyGo3
                     }
                 }
 
-                stringBuilder.Append('→');
+                stringBuilder.Append("->");
 
                 if (rightValue == null) {
                     stringBuilder.Append("(NULL)");
@@ -601,7 +601,7 @@ namespace ToolGood.ReadyGo3
                     }
                 }
             } else {
-                stringBuilder.Append($"{DisplayName}：{leftValue ?? "(NULL)"}=>{rightValue ?? "(NULL)"}");
+                stringBuilder.Append($"{DisplayName}：{leftValue ?? "(NULL)"}->{rightValue ?? "(NULL)"}");
             }
         }
     }
