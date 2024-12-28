@@ -333,7 +333,19 @@ namespace ToolGood.ReadyGo3
                 stringBuilder.Append('：');
                 stringBuilder.Append(rightValue);
                 if (EnumNames.TryGetValue(rightValue.ToString(), out string rv)) {
-                    stringBuilder.Append('=');
+                    if (string.IsNullOrEmpty(rv) == false) {
+                        stringBuilder.Append('=');
+                    }
+                    stringBuilder.Append(rv);
+                }
+            } else if (Property.PropertyType == typeof(bool) || Property.PropertyType == typeof(bool?)) {
+                stringBuilder.Append(DisplayName);
+                stringBuilder.Append('：');
+                stringBuilder.Append(rightValue ?? "(NULL)");
+                if (null != rightValue && EnumNames.TryGetValue(((bool)rightValue ? "1" : "0"), out string rv)) {
+                    if (string.IsNullOrEmpty(rv) == false) {
+                        stringBuilder.Append('=');
+                    }
                     stringBuilder.Append(rv);
                 }
             } else if (Property.PropertyType == typeof(string)) {
@@ -348,7 +360,9 @@ namespace ToolGood.ReadyGo3
                         var r = rs[i];
                         stringBuilder.Append(r);
                         if (EnumNames.TryGetValue(r.ToString(), out string rv)) {
-                            stringBuilder.Append('=');
+                            if (string.IsNullOrEmpty(rv) == false) {
+                                stringBuilder.Append('=');
+                            }
                             stringBuilder.Append(rv);
                         }
                     }
@@ -378,7 +392,9 @@ namespace ToolGood.ReadyGo3
                 } else {
                     stringBuilder.Append(rightValue);
                     if (EnumNames.TryGetValue(rightValue.ToString(), out string rv)) {
-                        stringBuilder.Append('=');
+                        if (string.IsNullOrEmpty(rv) == false) {
+                            stringBuilder.Append('=');
+                        }
                         stringBuilder.Append(rv);
                     }
                 }
@@ -403,8 +419,6 @@ namespace ToolGood.ReadyGo3
                     stringBuilder.Append($"{DisplayName}：{(DateTimeOffset)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTimeOffset)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(TimeSpan)) {
                     stringBuilder.Append($"{DisplayName}：{(TimeSpan)leftValue:d HH:mm:ss}->{(TimeSpan)rightValue:d HH:mm:ss}");
-
-
                 } else if (Property.PropertyType == typeof(DateTime?)) {
                     stringBuilder.Append($"{DisplayName}：{(DateTime?)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTime?)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateTimeOffset?)) {
@@ -432,7 +446,9 @@ namespace ToolGood.ReadyGo3
 
                 stringBuilder.Append(leftValue);
                 if (EnumNames.TryGetValue(leftValue.ToString(), out string lv)) {
-                    stringBuilder.Append('=');
+                    if (string.IsNullOrEmpty(lv) == false) {
+                        stringBuilder.Append('=');
+                    }
                     stringBuilder.Append(lv);
                 }
                 stringBuilder.Append('-');
@@ -440,7 +456,29 @@ namespace ToolGood.ReadyGo3
 
                 stringBuilder.Append(rightValue);
                 if (EnumNames.TryGetValue(rightValue.ToString(), out string rv)) {
-                    stringBuilder.Append('=');
+                    if (string.IsNullOrEmpty(rv) == false) {
+                        stringBuilder.Append('=');
+                    }
+                    stringBuilder.Append(rv);
+                }
+            } else if (Property.PropertyType == typeof(bool) || Property.PropertyType == typeof(bool?)) {
+                stringBuilder.Append(DisplayName);
+                stringBuilder.Append('：');
+                stringBuilder.Append(leftValue ?? "(NULL)");
+                if (null != leftValue && EnumNames.TryGetValue(((bool)leftValue ? "1" : "0"), out string lv)) {
+                    if (string.IsNullOrEmpty(lv) == false) {
+                        stringBuilder.Append('=');
+                    }
+                    stringBuilder.Append(lv);
+                }
+                stringBuilder.Append('-');
+                stringBuilder.Append('>');
+
+                stringBuilder.Append(rightValue ?? "(NULL)");
+                if (null != rightValue && EnumNames.TryGetValue(((bool)rightValue ? "1" : "0"), out string rv)) {
+                    if (string.IsNullOrEmpty(rv) == false) {
+                        stringBuilder.Append('=');
+                    }
                     stringBuilder.Append(rv);
                 }
             } else if (Property.PropertyType == typeof(string)) {
@@ -455,7 +493,9 @@ namespace ToolGood.ReadyGo3
                         var l = ls[i];
                         stringBuilder.Append(l);
                         if (EnumNames.TryGetValue(l.ToString(), out string lv)) {
-                            stringBuilder.Append('=');
+                            if (string.IsNullOrEmpty(lv) == false) {
+                                stringBuilder.Append('=');
+                            }
                             stringBuilder.Append(lv);
                         }
                     }
@@ -472,7 +512,9 @@ namespace ToolGood.ReadyGo3
                         var r = rs[i];
                         stringBuilder.Append(r);
                         if (EnumNames.TryGetValue(r.ToString(), out string rv)) {
-                            stringBuilder.Append('=');
+                            if (string.IsNullOrEmpty(rv) == false) {
+                                stringBuilder.Append('=');
+                            }
                             stringBuilder.Append(rv);
                         }
                     }
@@ -503,7 +545,9 @@ namespace ToolGood.ReadyGo3
                 } else {
                     stringBuilder.Append(leftValue);
                     if (EnumNames.TryGetValue(leftValue.ToString(), out string lv)) {
-                        stringBuilder.Append('=');
+                        if (string.IsNullOrEmpty(lv) == false) {
+                            stringBuilder.Append('=');
+                        }
                         stringBuilder.Append(lv);
                     }
                 }
@@ -516,7 +560,9 @@ namespace ToolGood.ReadyGo3
                 } else {
                     stringBuilder.Append(rightValue);
                     if (EnumNames.TryGetValue(rightValue.ToString(), out string rv)) {
-                        stringBuilder.Append('=');
+                        if (string.IsNullOrEmpty(rv) == false) {
+                            stringBuilder.Append('=');
+                        }
                         stringBuilder.Append(rv);
                     }
                 }
