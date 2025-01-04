@@ -338,37 +338,40 @@ namespace ToolGood.ReadyGo3
             if (null == rightValue) { return; }
 
             if (stringBuilder.Length != 0) { stringBuilder.Append('，'); }
+            if (string.IsNullOrEmpty(DisplayName) == false) {
+                stringBuilder.Append(DisplayName);
+                stringBuilder.Append('：');
+            }
+
             if (EnumNames == null) {
                 if (Property.PropertyType == typeof(DateTime)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTime)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{(DateTime)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateTimeOffset)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTimeOffset)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{(DateTimeOffset)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(TimeSpan)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeSpan)rightValue:d HH:mm:ss}");
+                    stringBuilder.Append($"{(TimeSpan)rightValue:d HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateTime?)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTime?)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{(DateTime?)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateTimeOffset?)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTimeOffset?)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{(DateTimeOffset?)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(TimeSpan?)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeSpan?)rightValue:d HH:mm:ss}");
+                    stringBuilder.Append($"{(TimeSpan?)rightValue:d HH:mm:ss}");
 #if NET8_0_OR_GREATER
                 } else if (Property.PropertyType == typeof(TimeOnly)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeOnly)rightValue:HH:mm:ss}");
+                    stringBuilder.Append($"{(TimeOnly)rightValue:HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateOnly)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateOnly)rightValue:yyyy-MM-dd}");
+                    stringBuilder.Append($"{(DateOnly)rightValue:yyyy-MM-dd}");
                 } else if (Property.PropertyType == typeof(TimeOnly?)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeOnly?)rightValue:HH:mm:ss}");
+                    stringBuilder.Append($"{(TimeOnly?)rightValue:HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateOnly?)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateOnly?)rightValue:yyyy-MM-dd}");
+                    stringBuilder.Append($"{(DateOnly?)rightValue:yyyy-MM-dd}");
 #endif
                 } else {
-                    stringBuilder.Append($"{DisplayName}：{rightValue ?? "(NULL)"}");
+                    stringBuilder.Append($"{rightValue ?? "(NULL)"}");
                 }
                 return;
             }
             if (Property.PropertyType.IsEnum) {
-                stringBuilder.Append(DisplayName);
-                stringBuilder.Append('：');
                 stringBuilder.Append(rightValue);
                 if (EnumNames.TryGetValue(rightValue.ToString(), out string rv)) {
                     if (string.IsNullOrEmpty(rv) == false) {
@@ -377,18 +380,14 @@ namespace ToolGood.ReadyGo3
                     }
                 }
             } else if (Property.PropertyType == typeof(bool) || Property.PropertyType == typeof(bool?)) {
-                stringBuilder.Append(DisplayName);
-                stringBuilder.Append('：');
-                stringBuilder.Append(rightValue ?? "(NULL)");
-                if (null != rightValue && EnumNames.TryGetValue(((bool)rightValue ? "1" : "0"), out string rv)) {
-                    if (string.IsNullOrEmpty(rv) == false) {
-                        stringBuilder.Append('=');
-                        stringBuilder.Append(rv);
-                    }
+                if (null == rightValue) {
+                    stringBuilder.Append("(NULL)");
+                } else if (EnumNames.TryGetValue(((bool)rightValue ? "1" : "0"), out string rv) && string.IsNullOrEmpty(rv) == false) {
+                    stringBuilder.Append(rv);
+                } else {
+                    stringBuilder.Append(rightValue);
                 }
             } else if (Property.PropertyType == typeof(string)) {
-                stringBuilder.Append(DisplayName);
-                stringBuilder.Append('：');
                 if (rightValue == null) {
                     stringBuilder.Append("(NULL)");
                 } else {
@@ -423,8 +422,6 @@ namespace ToolGood.ReadyGo3
                 || Property.PropertyType == typeof(int?)
                 || Property.PropertyType == typeof(long?)
                 ) {
-                stringBuilder.Append(DisplayName);
-                stringBuilder.Append('：');
                 if (rightValue == null) {
                     stringBuilder.Append("(NULL)");
                 } else {
@@ -437,7 +434,7 @@ namespace ToolGood.ReadyGo3
                     }
                 }
             } else {
-                stringBuilder.Append($"{DisplayName}：{rightValue ?? "(NULL)"}");
+                stringBuilder.Append($"{rightValue ?? "(NULL)"}");
             }
         }
 
@@ -449,39 +446,40 @@ namespace ToolGood.ReadyGo3
             if (null == leftValue && null == rightValue) { return; }
             if (null != leftValue && leftValue.Equals(rightValue)) { return; }
             if (stringBuilder.Length != 0) { stringBuilder.Append('，'); }
+            if (string.IsNullOrEmpty(DisplayName) == false) {
+                stringBuilder.Append(DisplayName);
+                stringBuilder.Append('：');
+            }
 
             if (EnumNames == null) {
                 if (Property.PropertyType == typeof(DateTime)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTime)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTime)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{(DateTime)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTime)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateTimeOffset)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTimeOffset)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTimeOffset)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{(DateTimeOffset)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTimeOffset)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(TimeSpan)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeSpan)leftValue:d HH:mm:ss}->{(TimeSpan)rightValue:d HH:mm:ss}");
+                    stringBuilder.Append($"{(TimeSpan)leftValue:d HH:mm:ss}->{(TimeSpan)rightValue:d HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateTime?)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTime?)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTime?)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{(DateTime?)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTime?)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateTimeOffset?)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateTimeOffset?)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTimeOffset?)rightValue:yyyy-MM-dd HH:mm:ss}");
+                    stringBuilder.Append($"{(DateTimeOffset?)leftValue:yyyy-MM-dd HH:mm:ss}->{(DateTimeOffset?)rightValue:yyyy-MM-dd HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(TimeSpan?)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeSpan?)leftValue:d HH:mm:ss}->{(TimeSpan?)rightValue:d HH:mm:ss}");
+                    stringBuilder.Append($"{(TimeSpan?)leftValue:d HH:mm:ss}->{(TimeSpan?)rightValue:d HH:mm:ss}");
 #if NET8_0_OR_GREATER
                 } else if (Property.PropertyType == typeof(TimeOnly)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeOnly)leftValue:HH:mm:ss}->{(TimeOnly)rightValue:HH:mm:ss}");
+                    stringBuilder.Append($"{(TimeOnly)leftValue:HH:mm:ss}->{(TimeOnly)rightValue:HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateOnly)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateOnly)leftValue:yyyy-MM-dd}->{(DateOnly)rightValue:yyyy-MM-dd}");
+                    stringBuilder.Append($"{(DateOnly)leftValue:yyyy-MM-dd}->{(DateOnly)rightValue:yyyy-MM-dd}");
                 } else if (Property.PropertyType == typeof(TimeOnly?)) {
-                    stringBuilder.Append($"{DisplayName}：{(TimeOnly?)leftValue:HH:mm:ss}->{(TimeOnly?)rightValue:HH:mm:ss}");
+                    stringBuilder.Append($"{(TimeOnly?)leftValue:HH:mm:ss}->{(TimeOnly?)rightValue:HH:mm:ss}");
                 } else if (Property.PropertyType == typeof(DateOnly?)) {
-                    stringBuilder.Append($"{DisplayName}：{(DateOnly?)leftValue:yyyy-MM-dd}->{(DateOnly?)rightValue:yyyy-MM-dd}");
+                    stringBuilder.Append($"{(DateOnly?)leftValue:yyyy-MM-dd}->{(DateOnly?)rightValue:yyyy-MM-dd}");
 #endif
                 } else {
-                    stringBuilder.Append($"{DisplayName}：{leftValue ?? "(NULL)"}->{rightValue ?? "(NULL)"}");
+                    stringBuilder.Append($"{leftValue ?? "(NULL)"}->{rightValue ?? "(NULL)"}");
                 }
                 return;
             }
             if (Property.PropertyType.IsEnum) {
-                stringBuilder.Append(DisplayName);
-                stringBuilder.Append('：');
-
                 stringBuilder.Append(leftValue);
                 if (EnumNames.TryGetValue(leftValue.ToString(), out string lv)) {
                     if (string.IsNullOrEmpty(lv) == false) {
@@ -494,32 +492,29 @@ namespace ToolGood.ReadyGo3
                 stringBuilder.Append(rightValue);
                 if (EnumNames.TryGetValue(rightValue.ToString(), out string rv)) {
                     if (string.IsNullOrEmpty(rv) == false) {
-                        stringBuilder.Append('=');
                         stringBuilder.Append(rv);
                     }
                 }
             } else if (Property.PropertyType == typeof(bool) || Property.PropertyType == typeof(bool?)) {
-                stringBuilder.Append(DisplayName);
-                stringBuilder.Append('：');
-                stringBuilder.Append(leftValue ?? "(NULL)");
-                if (null != leftValue && EnumNames.TryGetValue(((bool)leftValue ? "1" : "0"), out string lv)) {
-                    if (string.IsNullOrEmpty(lv) == false) {
-                        stringBuilder.Append('=');
-                        stringBuilder.Append(lv);
-                    }
+                if (null == leftValue) {
+                    stringBuilder.Append("(NULL)");
+                } else if (EnumNames.TryGetValue(((bool)leftValue ? "1" : "0"), out string lv) && string.IsNullOrEmpty(lv) == false) {
+                    stringBuilder.Append(lv);
+                } else {
+                    stringBuilder.Append(leftValue);
                 }
+
                 stringBuilder.Append("->");
 
-                stringBuilder.Append(rightValue ?? "(NULL)");
-                if (null != rightValue && EnumNames.TryGetValue(((bool)rightValue ? "1" : "0"), out string rv)) {
-                    if (string.IsNullOrEmpty(rv) == false) {
-                        stringBuilder.Append('=');
-                        stringBuilder.Append(rv);
-                    }
+                if (null == rightValue) {
+                    stringBuilder.Append("(NULL)");
+                } else if (EnumNames.TryGetValue(((bool)rightValue ? "1" : "0"), out string rv) && string.IsNullOrEmpty(rv) == false) {
+                    stringBuilder.Append(rv);
+                } else {
+                    stringBuilder.Append(rightValue);
                 }
+
             } else if (Property.PropertyType == typeof(string)) {
-                stringBuilder.Append(DisplayName);
-                stringBuilder.Append('：');
                 if (null == leftValue) {
                     stringBuilder.Append("(NULL)");
                 } else {
@@ -572,9 +567,6 @@ namespace ToolGood.ReadyGo3
                 || Property.PropertyType == typeof(int?)
                 || Property.PropertyType == typeof(long?)
                 ) {
-                stringBuilder.Append(DisplayName);
-                stringBuilder.Append('：');
-
                 if (leftValue == null) {
                     stringBuilder.Append("(NULL)");
                 } else {
@@ -601,8 +593,9 @@ namespace ToolGood.ReadyGo3
                     }
                 }
             } else {
-                stringBuilder.Append($"{DisplayName}：{leftValue ?? "(NULL)"}->{rightValue ?? "(NULL)"}");
+                stringBuilder.Append($"{leftValue ?? "(NULL)"}->{rightValue ?? "(NULL)"}");
             }
         }
     }
+
 }
