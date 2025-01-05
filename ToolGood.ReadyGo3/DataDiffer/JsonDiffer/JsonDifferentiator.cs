@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
 
 namespace ToolGood.ReadyGo3.DataDiffer.JsonDiffer
 {
