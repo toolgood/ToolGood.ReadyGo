@@ -31,6 +31,7 @@ ToolGood.ReadyGo
   * 语法类似LINQ。
 * 支持存储过程。
 * 支持SQL执行监控。
+* 支持比较差异，支持类、json格式、yaml格式
 
 
 #### 1、数据表生成与删除
@@ -232,6 +233,10 @@ public User FindUser(int userId,string userName,string nickName)
 
 ````
 
-
- 
+#### 7、比较差异
+``` csharp
+    var diff1 = DataDiffHelper.Diff(oldData, newData);
+    var diff2 = DataDiffHelper.JsonDiff(oldData, newData);
+    var diff3 = DataDiffHelper.YamlDiff(oldData, newData);
+```
  
