@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -6,6 +8,8 @@ using System.Reflection;
 using System.Text;
 using ToolGood.ReadyGo3;
 using ToolGood.ReadyGo3.Attributes;
+using ToolGood.ReadyGo3.DataDiffer.JsonDiffer;
+using ToolGood.ReadyGo3.DataDiffer.YamlToJson;
 
 namespace ToolGood.ReadyGo3
 {
@@ -168,6 +172,39 @@ namespace ToolGood.ReadyGo3
                 right.Add(func(item));
             }
             return Diff(name, left, right, dict);
+        }
+        /// <summary>
+        /// json格式 差异
+        /// </summary>
+        /// <param name="left">原数据</param>
+        /// <param name="right">新数据</param>
+        /// <param name="formatting"></param>
+        /// <returns></returns>
+        public static string JsonDiff(string left, string right, Formatting formatting = Formatting.None)
+        {
+            var j1 = JToken.Parse(left);
+            var j2 = JToken.Parse(right);
+
+            var diff = JsonDifferentiator.Differentiate(j1, j2);
+            return diff.ToString(formatting);
+        }
+        /// <summary>
+        /// yaml格式 差异
+        /// </summary>
+        /// <param name="left">原数据</param>
+        /// <param name="right">新数据</param>
+        /// <param name="formatting"></param>
+        /// <returns></returns>
+        public static string YamlDiff(string left, string right, Formatting formatting = Formatting.None)
+        {
+            var leftStr = StringHelper.ToJson(left);
+            var j1 = JToken.Parse(leftStr);
+
+            var rightStr = StringHelper.ToJson(right);
+            var j2 = JToken.Parse(rightStr);
+
+            var diff = JsonDifferentiator.Differentiate(j1, j2);
+            return diff.ToString(formatting);
         }
     }
 

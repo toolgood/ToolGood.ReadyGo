@@ -16,7 +16,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Product>ToolGood.ReadyGo3</Product>
     <DelaySign>false</DelaySign>
-    <Version>4.2.4</Version>
+    <Version>4.3.0</Version>
     <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\ToolGood.ReadyGo3.xml</DocumentationFile>
@@ -29,6 +29,12 @@
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
+  </ItemGroup>
+ 
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SharpYaml" Version="2.1.1" />
   </ItemGroup>
  
  
