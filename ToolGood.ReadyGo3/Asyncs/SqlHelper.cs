@@ -104,7 +104,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public async Task<int> Select_Count_Async<T>(string sql = "", params object[] args)
         {
-            return await Count_Async<int>(sql, args);
+            return await Count_Async<T>(sql, args);
         }
 
         /// <summary>
