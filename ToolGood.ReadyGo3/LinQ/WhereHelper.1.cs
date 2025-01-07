@@ -265,7 +265,9 @@ namespace ToolGood.ReadyGo3.LinQ
         private void whereTranslate(StringBuilder where, string text)
         {
             if (text == "@@") {
-                where.Append("@@");
+                where.Append(_paramPrefix);
+                where.Append(this._args.Count.ToString());
+                //where.Append("@@");
             } else if (text.Length == 1) {
                 where.Append(text);
             } else if (text.StartsWith("@")) {
