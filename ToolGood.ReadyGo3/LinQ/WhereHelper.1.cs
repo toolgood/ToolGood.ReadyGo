@@ -491,6 +491,20 @@ namespace ToolGood.ReadyGo3.LinQ
         /// </summary>
         /// <param name="txt"></param>
         /// <returns></returns>
+        public WhereHelper<T1> IfPositiveInteger(string txt)
+        {
+            if (long.TryParse(txt, out long i)) {
+                this.ifTrue(i > 0);
+                return this;
+            }
+            return this;
+        }
+
+        /// <summary>
+        /// 如果是正整数，大于0，会影响 Where、OrderBy、AddSelect GroupBy Having On方法
+        /// </summary>
+        /// <param name="txt"></param>
+        /// <returns></returns>
         public WhereHelper<T1> IfPositiveInteger(long txt)
         {
             this.ifTrue(txt > 0);
