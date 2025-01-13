@@ -54,7 +54,7 @@ namespace ToolGood.ReadyGo3.DataDiffer.JsonDiffer
                             var diff = Differentiate(firstsItem, secondsItem);
 
                             if (diff != null) {
-                                if (firstsItem["id"] != null) {
+                                if (firstsItem["id"] != null && firstsItem["id"].Type != JTokenType.Null) {
                                     if (diff["*id"] != null || diff["+id"] != null || diff["-id"] != null || diff["id"] != null) {
                                     } else {
                                         var diff2 = new JObject();
