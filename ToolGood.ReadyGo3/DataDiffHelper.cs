@@ -185,7 +185,7 @@ namespace ToolGood.ReadyGo3
             var j1 = JToken.Parse(left);
             var j2 = JToken.Parse(right);
 
-            var diff = JsonDifferentiator.Differentiate(j2, j1);
+            var diff = JsonDifferentiator.Differentiate(j1, j2);
             return diff.ToString(formatting);
         }
         /// <summary>
@@ -203,7 +203,7 @@ namespace ToolGood.ReadyGo3
             var rightStr = StringHelper.ToJson(right);
             var j2 = JToken.Parse(rightStr);
 
-            var diff = JsonDifferentiator.Differentiate(j2, j1);
+            var diff = JsonDifferentiator.Differentiate(j1, j2);
             return diff.ToString(formatting);
         }
     }

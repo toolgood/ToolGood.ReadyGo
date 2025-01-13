@@ -18,52 +18,57 @@ namespace ToolGood.ReadyGo3.DataDiffer.JsonDiffer
             return new TargetNode(symbol, null);
         }
 
-        public static JToken Differentiate(JToken newValue, JToken oldValue)
+        public static JToken Differentiate(JToken oldValue, JToken newValue)
         {
-            if (JToken.DeepEquals(newValue, oldValue)) return null;
+            if (JToken.DeepEquals(oldValue, newValue)) return null;
 
-            if (newValue != null && oldValue != null && newValue?.GetType() != oldValue?.GetType())
-                throw new InvalidOperationException($"Operands' types must match; '{newValue.GetType().Name}' <> '{oldValue.GetType().Name}'");
+            if (oldValue != null && newValue != null && oldValue?.GetType() != newValue?.GetType())
+                throw new InvalidOperationException($"Operands' types must match; '{oldValue.GetType().Name}' <> '{newValue.GetType().Name}'");
 
-            var propertyNames = (newValue?.Children() ?? default).Union(oldValue?.Children() ?? default)?.Select(_ => (_ as JProperty)?.Name)?.Distinct().ToList();
+            var propertyNames = (oldValue?.Children() ?? default).Union(newValue?.Children() ?? default)?.Select(_ => (_ as JProperty)?.Name)?.Distinct().ToList();
             if (propertyNames.Contains("id")) { //id放在第一位比较好找
                 propertyNames.Remove("id");
                 propertyNames.Insert(0, "id");
             }
 
-            if (!propertyNames.Any() && (newValue is JValue || oldValue is JValue)) {
-                return (newValue == null) ? oldValue : newValue;
+            if (!propertyNames.Any() && (oldValue is JValue || newValue is JValue)) {
+                return (oldValue == null) ? newValue : oldValue;
             }
 
             var difference = JToken.Parse("{}");
 
             foreach (var property in propertyNames) {
                 if (property == null) {
-                    if (newValue == null) {
-                        difference = oldValue;
+                    if (oldValue == null) {
+                        difference = newValue;
                     }
                     // array of object?
-                    else if (newValue is JArray && newValue.Children().All(c => !(c is JValue))) {
+                    else if (oldValue is JArray && oldValue.Children().All(c => !(c is JValue))) {
                         var difrences = new JArray();
-                        var maximum = Math.Max(newValue?.Count() ?? 0, oldValue?.Count() ?? 0);
+                        var maximum = Math.Max(oldValue?.Count() ?? 0, newValue?.Count() ?? 0);
 
                         for (int i = 0; i < maximum; i++) {
-                            var firstsItem = newValue?.ElementAtOrDefault(i);
-                            var secondsItem = oldValue?.ElementAtOrDefault(i);
+                            var firstsItem = oldValue?.ElementAtOrDefault(i);
+                            var secondsItem = newValue?.ElementAtOrDefault(i);
 
                             var diff = Differentiate(firstsItem, secondsItem);
 
                             if (diff != null) {
-                                if (firstsItem["id"] != null && firstsItem["id"].Type != JTokenType.Null) {
-                                    if (diff["*id"] != null || diff["+id"] != null || diff["-id"] != null || diff["id"] != null) {
-                                    } else {
-                                        var diff2 = new JObject();
-                                        diff2["$id"] = firstsItem["id"];
-                                        foreach (var (k, v) in (JObject)diff) {
-                                            diff2[k] = v;
-                                        }
-                                        diff = diff2;
+                                if (diff["*id"] != null || diff["+id"] != null || diff["-id"] != null || diff["id"] != null) {
+                                } else if (firstsItem != null && firstsItem["id"] != null && firstsItem["id"].Type != JTokenType.Null) {
+                                    var diff2 = new JObject();
+                                    diff2["$id"] = firstsItem["id"];
+                                    foreach (var (k, v) in (JObject)diff) {
+                                        diff2[k] = v;
                                     }
+                                    diff = diff2;
+                                } else {
+                                    var diff2 = new JObject();
+                                    diff2["_"] = i + 1;
+                                    foreach (var (k, v) in (JObject)diff) {
+                                        diff2[k] = v;
+                                    }
+                                    diff = diff2;
                                 }
                                 difrences.Add(diff);
                             }
@@ -73,14 +78,14 @@ namespace ToolGood.ReadyGo3.DataDiffer.JsonDiffer
                             difference = difrences;
                         }
                     } else {
-                        difference = newValue;
+                        difference = oldValue;
                     }
 
                     continue;
                 }
 
-                if (newValue?[property] == null) {
-                    var secondVal = oldValue?[property]?.Parent as JProperty;
+                if (oldValue?[property] == null) {
+                    var secondVal = newValue?[property]?.Parent as JProperty;
 
                     var targetNode = PointTargetNode(difference, property, ChangeMode.Added);
 
@@ -92,8 +97,8 @@ namespace ToolGood.ReadyGo3.DataDiffer.JsonDiffer
                     continue;
                 }
 
-                if (oldValue?[property] == null) {
-                    var firstVal = newValue?[property]?.Parent as JProperty;
+                if (newValue?[property] == null) {
+                    var firstVal = oldValue?[property]?.Parent as JProperty;
 
                     var targetNode = PointTargetNode(difference, property, ChangeMode.Removed);
 
@@ -105,28 +110,27 @@ namespace ToolGood.ReadyGo3.DataDiffer.JsonDiffer
                     continue;
                 }
 
-                if (newValue?[property] is JValue value) {
-                    if (!JToken.DeepEquals(newValue?[property], oldValue?[property])) {
+                if (oldValue?[property] is JValue value) {
+                    if (!JToken.DeepEquals(oldValue?[property], newValue?[property])) {
                         var targetNode = PointTargetNode(difference, property, ChangeMode.Changed);
 
                         if (targetNode.Property != null) {
-                            difference[targetNode.Symbol][targetNode.Property] = value;
+                            difference[targetNode.Symbol][targetNode.Property] = value + "->" + newValue?[property];
                         } else
-                            difference[targetNode.Symbol] = value;
-                        //difference["changed"][property] = showOriginalValues ? second?[property] : value;
+                            difference[targetNode.Symbol] = value + "->" + newValue?[property];
                     }
 
                     continue;
                 }
 
-                if (newValue?[property] is JObject) {
+                if (oldValue?[property] is JObject) {
 
-                    var targetNode = oldValue?[property] == null
+                    var targetNode = newValue?[property] == null
                         ? PointTargetNode(difference, property, ChangeMode.Removed)
                         : PointTargetNode(difference, property, ChangeMode.Changed);
 
-                    var firstsItem = newValue[property];
-                    var secondsItem = oldValue[property];
+                    var firstsItem = oldValue[property];
+                    var secondsItem = newValue[property];
 
                     var diffrence = Differentiate(firstsItem, secondsItem);
 
@@ -142,18 +146,18 @@ namespace ToolGood.ReadyGo3.DataDiffer.JsonDiffer
                     continue;
                 }
 
-                if (newValue?[property] is JArray) {
+                if (oldValue?[property] is JArray) {
                     var difrences = new JArray();
 
-                    var targetNode = oldValue?[property] == null
+                    var targetNode = newValue?[property] == null
                        ? PointTargetNode(difference, property, ChangeMode.Removed)
                        : PointTargetNode(difference, property, ChangeMode.Changed);
 
-                    var maximum = Math.Max(newValue?[property]?.Count() ?? 0, oldValue?[property]?.Count() ?? 0);
+                    var maximum = Math.Max(oldValue?[property]?.Count() ?? 0, newValue?[property]?.Count() ?? 0);
 
                     for (int i = 0; i < maximum; i++) {
-                        var firstsItem = newValue[property]?.ElementAtOrDefault(i);
-                        var secondsItem = oldValue[property]?.ElementAtOrDefault(i);
+                        var firstsItem = oldValue[property]?.ElementAtOrDefault(i);
+                        var secondsItem = newValue[property]?.ElementAtOrDefault(i);
 
                         var diff = Differentiate(firstsItem, secondsItem);
 
@@ -176,4 +180,5 @@ namespace ToolGood.ReadyGo3.DataDiffer.JsonDiffer
             return difference;
         }
     }
+
 }
