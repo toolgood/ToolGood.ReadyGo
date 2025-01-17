@@ -70,6 +70,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 数据变动转成文本
         /// </summary>
+        /// <param name="name"></param>
         /// <param name="lefts">原数据</param>
         /// <param name="rights"></param>
         /// <returns></returns>
@@ -93,6 +94,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 数据变动转成文本
         /// </summary>
+        /// <param name="name"></param>
         /// <param name="lefts">原数据</param>
         /// <param name="rights">新数据</param>
         /// <returns></returns>
@@ -114,6 +116,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 数据变动转成文本
         /// </summary>
+        /// <param name="name"></param>
         /// <param name="lefts">原数据</param>
         /// <param name="rights">新数据</param>
         /// <param name="dict">字典</param>
@@ -154,6 +157,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 数据变动转成文本
         /// </summary>
+        /// <param name="name"></param>
         /// <param name="lefts">原数据</param>
         /// <param name="rights">新数据</param>
         /// <param name="func"></param>
@@ -182,10 +186,15 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string JsonDiff(string left, string right, Formatting formatting = Formatting.None)
         {
+            if (left == right) { return "未修改"; }
+            if (string.IsNullOrWhiteSpace(left)) { return "新增" + right; }
+            if (string.IsNullOrWhiteSpace(right)) { return "删除" + left; }
+
             var j1 = JToken.Parse(left);
             var j2 = JToken.Parse(right);
 
             var diff = JsonDifferentiator.Differentiate(j1, j2);
+            if (diff == null) { return "{}"; }
             return diff.ToString(formatting);
         }
         /// <summary>
@@ -197,13 +206,18 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string YamlDiff(string left, string right, Formatting formatting = Formatting.None)
         {
-            var leftStr = StringHelper.ToJson(left);
-            var j1 = JToken.Parse(leftStr);
+            if (left == right) { return "未修改"; }
+            if (string.IsNullOrWhiteSpace(left)) { return "新增" + right; }
+            if (string.IsNullOrWhiteSpace(right)) { return "删除" + left; }
 
-            var rightStr = StringHelper.ToJson(right);
-            var j2 = JToken.Parse(rightStr);
+            string leftStr = StringHelper.ToJson(left);
+            var j1 = JToken.Parse(leftStr ?? "{}");
+
+            string rightStr = StringHelper.ToJson(right);
+            var j2 = JToken.Parse(rightStr ?? "{}");
 
             var diff = JsonDifferentiator.Differentiate(j1, j2);
+            if (diff == null) { return "{}"; }
             return diff.ToString(formatting);
         }
     }
