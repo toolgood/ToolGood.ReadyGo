@@ -19,6 +19,11 @@ namespace ToolGood.ReadyGo3.PetaPoco.Core
         public string PropertyName;
 
         /// <summary>
+        /// 是否 返回列必须存在
+        /// </summary>
+        public bool RequiredResultColumn;
+
+        /// <summary>
         ///     是否为返回列，即没有真实的列
         /// </summary>
         public bool ResultColumn;

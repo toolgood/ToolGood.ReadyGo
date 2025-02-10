@@ -28,6 +28,11 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public bool ResultColumn;
 
         /// <summary>
+        /// 返回列是否必须存在
+        /// </summary>
+        public bool RequiredResultColumn;
+
+        /// <summary>
         ///     返回列的sql语句，注，{0} 为当前列的别名.
         ///     Select UserName from User as u where u.UserId={0}UserId
         /// </summary>
@@ -72,9 +77,10 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 if (string.IsNullOrEmpty(ci.ColumnName)) ci.ColumnName = pi.Name;
 
                 ci.ForceToUtc = colattr.ForceToUtc;
-                if (colattr is ResultColumnAttribute) {
+                if (colattr is ResultColumnAttribute resultColumn) {
+                    ci.RequiredResultColumn = resultColumn.Required;
                     ci.ResultColumn = true;
-                    ci.ResultSql = (colattr as ResultColumnAttribute).Definition;
+                    ci.ResultSql = resultColumn.Definition;
                 }
             } else {
                 ci.ColumnName = pi.Name;

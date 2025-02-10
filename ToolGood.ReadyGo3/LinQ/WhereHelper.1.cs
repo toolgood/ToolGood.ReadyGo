@@ -1509,7 +1509,9 @@ namespace ToolGood.ReadyGo3.LinQ
                 };
 
                 if (col.Value.ResultColumn) {
-                    if (string.IsNullOrEmpty(col.Value.ResultSql)) {
+                    if (col.Value.RequiredResultColumn == false) {
+                        continue;
+                    } else if (string.IsNullOrEmpty(col.Value.ResultSql)) {
                         header.QuerySql = header.Table + "." + provider.EscapeSqlIdentifier(col.Value.ColumnName);
                     } else {
                         header.QuerySql = string.Format(col.Value.ResultSql, header.Table + ".");

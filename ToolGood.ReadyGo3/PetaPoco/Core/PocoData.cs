@@ -65,6 +65,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
                     PropertyInfo = pi,
                     PropertyName = pi.Name,
                     ColumnName = ci.ColumnName,
+                    RequiredResultColumn = ci.RequiredResultColumn,
                     ResultColumn = ci.ResultColumn,
                     ForceToUtc = ci.ForceToUtc,
                     ResultSql = ci.ResultSql

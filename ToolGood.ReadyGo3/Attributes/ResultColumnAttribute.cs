@@ -12,13 +12,27 @@ namespace ToolGood.ReadyGo3.Attributes
         ///
         /// </summary>
         public ResultColumnAttribute()
-        { }
+        {
+            Required = true;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="required"></param>
+        public ResultColumnAttribute(bool required)
+        {
+            Required = required;
+        }
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="name"></param>
-        public ResultColumnAttribute(string name) : base(name) { }
+        public ResultColumnAttribute(string name) : base(name)
+        {
+            Required = true;
+        }
 
         /// <summary>
         ///
@@ -27,6 +41,7 @@ namespace ToolGood.ReadyGo3.Attributes
         /// <param name="definition"></param>
         public ResultColumnAttribute(string name, string definition) : base(name)
         {
+            Required = true;
             if (string.IsNullOrEmpty(definition) == false) {
                 definition = definition.Replace("{0}.", "{0}").Trim();
                 if (definition.StartsWith("(") == false) {
@@ -35,7 +50,7 @@ namespace ToolGood.ReadyGo3.Attributes
                 Definition = definition;
             }
         }
-
+        public bool Required;
         /// <summary>
         ///
         /// </summary>

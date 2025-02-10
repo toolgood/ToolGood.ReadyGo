@@ -94,7 +94,7 @@ namespace ToolGood.ReadyGo3.Internals
                     var col = item.Value;
 
                     if (col.ResultColumn) {
-                        if (string.IsNullOrEmpty(col.ResultSql) == false) {
+                        if (col.RequiredResultColumn && string.IsNullOrEmpty(col.ResultSql) == false) {
                             stringBuilder.Append(",");
                             stringBuilder.AppendFormat(col.ResultSql, (from ?? tableName) + ".");
                             stringBuilder.Append(" AS '");
