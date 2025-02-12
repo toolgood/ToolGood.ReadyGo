@@ -33,6 +33,15 @@ namespace ToolGood.ReadyGo3.Attributes
         {
             Required = true;
         }
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="required"></param>
+        public ResultColumnAttribute(string name, bool required) : base(name)
+        {
+            Required = true;
+        }
 
         /// <summary>
         ///
@@ -50,6 +59,9 @@ namespace ToolGood.ReadyGo3.Attributes
                 Definition = definition;
             }
         }
+        /// <summary>
+        /// 
+        /// </summary>
         public bool Required;
         /// <summary>
         ///
