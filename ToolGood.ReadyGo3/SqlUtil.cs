@@ -16,6 +16,10 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static string ToEscapeParam(string stringValue)
         {
+            if (string.IsNullOrEmpty(stringValue)) {
+                return "";
+            }
+
             return stringValue.Replace(@"\", @"\\").Replace("'", "\\'")
                                   .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
                                   .Replace("\f", "\\f").Replace("\n", "\\n").Replace("\r", "\\r")
