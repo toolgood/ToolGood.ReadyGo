@@ -217,6 +217,21 @@ namespace ToolGood.ReadyGo3
         }
 
         /// <summary>
+        /// 打开Oracle数据库
+        /// </summary>
+        /// <param name="server">服务器</param>
+        /// <param name="port">端口号</param>
+        /// <param name="serviceName">服务名</param>
+        /// <param name="user">用户</param>
+        /// <param name="pwd">密码</param>
+        /// <returns></returns>
+        public static SqlHelper OpenOracle(string server, int port, string serviceName, string user, string pwd)
+        {
+            var conn = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={server})(PORT={port}))(CONNECT_DATA=(SERVICE_NAME={serviceName})));User Id={user};Password={pwd}";
+            return SqlHelperFactory.OpenDatabase(conn, SqlType.Oracle);
+        }
+
+        /// <summary>
         /// 打开Sqlite数据库 使用System.Data.SQLite类库
         /// </summary>
         /// <param name="filePath">文件目录</param>
