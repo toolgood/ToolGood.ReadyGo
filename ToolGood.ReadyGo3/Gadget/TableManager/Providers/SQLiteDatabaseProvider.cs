@@ -65,6 +65,11 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             return "DROP TABLE IF EXISTS [" + ti.TableName + "];";
         }
 
+        public override string GetDropTable(string tableName)
+        {
+            return "DROP TABLE IF EXISTS [" + tableName + "];";
+        }
+
         public override string GetTruncateTable(Type type)
         {
             var sql = GetDropTable(type) + "\r\n";

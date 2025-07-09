@@ -26,6 +26,11 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             return null;
         }
 
+        public virtual string GetDropTable(string tableName)
+        {
+            return null;
+        }
+
         public virtual string GetTruncateTable(Type type)
         {
             return null;

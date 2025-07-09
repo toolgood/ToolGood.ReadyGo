@@ -35,6 +35,12 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             return dp.GetDropTable(type);
         }
 
+        public string GetDropTable(string tableName)
+        {
+            var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
+            return dp.GetDropTable(tableName);
+        }
+
         public string GetTruncateTable(Type type)
         {
             var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
