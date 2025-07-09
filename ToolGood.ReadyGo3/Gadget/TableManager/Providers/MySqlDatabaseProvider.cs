@@ -77,6 +77,11 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             return "TRUNCATE TABLE " + GetTableName(ti) + ";";
         }
 
+        public override string GetTruncateTable(string tableName)
+        {
+            return "TRUNCATE TABLE " + tableName + ";";
+        }
+
         private string GetText(ColumnInfo ci)
         {
             if (ci.IsLongText) {

@@ -36,6 +36,11 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             return null;
         }
 
+        public virtual string GetTruncateTable(string tableName)
+        {
+            return null;
+        }
+
         //protected virtual string EscapeSqlIdentifier(string name)
         //{
         //    return "[" + name + "]";

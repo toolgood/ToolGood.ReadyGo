@@ -72,10 +72,14 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 
         public override string GetTruncateTable(Type type)
         {
-            var sql = GetDropTable(type) + "\r\n";
-            sql += "VACUUM;\r\n";
-            sql += GetTryCreateTable(type);
-            return sql;
+            var ti = TableInfo.FromType(type);
+            return GetTruncateTable(ti.TableName);
+        }
+
+        public override string GetTruncateTable(string tableName)
+        {
+            return $@"DELETE FROM {tableName};
+DELETE FROM sqlite_sequence WHERE name='{tableName}';";
         }
 
         private string CreateColumn(TableInfo ti, ColumnInfo ci)

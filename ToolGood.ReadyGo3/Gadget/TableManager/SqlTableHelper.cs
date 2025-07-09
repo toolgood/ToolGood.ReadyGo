@@ -46,6 +46,11 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
             return dp.GetTruncateTable(type);
         }
+        public string GetTruncateTable(string tableName)
+        {
+            var dp = DatabaseProvider.Resolve(_sqlHelper._sqlType);
+            return dp.GetTruncateTable(tableName);
+        }
 
         public void TryCreateTable(Type type, bool withIndex = true)
         {
@@ -71,11 +76,23 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager
             var sql = GetDropTable(type);
             _sqlHelper.Execute(sql);
         }
+        public void DropTable(string tableName)
+        {
+            var sql = GetDropTable(tableName);
+            _sqlHelper.Execute(sql);
+        }
 
         public void TruncateTable(Type type)
         {
             var sql = GetTruncateTable(type);
             _sqlHelper.Execute(sql);
         }
+
+        public void TruncateTable(string tableName)
+        {
+            var sql = GetTruncateTable(tableName);
+            _sqlHelper.Execute(sql);
+        }
+
     }
 }
