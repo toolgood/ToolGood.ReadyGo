@@ -1,15 +1,12 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using ToolGood.ReadyGo3;
+using System.Text.Json.Nodes;
 using ToolGood.ReadyGo3.Attributes;
-using ToolGood.ReadyGo3.DataDiffer.JsonDiffer;
-using ToolGood.ReadyGo3.DataDiffer.YamlToJson;
+using ToolGood.ReadyGo3.JsonDiffPatch;
 
 namespace ToolGood.ReadyGo3
 {
@@ -184,42 +181,21 @@ namespace ToolGood.ReadyGo3
         /// <param name="right">新数据</param>
         /// <param name="formatting"></param>
         /// <returns></returns>
-        public static string JsonDiff(string left, string right, Formatting formatting = Formatting.None)
+        public static string JsonDiff(string left, string right)
         {
             if (left == right) { return "未修改"; }
             if (string.IsNullOrWhiteSpace(left)) { return "新增" + right; }
             if (string.IsNullOrWhiteSpace(right)) { return "删除" + left; }
 
-            var j1 = JToken.Parse(left);
-            var j2 = JToken.Parse(right);
+            var j1 = JsonObject.Parse(left);
+            var j2 = JsonObject.Parse(right);
 
-            var diff = JsonDifferentiator.Differentiate(j1, j2);
+            var diff = j1.Diff(j2);
+            //var diff = JsonDifferentiator.Differentiate(j1, j2);
             if (diff == null) { return "{}"; }
-            return diff.ToString(formatting);
+            return diff.ToString();
         }
-        /// <summary>
-        /// yaml格式 差异
-        /// </summary>
-        /// <param name="left">原数据</param>
-        /// <param name="right">新数据</param>
-        /// <param name="formatting"></param>
-        /// <returns></returns>
-        public static string YamlDiff(string left, string right, Formatting formatting = Formatting.None)
-        {
-            if (left == right) { return "未修改"; }
-            if (string.IsNullOrWhiteSpace(left)) { return "新增" + right; }
-            if (string.IsNullOrWhiteSpace(right)) { return "删除" + left; }
-
-            string leftStr = StringHelper.ToJson(left);
-            var j1 = JToken.Parse(leftStr ?? "{}");
-
-            string rightStr = StringHelper.ToJson(right);
-            var j2 = JToken.Parse(rightStr ?? "{}");
-
-            var diff = JsonDifferentiator.Differentiate(j1, j2);
-            if (diff == null) { return "{}"; }
-            return diff.ToString(formatting);
-        }
+   
     }
 
     internal class DataDiffTypeInfo

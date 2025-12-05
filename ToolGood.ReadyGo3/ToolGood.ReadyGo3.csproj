@@ -5,7 +5,7 @@
     <Copyright>Copyright 2016-2025 ToolGood</Copyright>
     <AssemblyTitle>ToolGood.ReadyGo</AssemblyTitle>
     <Authors>ToolGood</Authors>
-    <TargetFrameworks>netstandard2.1;net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
     <AssemblyName>ToolGood.ReadyGo3</AssemblyName>
     <SignAssembly>true</SignAssembly>
     <PackageId>ToolGood.ReadyGo3</PackageId>
@@ -16,7 +16,7 @@
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Product>ToolGood.ReadyGo3</Product>
     <DelaySign>false</DelaySign>
-    <Version>4.4.0</Version>
+    <Version>4.4.1</Version>
     <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\ToolGood.ReadyGo3.xml</DocumentationFile>
@@ -31,12 +31,4 @@
     </None>
   </ItemGroup>
  
-
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="SharpYaml" Version="2.1.4" />
-  </ItemGroup>
- 
- 
-
 </Project>
