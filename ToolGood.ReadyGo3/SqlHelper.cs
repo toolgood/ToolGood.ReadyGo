@@ -419,125 +419,7 @@ namespace ToolGood.ReadyGo3
 
             return GetDatabase().Table_Page<T>(table, page, itemsPerPage, sql, args);
         }
-        /// <summary>
-        /// 执行SQL 查询, 返回单个
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="select"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public T FirstOrDefault<T>(SelectSql<T> select)
-            where T : class
-        {
-            if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
-
-            var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
-            if (string.IsNullOrEmpty(columnSql)) { columnSql = "*"; }
-            var tableSql = RemoveStart(select.TableSql, "FROM ");
-            var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
-            var sql = $"SELECT {columnSql} FROM {tableSql} WHERE {whereSql}";
-
-            return GetDatabase().Query<T>(sql, select.SqlParameters.ToArray()).FirstOrDefault();
-        }
-
-        /// <summary>
-        /// 执行SQL 查询,返回集合
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="page">页数</param>
-        /// <param name="itemsPerPage">每页数量</param>
-        /// <param name="select"></param>
-        /// <returns></returns>
-        public List<T> Select<T>(int page, int itemsPerPage, SelectSql<T> select)
-            where T : class
-        {
-            if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
-            if (page <= 0) { page = 1; }
-            if (itemsPerPage <= 0) { itemsPerPage = 20; }
-
-            var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
-            if (string.IsNullOrEmpty(columnSql)) { columnSql = "*"; }
-            var tableSql = RemoveStart(select.TableSql, "FROM ");
-            var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
-            var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");
-
-            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
-
-            return GetDatabase().Query<T>(sql, select.SqlParameters.ToArray()).ToList();
-        }
-
-        /// <summary>
-        /// 执行SQL 查询,返回集合
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="limit">每页数量</param>
-        /// <param name="select"></param>
-        /// <returns></returns>
-        public List<T> Select<T>(int limit, SelectSql<T> select)
-            where T : class
-        {
-            if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
-            if (limit <= 0) { limit = 20; }
-
-            var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
-            if (string.IsNullOrEmpty(columnSql)) { columnSql = "*"; }
-            var tableSql = RemoveStart(select.TableSql, "FROM ");
-            var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
-            var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");
-
-            var sql = _provider.CreateSql(limit, 0, columnSql, tableSql, orderSql, whereSql);
-
-            return GetDatabase().Query<T>(sql, select.SqlParameters.ToArray()).ToList();
-        }
-        /// <summary>
-        /// 执行SQL 查询,返回集合
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="select"></param>
-        /// <returns></returns>
-        public List<T> Select<T>(SelectSql<T> select)
-             where T : class
-        {
-            if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
-
-            var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
-            if (string.IsNullOrEmpty(columnSql)) { columnSql = "*"; }
-            var tableSql = RemoveStart(select.TableSql, "FROM ");
-            var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
-            var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");
-
-            var sql = _provider.CreateSql(columnSql, tableSql, orderSql, whereSql);
-
-            return GetDatabase().Query<T>(sql, select.SqlParameters.ToArray()).ToList();
-        }
-        /// <summary>
-        /// 执行SQL 查询,返回Page类型
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="page">页数</param>
-        /// <param name="itemsPerPage">每页数量</param>
-        /// <param name="select"></param>
-        /// <returns></returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        public Page<T> Page<T>(int page, int itemsPerPage, SelectSql<T> select)
-          where T : class
-        {
-            if (string.IsNullOrWhiteSpace(select.ColumnsSql)) { throw new ArgumentNullException("columnSql is null."); }
-            if (page <= 0) { page = 1; }
-            if (itemsPerPage <= 0) { itemsPerPage = 20; }
-
-            var columnSql = RemoveStart(select.ColumnsSql, "SELECT ");
-            if (string.IsNullOrEmpty(columnSql)) { columnSql = "*"; }
-            var tableSql = RemoveStart(select.TableSql, "FROM ");
-            var whereSql = RemoveStart(select.GetWhereSql(), "WHERE ");
-            var orderSql = RemoveStart(select.OrderSql, "ORDER BY ");
-
-            string countSql = string.IsNullOrEmpty(whereSql) ? $"SELECT COUNT(1) FROM {tableSql}" : $"SELECT COUNT(1) FROM {tableSql} WHERE {whereSql}";
-
-            var sql = _provider.CreateSql((int)itemsPerPage, (int)((Math.Max(0, page - 1)) * itemsPerPage), columnSql, tableSql, orderSql, whereSql);
-
-            return GetDatabase().PageSql<T>(page, itemsPerPage, sql, countSql, select.SqlParameters.ToArray());
-        }
+         
         #region Obsolete
         /// <summary>
         /// 执行SQL 查询, 返回单个
@@ -548,7 +430,6 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        [Obsolete("use SelectSql class")]
         public T SQL_FirstOrDefault<T>(string columnSql, string tableSql, string whereSql, params object[] args)
             where T : class
         {
@@ -572,7 +453,6 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql"></param>
         /// <param name="args"></param>
         /// <returns></returns>
-        [Obsolete("use SelectSql class")]
         public T SQL_FirstOrDefault<T>(string columnSql, string tableSql, string whereSql, SqlParameterCollection args)
             where T : class
         {
@@ -591,7 +471,6 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        [Obsolete("use SelectSql class")]
         public List<T> SQL_Select<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -621,7 +500,6 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        [Obsolete("use SelectSql class")]
         public List<T> SQL_Select<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
             where T : class
         {
@@ -638,7 +516,6 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        [Obsolete("use SelectSql class")]
         public List<T> SQL_Select<T>(int limit, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -666,7 +543,6 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        [Obsolete("use SelectSql class")]
         public List<T> SQL_Select<T>(int limit, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
             where T : class
         {
@@ -683,7 +559,6 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        [Obsolete("use SelectSql class")]
         public List<T> SQL_Select<T>(string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -709,7 +584,6 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        [Obsolete("use SelectSql class")]
         public List<T> SQL_Select<T>(string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
             where T : class
         {
@@ -728,7 +602,6 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        [Obsolete("use SelectSql class")]
         public Page<T> SQL_Page<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -760,7 +633,6 @@ namespace ToolGood.ReadyGo3
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        [Obsolete("use SelectSql class")]
         public Page<T> SQL_Page<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
             where T : class
         {
