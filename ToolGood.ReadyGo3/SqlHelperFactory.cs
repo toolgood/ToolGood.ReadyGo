@@ -238,16 +238,14 @@ namespace ToolGood.ReadyGo3
 		/// <param name="pwd">密码, 新版本dll不支持密码</param>
 		/// <param name="useSynchronous">使用同步，为False则更快</param>
 		/// <param name="journalMode">Journal模式</param>
-		/// <param name="maxPoolSize">最大连接池大小</param>
 		/// <returns></returns>
-		public static SqlHelper OpenSqliteFile(string filePath, string pwd = null, bool useSynchronous = true, JournalMode journalMode = JournalMode.None
-            ,int maxPoolSize = 128)
+		public static SqlHelper OpenSqliteFile(string filePath, string pwd = null, bool useSynchronous = true, JournalMode journalMode = JournalMode.None)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Data Source={0};", filePath);
-			sb.AppendFormat("Pooling=True;Max Pool Size={0};", maxPoolSize);
+			sb.AppendFormat("Pooling=False;"); //Microsoft.Data.Sqlite的连接池有问题，防止内存爆涨，默认关闭连接池
 
-			if (useSynchronous == false) {
+			if(useSynchronous == false) {
                 sb.Append("synchronous=OFF;");
             }
             if (journalMode != JournalMode.None) {
@@ -271,8 +269,8 @@ namespace ToolGood.ReadyGo3
         public static SqlHelper OpenMsSqliteFile(string filePath, string pwd = null)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Data Source={0};", filePath);
-            if (string.IsNullOrEmpty(pwd) == false) {
+            sb.AppendFormat("Data Source={0};Pooling=False;", filePath);//Microsoft.Data.Sqlite的连接池有问题，防止内存爆涨，默认关闭连接池
+			if (string.IsNullOrEmpty(pwd) == false) {
                 sb.Append("Mode=ReadWrite;Password=" + pwd);
             }
             return OpenDatabase(sb.ToString(), "System.Data.SQLite", SqlType.SQLite);

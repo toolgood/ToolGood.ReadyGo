@@ -27,7 +27,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         public void Dispose()
         {
             if (_isDisposable) return;
-            if (_transactionDepth >= 1) {
+			if(_transactionDepth >= 1) {
                 _transactionDepth = 1;
                 AbortTransaction();
             }
