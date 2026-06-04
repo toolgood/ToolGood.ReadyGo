@@ -22,7 +22,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 				foreach(var item in ti.Indexs) {
 					var txt = "i_" + string.Join("_", item).Replace(" ", "_");
 					var columns = BuildColumns(item);
-					sql += "CREATE INDEX IF NOT EXISTS " + txt + " ON [" + ti.TableName + "](" + columns + ");\r\n";
+					sql += "CREATE INDEX IF NOT EXISTS " + txt + " ON " + ti.TableName + "(" + columns + ");\r\n";
 				}
 
 				foreach(var item in ti.Uniques) {
