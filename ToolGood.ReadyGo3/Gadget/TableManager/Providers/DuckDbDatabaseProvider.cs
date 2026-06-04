@@ -93,27 +93,27 @@ DELETE FROM sqlite_sequence WHERE name='{tableName}';";
 			if(type == typeof(string)) return CreateField(ti, ci, "Text", "", false);
 			if(type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 			if(type == typeof(SByte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(UInt16[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(UInt32[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(UInt64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(Int16[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(Int32[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(Int64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(Single[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(double[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(bool[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+			if(type == typeof(UInt16[])) return CreateField(ti, ci, "SMALLINT[]", ci.FieldLength, false);
+			if(type == typeof(UInt32[])) return CreateField(ti, ci, "INTEGER[]", ci.FieldLength, false);
+			if(type == typeof(UInt64[])) return CreateField(ti, ci, "BIGINT[]", ci.FieldLength, false);
+			if(type == typeof(Int16[])) return CreateField(ti, ci, "SMALLINT[]", ci.FieldLength, false);
+			if(type == typeof(Int32[])) return CreateField(ti, ci, "INTEGER[]", ci.FieldLength, false);
+			if(type == typeof(Int64[])) return CreateField(ti, ci, "BIGINT[]", ci.FieldLength, false);
+			if(type == typeof(Single[])) return CreateField(ti, ci, "FLOAT[]", ci.FieldLength, false);
+			if(type == typeof(double[])) return CreateField(ti, ci, "DOUBLE[]", ci.FieldLength, false);
+			if(type == typeof(bool[])) return CreateField(ti, ci, "BOOLEAN[]", ci.FieldLength, false);
 
 			if(type == typeof(List<Byte>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 			if(type == typeof(List<SByte>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(List<UInt16>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(List<UInt32>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(List<UInt64>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(List<Int16>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(List<Int32>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(List<Int64>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(List<Single>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(List<double>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-			if(type == typeof(List<bool>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+			if(type == typeof(List<UInt16>)) return CreateField(ti, ci, "SMALLINT[]", ci.FieldLength, false);
+			if(type == typeof(List<UInt32>)) return CreateField(ti, ci, "INTEGER[]", ci.FieldLength, false);
+			if(type == typeof(List<UInt64>)) return CreateField(ti, ci, "BIGINT[]", ci.FieldLength, false);
+			if(type == typeof(List<Int16>)) return CreateField(ti, ci, "SMALLINT[]", ci.FieldLength, false);
+			if(type == typeof(List<Int32>)) return CreateField(ti, ci, "INTEGER[]", ci.FieldLength, false);
+			if(type == typeof(List<Int64>)) return CreateField(ti, ci, "BIGINT[]", ci.FieldLength, false);
+			if(type == typeof(List<Single>)) return CreateField(ti, ci, "FLOAT[]", ci.FieldLength, false);
+			if(type == typeof(List<double>)) return CreateField(ti, ci, "DOUBLE[]", ci.FieldLength, false);
+			if(type == typeof(List<bool>)) return CreateField(ti, ci, "BOOLEAN[]", ci.FieldLength, false);
 
 			if(type == typeof(AnsiString)) return CreateField(ti, ci, "Text", ci.FieldLength, isRequired);
 
@@ -121,23 +121,24 @@ DELETE FROM sqlite_sequence WHERE name='{tableName}';";
 			//if (isRequired == false) type = ColumnType.GetBaseType(type);
 
 			if(type == typeof(bool)) return CreateField(ti, ci, "BOOLEAN", ci.FieldLength, isRequired);
-			if(type == typeof(byte)) return CreateField(ti, ci, "int", "1", isRequired);
+			if(type == typeof(byte)) return CreateField(ti, ci, "SMALLINT", "1", isRequired);
 			if(type == typeof(char)) return CreateField(ti, ci, "char", "1", isRequired);
 
-			if(type == typeof(UInt16)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
+			if(type == typeof(UInt16)) return CreateField(ti, ci, "SMALLINT", ci.FieldLength, isRequired);
 			if(type == typeof(UInt32)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
-			if(type == typeof(UInt64)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
-			if(type == typeof(Int16)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
+			if(type == typeof(UInt64)) return CreateField(ti, ci, "BIGINT", ci.FieldLength, isRequired);
+			if(type == typeof(Int16)) return CreateField(ti, ci, "SMALLINT", ci.FieldLength, isRequired);
 			if(type == typeof(Int32)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
-			if(type == typeof(Int64)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
+			if(type == typeof(Int64)) return CreateField(ti, ci, "BIGINT", ci.FieldLength, isRequired);
 			if(type == typeof(Single)) return CreateField(ti, ci, "FLOAT", ci.FieldLength, isRequired);
-			if(type == typeof(double)) return CreateField(ti, ci, "REAL", ci.FieldLength, isRequired);
-			if(type == typeof(decimal)) return CreateField(ti, ci, "REAL", ci.FieldLength, isRequired);
-			if(type == typeof(DateTime)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
-			if(type == typeof(TimeSpan)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
-			if(type == typeof(DateTimeOffset)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
+			if(type == typeof(double)) return CreateField(ti, ci, "DOUBLE", ci.FieldLength, isRequired);
+			if(type == typeof(decimal)) return CreateField(ti, ci, "NUMERIC", ci.FieldLength, isRequired);
+			if(type == typeof(DateTime)) return CreateField(ti, ci, "DATETIME", ci.FieldLength, isRequired);
+			if(type == typeof(DateOnly)) return CreateField(ti, ci, "DATE", ci.FieldLength, isRequired);
+			if(type == typeof(TimeSpan)) return CreateField(ti, ci, "TIME", ci.FieldLength, isRequired);
+			if(type == typeof(DateTimeOffset)) return CreateField(ti, ci, "DATETIME", ci.FieldLength, isRequired);
 
-			if(type == typeof(Guid)) return CreateField(ti, ci, "Text", "40", isRequired);
+			if(type == typeof(Guid)) return CreateField(ti, ci, "TEXT", "40", isRequired);
 
 			throw new Exception("");
 		}
