@@ -11,7 +11,8 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 		public override string GetTryCreateTable(Type type, bool withIndex = true)
 		{
 			var ti = TableInfo.FromType(type);
-			var sql = "CREATE TABLE IF NOT EXISTS " + ti.TableName + "(\r\n";
+			var sql = "CREATE SEQUENCE IF NOT EXISTS seq_" + ti.TableName + " START 1;";
+			sql += "CREATE TABLE IF NOT EXISTS " + ti.TableName + "(\r\n";
 			foreach(var item in ti.Columns) {
 				sql += "    " + CreateColumn(ti, item) + ",\r\n";
 			}
@@ -159,6 +160,9 @@ DELETE FROM sqlite_sequence WHERE name='{tableName}';";
 			}
 			if(ti.PrimaryKey == ci.ColumnName) {
 				sb.Append(" PRIMARY KEY");
+				if(ti.AutoIncrement) {
+					sb.Append(" DEFAULT NEXTVAL('seq_" + ti.TableName+"')");
+				}
 			}
 			//if (string.IsNullOrEmpty(ci.Comment) == false) {
 			//    sb.AppendFormat(" COMMENT '{0}'", ci.Comment);

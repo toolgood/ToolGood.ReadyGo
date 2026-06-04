@@ -1,18 +1,19 @@
-﻿namespace ToolGood.ReadyGo3.Test
+﻿using DuckDB.NET.Data;
+
+namespace ToolGood.ReadyGo3.Test
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-
-            using (var helper=SqlHelperFactory.OpenSqliteFile("1.db")) {
+			using (var helper=SqlHelperFactory.OpenDuckDbFile("6.db")) {
                 helper._TableHelper.CreateTable(typeof(testArray));
 
 
-                helper.Insert(new testArray() { });
+                helper.Insert(new testArray() { num =11 });
 
 
-                helper.Update<testArray>("set doubleArray=@0 where id=@1", new double[2] { 1, 2 }, 1);
+                //helper.Update<testArray>("set doubleArray=@0 where id=@1", new double[2] { 1, 2 }, 1);
 
 
             }
@@ -24,6 +25,7 @@
     {
         public int id { get; set; }
 
-        public double[] doubleArray { get; set; }
+        public double num { get; set; }
+        //public double[] doubleArray { get; set; }
     }
 }

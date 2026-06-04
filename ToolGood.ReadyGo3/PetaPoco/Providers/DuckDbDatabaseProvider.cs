@@ -30,7 +30,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 		public override object ExecuteInsert(Database db, System.Data.IDbCommand cmd, string primaryKeyName)
 		{
 			if(primaryKeyName != null) {
-				cmd.CommandText += ";\nSELECT last_insert_rowid();";
+				cmd.CommandText += " RETURNING *;";
 				return db.ExecuteScalarHelper(cmd);
 			} else {
 				db.ExecuteNonQueryHelper(cmd);
