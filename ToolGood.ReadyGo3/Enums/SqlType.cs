@@ -25,10 +25,15 @@
         /// </summary>
         FirebirdDb,
 
-        /// <summary>
-        /// Sql Server 数据库
-        /// </summary>
-        SqlServer = 10,
+		/// <summary>
+		/// DuckDB 数据库
+		/// </summary>
+		DuckDb,
+
+		/// <summary>
+		/// Sql Server 数据库
+		/// </summary>
+		SqlServer = 10,
 
         /// <summary>
         /// Sql Server CE 数据库
@@ -59,5 +64,8 @@
         /// PostgreSQL 数据库
         /// </summary>
         PostgreSQL = 40,
-    }
+
+
+		
+	}
 }

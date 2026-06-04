@@ -276,13 +276,29 @@ namespace ToolGood.ReadyGo3
             return OpenDatabase(sb.ToString(), "System.Data.SQLite", SqlType.SQLite);
         }
 
-        /// <summary>
-        /// 打开Access数据库 32位
-        /// </summary>
-        /// <param name="filePath">文件目录</param>
-        /// <param name="pwd">密码</param>
-        /// <returns></returns>
-        public static SqlHelper OpenAccessFile(string filePath, string pwd = null)
+		/// <summary>
+		/// 打开DuckDB数据库，支持密码
+		/// </summary>
+		/// <param name="filePath"></param>
+		/// <param name="pwd"></param>
+		/// <returns></returns>
+		public static SqlHelper OpenDuckDbFile(string filePath, string pwd = null)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat("Data Source={0};", filePath);
+			if (string.IsNullOrEmpty(pwd) == false) {
+                sb.Append("Mode=ReadWrite;Password=" + pwd);
+            }
+            return OpenDatabase(sb.ToString(), "DuckDB.NET.Data.Full", SqlType.DuckDb);
+        }
+
+		/// <summary>
+		/// 打开Access数据库 32位
+		/// </summary>
+		/// <param name="filePath">文件目录</param>
+		/// <param name="pwd">密码</param>
+		/// <returns></returns>
+		public static SqlHelper OpenAccessFile(string filePath, string pwd = null)
         {
             var connstr = $"Provider=Microsoft.Jet.Oledb.4.0;data source={filePath};";
             if (string.IsNullOrEmpty(pwd) == false) {
