@@ -1,4 +1,4 @@
-﻿using System.Data.Common;
+using System.Data.Common;
 using System.Linq;
 using System.Text;
 using ToolGood.ReadyGo3.PetaPoco.Core;
@@ -48,7 +48,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
             } else {
                 sb.Append(" ORDER BY ABS(1)");
             }
-            sb.AppendFormat($" OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY");
+            sb.Append($" OFFSET {offset} ROWS FETCH NEXT {limit} ROWS ONLY");
             return sb.ToString();
         }
 

@@ -91,7 +91,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 return sb.ToString();
             } else {
                 StringBuilder sb = new StringBuilder();
-                sb.AppendFormat("SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY {0})", string.IsNullOrWhiteSpace(order) ? "(SELECT NULL)" : order);
+                sb.AppendFormat("SELECT * FROM (SELECT ROW_NUMBER() OVER (ORDER BY {0})", string.IsNullOrEmpty(order) ? "(SELECT NULL)" : order);
                 sb.AppendFormat(" peta_rn,{0} ", columnSql);
                 sb.Append(" FROM ");
                 sb.Append(fromtable);

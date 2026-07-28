@@ -27,8 +27,10 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
 
         public override void PreExecute(IDbCommand cmd)
         {
-            cmd.GetType().GetProperty("BindByName").SetValue(cmd, true, null);
-            cmd.GetType().GetProperty("InitialLONGFetchSize").SetValue(cmd, -1, null);
+            var bindByNameProp = cmd.GetType().GetProperty("BindByName");
+            if (bindByNameProp != null) bindByNameProp.SetValue(cmd, true, null);
+            var fetchSizeProp = cmd.GetType().GetProperty("InitialLONGFetchSize");
+            if (fetchSizeProp != null) fetchSizeProp.SetValue(cmd, -1, null);
         }
 
         public override string BuildPageQuery(int skip, int take, SQLParts parts, ref object[] args)

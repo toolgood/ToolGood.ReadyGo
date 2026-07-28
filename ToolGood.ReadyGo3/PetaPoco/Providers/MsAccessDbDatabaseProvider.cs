@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Text;
@@ -57,8 +57,6 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             StringBuilder sb = new StringBuilder();
             sb.Append("SELECT ");
-
-            sb.Append(" ");
             sb.Append(columnSql);
             sb.Append(" FROM ");
             sb.Append(fromtable);
