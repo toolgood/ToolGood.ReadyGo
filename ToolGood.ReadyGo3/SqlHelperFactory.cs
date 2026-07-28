@@ -1,4 +1,4 @@
-﻿using System.Data.Common;
+using System.Data.Common;
 using System.Text;
 using ToolGood.ReadyGo3.PetaPoco.Core;
 
@@ -106,7 +106,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static SqlHelper OpenSqlServer(string server, int port, string database, string user, string pwd, bool trustServerCertificate = false)
         {
-            var connstr = $"Server={server},{port}:Database={database};Uid={user};Pwd={pwd}";
+            var connstr = $"Server={server},{port};Database={database};Uid={user};Pwd={pwd}";
             if (trustServerCertificate) {
                 connstr += ";TrustServerCertificate=True";
             }
@@ -154,7 +154,7 @@ namespace ToolGood.ReadyGo3
         /// <returns></returns>
         public static SqlHelper OpenSqlServer2012(string server, int port, string database, string user, string pwd, bool trustServerCertificate = false)
         {
-            var connstr = $"Server={server},{port}:Database={database};Uid={user};Pwd={pwd}";
+            var connstr = $"Server={server},{port};Database={database};Uid={user};Pwd={pwd}";
             if (trustServerCertificate) {
                 connstr += ";TrustServerCertificate=True";
             }

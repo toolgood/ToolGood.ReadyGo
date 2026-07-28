@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -355,7 +355,7 @@ namespace ToolGood.ReadyGo3
         {
             var leftValue = Property.GetValue(left);
             var rightValue = Property.GetValue(right);
-            if (leftValue.Equals(rightValue)) { return false; }
+            if (object.Equals(leftValue, rightValue)) { return false; }
             return true;
         }
 

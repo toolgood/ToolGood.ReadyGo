@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -81,8 +81,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 
 		public override string GetTruncateTable(string tableName)
 		{
-			return $@"DELETE FROM {tableName};
-DELETE FROM sqlite_sequence WHERE name='{tableName}';";
+			return $"DELETE FROM {tableName};";
 		}
 
 		private string CreateColumn(TableInfo ti, ColumnInfo ci)

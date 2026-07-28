@@ -135,7 +135,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         internal void OnBeginTransaction()
         {
-            _sqlHelper._events.OnAfterTransaction();
+            _sqlHelper._events.OnBeforeTransaction();
         }
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace ToolGood.ReadyGo3.PetaPoco
         /// </summary>
         public void OnEndTransaction()
         {
-            _sqlHelper._events.OnBeforeTransaction();
+            _sqlHelper._events.OnAfterTransaction();
         }
 
         /// <summary>
@@ -594,28 +594,28 @@ namespace ToolGood.ReadyGo3.PetaPoco
                 try {
                     using (var cmd = CreateCommand(_sharedConnection, sql, args)) {
                         DoPreExecute(cmd);
-                        var reader = cmd.ExecuteReader();
-                        OnExecutedCommand(cmd);
+                        using (var reader = cmd.ExecuteReader()) {
+                            OnExecutedCommand(cmd);
 
-                        DataTable dt = new DataTable();
-                        bool init = false;
-                        dt.BeginLoadData();
-                        object[] vals = new object[0];
-                        while (reader.Read()) {
-                            if (!init) {
-                                init = true;
-                                int fieldCount = reader.FieldCount;
-                                for (int i = 0; i < fieldCount; i++) {
-                                    dt.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
+                            DataTable dt = new DataTable();
+                            bool init = false;
+                            dt.BeginLoadData();
+                            object[] vals = new object[0];
+                            while (reader.Read()) {
+                                if (!init) {
+                                    init = true;
+                                    int fieldCount = reader.FieldCount;
+                                    for (int i = 0; i < fieldCount; i++) {
+                                        dt.Columns.Add(reader.GetName(i), reader.GetFieldType(i));
+                                    }
+                                    vals = new object[fieldCount];
                                 }
-                                vals = new object[fieldCount];
+                                reader.GetValues(vals);
+                                dt.LoadDataRow(vals, true);
                             }
-                            reader.GetValues(vals);
-                            dt.LoadDataRow(vals, true);
+                            dt.EndLoadData();
+                            return dt;
                         }
-                        reader.Close();
-                        dt.EndLoadData();
-                        return dt;
                     }
                 } finally {
                     CloseSharedConnection();
