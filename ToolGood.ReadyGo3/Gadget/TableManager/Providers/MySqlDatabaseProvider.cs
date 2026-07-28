@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -53,11 +53,11 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 
         private string BuildColumns(List<string> columnList)
         {
-            var columns = "";
+            var sb = new StringBuilder();
             foreach (var col in columnList) {
-                columns += $"`{col}`,";
+                sb.Append($"`{col}`,");
             }
-            return columns.Replace("[", "`").Replace("]", "`").Replace("``", "`").Trim(',');
+            return sb.ToString().Replace("[", "`").Replace("]", "`").Replace("``", "`").Trim(',');
         }
 
         public override string GetDropTable(Type type)
@@ -151,7 +151,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 
             if (type == typeof(Guid)) return CreateField(ti, ci, "char", "40", isRequired);
 
-            throw new Exception("");
+            throw new Exception($"Unsupported column type: {ci.PropertyType.Name}");
         }
 
         private string CreateField(TableInfo ti, ColumnInfo ci, string fieldType, string length, bool isRequired)

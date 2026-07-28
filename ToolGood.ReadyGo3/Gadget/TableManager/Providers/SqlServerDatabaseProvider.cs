@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,16 +14,11 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
         public override string GetTryCreateTable(Type type, bool withIndex = true)
         {
             var ti = TableInfo.FromType(type);
-            var sql = "CREATE TABLE IF NOT EXISTS " + GetTableName(ti) + "(\r\n";
+            var sql = "CREATE TABLE " + GetTableName(ti) + "(\r\n";
             foreach (var item in ti.Columns) {
                 sql += "    " + CreateColumn(ti, item) + ",\r\n";
             }
             if (withIndex) {
-                foreach (var item in ti.Indexs) {
-                    var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
-                    var columns = BuildColumns(item);
-                    sql += "    INDEX " + txt + "(" + columns + "),\r\n";
-                }
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
@@ -32,7 +27,14 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             }
 
             sql = sql.Substring(0, sql.Length - 3);
-            sql += "\r\n);";
+            sql += "\r\n);\r\n";
+            if (withIndex) {
+                foreach (var item in ti.Indexs) {
+                    var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                    var columns = BuildColumns(item);
+                    sql += "CREATE INDEX " + txt + " ON " + GetTableName(ti) + "(" + columns + ");\r\n";
+                }
+            }
             return sql;
         }
  
@@ -56,11 +58,11 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
 
         private string BuildColumns(List<string> columnList)
         {
-            var columns = "";
+            var sb = new StringBuilder();
             foreach (var col in columnList) {
-                columns += $"[{col}],";
+                sb.Append($"[{col}],");
             }
-            return columns.Replace("[[", "[").Replace("]]", "]").Trim(',');
+            return sb.ToString().Replace("[[", "[").Replace("]]", "]").Trim(',');
         }
 
         public override string GetDropTable(Type type)
@@ -137,7 +139,7 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
             if (type == typeof(TimeSpan)) return CreateField(ti, ci, "time", ci.FieldLength, isRequired);
             if (type == typeof(Guid)) return CreateField(ti, ci, "uniqueidentifier", ci.FieldLength, isRequired);
 
-            throw new Exception("");
+            throw new Exception($"Unsupported column type: {ci.PropertyType.Name}");
         }
 
         private string CreateField(TableInfo ti, ColumnInfo ci, string fieldType, string length, bool isRequired)
@@ -161,9 +163,6 @@ namespace ToolGood.ReadyGo3.Gadget.TableManager.Providers
                 if (ti.AutoIncrement) {
                     sb.Append(" identity(1,1) ");
                 }
-            }
-            if (string.IsNullOrEmpty(ci.Comment) == false) {
-                sb.AppendFormat(" COMMENT '{0}'", ci.Comment.Replace("'", @"\'"));
             }
             return sb.ToString();
         }
