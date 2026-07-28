@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -57,16 +57,6 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                     return "'" + txt + "'";
                 }
                 return $"'{Convert.ToInt64(value)}'";
-                //var isEnumFlags = fieldType.IsEnum;
-                //long enumValue;
-                //if (!isEnumFlags && Int64.TryParse(value.ToString(), out enumValue)) {
-                //    value = Enum.ToObject(fieldType, enumValue).ToString();
-                //}
-                //var enumString = value.ToString();
-
-                //return !isEnumFlags
-                //    ? GetQuotedValue(enumString.Trim('"'))
-                //    : enumString;
             }
 
             var typeCode = Type.GetTypeCode(fieldType);
@@ -137,8 +127,10 @@ namespace ToolGood.ReadyGo3.LinQ.Expressions
                 var o = original[i];
                 if (o.NodeType == ExpressionType.MemberAccess) {
                     quotedColName = getColumnName(o as MemberExpression);
+                } else if (o is ConstantExpression ce) {
+                    args.Add(ce.Value);
                 } else {
-                    args.Add((o as ConstantExpression).Value);
+                    args.Add(Expression.Lambda(o).Compile().DynamicInvoke());
                 }
             }
 

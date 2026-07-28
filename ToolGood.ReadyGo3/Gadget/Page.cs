@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace ToolGood.ReadyGo3
@@ -21,7 +21,7 @@ namespace ToolGood.ReadyGo3
         /// <summary>
         /// 总页数
         /// </summary>
-        public int TotalPages => (int)Math.Ceiling(TotalItems / (double)PageSize);
+        public int TotalPages => PageSize <= 0 ? 0 : (int)Math.Ceiling(TotalItems / (double)PageSize);
 
         /// <summary>
         /// 总数

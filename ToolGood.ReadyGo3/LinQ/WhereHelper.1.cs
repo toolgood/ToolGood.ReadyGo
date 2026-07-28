@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data;
@@ -270,8 +270,8 @@ namespace ToolGood.ReadyGo3.LinQ
                 //where.Append("@@");
             } else if (text.Length == 1) {
                 where.Append(text);
-            } else if (text.StartsWith("@")) {
-                int p = this._args.Count + int.Parse(text.Replace("@", ""));
+            } else if (text.StartsWith("@") && int.TryParse(text.AsSpan(1), out int parsed)) {
+                int p = this._args.Count + parsed;
                 where.Append(_paramPrefix);
                 where.Append(p.ToString());
             } else {
@@ -1569,10 +1569,11 @@ namespace ToolGood.ReadyGo3.LinQ
             sb.Append("SET ");
             int index = 0;
             List<object> args = new List<object>();
+            var provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
             foreach (var pi in pis) {
                 if (pi.CanRead == false) continue;
                 if (index > 0) { sb.Append(","); }
-                sb.AppendFormat("{0}=@{1}", pi.Name, index++);
+                sb.AppendFormat("{0}=@{1}", provider.EscapeSqlIdentifier(pi.Name), index++);
                 args.Add(pi.GetValue(setData, null));
             }
             var sql = BuildUpdateSql(sb.ToString(), args);
@@ -1593,9 +1594,10 @@ namespace ToolGood.ReadyGo3.LinQ
             sb.Append("SET ");
             int index = 0;
             List<object> args = new List<object>();
+            var provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
             foreach (var item in setData) {
                 if (index > 0) { sb.Append(","); }
-                sb.AppendFormat("{0}=@{1}", item.Key, index++);
+                sb.AppendFormat("{0}=@{1}", provider.EscapeSqlIdentifier(item.Key), index++);
                 args.Add(item.Value);
             }
             var sql = BuildUpdateSql(sb.ToString(), args);
@@ -1683,114 +1685,5 @@ namespace ToolGood.ReadyGo3.LinQ
 
         #endregion 11 Delete
 
-        //#region 12 SelectInsert
-        ///// <summary>
-        ///// 查询插入
-        ///// </summary>
-        ///// <param name="insertTableName"></param>
-        ///// <param name="replaceSelect"></param>
-        ///// <param name="args"></param>
-        //public void SelectInsert(string insertTableName = null, string replaceSelect = null, params object[] args)
-        //{
-        //    var sql = CreateSelectInsertSql(typeof(T1), insertTableName, replaceSelect, args);
-        //    _sqlhelper.Execute(sql, _args.ToArray());
-        //}
-
-        ///// <summary>
-        ///// 查询插入
-        ///// </summary>
-        ///// <typeparam name="T"></typeparam>
-        ///// <param name="insertTableName"></param>
-        ///// <param name="replaceSelect"></param>
-        ///// <param name="args"></param>
-        //public void SelectInsert<T>(string insertTableName = null, string replaceSelect = null, params object[] args)
-        //{
-        //    var sql = CreateSelectInsertSql(typeof(T), insertTableName, replaceSelect, args);
-        //    _sqlhelper.Execute(sql, _args.ToArray());
-        //}
-
-        //private string CreateSelectInsertSql(Type type, string insertTableName, string replaceColumns, object[] args)
-        //{
-        //    Dictionary<string, string> replaceCols = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        //    var Provider = DatabaseProvider.Resolve(_sqlhelper._sqlType);
-        //    if (string.IsNullOrEmpty(replaceColumns) == false) {
-        //        var columnSqls = Provider.FormatSql(replaceColumns, args).Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-        //        foreach (var item in columnSqls) {
-        //            var sp = item.Split(new char[] { '.', ' ' }, StringSplitOptions.RemoveEmptyEntries);
-        //            var header = sp[sp.Length - 1].Replace("'", "").Replace("\"", "");
-        //            replaceCols[header] = item;
-        //        }
-        //    }
-
-        //    var pd = PocoData.ForType(type);
-        //    var pocoData = PocoData.ForType(typeof(T1));
-
-        //    StringBuilder sb = new StringBuilder();
-        //    sb.Append("INSERT INTO ");
-        //    if (string.IsNullOrEmpty(insertTableName)) {
-        //        sb.Append(Provider.GetTableName(pd));
-        //    } else {
-        //        sb.Append(insertTableName);
-        //    }
-        //    sb.Append("(");
-        //    Dictionary<string, string> selectColumns = new Dictionary<string, string>();
-        //    foreach (var item in pd.Columns) {
-        //        var colName = item.Key;
-        //        if (colName == pd.TableInfo.PrimaryKey) continue;
-        //        if (item.Value.ResultColumn) continue;
-
-        //        if (replaceCols.TryGetValue(colName, out string sql)) {
-        //            selectColumns[Provider.EscapeSqlIdentifier(colName)] = sql;
-        //        } else if (pocoData.Columns.ContainsKey(colName)) {
-        //            var ci = pocoData.Columns[colName];
-        //            selectColumns[Provider.EscapeSqlIdentifier(colName)] = Table_Name + "." + ci.ColumnName;
-        //        }
-        //    }
-        //    sb.Append(string.Join(",", selectColumns.Keys));
-        //    sb.Append(") SELECT ");
-        //    if (_useDistinct) sb.Append("DISTINCT ");
-        //    sb.Append(string.Join(",", selectColumns.Values));
-        //    sb.Append(" ");
-        //    sb.Append(GetFromAndJoinOn());
-
-        //    if (_where.Length > 0) {
-        //        sb.Append(" WHERE ");
-        //        sb.Append(_where);
-        //    }
-
-        //    if (_groupby.Length > 0) {
-        //        sb.Append(" GROUP BY ");
-        //        sb.Append(_groupby);
-        //        if (_having.Length > 0) {
-        //            sb.Append(" HAVING ");
-        //            sb.Append(_having);
-        //        }
-        //    }
-        //    if (_order.Length > 0) {
-        //        sb.Append(" ORDER BY ");
-        //        sb.Append(_order);
-        //    }
-        //    return sb.ToString();
-        //}
-
-        //#endregion
-
-        /// <summary>
-        /// 释放
-        /// </summary>
-        public void Dispose()
-        {
-            _sqlExpression = null;
-            _args = null;
-            _where = null;
-            _joinOnString = null;
-
-            _order = null;
-            _groupby = null;
-            _having = null;
-
-            _includeColumns = null;
-            _excludeColumns = null;
-        }
     }
 }

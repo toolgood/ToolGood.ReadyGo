@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 
 namespace ToolGood.ReadyGo3.Gadget.Events
@@ -178,7 +178,10 @@ namespace ToolGood.ReadyGo3.Gadget.Events
             if (args != null && args.Length > 0) {
                 sb.Append("\n");
                 for (int i = 0; i < args.Length; i++) {
-                    sb.AppendFormat("\t -> ({0})[{1}] = \"{2}\"\n", i, args[i].GetType().Name, args[i]);
+                    var arg = args[i];
+                    var typeName = arg?.GetType().Name ?? "null";
+                    var val = arg?.ToString() ?? "NULL";
+                    sb.AppendFormat("\t -> ({0})[{1}] = \"{2}\"\n", i, typeName, val);
                 }
                 sb.Remove(sb.Length - 1, 1);
             }
