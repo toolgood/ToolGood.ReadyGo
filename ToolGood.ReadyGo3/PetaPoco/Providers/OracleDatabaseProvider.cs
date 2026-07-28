@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Data.Common;
 using System.Text;
@@ -127,12 +127,12 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
                 sb.Append(";");
             } else {
                 sb.Append("SELECT * FROM (");
-                sb.Append("SELECT outtable.*, rownum rn FROM (");
+                sb.Append("SELECT outtable.*, ROWNUM rn FROM (");
                 sb.Append(sql);
-                sb.Append(" ) outtable WHERE rownum > ");
-                sb.Append(offset.ToString());
-                sb.Append(" ) WHERE rn <= ");
+                sb.Append(" ) outtable WHERE ROWNUM <= ");
                 sb.Append((limit + offset).ToString());
+                sb.Append(" ) WHERE rn > ");
+                sb.Append(offset.ToString());
                 sb.Append(";");
             }
             return sb.ToString();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
@@ -132,7 +132,7 @@ namespace ToolGood.ReadyGo3.PetaPoco.Providers
         {
             switch (function) {
                 case SqlFunction.Fuction: break;
-                case SqlFunction.Len: return CreateFunction("LENGTH({0})", args);
+                case SqlFunction.Len: return CreateFunction("LEN({0})", args);
                 //case SqlFunction.Max: break;
                 //case SqlFunction.Min: break;
                 //case SqlFunction.Avg: break;
