@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 
@@ -104,7 +104,7 @@ namespace ToolGood.ReadyGo3
         {
             SqlParameter parameter = new SqlParameter {
                 ParameterName = parameterName,
-                Value = new DateTime(value.Year, value.Month, value.Day, 23, 59, 59),
+                Value = value.Date.AddDays(1).AddMilliseconds(-1),
                 DbType = DbType.DateTime,
                 ParameterDirection = ParameterDirection.Input,
             };
