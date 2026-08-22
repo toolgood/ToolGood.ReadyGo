@@ -54,10 +54,11 @@ namespace ToolGood.ReadyGo.NPoco
             var canWrite = memberInfo.IsField() || ((PropertyInfo) memberInfo).CanWrite;
 
             // roslyn automatically implemented properties, in particular for get-only properties: <{Name}>k__BackingField;
+            // anonymous types use <{Name}>i__Field for their get-only backing fields.
             if (!canWrite)
             {
-                var backingFieldName = $"<{memberName}>k__BackingField";
-                var backingFieldMemberInfo = targetType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(x => x.Name == backingFieldName);
+                var backingFieldNames = new[] { $"<{memberName}>k__BackingField", $"<{memberName}>i__Field" };
+                var backingFieldMemberInfo = targetType.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).FirstOrDefault(x => backingFieldNames.Contains(x.Name));
                 if (backingFieldMemberInfo != null)
                 {
                     memberInfo = backingFieldMemberInfo;
