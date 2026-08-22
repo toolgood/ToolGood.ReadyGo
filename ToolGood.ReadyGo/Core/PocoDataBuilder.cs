@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
+using ToolGood.ReadyGo.Attributes;
 using ToolGood.ReadyGo.NPoco.FluentMappings;
 using ToolGood.ReadyGo.NPoco.RowMappers;
 

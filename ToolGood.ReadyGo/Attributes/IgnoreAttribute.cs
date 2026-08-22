@@ -2,11 +2,8 @@ using System;
 
 namespace ToolGood.ReadyGo.Attributes
 {
-    /// <summary>
-    /// 忽略特征
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class IgnoreAttribute : ToolGood.ReadyGo.NPoco.IgnoreAttribute
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    public class IgnoreAttribute : Attribute
     {
     }
 }

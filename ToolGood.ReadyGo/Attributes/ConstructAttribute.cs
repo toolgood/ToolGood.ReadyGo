@@ -1,6 +1,6 @@
 using System;
 
-namespace ToolGood.ReadyGo.NPoco
+namespace ToolGood.ReadyGo.Attributes
 {
     [AttributeUsage(AttributeTargets.Constructor)]
     public class ConstructAttribute : Attribute

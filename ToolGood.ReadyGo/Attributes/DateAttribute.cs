@@ -1,4 +1,5 @@
 using System;
+using ToolGood.ReadyGo.Attributes.ColumnSerializers;
 
 namespace ToolGood.ReadyGo.Attributes
 {
@@ -7,7 +8,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 基于 SerializedColumn + IColumnSerializer 实现，数据库中仅存 "yyyy-MM-dd"。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class DateAttribute : ToolGood.ReadyGo.NPoco.SerializedColumnAttribute
+    public class DateAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>
         /// 列级序列化器

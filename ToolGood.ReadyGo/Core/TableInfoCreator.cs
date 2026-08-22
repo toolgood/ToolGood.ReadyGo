@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using ToolGood.ReadyGo.Attributes;
 
 namespace ToolGood.ReadyGo.NPoco
 {

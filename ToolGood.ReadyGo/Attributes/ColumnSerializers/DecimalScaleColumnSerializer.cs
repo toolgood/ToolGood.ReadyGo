@@ -1,12 +1,12 @@
 using System;
 using System.Globalization;
 
-namespace ToolGood.ReadyGo.Attributes
+namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
 {
     /// <summary>
     /// 小数转整数列序列化器：保存时数值 × 10^scale 存为整数，读取时 ÷ 10^scale 并四舍五入
     /// </summary>
-    public class DecimalScaleColumnSerializer : ToolGood.ReadyGo.NPoco.IColumnSerializer
+    public class DecimalScaleColumnSerializer : NPoco.IColumnSerializer
     {
         private readonly int _scale;
         private readonly decimal _multiplier;

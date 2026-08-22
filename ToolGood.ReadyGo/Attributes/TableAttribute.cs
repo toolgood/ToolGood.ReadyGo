@@ -6,7 +6,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 表特征
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    public class TableAttribute : ToolGood.ReadyGo.NPoco.TableNameAttribute
+    public class TableAttribute : TableNameAttribute
     {
         /// <summary>
         /// 数据表名

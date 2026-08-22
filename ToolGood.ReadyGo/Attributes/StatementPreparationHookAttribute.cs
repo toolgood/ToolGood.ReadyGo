@@ -1,6 +1,7 @@
 using System;
+using ToolGood.ReadyGo.NPoco;
 
-namespace ToolGood.ReadyGo.NPoco
+namespace ToolGood.ReadyGo.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public abstract class StatementPreparationHookAttribute : Attribute

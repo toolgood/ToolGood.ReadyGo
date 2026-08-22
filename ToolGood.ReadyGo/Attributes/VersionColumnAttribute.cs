@@ -1,6 +1,7 @@
 using System;
+using ToolGood.ReadyGo.NPoco;
 
-namespace ToolGood.ReadyGo.NPoco
+namespace ToolGood.ReadyGo.Attributes
 {
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class VersionColumnAttribute : ColumnAttribute

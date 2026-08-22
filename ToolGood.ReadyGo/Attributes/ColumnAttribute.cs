@@ -2,12 +2,13 @@ using System;
 
 namespace ToolGood.ReadyGo.Attributes
 {
-    /// <summary>
-    /// 列标签
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class ColumnAttribute : ToolGood.ReadyGo.NPoco.ColumnAttribute
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
+    public class ColumnAttribute : Attribute
     {
+        public ColumnAttribute(string name) { Name = name; }
+        public string Name { get; set; }
+        public bool ForceToUtc { get; set; } = true;
+        public bool ExactNameMatch { get; set; }
         /// <summary>
         /// 备注
         /// </summary>
@@ -30,7 +31,7 @@ namespace ToolGood.ReadyGo.Attributes
         {
             Name = name.Trim();
             ForceToUtc = false;
-            if (comment != null) {
+            if(comment != null) {
                 this.Comment = comment.Trim();
             }
         }

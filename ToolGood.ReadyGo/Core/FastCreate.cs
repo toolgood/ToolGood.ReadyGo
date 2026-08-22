@@ -5,6 +5,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Reflection;
+using ToolGood.ReadyGo.Attributes;
 
 namespace ToolGood.ReadyGo.NPoco
 {

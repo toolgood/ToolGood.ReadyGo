@@ -1,4 +1,4 @@
-namespace ToolGood.ReadyGo.NPoco
+namespace ToolGood.ReadyGo.Attributes
 {
     public class SerializedColumnAttribute : ColumnAttribute
     {

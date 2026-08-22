@@ -1,12 +1,12 @@
 using System;
 using System.Globalization;
 
-namespace ToolGood.ReadyGo.Attributes
+namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
 {
     /// <summary>
     /// 日期列序列化器：序列化为 "yyyy-MM-dd"，反序列化回 DateTime / DateTimeOffset / DateOnly
     /// </summary>
-    public class DateColumnSerializer : ToolGood.ReadyGo.NPoco.IColumnSerializer
+    public class DateColumnSerializer : NPoco.IColumnSerializer
     {
         public const string DateFormat = "yyyy-MM-dd";
 

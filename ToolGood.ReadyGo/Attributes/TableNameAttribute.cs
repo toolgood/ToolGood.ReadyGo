@@ -1,6 +1,6 @@
 using System;
 
-namespace ToolGood.ReadyGo.NPoco
+namespace ToolGood.ReadyGo.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
     public class TableNameAttribute : Attribute

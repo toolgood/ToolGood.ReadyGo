@@ -2,53 +2,37 @@ using System;
 
 namespace ToolGood.ReadyGo.Attributes
 {
-    /// <summary>
-    /// 主键
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
-    public class PrimaryKeyAttribute : ToolGood.ReadyGo.NPoco.PrimaryKeyAttribute
+    [AttributeUsage(AttributeTargets.Class)]
+    public class PrimaryKeyAttribute : Attribute
     {
+        public PrimaryKeyAttribute(string primaryKey)
+        {
+            Value = primaryKey;
+            _autoIncrement = true;
+        }
+
+        public PrimaryKeyAttribute(string[] primaryKey) : this(string.Join(",", primaryKey))
+        {
+        }
         /// <summary>
         ///     The column name.
         /// </summary>
         public string PrimaryKey => Value;
-
-        /// <summary>
-        ///     Constructs a new instance of the <seealso cref="PrimaryKeyAttribute" />.
-        /// </summary>
-        /// <param name="primaryKey">The name of the primary key column.</param>
-        public PrimaryKeyAttribute(string primaryKey) : base(primaryKey.Trim())
+        public string Value { get; private set; }
+        public string SequenceName { get; set; }
+        private bool _autoIncrement;
+        public bool AutoIncrement
         {
+            get { return _autoIncrement; }
+            set
+            {
+                _autoIncrement = value;
+                if (value && Value.Contains(","))
+                {
+                    throw new InvalidOperationException("Cannot set AutoIncrement to true when the primary key is a Composite Key");
+                }
+            }
         }
-
-        /// <summary>
-        /// 主键
-        /// </summary>
-        /// <param name="primaryKey"></param>
-        public PrimaryKeyAttribute(string[] primaryKey) : base(primaryKey)
-        {
-        }
-
-        /// <summary>
-        /// 主键
-        /// </summary>
-        /// <param name="primaryKey"></param>
-        /// <param name="autoIncrement"></param>
-        public PrimaryKeyAttribute(string primaryKey, bool autoIncrement) : base(primaryKey.Trim())
-        {
-            AutoIncrement = autoIncrement;
-        }
-
-        /// <summary>
-        /// 主键
-        /// </summary>
-        /// <param name="primaryKey"></param>
-        /// <param name="autoIncrement"></param>
-        /// <param name="sequenceName"></param>
-        public PrimaryKeyAttribute(string primaryKey, bool autoIncrement, string sequenceName) : base(primaryKey.Trim())
-        {
-            AutoIncrement = autoIncrement;
-            SequenceName = sequenceName.Trim();
-        }
+        public bool UseOutputClause { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using ToolGood.ReadyGo.Attributes.ColumnSerializers;
 
 namespace ToolGood.ReadyGo.Attributes
 {
@@ -7,7 +8,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 例：scale=2 时，1.23 存为 123，读取 123 还原为 1.23。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class DecimalScaleAttribute : ToolGood.ReadyGo.NPoco.SerializedColumnAttribute
+    public class DecimalScaleAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>
         /// 小数点位数
