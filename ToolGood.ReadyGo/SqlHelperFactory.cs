@@ -67,17 +67,6 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 打开Sql Server数据库
         /// </summary>
-        /// <param name="connectionString"></param>
-        /// <returns></returns>
-        public static SqlHelper OpenSqlServer(SqlServerConnectionString connectionString)
-        {
-            var connstr = connectionString.ToString();
-            return OpenDatabase(connstr, "System.Data.SqlClient", SqlType.SqlServer);
-        }
-
-        /// <summary>
-        /// 打开Sql Server数据库
-        /// </summary>
         /// <param name="server">服务器</param>
         /// <param name="database">活动数据库</param>
         /// <param name="user">用户</param>
@@ -115,17 +104,6 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 开Sql Server2012数据库
         /// </summary>
-        /// <param name="connectionString"></param>
-        /// <returns></returns>
-        public static SqlHelper OpenSqlServer2012(SqlServerConnectionString connectionString)
-        {
-            var connstr = connectionString.ToString();
-            return OpenDatabase(connstr, "System.Data.SqlClient", SqlType.SqlServer2012);
-        }
-
-        /// <summary>
-        /// 打开Sql Server2012数据库
-        /// </summary>
         /// <param name="server">服务器</param>
         /// <param name="database">活动数据库</param>
         /// <param name="user">用户</param>
@@ -158,24 +136,6 @@ namespace ToolGood.ReadyGo
                 connstr += ";TrustServerCertificate=True";
             }
             return OpenDatabase(connstr, "System.Data.SqlClient", SqlType.SqlServer2012);
-        }
-
-        /// <summary>
-        /// 打开Mysql数据库,SslMode默认none
-        /// </summary>
-        /// <param name="connectionString"></param>
-        /// <returns></returns>
-        public static SqlHelper OpenMysql(MysqlConnectionString connectionString)
-        {
-            var connstr = connectionString.ToString();
-            if (connstr.IndexOf("SslMode", System.StringComparison.CurrentCultureIgnoreCase) == -1) {
-                var factory = DatabaseProvider.GetProviderFactory(SqlType.MySql);
-                if (factory.GetType().Assembly.GetName().Version.Major >= 8) {
-                    connstr += ";SslMode=none;";
-                    connstr = connstr.Replace(";;", ";");
-                }
-            }
-            return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
 
         /// <summary>

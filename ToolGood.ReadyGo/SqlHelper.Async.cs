@@ -213,21 +213,6 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        /// 执行SQL 查询, 返回单个
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="columnSql"></param>
-        /// <param name="tableSql"></param>
-        /// <param name="whereSql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        public async Task<T> SQL_FirstOrDefault_Async<T>(string columnSql, string tableSql, string whereSql, SqlParameterCollection args)
-            where T : class
-        {
-            return await SQL_FirstOrDefault_Async<T>(columnSql, tableSql, whereSql, args.ToArray());
-        }
-
-        /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -255,24 +240,6 @@ namespace ToolGood.ReadyGo
             var sql = BuildSelectSql(columnSql, tableSql, orderSql, whereSql);
 
             return await GetDatabase().SkipTakeAsync<T>((page - 1) * itemsPerPage, itemsPerPage, sql, args);
-        }
-
-        /// <summary>
-        /// 执行SQL 查询,返回集合
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="page">页数</param>
-        /// <param name="itemsPerPage">每页数量</param>
-        /// <param name="columnSql">查询列 SQL语句</param>
-        /// <param name="tableSql">TABLE SQL语句</param>
-        /// <param name="orderSql">ORDER BY SQL语句</param>
-        /// <param name="whereSql">WHERE SQL语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public async Task<List<T>> SQL_Select_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
-            where T : class
-        {
-            return await SQL_Select_Async<T>(page, itemsPerPage, columnSql, tableSql, orderSql, whereSql, args.ToArray());
         }
 
         /// <summary>
@@ -307,23 +274,6 @@ namespace ToolGood.ReadyGo
         /// 执行SQL 查询,返回集合
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="limit">每页数量</param>
-        /// <param name="columnSql">查询列 SQL语句</param>
-        /// <param name="tableSql">TABLE SQL语句</param>
-        /// <param name="orderSql">ORDER BY SQL语句</param>
-        /// <param name="whereSql">WHERE SQL语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public async Task<List<T>> SQL_Select_Async<T>(int limit, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
-            where T : class
-        {
-            return await SQL_Select_Async<T>(limit, columnSql, tableSql, orderSql, whereSql, args.ToArray());
-        }
-
-        /// <summary>
-        /// 执行SQL 查询,返回集合
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
         /// <param name="columnSql">查询列 SQL语句</param>
         /// <param name="tableSql">TABLE SQL语句</param>
         /// <param name="orderSql">ORDER BY SQL语句</param>
@@ -344,22 +294,6 @@ namespace ToolGood.ReadyGo
             var sql = BuildSelectSql(columnSql, tableSql, orderSql, whereSql);
 
             return await GetDatabase().QueryAsync<T>(sql, args).ToListAsync();
-        }
-
-        /// <summary>
-        /// 执行SQL 查询,返回集合
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="columnSql">查询列 SQL语句</param>
-        /// <param name="tableSql">TABLE SQL语句</param>
-        /// <param name="orderSql">ORDER BY SQL语句</param>
-        /// <param name="whereSql">WHERE SQL语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public async Task<List<T>> SQL_Select_Async<T>(string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
-            where T : class
-        {
-            return await SQL_Select_Async<T>(columnSql, tableSql, orderSql, whereSql, args.ToArray());
         }
 
         /// <summary>
@@ -403,23 +337,6 @@ namespace ToolGood.ReadyGo
             };
         }
 
-        /// <summary>
-        /// 执行SQL 查询,返回Page类型
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="page">页数</param>
-        /// <param name="itemsPerPage">每页数量</param>
-        /// <param name="columnSql">查询列 SQL语句</param>
-        /// <param name="tableSql">TABLE SQL语句</param>
-        /// <param name="orderSql">ORDER BY SQL语句</param>
-        /// <param name="whereSql">WHERE SQL语句</param>
-        /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
-        public async Task<Page<T>> SQL_Page_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, SqlParameterCollection args)
-            where T : class
-        {
-            return await SQL_Page_Async<T>(page, itemsPerPage, columnSql, tableSql, orderSql, whereSql, args.ToArray());
-        }
         #endregion
 
         #endregion Select Page Select
