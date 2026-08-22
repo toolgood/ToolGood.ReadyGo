@@ -7,7 +7,6 @@ using System.Data.Common;
 using System.Linq;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo.NPoco.Extensions;
-using ToolGood.ReadyGo.NPoco.Linq;
 using System.Threading;
 using System.Runtime.CompilerServices;
 
@@ -265,11 +264,6 @@ namespace ToolGood.ReadyGo.NPoco
             return result;
         }
 
-        public IAsyncUpdateQueryProvider<T> UpdateManyAsync<T>()
-        {
-            return new AsyncUpdateQueryProvider<T>(this);
-        }
-
         public Task<int> DeleteAsync(object poco, CancellationToken cancellationToken = default)
         {
             var tableInfo = PocoDataFactory.TableInfoForType(poco.GetType());
@@ -284,11 +278,6 @@ namespace ToolGood.ReadyGo.NPoco
         public virtual Task<int> DeleteAsync(string tableName, string primaryKeyName, object poco, object primaryKeyValue, CancellationToken cancellationToken = default)
         {
             return DeleteImpAsync(tableName, primaryKeyName, poco, primaryKeyValue, false, cancellationToken);
-        }
-
-        public IAsyncDeleteQueryProvider<T> DeleteManyAsync<T>()
-        {
-            return new AsyncDeleteQueryProvider<T>(this);
         }
 
         public Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, Sql sql, CancellationToken cancellationToken = default)
@@ -424,11 +413,6 @@ namespace ToolGood.ReadyGo.NPoco
         public Task<(List<T1>, List<T2>)> FetchMultipleAsync<T1, T2>(Sql sql, CancellationToken cancellationToken = default) { return FetchMultipleImp<T1, T2, DontMap, DontMap, (List<T1>, List<T2>)>(new[] { typeof(T1), typeof(T2) }, new Func<List<T1>, List<T2>, (List<T1>, List<T2>)>((y, z) => (y, z)), sql, false, cancellationToken); }
         public Task<(List<T1>, List<T2>, List<T3>)> FetchMultipleAsync<T1, T2, T3>(Sql sql, CancellationToken cancellationToken = default) { return FetchMultipleImp<T1, T2, T3, DontMap, (List<T1>, List<T2>, List<T3>)>(new[] { typeof(T1), typeof(T2), typeof(T3) }, new Func<List<T1>, List<T2>, List<T3>, (List<T1>, List<T2>, List<T3>)>((x, y, z) => (x, y, z)), sql, false, cancellationToken); }
         public Task<(List<T1>, List<T2>, List<T3>, List<T4>)> FetchMultipleAsync<T1, T2, T3, T4>(Sql sql, CancellationToken cancellationToken = default) { return FetchMultipleImp<T1, T2, T3, T4, (List<T1>, List<T2>, List<T3>, List<T4>)>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, new Func<List<T1>, List<T2>, List<T3>, List<T4>, (List<T1>, List<T2>, List<T3>, List<T4>)>((w, x, y, z) => (w, x, y, z)), sql, false, cancellationToken); }
-
-        public IAsyncQueryProviderWithIncludes<T> QueryAsync<T>()
-        {
-            return new AsyncQueryProvider<T>(this);
-        }
 
         public IAsyncEnumerable<T> QueryAsync<T>(string sql, CancellationToken cancellationToken = default)
         {

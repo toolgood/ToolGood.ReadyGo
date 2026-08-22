@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Text;
-using ToolGood.ReadyGo.NPoco.Linq;
 
 namespace ToolGood.ReadyGo.NPoco.Expressions
 {

@@ -3,9 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
-using System.Threading;
 using System.Threading.Tasks;
-using ToolGood.ReadyGo.NPoco.Linq;
+using System.Threading;
 
 namespace ToolGood.ReadyGo.NPoco
 {
@@ -79,16 +78,6 @@ namespace ToolGood.ReadyGo.NPoco
         /// </summary>        
         Task<int> DeleteAsync(object poco, CancellationToken cancellationToken = default);
 
-        /// <summary>
-        /// Generate an update statement using a Fluent syntax. Remember to call Execute.
-        /// </summary>
-        IAsyncUpdateQueryProvider<T> UpdateManyAsync<T>();
-
-        /// <summary>
-        /// Generate a delete statement using a Fluent syntax. Remember to call Execute.
-        /// </summary>
-        IAsyncDeleteQueryProvider<T> DeleteManyAsync<T>();
-        
         /// <summary>
         /// Determines whether the POCO already exists
         /// </summary>
@@ -169,11 +158,6 @@ namespace ToolGood.ReadyGo.NPoco
         /// Caution: This query will only be executed once you start iterating the result
         /// </summary>
         IAsyncEnumerable<T> QueryAsync<T>(Sql sql, CancellationToken cancellationToken = default);
-
-        /// <summary>
-        /// Entry point for LINQ queries
-        /// </summary>
-        IAsyncQueryProviderWithIncludes<T> QueryAsync<T>();
 
         /// <summary>
         /// Fetch objects of type T from the database using the sql and parameters specified. 
