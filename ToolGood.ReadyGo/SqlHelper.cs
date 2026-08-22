@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Linq;
+using System.Linq.Expressions;
 using ToolGood.ReadyGo.Gadget.Internals;
 using ToolGood.ReadyGo.Internals;
 using ToolGood.ReadyGo.NPoco;
@@ -331,6 +332,37 @@ namespace ToolGood.ReadyGo
 
             return ToPage(GetDatabase().Page<T>(page, itemsPerPage, sql, args));
         }
+
+        #region FetchOneToMany
+        /// <summary>
+        /// 一对多查询，将子表数据合并到主表的集合属性中（many 指定主表的子集合属性）
+        /// 例如：FetchOneToMany&lt;UserDto&gt;(x =&gt; x.Cars, "select u.*, c.* from Users u inner join Cars c on u.UserId = c.UserId order by u.UserId");
+        /// </summary>
+        /// <typeparam name="T">主表类型</typeparam>
+        /// <param name="many">主表存放子表集合的属性</param>
+        /// <param name="sql">SQL 语句，须同时返回主表与子表列</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> FetchOneToMany<T>(Expression<Func<T, IList>> many, string sql, params object[] args)
+        {
+            return GetDatabase().FetchOneToMany(many, sql, args);
+        }
+
+        /// <summary>
+        /// 一对多查询，idFunc 指定主表唯一标识，用于合并行（多表查询须含子表 id 列时使用）
+        /// </summary>
+        /// <typeparam name="T">主表类型</typeparam>
+        /// <param name="many">主表存放子表集合的属性</param>
+        /// <param name="idFunc">主表唯一标识选择器</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public List<T> FetchOneToMany<T>(Expression<Func<T, IList>> many, Func<T, object> idFunc, string sql, params object[] args)
+        {
+            return GetDatabase().FetchOneToMany(many, idFunc, sql, args);
+        }
+
+        #endregion FetchOneToMany
 
         #region Obsolete
         /// <summary>

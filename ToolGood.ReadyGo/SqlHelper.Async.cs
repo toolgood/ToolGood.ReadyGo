@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo.Gadget.Internals;
 using ToolGood.ReadyGo.NPoco;
@@ -422,6 +423,47 @@ namespace ToolGood.ReadyGo
         #endregion
 
         #endregion Select Page Select
+
+        #region FetchOneToMany
+
+        /// <summary>
+        /// 一对多查询，将子表数据合并到主表的集合属性中（many 指定主表的子集合属性）
+        /// </summary>
+        /// <typeparam name="T">主表类型</typeparam>
+        /// <param name="many">主表存放子表集合的属性</param>
+        /// <param name="sql">SQL 语句，须同时返回主表与子表列</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<List<T>> FetchOneToMany_Async<T>(Expression<Func<T, IList>> many, string sql, params object[] args)
+        {
+            var result = new List<T>();
+            await foreach (var item in GetDatabase().QueryAsync<T>(default!, many, null, new Sql(sql, args)))
+            {
+                result.Add(item);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// 一对多查询，idFunc 指定主表唯一标识，用于合并行
+        /// </summary>
+        /// <typeparam name="T">主表类型</typeparam>
+        /// <param name="many">主表存放子表集合的属性</param>
+        /// <param name="idFunc">主表唯一标识选择器</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<List<T>> FetchOneToMany_Async<T>(Expression<Func<T, IList>> many, Func<T, object> idFunc, string sql, params object[] args)
+        {
+            var result = new List<T>();
+            await foreach (var item in GetDatabase().QueryAsync<T>(default!, many, x => new[] { idFunc(x) }, new Sql(sql, args)))
+            {
+                result.Add(item);
+            }
+            return result;
+        }
+
+        #endregion FetchOneToMany
 
         #region Single SingleOrDefault First FirstOrDefault
 
