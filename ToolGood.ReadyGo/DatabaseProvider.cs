@@ -47,10 +47,16 @@ namespace ToolGood.ReadyGo
                 case SqlType.Oracle: return ToolGood.ReadyGo.NPoco.DatabaseType.Oracle;
                 case SqlType.PostgreSQL: return ToolGood.ReadyGo.NPoco.DatabaseType.PostgreSQL;
                 case SqlType.FirebirdDb: return ToolGood.ReadyGo.NPoco.DatabaseType.Firebird;
-                case SqlType.MsAccessDb:
-                case SqlType.SqlServerCE:
                 case SqlType.DuckDb:
-                default: throw new DatabaseUnsupportException();
+                    // DuckDB 参数语法为 $name，与 NPoco 内核默认的 @ 前缀不兼容，需自定义 IDatabaseType 后接入
+                    throw new DatabaseUnsupportException("DuckDB 暂不支持：NPoco 内核未提供 DuckDB 的 DatabaseType，且 DuckDB 参数语法($name)与内核默认参数前缀(@)不兼容。请自定义 DuckDB 的 IDatabaseType 实现后接入，或改用 SQLite。");
+                case SqlType.MsAccessDb:
+                    // Jet/ACE SQL 方言（TOP 分页、? 参数）与现有 DatabaseType 不兼容
+                    throw new DatabaseUnsupportException("Access(MsAccessDb) 暂不支持：Jet/ACE SQL 方言与 NPoco 内核现有 DatabaseType 不兼容，需自定义 Access 的 IDatabaseType 实现后接入。");
+                case SqlType.SqlServerCE:
+                    throw new DatabaseUnsupportException("SqlServerCE 已停止维护，不再支持。");
+                default:
+                    throw new DatabaseUnsupportException($"未知的数据库类型: {sqlType}。");
             }
         }
 
@@ -105,9 +111,18 @@ namespace ToolGood.ReadyGo
                         "FirebirdSql.Data.FirebirdClient.FirebirdClientFactory, FirebirdSql.Data.FirebirdClient"
                         );
                 case SqlType.MsAccessDb:
-                case SqlType.SqlServerCE:
+                    return GetFactory(
+                        "System.Data.OleDb.OleDbFactory, System.Data.OleDb, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51",
+                        "System.Data.OleDb.OleDbFactory, System.Data.OleDb"
+                        );
                 case SqlType.DuckDb:
-                default: throw new DatabaseUnsupportException();
+                    return GetFactory(
+                        "DuckDB.NET.Data.DuckDBFactory, DuckDB.NET.Data.Full",
+                        "DuckDB.NET.Data.DuckDBFactory, DuckDB.NET.Data"
+                        );
+                case SqlType.SqlServerCE:
+                    throw new DatabaseUnsupportException("SqlServerCE 已停止维护，不再支持。");
+                default: throw new DatabaseUnsupportException($"未知的数据库类型: {sqlType}。");
             }
         }
 
@@ -143,8 +158,8 @@ namespace ToolGood.ReadyGo
                 return SqlType.SqlServer;
             if (providerNameOrTypeName.Equals("SqlConnection") || providerNameOrTypeName.Equals("SqlClientFactory")) return SqlType.SqlServer;
 
-            // Assume SQL Server
-            return SqlType.SqlServer;
+            // 无法识别的提供程序，明确报错而不是静默假设 SqlServer，避免错误方言导致难以定位的问题
+            throw new DatabaseUnsupportException($"无法识别的数据库提供程序: {providerNameOrTypeName}。请显式指定 SqlType 或使用受支持的 providerName。");
         }
     }
 }

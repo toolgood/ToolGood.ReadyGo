@@ -213,8 +213,9 @@ namespace ToolGood.ReadyGo
             var helper = OpenDatabase(sb.ToString(), "System.Data.SQLite", SqlType.SQLite);
 
             // 新版sqlite不支持password参数，解决方案： https://stackoverflow.com/questions/37860933/cannot-provide-password-in-connection-string-for-sqlite
+            // PRAGMA key 不支持参数化，必须对密码做转义，防止密码含单引号/反斜杠导致 SQL 语法错误或注入
             if (string.IsNullOrEmpty(pwd) == false) {
-                helper.Execute($"PRAGMA key = '{pwd}';");
+                helper.Execute($"PRAGMA key = '{SqlUtil.ToEscapeParam(pwd)}';");
             }
             return helper;
         }

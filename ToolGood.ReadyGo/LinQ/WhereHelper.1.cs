@@ -1429,7 +1429,8 @@ namespace ToolGood.ReadyGo.LinQ
                     if (h != null) {
                         h.QuerySql = header.QuerySql;
                     } else {
-                        headers.Add(h);
+                        // 未匹配到时加入源项而不是 null，避免后续拼接时 NullReferenceException
+                        headers.Add(header);
                     }
                 }
             }
