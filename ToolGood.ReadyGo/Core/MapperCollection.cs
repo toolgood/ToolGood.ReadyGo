@@ -1,0 +1,83 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Linq;
+using System.Data.Common;
+using System.Reflection;
+
+namespace ToolGood.ReadyGo.NPoco
+{
+    public class MapperCollection : List<IMapper>, IMapperCollection
+    {
+        public IColumnSerializer ColumnSerializer { get; set; } = DatabaseFactory.ColumnSerializer;
+        internal readonly Dictionary<Type, IMapperCollection.ObjectFactoryDelegate> Factories = new Dictionary<Type, IMapperCollection.ObjectFactoryDelegate>();
+        
+
+        public MapperCollection()
+        {
+            Factories.Add(typeof(object), x => new PocoExpando());
+            Factories.Add(typeof(IDictionary<string, object>), x => new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
+            Factories.Add(typeof(Dictionary<string, object>), x => new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase));
+            Factories.Add(typeof(OrderedDictionary), x => new OrderedDictionary(StringComparer.OrdinalIgnoreCase));
+        }
+
+        public void RegisterFactory<T>(Func<DbDataReader, T> factory)
+        {
+            Factories[typeof(T)] = x => factory(x);
+        }
+
+        public IMapperCollection.ObjectFactoryDelegate GetFactory(Type type)
+        {
+            return Factories.ContainsKey(type) ? Factories[type] : null;
+        }
+
+        public bool HasFactory(Type type)
+        {
+            return Factories.ContainsKey(type);
+        }
+
+        public void ClearFactories(Type type = null)
+        {
+            if (type != null)
+            {
+                Factories.Remove(type);
+            }
+            else
+            {
+                Factories.Clear();
+            }
+        }
+
+        public Func<object, object> Find(Func<IMapper, Func<object, object>> predicate)
+        {
+            return this.Select(predicate).FirstOrDefault(x => x != null);
+        }
+
+        public object FindAndExecute(Func<IMapper, Func<object, object>> predicate, object value)
+        {
+            var converter = Find(predicate);
+            return converter != null ? converter(value) : value;
+        }
+
+        private static readonly Cache<object, Func<object, object>> ToDbConverterCache = new();
+        private static readonly Cache<object, Func<object, object>> FromDbConverterCache = new();
+
+        public Func<object, object> FindFromDbConverter(Type destType, Type srcType)
+        {
+            var key = new { DestType = destType, SrcType = srcType };
+            return FromDbConverterCache.Get(key, () => Find(x => x.GetFromDbConverter(destType, srcType)));
+        }
+
+        public Func<object, object> FindFromDbConverter(MemberInfo destInfo, Type srcType)
+        {
+            var key = new { DestInfo = destInfo, SrcType = srcType };
+            return FromDbConverterCache.Get(key, () => Find(x => x.GetFromDbConverter(destInfo, srcType)));
+        }
+
+        public Func<object, object> FindToDbConverter(Type destType, MemberInfo srcInfo)
+        {
+            var key = new { DestType = destType, SrcInfo = srcInfo };
+            return ToDbConverterCache.Get(key, () => Find(x => x.GetToDbConverter(destType, srcInfo)));
+        }
+    }
+}

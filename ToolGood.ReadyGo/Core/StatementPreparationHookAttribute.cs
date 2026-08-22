@@ -1,0 +1,10 @@
+using System;
+
+namespace ToolGood.ReadyGo.NPoco
+{
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    public abstract class StatementPreparationHookAttribute : Attribute
+    {
+        public abstract IAlterStatementHook AlterStatementHook { get; }
+    }
+}
