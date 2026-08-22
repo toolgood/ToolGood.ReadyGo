@@ -21,6 +21,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo.NPoco.Expressions;
 using ToolGood.ReadyGo.NPoco.Extensions;
+using ToolGood.ReadyGo.NPoco.Linq;
 using ToolGood.ReadyGo.NPoco.Internal;
 using System.Threading;
 using System.Runtime.CompilerServices;
@@ -1193,6 +1194,33 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        public IQueryProviderWithIncludes<T> Query<T>()
+        {
+            return new QueryProvider<T>(this);
+        }
+
+        public (List<T>, List<T1>, List<T2>, List<T3>) QueryMultiple<T, T1, T2, T3>(
+            Func<IQueryProviderWithIncludes<T>, IQueryProvider<T>> query1,
+            Func<IQueryProviderWithIncludes<T1>, IQueryProvider<T1>> query2,
+            Func<IQueryProviderWithIncludes<T2>, IQueryProvider<T2>> query3,
+            Func<IQueryProviderWithIncludes<T3>, IQueryProvider<T3>> query4
+            )
+        {
+            var qp1 = new QueryProvider<T>(this);
+            var qp2 = new QueryProvider<T1>(this);
+            var qp3 = new QueryProvider<T2>(this);
+            var qp4 = new QueryProvider<T3>(this);
+            query1.Invoke(qp1);
+            query2.Invoke(qp2);
+            query3.Invoke(qp3);
+            query4.Invoke(qp4);
+            var sql1 = ((INeedSql)qp1).GetSql();
+            var sql2 = ((INeedSql)qp2).GetSql();
+            var sql3 = ((INeedSql)qp3).GetSql();
+            var sql4 = ((INeedSql)qp4).GetSql();
+            return FetchMultiple<T, T1, T2, T3>(sql1.Concat(sql2, ";").Concat(sql3, ";").Concat(sql4, ";"));
+        }
+
         private IEnumerable<T> Query<T>(T instance, Sql Sql)
         {
             return QueryImp(instance, null, null, Sql);
@@ -1669,6 +1697,11 @@ namespace ToolGood.ReadyGo.NPoco
             return primaryKeyValuePairs;
         }
 
+        public IUpdateQueryProvider<T> UpdateMany<T>()
+        {
+            return new UpdateQueryProvider<T>(this);
+        }
+
         public int Update(string tableName, string primaryKeyName, object poco)
         {
             return Update(tableName, primaryKeyName, poco, null);
@@ -1720,6 +1753,11 @@ namespace ToolGood.ReadyGo.NPoco
         {
             var tableInfo = PocoDataFactory.TableInfoForType(typeof(T));
             return Execute(new Sql($"UPDATE {_dbType.EscapeTableName(tableInfo.TableName)}").Append(sql));
+        }
+
+        public IDeleteQueryProvider<T> DeleteMany<T>()
+        {
+            return new DeleteQueryProvider<T>(this);
         }
 
         public int Delete(string tableName, string primaryKeyName, object poco)

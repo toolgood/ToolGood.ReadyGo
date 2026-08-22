@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using ToolGood.ReadyGo.NPoco.Linq;
 using System.Threading.Tasks;
 
 namespace ToolGood.ReadyGo.NPoco
@@ -100,6 +101,11 @@ namespace ToolGood.ReadyGo.NPoco
         int UpdateBatch<T>(IEnumerable<UpdateBatch<T>> pocos, BatchOptions? options = null);
 
         /// <summary>
+        /// Generate an update statement using a Fluent syntax. Remember to call Execute.
+        /// </summary>
+        IUpdateQueryProvider<T> UpdateMany<T>();
+
+        /// <summary>
         /// Delete POCO specifying the table name and primary key
         /// </summary>        
         int Delete(string tableName, string primaryKeyName, object poco);
@@ -134,6 +140,11 @@ namespace ToolGood.ReadyGo.NPoco
         /// Delete POCO deriving the table name from T and generating sql using the primary key
         /// </summary>        
         int Delete<T>(object pocoOrPrimaryKey);
+
+        /// <summary>
+        /// Generate a delete statement using a Fluent syntax. Remember to call Execute.
+        /// </summary>        
+        IDeleteQueryProvider<T> DeleteMany<T>();
 
         /// <summary>
         /// Performs an insert or an update depending on whether the POCO already exists. (i.e. an upsert/merge)

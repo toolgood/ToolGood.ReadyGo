@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
+using ToolGood.ReadyGo.NPoco.Linq;
 using System.Threading.Tasks;
 
 namespace ToolGood.ReadyGo.NPoco
@@ -162,6 +163,11 @@ namespace ToolGood.ReadyGo.NPoco
         /// Caution: This query will only be executed once you start iterating the result
         /// </summary>
         IEnumerable<T> Query<T>(Sql sql);
+        
+        /// <summary>
+        /// Entry point for LINQ queries
+        /// </summary>
+        IQueryProviderWithIncludes<T> Query<T>();
         
         /// <summary>
         /// Get an object of type T by primary key value

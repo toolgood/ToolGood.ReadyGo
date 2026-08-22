@@ -8,6 +8,7 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.Linq.Expressions;
 using ToolGood.ReadyGo.NPoco.Internal;
+using ToolGood.ReadyGo.NPoco.Linq;
 
 namespace ToolGood.ReadyGo.NPoco.Expressions
 {
