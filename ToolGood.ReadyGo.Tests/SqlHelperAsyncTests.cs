@@ -249,7 +249,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
             helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
 
-            var data = await helper.FetchMultiple_Async<UserInfo, SimpleUser>("SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
+            var data = await helper.SelectMultiple_Async<UserInfo, SimpleUser>("SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
 
             Assert.Equal(2, data.Item1.Count);
             Assert.Equal(2, data.Item2.Count);
@@ -265,7 +265,7 @@ namespace ToolGood.ReadyGo.Tests
             db.NewUser("张三", 20);
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
 
-            var tuple = await helper.FetchMultiple_Async<UserInfo, SimpleUser, Tuple<List<UserInfo>, List<SimpleUser>>>(
+            var tuple = await helper.SelectMultiple_Async<UserInfo, SimpleUser, Tuple<List<UserInfo>, List<SimpleUser>>>(
                 (u, s) => Tuple.Create(u, s),
                 "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
 

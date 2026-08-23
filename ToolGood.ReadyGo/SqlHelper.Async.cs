@@ -341,7 +341,7 @@ namespace ToolGood.ReadyGo
 
         #endregion Select Page Select
 
-        #region FetchOneToMany
+        #region SelectOneToMany
 
         /// <summary>
         /// 一对多查询，将子表数据合并到主表的集合属性中（many 指定主表的子集合属性）
@@ -351,7 +351,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，须同时返回主表与子表列</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> FetchOneToMany_Async<T>(Expression<Func<T, IList>> many, string sql, params object[] args)
+        public async Task<List<T>> SelectOneToMany_Async<T>(Expression<Func<T, IList>> many, string sql, params object[] args)
         {
             var result = new List<T>();
             await foreach (var item in GetDatabase().QueryAsync<T>(default!, many, null, new Sql(sql, args)))
@@ -370,7 +370,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<List<T>> FetchOneToMany_Async<T>(Expression<Func<T, IList>> many, Func<T, object> idFunc, string sql, params object[] args)
+        public async Task<List<T>> SelectOneToMany_Async<T>(Expression<Func<T, IList>> many, Func<T, object> idFunc, string sql, params object[] args)
         {
             var result = new List<T>();
             await foreach (var item in GetDatabase().QueryAsync<T>(default!, many, x => new[] { idFunc(x) }, new Sql(sql, args)))
@@ -380,14 +380,14 @@ namespace ToolGood.ReadyGo
             return result;
         }
 
-        #endregion FetchOneToMany
+        #endregion SelectOneToMany
 
-        #region FetchMultiple
+        #region SelectMultiple
 
         /// <summary>
         /// 执行多条 SQL，返回多个结果集。
-        /// <para>var (users, addresses) = await helper.FetchMultiple_Async&lt;User, Address&gt;("select * from users;select * from addresses;");</para>
-        /// <para>var data = await helper.FetchMultiple_Async&lt;User, Address&gt;(sql);</para>
+        /// <para>var (users, addresses) = await helper.SelectMultiple_Async&lt;User, Address&gt;("select * from users;select * from addresses;");</para>
+        /// <para>var data = await helper.SelectMultiple_Async&lt;User, Address&gt;(sql);</para>
         /// <para>var users = data.Item1; var addresses = data.Item2;</para>
         /// </summary>
         /// <typeparam name="T1">第一个结果集类型</typeparam>
@@ -395,7 +395,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<(List<T1>, List<T2>)> FetchMultiple_Async<T1, T2>(string sql, params object[] args)
+        public async Task<(List<T1>, List<T2>)> SelectMultiple_Async<T1, T2>(string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync<T1, T2>(sql, args);
         }
@@ -409,7 +409,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<(List<T1>, List<T2>, List<T3>)> FetchMultiple_Async<T1, T2, T3>(string sql, params object[] args)
+        public async Task<(List<T1>, List<T2>, List<T3>)> SelectMultiple_Async<T1, T2, T3>(string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync<T1, T2, T3>(sql, args);
         }
@@ -424,14 +424,14 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<(List<T1>, List<T2>, List<T3>, List<T4>)> FetchMultiple_Async<T1, T2, T3, T4>(string sql, params object[] args)
+        public async Task<(List<T1>, List<T2>, List<T3>, List<T4>)> SelectMultiple_Async<T1, T2, T3, T4>(string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync<T1, T2, T3, T4>(sql, args);
         }
 
         /// <summary>
         /// 执行多条 SQL，并通过回调组合多个结果集。
-        /// <para>var tuple = await helper.FetchMultiple_Async&lt;User, Address, Tuple&lt;List&lt;User&gt;, List&lt;Address&gt;&gt;&gt;( (u, a) =&gt; Tuple.Create(u, a), sql);</para>
+        /// <para>var tuple = await helper.SelectMultiple_Async&lt;User, Address, Tuple&lt;List&lt;User&gt;, List&lt;Address&gt;&gt;&gt;( (u, a) =&gt; Tuple.Create(u, a), sql);</para>
         /// </summary>
         /// <typeparam name="T1">第一个结果集类型</typeparam>
         /// <typeparam name="T2">第二个结果集类型</typeparam>
@@ -440,7 +440,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<TRet> FetchMultiple_Async<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, params object[] args)
+        public async Task<TRet> SelectMultiple_Async<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync(cb, sql, args);
         }
@@ -456,7 +456,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<TRet> FetchMultiple_Async<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, params object[] args)
+        public async Task<TRet> SelectMultiple_Async<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync(cb, sql, args);
         }
@@ -473,12 +473,12 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public async Task<TRet> FetchMultiple_Async<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, params object[] args)
+        public async Task<TRet> SelectMultiple_Async<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync(cb, sql, args);
         }
 
-        #endregion FetchMultiple
+        #endregion SelectMultiple
 
         #region Single SingleOrDefault First FirstOrDefault
 
