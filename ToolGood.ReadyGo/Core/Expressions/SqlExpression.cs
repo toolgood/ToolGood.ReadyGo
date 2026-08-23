@@ -1035,9 +1035,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
 
         protected virtual object VisitMethodCall(MethodCallExpression m)
         {
-            if (m.Method.DeclaringType == typeof(S))
-                return VisitSqlMethodCall(m);
-
             if (IsStaticArrayMethod(m))
                 return VisitStaticArrayMethodCall(m);
 
@@ -1399,43 +1396,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             var sIn = FlattenList(inArgs, quotedColName);
             var statement = string.Format("{0} {1} ({2})", quotedColName, "IN", sIn);
             return statement;
-        }
-
-        protected virtual object VisitSqlMethodCall(MethodCallExpression m)
-        {
-            List<Object> args = this.VisitExpressionList(m.Arguments);
-            object quotedColName = args[0];
-            args.RemoveAt(0);
-
-            string statement;
-
-            switch (m.Method.Name)
-            {
-                case "In":
-                    statement = BuildInStatement(m.Arguments[1], quotedColName);
-                    break;
-                case "Desc":
-                    statement = string.Format("{0} DESC", quotedColName);
-                    break;
-                case "As":
-                    statement = string.Format("{0} As {1}", quotedColName,
-                        _databaseType.EscapeSqlIdentifier(RemoveQuoteFromAlias(args[0].ToString())));
-                    break;
-                case "Sum":
-                case "Count":
-                case "Min":
-                case "Max":
-                case "Avg":
-                    statement = string.Format("{0}({1}{2})",
-                                         m.Method.Name.ToUpper(),
-                                         quotedColName,
-                                         args.Count == 1 ? string.Format(",{0}", args[0]) : "");
-                    break;
-                default:
-                    throw new NotSupportedException();
-            }
-
-            return new PartialSqlString(statement);
         }
 
         protected virtual object VisitColumnAccessMethod(MethodCallExpression m)
