@@ -148,19 +148,18 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 			if(string.IsNullOrEmpty(length) == false) {
 				sb.AppendFormat("({0})", length);
 			}
+			// DEFAULT 子句必须位于列约束之前；自增优先于 DefaultValue，避免出现两个 DEFAULT
+			if(ti.PrimaryKey == ci.ColumnName && ti.AutoIncrement) {
+				sb.AppendFormat(" DEFAULT NEXTVAL('seq_{0}')", ti.TableName);
+			} else if(string.IsNullOrEmpty(ci.DefaultValue) == false) {
+				sb.AppendFormat(" DEFAULT({0})", ci.DefaultValue);
+			}
 			if(isRequired) {
 				sb.Append(" NOT");
 			}
 			sb.Append(" NULL");
-
-			if(string.IsNullOrEmpty(ci.DefaultValue) == false) {
-				sb.AppendFormat(" DEFAULT({0})", ci.DefaultValue);
-			}
 			if(ti.PrimaryKey == ci.ColumnName) {
 				sb.Append(" PRIMARY KEY");
-				if(ti.AutoIncrement) {
-					sb.Append(" DEFAULT NEXTVAL('seq_" + ti.TableName+"')");
-				}
 			}
 			return sb.ToString();
 		}

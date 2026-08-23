@@ -23,7 +23,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
-                    sql += "    CONSTRAINT " + txt + " UNIQUE (" + columns + "),\r\n  ";
+                    sql += "    CONSTRAINT " + txt + " UNIQUE (" + columns + "),\r\n";
                 }
             }
 
@@ -121,7 +121,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 
             if (type == typeof(bool)) return CreateField(ti, ci, "bit", null, isRequired);
             if (type == typeof(byte)) return CreateField(ti, ci, "tinyint", "1", isRequired);
-            if (type == typeof(char)) return CreateField(ti, ci, "tinyint", "1", isRequired);
+            if (type == typeof(char)) return CreateField(ti, ci, "nchar", "1", isRequired);
 
             if (type == typeof(UInt16)) return CreateField(ti, ci, "smallint", ci.FieldLength, isRequired);
             if (type == typeof(UInt32)) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);

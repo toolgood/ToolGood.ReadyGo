@@ -128,7 +128,7 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal(2, helper.Count<Tb_Order>());
 
             var sql = helper._TableHelper.GetTruncateTable(typeof(Tb_Order));
-            Assert.Contains("DELETE FROM Tb_Order", sql);
+            Assert.Contains("DELETE FROM [Tb_Order]", sql);
             Assert.Contains("sqlite_sequence", sql);
 
             helper._TableHelper.TruncateTable(typeof(Tb_Order));

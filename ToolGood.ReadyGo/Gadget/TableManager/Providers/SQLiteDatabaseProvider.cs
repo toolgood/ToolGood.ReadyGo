@@ -74,13 +74,23 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         public override string GetTruncateTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            return GetTruncateTable(ti.TableName);
+            return GetTruncateTable(ti.TableName, ti.AutoIncrement);
         }
 
         public override string GetTruncateTable(string tableName)
         {
-            return $@"DELETE FROM {tableName};
-DELETE FROM sqlite_sequence WHERE name='{tableName}';";
+            return GetTruncateTable(tableName, false);
+        }
+
+        private string GetTruncateTable(string tableName, bool withSequenceReset)
+        {
+            var sql = $"DELETE FROM [{tableName}];";
+            // 仅当目标表为自增表时重置自增计数（此时 sqlite_sequence 表必然已存在），
+            // 避免在从未使用 AUTOINCREMENT 的数据库中因 sqlite_sequence 不存在而报错
+            if (withSequenceReset) {
+                sql += $"\r\nDELETE FROM sqlite_sequence WHERE name='{tableName}';";
+            }
+            return sql;
         }
 
         private string CreateColumn(TableInfo ti, ColumnInfo ci)
