@@ -10,7 +10,7 @@ using ToolGood.ReadyGo.NPoco.Expressions;
 
 namespace ToolGood.ReadyGo.NPoco.Linq
 {
-    public class AsyncQueryProvider<T> : IAsyncQueryProviderWithIncludes<T>, ISimpleQueryProviderExpression<T>, INeedDatabase, INeedSql
+    public class AsyncQueryProvider<T> : IAsyncQueryProviderWithIncludes<T>, INeedDatabase, INeedSql
     {
         protected readonly Database _database;
         protected ISqlExpression<T> _sqlExpression;
@@ -28,8 +28,6 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             _buildComplexSql = new ComplexSqlBuilder<T>(database, _pocoData, _sqlExpression, _joinSqlExpressions);
             _sqlExpression = _sqlExpression.Where(whereExpression);
         }
-
-        ISqlExpression<T> ISimpleQueryProviderExpression<T>.AtlasSqlExpression { get { return _sqlExpression; } }
 
         public AsyncQueryProvider(Database database) : this(database, null)
         {
