@@ -21,13 +21,13 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 			sql += "\r\n);\r\n";
 			if(withIndex) {
 				foreach(var item in ti.Indexs) {
-					var txt = "i_" + string.Join("_", item).Replace(" ", "_");
+					var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
 					var columns = BuildColumns(item);
 					sql += "CREATE INDEX IF NOT EXISTS " + txt + " ON \"" + ti.TableName + "\"(" + columns + ");\r\n";
 				}
 
 				foreach(var item in ti.Uniques) {
-					var txt = "u_" + string.Join("_", item).Replace(" ", "_");
+					var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
 					var columns = BuildColumns(item);
 					sql += "CREATE UNIQUE INDEX IF NOT EXISTS " + txt + " ON \"" + ti.TableName + "\"( " + columns + ");\r\n";
 				}
@@ -66,12 +66,12 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 		public override string GetDropTable(Type type)
 		{
 			var ti = TableInfo.FromType(type);
-			return "DROP TABLE IF EXISTS \"" + ti.TableName + "\";";
+			return "DROP TABLE IF EXISTS \"" + ti.TableName + "\";\r\nDROP SEQUENCE IF EXISTS seq_" + ti.TableName + ";";
 		}
 
 		public override string GetDropTable(string tableName)
 		{
-			return "DROP TABLE IF EXISTS \"" + tableName + "\";";
+			return "DROP TABLE IF EXISTS \"" + tableName + "\";\r\nDROP SEQUENCE IF EXISTS seq_" + tableName + ";";
 		}
 
 		public override string GetTruncateTable(Type type)
@@ -89,8 +89,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 		{
 			var type = ci.PropertyType;
 			var isRequired = ci.Required;
-			if(type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, true);
-			if(type == typeof(string)) return CreateField(ti, ci, "Text", "", false);
+			if(type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
+			if(type == typeof(string)) return CreateField(ti, ci, "Text", "", isRequired);
 			if(type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 			if(type == typeof(SByte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 			if(type == typeof(UInt16[])) return CreateField(ti, ci, "SMALLINT[]", ci.FieldLength, false);
