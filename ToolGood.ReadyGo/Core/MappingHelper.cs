@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo.NPoco
             if (pc != null && pc.SerializedColumn && (pc.ColumnSerializer != null || mapper?.ColumnSerializer != null))
             {
                 var serializer = pc.ColumnSerializer ?? mapper.ColumnSerializer;
-                converter = src => serializer.Deserialize(src?.ToString(), dstType);
+                converter = src => serializer.Deserialize(src, dstType);
                 return converter;
             }
 

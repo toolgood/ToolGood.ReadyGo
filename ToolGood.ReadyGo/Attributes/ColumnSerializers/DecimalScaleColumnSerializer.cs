@@ -27,7 +27,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <summary>
         /// 数值 × 10^scale，四舍五入后保存为整数
         /// </summary>
-        public string Serialize(object value)
+        public object Serialize(object value)
         {
             if (value == null) {
                 return null;
@@ -40,13 +40,14 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <summary>
         /// 整数 ÷ 10^scale，四舍五入后还原小数
         /// </summary>
-        public object Deserialize(string value, Type targetType)
+        public object Deserialize(object value, Type targetType)
         {
-            if (string.IsNullOrEmpty(value)) {
+            var s = value as string ?? value?.ToString();
+            if (string.IsNullOrEmpty(s)) {
                 return null;
             }
             var t = Nullable.GetUnderlyingType(targetType) ?? targetType;
-            var d = Math.Round(decimal.Parse(value, CultureInfo.InvariantCulture) / _multiplier, _scale, MidpointRounding.AwayFromZero);
+            var d = Math.Round(decimal.Parse(s, CultureInfo.InvariantCulture) / _multiplier, _scale, MidpointRounding.AwayFromZero);
             if (t == typeof(double)) {
                 return (double)d;
             }

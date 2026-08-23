@@ -13,7 +13,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <summary>
         /// 序列化为日期字符串
         /// </summary>
-        public string Serialize(object value)
+        public object Serialize(object value)
         {
             switch (value) {
                 case null:
@@ -32,19 +32,20 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <summary>
         /// 从日期字符串反序列化
         /// </summary>
-        public object Deserialize(string value, Type targetType)
+        public object Deserialize(object value, Type targetType)
         {
-            if (string.IsNullOrEmpty(value)) {
+            var s = value as string ?? value?.ToString();
+            if (string.IsNullOrEmpty(s)) {
                 return null;
             }
             var t = Nullable.GetUnderlyingType(targetType) ?? targetType;
             if (t == typeof(DateOnly)) {
-                return DateOnly.ParseExact(value, DateFormat, CultureInfo.InvariantCulture);
+                return DateOnly.ParseExact(s, DateFormat, CultureInfo.InvariantCulture);
             }
             if (t == typeof(DateTimeOffset)) {
-                return new DateTimeOffset(DateTime.ParseExact(value, DateFormat, CultureInfo.InvariantCulture));
+                return new DateTimeOffset(DateTime.ParseExact(s, DateFormat, CultureInfo.InvariantCulture));
             }
-            return DateTime.ParseExact(value, DateFormat, CultureInfo.InvariantCulture);
+            return DateTime.ParseExact(s, DateFormat, CultureInfo.InvariantCulture);
         }
     }
 }

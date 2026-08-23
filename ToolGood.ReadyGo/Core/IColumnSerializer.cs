@@ -4,7 +4,7 @@ namespace ToolGood.ReadyGo.NPoco
 {
     public interface IColumnSerializer
     {
-        string Serialize(object value);
-        object Deserialize(string value, Type targetType);
+        object Serialize(object value);
+        object Deserialize(object value, Type targetType);
     }
 }
