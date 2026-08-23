@@ -10,7 +10,6 @@ namespace ToolGood.ReadyGo.NPoco
 {
     public interface IDatabaseType
     {
-        void AddTypeMap(Type type, DbType dbType);
         string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args);
         string EscapeSqlIdentifier(string str);
         string EscapeTableName(string tableName);
@@ -30,7 +29,6 @@ namespace ToolGood.ReadyGo.NPoco
         string GetInsertOutputClause(string primaryKeyName, bool useOutputClause);
         string GetParameterPrefix(string connectionString);
         string GetProviderName();
-        string GetSQLForTransactionLevel(IsolationLevel isolationLevel);
         void InsertBulk<T>(IDatabase db, IEnumerable<T> pocos, InsertBulkOptions options);
         Task InsertBulkAsync<T>(IDatabase db, IEnumerable<T> pocos, InsertBulkOptions options, CancellationToken cancellationToken = default);
         DbType? LookupDbType(Type type, string name);

@@ -55,21 +55,6 @@ namespace ToolGood.ReadyGo.NPoco.DatabaseTypes
             return IsolationLevel.ReadCommitted;
         }
 
-        public override string GetSQLForTransactionLevel(IsolationLevel isolationLevel)
-        {
-            switch (isolationLevel)
-            {
-                case IsolationLevel.ReadCommitted:
-                    return "SET TRANSACTION ISOLATION LEVEL READ COMMITTED;";
-
-                case IsolationLevel.Serializable:
-                    return "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;";
-
-                default:
-                    return "SET TRANSACTION ISOLATION LEVEL READ COMMITTED;";
-            }
-        }
-
         public override string GetProviderName()
         {
             return "System.Data.SQLite";

@@ -634,8 +634,8 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
-        internal bool TransactionIsAborted { get; set; }
-        internal int TransactionCount { get; set; }
+        private bool TransactionIsAborted { get; set; }
+        private int TransactionCount { get; set; }
 
         private bool TransactionIsOk()
         {

@@ -14,14 +14,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
 {
     public abstract class SqlExpression<T> : ISqlExpression<T>
     {
-        private List<string> orderByProperties = new List<string>();
         private List<OrderByMember> orderByMembers = new List<OrderByMember>();
         private List<SelectMember> selectMembers = new List<SelectMember>();
         private List<GeneralMember> generalMembers = new List<GeneralMember>();
-        private string selectExpression = string.Empty;
         private string whereExpression;
         private string groupBy = string.Empty;
-        private string havingExpression;
         private string orderBy = string.Empty;
         private string tableHint = string.Empty;
 
@@ -75,16 +72,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             public virtual string ToDeleteStatement()
             {
                 return _expression.ToDeleteStatement();
-            }
-
-            public virtual string ToUpdateStatement(T item)
-            {
-                return _expression.ToUpdateStatement(item, false);
-            }
-
-            public virtual string ToUpdateStatement(T item, bool excludeDefaults)
-            {
-                return _expression.ToUpdateStatement(item, excludeDefaults);
             }
 
             public virtual string ToUpdateStatement(T item, bool excludeDefaults, bool allFields)
@@ -247,11 +234,9 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         public virtual ISqlExpression<T> OrderBy<TKey>(Expression<Func<T, TKey>> keySelector)
         {
             sep = string.Empty;
-            orderByProperties.Clear();
             orderByMembers.Clear();
             generalMembers.Clear();
             var memberAccess = (MemberAccessString)Visit(keySelector);
-            orderByProperties.Add(memberAccess + " ASC");
             orderByMembers.Add(new OrderByMember { AscDesc = "ASC", PocoColumn = memberAccess.PocoColumn, EntityType = memberAccess.Type, PocoColumns = memberAccess.PocoColumns });
             generalMembers.Clear();
             BuildOrderByClauseInternal();
@@ -263,7 +248,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             sep = string.Empty;
             generalMembers.Clear();
             var memberAccess = (MemberAccessString)Visit(keySelector);
-            orderByProperties.Add(memberAccess + " ASC");
             orderByMembers.Add(new OrderByMember { AscDesc = "ASC", PocoColumn = memberAccess.PocoColumn, EntityType = memberAccess.Type, PocoColumns = memberAccess.PocoColumns });
             generalMembers.Clear();
             BuildOrderByClauseInternal();
@@ -273,11 +257,9 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         public virtual ISqlExpression<T> OrderByDescending<TKey>(Expression<Func<T, TKey>> keySelector)
         {
             sep = string.Empty;
-            orderByProperties.Clear();
             orderByMembers.Clear();
             generalMembers.Clear();
             var memberAccess = (MemberAccessString)Visit(keySelector);
-            orderByProperties.Add(memberAccess + " DESC");
             orderByMembers.Add(new OrderByMember { AscDesc = "DESC", PocoColumn = memberAccess.PocoColumn, EntityType = memberAccess.Type, PocoColumns = memberAccess.PocoColumns });
             generalMembers.Clear();
             BuildOrderByClauseInternal();
@@ -289,7 +271,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             sep = string.Empty;
             generalMembers.Clear();
             var memberAccess = (MemberAccessString)Visit(keySelector);
-            orderByProperties.Add(memberAccess + " DESC");
             orderByMembers.Add(new OrderByMember { AscDesc = "DESC", PocoColumn = memberAccess.PocoColumn, EntityType = memberAccess.Type, PocoColumns = memberAccess.PocoColumns });
             generalMembers.Clear();
             BuildOrderByClauseInternal();
@@ -369,11 +350,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                 WhereExpression);
         }
 
-        protected virtual string ToUpdateStatement(T item)
-        {
-            return ToUpdateStatement(item, false);
-        }
-
         protected virtual string ToUpdateStatement(T item, bool excludeDefaults)
         {
             var setFields = new StringBuilder();
@@ -418,9 +394,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             sql.Append(string.IsNullOrEmpty(GroupByExpression) ?
                        "" :
                        " \n" + GroupByExpression);
-            sql.Append(string.IsNullOrEmpty(HavingExpression) ?
-                       "" :
-                       " \n" + HavingExpression);
             sql.Append(string.IsNullOrEmpty(OrderByExpression) ?
                        "" :
                        " \n" + OrderByExpression);
@@ -464,19 +437,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             }
         }
 
-        private string HavingExpression
-        {
-            get
-            {
-                return havingExpression;
-            }
-            set
-            {
-                havingExpression = value;
-            }
-        }
-
-
         private string OrderByExpression
         {
             get
@@ -486,24 +446,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             set
             {
                 orderBy = value;
-            }
-        }
-
-        protected virtual string LimitExpression
-        {
-            get
-            {
-                if (!Skip.HasValue) return "";
-                string rows;
-                if (Rows.HasValue)
-                {
-                    rows = string.Format(",{0}", Rows.Value);
-                }
-                else
-                {
-                    rows = string.Empty;
-                }
-                return string.Format("LIMIT {0}{1}", Skip.Value, rows);
             }
         }
 
@@ -1286,16 +1228,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return list;
         }
 
-        protected virtual List<Object> VisitConstantList(ReadOnlyCollection<Expression> original)
-        {
-            List<Object> list = new List<Object>();
-            for (int i = 0, n = original.Count; i < n; i++)
-            {
-                list.Add(original[i].GetConstantValue<object>());
-            }
-            return list;
-        }
-
         protected virtual object VisitNewArray(NewArrayExpression na)
         {
 
@@ -1360,13 +1292,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                 default:
                     return e.ToString();
             }
-        }
-
-        protected virtual string GetQuotedColumnName(string memberName)
-        {
-            var fd = _pocoData.Columns.Values.FirstOrDefault(x => x.MemberInfoData.Name == memberName);
-            string fn = fd != null ? fd.ColumnName : memberName;
-            return _databaseType.EscapeSqlIdentifier(fn);
         }
 
         protected string RemoveQuoteFromAlias(string exp)

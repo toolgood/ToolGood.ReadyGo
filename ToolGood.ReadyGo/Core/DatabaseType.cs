@@ -20,14 +20,10 @@ namespace ToolGood.ReadyGo.NPoco
     {
         // Helper Properties
         public static DatabaseType SqlServer2012 { get { return DynamicDatabaseType.MakeSqlServerType("SqlServer2012DatabaseType"); } }
-        public static DatabaseType SqlServer2008 { get { return DynamicDatabaseType.MakeSqlServerType("SqlServer2008DatabaseType"); } }
-        public static DatabaseType SqlServer2005 { get { return DynamicDatabaseType.MakeSqlServerType("SqlServerDatabaseType"); } }
         public static DatabaseType PostgreSQL { get { return Singleton<PostgreSQLDatabaseType>.Instance; } }
         public static DatabaseType Oracle { get { return Singleton<OracleDatabaseType>.Instance; } }
-        public static DatabaseType OracleManaged { get { return Singleton<OracleManagedDatabaseType>.Instance; } }
         public static DatabaseType MySQL { get { return Singleton<MySqlDatabaseType>.Instance; } }
         public static DatabaseType SQLite { get { return Singleton<SQLiteDatabaseType>.Instance; } }
-        public static DatabaseType SQLCe { get { return DynamicDatabaseType.MakeSqlServerType("SqlServerCEDatabaseType"); } }
         public static DatabaseType Firebird { get { return Singleton<FirebirdDatabaseType>.Instance; } }
 
         readonly Dictionary<Type, DbType> typeMap;
@@ -78,15 +74,7 @@ namespace ToolGood.ReadyGo.NPoco
 #endif
         }
 
-        /// <summary>
-        /// Configire the specified type to be mapped to a given db-type
-        /// </summary>
-        public void AddTypeMap(Type type, DbType dbType)
-        {
-            typeMap[type] = dbType;
-        }
-
-        internal const string LinqBinary = "System.Data.Linq.Binary";
+        private const string LinqBinary = "System.Data.Linq.Binary";
         public virtual DbType? LookupDbType(Type type, string name)
         {
             DbType dbType;
@@ -310,30 +298,6 @@ namespace ToolGood.ReadyGo.NPoco
         public virtual IsolationLevel GetDefaultTransactionIsolationLevel()
         {
             return IsolationLevel.ReadCommitted;
-        }
-
-        public virtual string GetSQLForTransactionLevel(IsolationLevel isolationLevel)
-        {
-            switch (isolationLevel)
-            {
-                case IsolationLevel.ReadCommitted:
-                    return "SET TRANSACTION ISOLATION LEVEL READ COMMITTED;";
-
-                case IsolationLevel.ReadUncommitted:
-                    return "SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;";
-
-                case IsolationLevel.RepeatableRead:
-                    return "SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;";
-
-                case IsolationLevel.Serializable:
-                    return "SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;";
-
-                case IsolationLevel.Snapshot:
-                    return "SET TRANSACTION ISOLATION LEVEL SNAPSHOT;";
-
-                default:
-                    return "SET TRANSACTION ISOLATION LEVEL READ COMMITTED;";
-            }
         }
 
         public ISqlExpression<T> ExpressionVisitor<T>(IDatabase db, PocoData pocoData)

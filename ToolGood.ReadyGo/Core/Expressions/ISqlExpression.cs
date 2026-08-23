@@ -48,8 +48,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             string ToDeleteStatement();
             string ToSelectStatement();
             string ToSelectStatement(bool applyPaging, bool distinct);
-            string ToUpdateStatement(T item);
-            string ToUpdateStatement(T item, bool excludeDefaults);
             string ToUpdateStatement(T item, bool excludeDefaults, bool allFields);
             string ToWhereStatement();
         }

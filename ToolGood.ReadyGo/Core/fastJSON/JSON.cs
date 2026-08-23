@@ -219,17 +219,6 @@ namespace ToolGood.ReadyGo.NPoco.fastJSON
         {
             return new JsonParser(json, Parameters.AllowNonQuotedKeys).Decode();
         }
-#if !NET35
-        /// <summary>
-        /// Create a .net4 dynamic object from the json string
-        /// </summary>
-        /// <param name="json"></param>
-        /// <returns></returns>
-        public static dynamic ToDynamic(string json)
-        {
-            return new DynamicJson(json);
-        }
-#endif
         /// <summary>
         /// Create a typed generic object from the json
         /// </summary>

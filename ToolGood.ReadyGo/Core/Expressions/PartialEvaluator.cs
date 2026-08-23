@@ -23,21 +23,6 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return SubtreeEvaluator.Eval(Nominator.Nominate(fnCanBeEvaluated, expression), expression);
         }
 
-        /// <summary>
-        /// Performs evaluation & replacement of independent sub-trees
-        /// </summary>
-        /// <param retval="expression">The root of the expression tree.</param>
-        /// <returns>A new tree with sub-trees evaluated and replaced.</returns>
-        public static Expression Eval(Expression expression)
-        {
-            return Eval(expression, PartialEvaluator.CanBeEvaluatedLocally);
-        }
-
-        private static bool CanBeEvaluatedLocally(Expression expression)
-        {
-            return expression.NodeType != ExpressionType.Parameter;
-        }
-
         private static bool IsByRefLikeType(Type type)
         {
             // Check for byref-like types (Span<T>, ReadOnlySpan<T>, etc.)
