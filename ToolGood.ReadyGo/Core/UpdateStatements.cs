@@ -9,6 +9,9 @@ namespace ToolGood.ReadyGo.NPoco
 {
     public partial class Database
     {
+        /// <summary>
+        /// 提供生成更新 SQL 语句的辅助方法。
+        /// </summary>
         public class UpdateStatements
         {
             internal static PreparedUpdateStatement PrepareUpdate(Database database, PocoData pd, string tableName, string primaryKeyName, object poco, object primaryKeyValue, IEnumerable<string> columns)

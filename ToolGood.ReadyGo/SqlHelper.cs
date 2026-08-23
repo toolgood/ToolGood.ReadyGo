@@ -155,7 +155,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询，并返回查询所返回的结果集中第一行的第一列。忽略额外的列或行。
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">结果类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns>返回查询所返回的结果集中第一行的第一列。忽略额外的列或行</returns>
@@ -332,7 +332,7 @@ namespace ToolGood.ReadyGo
         /// <param name="many">主表存放子表集合的属性</param>
         /// <param name="sql">SQL 语句，须同时返回主表与子表列</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>合并子表数据后的主表对象集合</returns>
         public List<T> SelectOneToMany<T>(Expression<Func<T, IList>> many, string sql, params object[] args)
         {
             return GetDatabase().FetchOneToMany(many, sql, args);
@@ -346,7 +346,7 @@ namespace ToolGood.ReadyGo
         /// <param name="idFunc">主表唯一标识选择器</param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>合并子表数据后的主表对象集合</returns>
         public List<T> SelectOneToMany<T>(Expression<Func<T, IList>> many, Func<T, object> idFunc, string sql, params object[] args)
         {
             return GetDatabase().FetchOneToMany(many, idFunc, sql, args);
@@ -365,7 +365,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T2">第二个结果集类型</typeparam>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>两个结果集组成的元组</returns>
         public (List<T1>, List<T2>) SelectMultiple<T1, T2>(string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple<T1, T2>(sql, args);
@@ -379,7 +379,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T3">第三个结果集类型</typeparam>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>三个结果集组成的元组</returns>
         public (List<T1>, List<T2>, List<T3>) SelectMultiple<T1, T2, T3>(string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple<T1, T2, T3>(sql, args);
@@ -394,7 +394,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T4">第四个结果集类型</typeparam>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>四个结果集组成的元组</returns>
         public (List<T1>, List<T2>, List<T3>, List<T4>) SelectMultiple<T1, T2, T3, T4>(string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple<T1, T2, T3, T4>(sql, args);
@@ -410,7 +410,7 @@ namespace ToolGood.ReadyGo
         /// <param name="cb">组合回调</param>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>经回调组合后的结果</returns>
         public TRet SelectMultiple<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple(cb, sql, args);
@@ -426,7 +426,7 @@ namespace ToolGood.ReadyGo
         /// <param name="cb">组合回调</param>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>经回调组合后的结果</returns>
         public TRet SelectMultiple<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple(cb, sql, args);
@@ -443,7 +443,7 @@ namespace ToolGood.ReadyGo
         /// <param name="cb">组合回调</param>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>经回调组合后的结果</returns>
         public TRet SelectMultiple<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple(cb, sql, args);
@@ -455,12 +455,12 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询, 返回单个
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="columnSql"></param>
-        /// <param name="tableSql"></param>
-        /// <param name="whereSql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="columnSql">查询列 SQL 语句</param>
+        /// <param name="tableSql">表名 SQL 语句</param>
+        /// <param name="whereSql">WHERE 条件 SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns>查询结果中的第一条记录，无结果时返回 null</returns>
         public T SQL_FirstOrDefault<T>(string columnSql, string tableSql, string whereSql, params object[] args)
             where T : class
         {
@@ -479,7 +479,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页数量</param>
         /// <param name="columnSql">查询列 SQL语句</param>
@@ -487,7 +487,7 @@ namespace ToolGood.ReadyGo
         /// <param name="orderSql">ORDER BY SQL语句</param>
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public List<T> SQL_Select<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -509,14 +509,14 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="limit">每页数量</param>
         /// <param name="columnSql">查询列 SQL语句</param>
         /// <param name="tableSql">TABLE SQL语句</param>
         /// <param name="orderSql">ORDER BY SQL语句</param>
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public List<T> SQL_Select<T>(int limit, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -537,13 +537,13 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="columnSql">查询列 SQL语句</param>
         /// <param name="tableSql">TABLE SQL语句</param>
         /// <param name="orderSql">ORDER BY SQL语句</param>
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public List<T> SQL_Select<T>(string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -563,7 +563,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回Page类型
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页数量</param>
         /// <param name="columnSql">查询列 SQL语句</param>
@@ -571,7 +571,7 @@ namespace ToolGood.ReadyGo
         /// <param name="orderSql">ORDER BY SQL语句</param>
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>分页结果</returns>
         public Page<T> SQL_Page<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -622,10 +622,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 获取第一个类型
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果中的第一条记录，无结果时返回 null</returns>
         public T FirstOrDefault<T>(string sql = "", params object[] args)
         {
             if (_sql_firstWithLimit1 == false) {
@@ -641,8 +641,8 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 插入集合，不返回主键
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="list">要插入的实体集合</param>
         public void InsertList<T>(List<T> list) where T : class
         {
             if (list == null) throw new ArgumentNullException("list is null.");
@@ -660,8 +660,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 插入，支持主键自动获取。
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="poco">对象</param>
-        /// <returns></returns>
+        /// <returns>插入后自动生成的主键值</returns>
         public object Insert<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -694,7 +695,7 @@ namespace ToolGood.ReadyGo
         /// <para>user.Name = "Bobby";</para>
         /// <para>helper.Update(user, snapshot.UpdatedColumns()); // 仅更新变更的列</para>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="poco">要跟踪的对象</param>
         /// <returns>快照</returns>
         public Snapshot<T> StartSnapshot<T>(T poco) where T : class
@@ -706,10 +707,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 更新指定列
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="poco">对象</param>
         /// <param name="columns">要更新的列名集合</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public int Update<T>(T poco, IEnumerable<string> columns) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -719,10 +720,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 更新，仅更新快照中发生变更的列
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="poco">对象</param>
         /// <param name="snapshot">快照</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public int Update<T>(T poco, Snapshot<T> snapshot) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -733,8 +734,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 删除
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="poco">对象</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public int Delete<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -747,10 +749,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 删除
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public int Delete<T>(string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
@@ -764,9 +766,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据ID 删除表数据, 注： 单独从delete方法，防止出错
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="primaryKey">主键</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public int DeleteById<T>(object primaryKey) where T : class
         {
             return GetDatabase().Delete<T>(primaryKey);
@@ -775,7 +777,8 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 保存
         /// </summary>
-        /// <param name="poco"></param>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="poco">对象</param>
         public void Save<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -785,10 +788,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 更新
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public int Update<T>(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
@@ -818,9 +821,9 @@ namespace ToolGood.ReadyGo
         /// <para>var so = helper.GetTableName(typeof(DbSaleOrder), "so");</para>
         /// <para>var select = $"select {so.Code} from {so} where {so.Id}='123'";</para>
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="asName"></param>
-        /// <returns></returns>
+        /// <param name="type">实体类型</param>
+        /// <param name="asName">表别名</param>
+        /// <returns>动态表名对象，可通过其成员访问列名</returns>
         public dynamic GetTableName(Type type, string asName = null)
         {
             var pd = GetDatabase().PocoDataFactory.ForType(type);
@@ -830,9 +833,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 获取动态表名，适合绑定数据表列名
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="asName"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="asName">表别名</param>
+        /// <returns>动态表名对象，可通过其成员访问列名</returns>
         public TableName<T> GetTableName<T>(string asName = null) where T : class, new()
         {
             var pd = GetDatabase().PocoDataFactory.ForType(typeof(T));

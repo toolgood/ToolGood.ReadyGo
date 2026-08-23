@@ -5,8 +5,16 @@ using ToolGood.ReadyGo.Attributes;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 根据实体类型上的特性生成表信息。
+    /// </summary>
     public class TableInfoCreator
     {
+        /// <summary>
+        /// 从指定类型解析并创建表信息（表名、主键、自增、序列、持久化类型及语句钩子）。
+        /// </summary>
+        /// <param name="t">实体类型。</param>
+        /// <returns>解析出的表信息。</returns>
         public static TableInfo FromPoco(Type t)
         {
             var tableInfo = new TableInfo();

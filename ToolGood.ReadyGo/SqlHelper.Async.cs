@@ -30,7 +30,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询，并返回查询所返回的结果集中第一行的第一列。忽略额外的列或行。
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">结果类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns>返回查询所返回的结果集中第一行的第一列。忽略额外的列或行</returns>
@@ -57,10 +57,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,判断是否存在，返回bool类型
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>存在返回 true，否则返回 false</returns>
         public async Task<bool> Exists_Async<T>(string sql, params object[] args)
         {
             return await Count_Async<T>(sql, args) > 0;
@@ -69,10 +69,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         ///  执行SQL 查询,返回数量
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>记录数量</returns>
         public async Task<int> Count_Async<T>(string sql = "", params object[] args)
         {
             sql = sql.Trim();
@@ -88,10 +88,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         ///  执行SQL 查询,返回数量
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>记录数量</returns>
         public async Task<int> Select_Count_Async<T>(string sql = "", params object[] args)
         {
             return await Count_Async<T>(sql, args);
@@ -100,9 +100,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回数量
         /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns>记录数量</returns>
         public async Task<int> Count_Async(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
@@ -116,10 +116,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public async Task<List<T>> Select_Async<T>(string sql = "", params object[] args)
         {
             return await GetDatabase().QueryAsync<T>(sql, args).ToListAsync();
@@ -128,11 +128,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="limit">获取个数</param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public async Task<List<T>> Select_Async<T>(int limit, string sql = "", params object[] args) where T : class
         {
             return await GetDatabase().SkipTakeAsync<T>(0, limit, sql, args);
@@ -141,12 +141,12 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="offset">跳过</param>
         /// <param name="limit">获取个数</param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public async Task<List<T>> Select_Async<T>(int limit, int offset, string sql = "", params object[] args) where T : class
         {
             return await GetDatabase().SkipTakeAsync<T>(offset, limit, sql, args);
@@ -155,12 +155,12 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页数量</param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public async Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, string sql = "", params object[] args)
              where T : class
         {
@@ -173,12 +173,12 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回Page类型
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页数量</param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>分页结果</returns>
         public async Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, string sql = "", params object[] args) where T : class
         {
             if (page <= 0) { page = 1; }
@@ -191,12 +191,12 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询, 返回单个
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="columnSql"></param>
-        /// <param name="tableSql"></param>
-        /// <param name="whereSql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="columnSql">查询列 SQL 语句</param>
+        /// <param name="tableSql">表名 SQL 语句</param>
+        /// <param name="whereSql">WHERE 条件 SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns>查询结果中的第一条记录，无结果时返回 null</returns>
         public async Task<T> SQL_FirstOrDefault_Async<T>(string columnSql, string tableSql, string whereSql, params object[] args)
             where T : class
         {
@@ -215,7 +215,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页数量</param>
         /// <param name="columnSql">查询列 SQL语句</param>
@@ -223,7 +223,7 @@ namespace ToolGood.ReadyGo
         /// <param name="orderSql">ORDER BY SQL语句</param>
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public async Task<List<T>> SQL_Select_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -245,14 +245,14 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="limit">每页数量</param>
         /// <param name="columnSql">查询列 SQL语句</param>
         /// <param name="tableSql">TABLE SQL语句</param>
         /// <param name="orderSql">ORDER BY SQL语句</param>
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public async Task<List<T>> SQL_Select_Async<T>(int limit, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -273,13 +273,13 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="columnSql">查询列 SQL语句</param>
         /// <param name="tableSql">TABLE SQL语句</param>
         /// <param name="orderSql">ORDER BY SQL语句</param>
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public async Task<List<T>> SQL_Select_Async<T>(string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -299,7 +299,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回Page类型
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页数量</param>
         /// <param name="columnSql">查询列 SQL语句</param>
@@ -307,7 +307,7 @@ namespace ToolGood.ReadyGo
         /// <param name="orderSql">ORDER BY SQL语句</param>
         /// <param name="whereSql">WHERE SQL语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>分页结果</returns>
         public async Task<Page<T>> SQL_Page_Async<T>(int page, int itemsPerPage, string columnSql, string tableSql, string orderSql, string whereSql, params object[] args)
             where T : class
         {
@@ -350,7 +350,7 @@ namespace ToolGood.ReadyGo
         /// <param name="many">主表存放子表集合的属性</param>
         /// <param name="sql">SQL 语句，须同时返回主表与子表列</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>合并子表数据后的主表对象集合</returns>
         public async Task<List<T>> SelectOneToMany_Async<T>(Expression<Func<T, IList>> many, string sql, params object[] args)
         {
             var result = new List<T>();
@@ -369,7 +369,7 @@ namespace ToolGood.ReadyGo
         /// <param name="idFunc">主表唯一标识选择器</param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>合并子表数据后的主表对象集合</returns>
         public async Task<List<T>> SelectOneToMany_Async<T>(Expression<Func<T, IList>> many, Func<T, object> idFunc, string sql, params object[] args)
         {
             var result = new List<T>();
@@ -394,7 +394,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T2">第二个结果集类型</typeparam>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>两个结果集组成的元组</returns>
         public async Task<(List<T1>, List<T2>)> SelectMultiple_Async<T1, T2>(string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync<T1, T2>(sql, args);
@@ -408,7 +408,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T3">第三个结果集类型</typeparam>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>三个结果集组成的元组</returns>
         public async Task<(List<T1>, List<T2>, List<T3>)> SelectMultiple_Async<T1, T2, T3>(string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync<T1, T2, T3>(sql, args);
@@ -423,7 +423,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T4">第四个结果集类型</typeparam>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>四个结果集组成的元组</returns>
         public async Task<(List<T1>, List<T2>, List<T3>, List<T4>)> SelectMultiple_Async<T1, T2, T3, T4>(string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync<T1, T2, T3, T4>(sql, args);
@@ -439,7 +439,7 @@ namespace ToolGood.ReadyGo
         /// <param name="cb">组合回调</param>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>经回调组合后的结果</returns>
         public async Task<TRet> SelectMultiple_Async<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync(cb, sql, args);
@@ -455,7 +455,7 @@ namespace ToolGood.ReadyGo
         /// <param name="cb">组合回调</param>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>经回调组合后的结果</returns>
         public async Task<TRet> SelectMultiple_Async<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync(cb, sql, args);
@@ -472,7 +472,7 @@ namespace ToolGood.ReadyGo
         /// <param name="cb">组合回调</param>
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>经回调组合后的结果</returns>
         public async Task<TRet> SelectMultiple_Async<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, params object[] args)
         {
             return await GetDatabase().FetchMultipleAsync(cb, sql, args);
@@ -496,10 +496,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 获取第一个类型
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果中的第一条记录，无结果时返回 null</returns>
         public async Task<T> FirstOrDefault_Async<T>(string sql = "", params object[] args)
         {
             if (_sql_firstWithLimit1 == false) {
@@ -516,8 +516,8 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 插入集合，不返回主键
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="list"></param>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="list">要插入的实体集合</param>
         public async Task InsertList_Async<T>(List<T> list) where T : class
         {
             if (list == null) throw new ArgumentNullException("list is null.");
@@ -535,8 +535,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 插入，支持主键自动获取。
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="poco">对象</param>
-        /// <returns></returns>
+        /// <returns>插入后自动生成的主键值</returns>
         public async Task<object> Insert_Async<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -554,8 +555,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 更新
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="poco">对象</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public async Task<int> Update_Async<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -568,10 +570,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 更新指定列
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="poco">对象</param>
         /// <param name="columns">要更新的列名集合</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public async Task<int> Update_Async<T>(T poco, IEnumerable<string> columns) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -581,10 +583,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 更新，仅更新快照中发生变更的列
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="poco">对象</param>
         /// <param name="snapshot">快照</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public async Task<int> Update_Async<T>(T poco, Snapshot<T> snapshot) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -595,8 +597,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 删除
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="poco">对象</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public async Task<int> Delete_Async<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -609,10 +612,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 删除
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public async Task<int> Delete_Async<T>(string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
@@ -626,9 +629,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据ID 删除表数据, 注： 单独从delete方法，防止出错
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="primaryKey">主键</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public async Task<int> DeleteById_Async<T>(object primaryKey) where T : class
         {
             var pd = GetDatabase().PocoDataFactory.ForType(typeof(T));
@@ -641,7 +644,8 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 保存
         /// </summary>
-        /// <param name="poco"></param>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="poco">对象</param>
         public async Task Save_Async<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -651,10 +655,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 更新
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public async Task<int> Update_Async<T>(string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");

@@ -18,8 +18,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(int condition) where T : class
         {
             return SingleOrDefaultById<T>(condition);
@@ -28,8 +29,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(int? condition) where T : class
         {
             return SingleOrDefaultById<T>(condition ?? 0);
@@ -38,8 +40,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(uint condition) where T : class
         {
             return SingleOrDefaultById<T>(condition);
@@ -48,8 +51,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(uint? condition) where T : class
         {
             return SingleOrDefaultById<T>(condition ?? 0);
@@ -58,8 +62,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(long condition) where T : class
         {
             return SingleOrDefaultById<T>(condition);
@@ -68,8 +73,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(long? condition) where T : class
         {
             return SingleOrDefaultById<T>(condition ?? 0);
@@ -78,8 +84,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(ulong condition) where T : class
         {
             return SingleOrDefaultById<T>(condition);
@@ -88,8 +95,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(ulong? condition) where T : class
         {
             return SingleOrDefaultById<T>(condition ?? 0);
@@ -100,8 +108,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(object condition) where T : class
         {
             return FirstOrDefault<T>(ConditionObjectToWhere(condition));
@@ -110,10 +119,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="limit">个数</param>
         /// <param name="offset">位移</param>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public List<T> Select<T>(int limit, int offset, object condition) where T : class
         {
             return Select<T>(limit, offset, ConditionObjectToWhere(condition));
@@ -122,9 +132,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="limit">个数</param>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public List<T> Select<T>(int limit, object condition) where T : class
         {
             return Select<T>(limit, ConditionObjectToWhere(condition));
@@ -133,9 +144,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public List<T> Select<T>(object condition) where T : class
         {
             return Select<T>(ConditionObjectToWhere(condition));
@@ -144,10 +155,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询页
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public List<T> SelectPage<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
@@ -157,10 +169,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询页
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>分页结果</returns>
         public Page<T> Page<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
@@ -170,10 +183,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件更新对象
         /// </summary>
-        /// <param name="set"></param>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="set">要更新的字段与值对象</param>
         /// <param name="condition">条件</param>
-        /// <param name="ignoreFields"></param>
-        /// <returns></returns>
+        /// <param name="ignoreFields">忽略的字段名集合</param>
+        /// <returns>受影响的行数</returns>
         public int Update<T>(object set, object condition, IEnumerable<string> ignoreFields = null) where T : class
         {
             return Update<T>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
@@ -182,8 +196,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件从数据库中删除对象
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public int Delete<T>(object condition) where T : class
         {
             return Delete<T>(ConditionObjectToWhere(condition));
@@ -192,8 +207,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询个数
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>记录数量</returns>
         public int Count<T>(object condition) where T : class
         {
             return Count<T>(ConditionObjectToWhere(condition));
@@ -202,8 +218,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件判断是否存在
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>存在返回 true，否则返回 false</returns>
         public bool Exists<T>(object condition) where T : class
         {
             if (condition.GetType().IsClass) {
@@ -226,8 +243,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(int condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition);
@@ -236,8 +254,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(int? condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition ?? 0);
@@ -246,8 +265,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(uint condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition);
@@ -256,8 +276,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(uint? condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition ?? 0);
@@ -266,8 +287,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(long condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition);
@@ -276,8 +298,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(long? condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition ?? 0);
@@ -286,8 +309,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(ulong condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition);
@@ -296,8 +320,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(ulong? condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition ?? 0);
@@ -308,8 +333,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(object condition) where T : class
         {
             return FirstOrDefault_Async<T>(ConditionObjectToWhere(condition));
@@ -318,10 +344,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="limit">个数</param>
         /// <param name="offset">位移</param>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public Task<List<T>> Select_Async<T>(int limit, int offset, object condition) where T : class
         {
             return Select_Async<T>(limit, offset, ConditionObjectToWhere(condition));
@@ -330,9 +357,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="limit">个数</param>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public Task<List<T>> Select_Async<T>(int limit, object condition) where T : class
         {
             return Select_Async<T>(limit, ConditionObjectToWhere(condition));
@@ -341,8 +369,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public Task<List<T>> Select_Async<T>(object condition) where T : class
         {
             return Select_Async<T>(ConditionObjectToWhere(condition));
@@ -351,10 +380,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         ///  根据条件查询页，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
@@ -364,10 +394,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         ///  根据条件查询页，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>分页结果</returns>
         public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
@@ -377,10 +408,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件更新对象
         /// </summary>
-        /// <param name="set"></param>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="set">要更新的字段与值对象</param>
         /// <param name="condition">条件</param>
-        /// <param name="ignoreFields"></param>
-        /// <returns></returns>
+        /// <param name="ignoreFields">忽略的字段名集合</param>
+        /// <returns>受影响的行数</returns>
         public Task<int> Update_Async<T>(object set, object condition, IEnumerable<string> ignoreFields = null) where T : class
         {
             return Update_Async<T>(ConditionObjectToUpdateSetWhere(set, condition, ignoreFields));
@@ -399,8 +431,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询个数，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>记录数量</returns>
         public Task<int> Count_Async<T>(object condition) where T : class
         {
             return Count_Async<T>(ConditionObjectToWhere(condition));
@@ -532,10 +565,10 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        ///
+        /// 将值转义为 SQL 字面量
         /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
+        /// <param name="value">要转义的值</param>
+        /// <returns>转义后的 SQL 字面量字符串</returns>
         protected string EscapeParam(object value)
         {
             if (object.Equals(value, null)) return "NULL";
