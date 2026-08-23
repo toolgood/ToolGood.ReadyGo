@@ -5,13 +5,25 @@ using ToolGood.ReadyGo.NPoco;
 
 namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 {
+    /// <summary>
+    /// SQL Server 2012 数据库提供程序
+    /// </summary>
     public class SqlServer2012DatabaseProvider : SqlServerDatabaseProvider
     { }
 
+    /// <summary>
+    /// SQL Server 数据库提供程序
+    /// </summary>
     public class SqlServerDatabaseProvider : DatabaseProvider
     {
         // http://www.cnblogs.com/gouchaonan/p/6127799.html
 
+        /// <summary>
+        /// 获取“表不存在时创建”的建表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <param name="withIndex">是否同时生成索引</param>
+        /// <returns>建表 SQL</returns>
         public override string GetTryCreateTable(Type type, bool withIndex = true)
         {
             var ti = TableInfo.FromType(type);

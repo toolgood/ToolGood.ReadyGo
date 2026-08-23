@@ -27,6 +27,12 @@ namespace ToolGood.ReadyGo.Internals
             _asName = asName;
         }
 
+        /// <summary>
+        /// 尝试获取成员（列名）对应的转义 SQL 标识符
+        /// </summary>
+        /// <param name="binder">成员绑定信息</param>
+        /// <param name="result">输出的转义后的 SQL 标识符（含别名前缀）</param>
+        /// <returns>是否成功获取到对应列</returns>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             var fieldName = binder.Name;
@@ -53,6 +59,10 @@ namespace ToolGood.ReadyGo.Internals
             return false;
         }
 
+        /// <summary>
+        /// 返回转义后的表名（含别名）
+        /// </summary>
+        /// <returns>转义后的表名</returns>
         public override string ToString()
         {
             if (string.IsNullOrEmpty(_asName)) {
@@ -68,6 +78,12 @@ namespace ToolGood.ReadyGo.Internals
     public class TableName<T> : TableName
         where T : class, new()
     {
+        /// <summary>
+        /// 初始化强类型表名动态对象
+        /// </summary>
+        /// <param name="pocoData">POCO 元数据</param>
+        /// <param name="databaseType">数据库类型</param>
+        /// <param name="asName">表别名</param>
         public TableName(PocoData pocoData, IDatabaseType databaseType, string asName) : base(pocoData, databaseType, asName)
         {
         }

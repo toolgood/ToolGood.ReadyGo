@@ -237,6 +237,7 @@ namespace ToolGood.ReadyGo.NPoco
         /// Returns an SQL expression that can be used to specify the return value of auto incremented columns.
         /// </summary>
         /// <param name="primaryKeyName">The primary key of the row being inserted.</param>
+        /// <param name="useOutputClause">是否使用输出子句。</param>
         /// <returns>An expression describing how to return the new primary key value</returns>
         /// <remarks>See the SQLServer database provider for an example of how this method is used.</remarks>
         public virtual string GetInsertOutputClause(string primaryKeyName, bool useOutputClause)

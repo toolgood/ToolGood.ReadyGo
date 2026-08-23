@@ -680,8 +680,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 更新
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="poco">对象</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public int Update<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
@@ -810,7 +811,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 切换数据库
         /// </summary>
-        /// <param name="databaseName"></param>
+        /// <param name="databaseName">要切换到的数据库名称</param>
         public void ChangeDatabase(string databaseName)
         {
             _databaseName = databaseName;

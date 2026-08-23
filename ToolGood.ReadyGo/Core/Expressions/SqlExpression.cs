@@ -372,6 +372,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return this;
         }
 
+        /// <summary>
+        /// 追加降序排序字段。
+        /// </summary>
+        /// <typeparam name="TKey">排序字段类型。</typeparam>
+        /// <param name="keySelector">排序字段选择器。</param>
+        /// <returns>当前表达式。</returns>
         public virtual ISqlExpression<T> ThenByDescending<TKey>(Expression<Func<T, TKey>> keySelector)
         {
             sep = string.Empty;
@@ -449,6 +455,10 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return this;
         }
 
+        /// <summary>
+        /// 生成删除语句。
+        /// </summary>
+        /// <returns>删除 SQL。</returns>
         protected virtual string ToDeleteStatement()
         {
             return string.Format("DELETE {0} FROM {1} {2}",
@@ -500,6 +510,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return WhereExpression;
         }
 
+        /// <summary>
+        /// 生成查询语句。
+        /// </summary>
+        /// <param name="applyPaging">是否应用分页。</param>
+        /// <param name="isDistinct">是否去重。</param>
+        /// <returns>查询 SQL。</returns>
         protected virtual string ToSelectStatement(bool applyPaging, bool isDistinct)
         {
             var sql = new StringBuilder();
@@ -569,6 +585,9 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         private int? Rows { get; set; }
         private int? Skip { get; set; }
 
+        /// <summary>
+        /// 当前实体的 POCO 元数据定义。
+        /// </summary>
         protected internal PocoData ModelDef
         {
             get
@@ -649,6 +668,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                     return exp.ToString();
             }
         }
+        /// <summary>
+        /// 访问成员初始化表达式。
+        /// </summary>
+        /// <param name="init">待访问的成员初始化表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitMemberInit(MemberInitExpression init)
         {
             NewExpression n = init.NewExpression;
@@ -694,6 +718,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             }
         }
 
+        /// <summary>
+        /// 访问嵌套的成员成员绑定。
+        /// </summary>
+        /// <param name="binding">待访问的成员成员绑定。</param>
+        /// <returns>访问结果。</returns>
         protected virtual object VisitMemberMemberBinding(MemberMemberBinding binding)
         {
             return VisitBindingList(binding.Bindings);
@@ -1430,6 +1459,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return list;
         }
 
+        /// <summary>
+        /// 访问数组创建表达式。
+        /// </summary>
+        /// <param name="na">待访问的数组创建表达式。</param>
+        /// <returns>访问结果。</returns>
         protected virtual object VisitNewArray(NewArrayExpression na)
         {
 
@@ -1532,6 +1566,10 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return new PartialSqlString(string.Format("({0}={1})", GetQuotedTrueValue(), GetQuotedTrueValue()));
         }
 
+        /// <summary>
+        /// 生成恒假的 SQL 表达式片段。
+        /// </summary>
+        /// <returns>假值表达式片段。</returns>
         protected object GetFalseExpression()
         {
             return new PartialSqlString(string.Format("({0}={1})", GetQuotedTrueValue(), GetQuotedFalseValue()));

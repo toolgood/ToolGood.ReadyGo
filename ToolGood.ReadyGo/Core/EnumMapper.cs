@@ -6,12 +6,21 @@ using System.Threading;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 枚举与字符串之间的映射器，用于在枚举值与字符串之间相互转换。
+    /// </summary>
     public class EnumMapper : IDisposable
     {
         readonly Dictionary<Type, Dictionary<string, object>> _stringsToEnums = new Dictionary<Type, Dictionary<string, object>>();
         readonly Dictionary<Type, Dictionary<int, string>> _enumNumbersToStrings = new Dictionary<Type, Dictionary<int, string>>();
         readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         
+        /// <summary>
+        /// 根据枚举类型与字符串值查找对应的枚举值。
+        /// </summary>
+        /// <param name="type">枚举类型。</param>
+        /// <param name="value">要查找的字符串值。</param>
+        /// <returns>对应的枚举值。</returns>
         public object EnumFromString(Type type, string value)
         {
             PopulateIfNotPresent(type);
@@ -22,6 +31,11 @@ namespace ToolGood.ReadyGo.NPoco
             return _stringsToEnums[type][value];
         }
 
+        /// <summary>
+        /// 将枚举值转换为对应的字符串表示。
+        /// </summary>
+        /// <param name="theEnum">要转换的枚举值。</param>
+        /// <returns>枚举值对应的字符串。</returns>
         public string StringFromEnum(object theEnum)
         {
             Type typeOfEnum = theEnum.GetType();

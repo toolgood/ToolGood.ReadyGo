@@ -22,6 +22,7 @@ namespace ToolGood.ReadyGo.NPoco
         /// <param name="tableName">The name of the table to insert into</param>
         /// <param name="primaryKeyName">The name of the primary key column of the table</param>
         /// <param name="poco">The POCO object that specifies the column values to be inserted</param>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
         /// <returns>The auto allocated primary key of the new record</returns>
         public Task<object> InsertAsync(string tableName, string primaryKeyName, object poco, CancellationToken cancellationToken = default)
         {
@@ -33,6 +34,7 @@ namespace ToolGood.ReadyGo.NPoco
         /// Performs an SQL Insert
         /// </summary>
         /// <param name="poco">The POCO object that specifies the column values to be inserted</param>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
         /// <returns>The auto allocated primary key of the new record, or null for non-auto-increment tables</returns>
         /// <remarks>The name of the table, it's primary key and whether it's an auto-allocated primary key are retrieved
         /// from the POCO's attributes</remarks>
@@ -49,6 +51,7 @@ namespace ToolGood.ReadyGo.NPoco
         /// <param name="primaryKeyName">The name of the primary key column of the table</param>
         /// <param name="autoIncrement">True if the primary key is automatically allocated by the DB</param>
         /// <param name="poco">The POCO object that specifies the column values to be inserted</param>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
         /// <returns>The auto allocated primary key of the new record, or null for non-auto-increment tables</returns>
         /// <remarks>Inserts a poco into a table.  If the poco has a property with the same name 
         /// as the primary key the id of the new record is assigned to it.  Either way,

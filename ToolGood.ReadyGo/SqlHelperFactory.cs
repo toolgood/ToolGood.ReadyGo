@@ -266,7 +266,7 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="filePath">文件目录</param>
         /// <param name="pwd">密码</param>
-        /// <returns></returns>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenAccessFile(string filePath, string pwd = null)
         {
             var connstr = $"Provider=Microsoft.Jet.Oledb.4.0;data source={filePath};";

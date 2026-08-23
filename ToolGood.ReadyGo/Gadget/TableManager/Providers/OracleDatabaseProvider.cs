@@ -41,6 +41,11 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             return sql;
         }
 
+        /// <summary>
+        /// 获取创建索引 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>创建索引 SQL</returns>
         public override string GetCreateIndex(Type type)
         {
             string sql = "";

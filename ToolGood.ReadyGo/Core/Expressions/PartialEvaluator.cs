@@ -36,7 +36,7 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         }
 
         /// <summary>
-        /// Evaluates & replaces sub-trees when first candidate is reached (top-down)
+        /// 当到达第一个候选节点时，自上而下地求值并替换子树。
         /// </summary>
         class SubtreeEvaluator : ExpressionVisitor
         {

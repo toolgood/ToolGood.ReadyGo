@@ -852,6 +852,14 @@ namespace ToolGood.ReadyGo.NPoco
             return CreateCommand(connection, CommandType.Text, sql, args);
         }
 
+        /// <summary>
+        /// 创建数据库命令并绑定参数。
+        /// </summary>
+        /// <param name="connection">命令使用的连接。</param>
+        /// <param name="commandType">命令类型。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数。</param>
+        /// <returns>创建好的数据库命令。</returns>
         public virtual DbCommand CreateCommand(DbConnection connection, CommandType commandType, string sql, params object[] args)
         {
             if (commandType == CommandType.StoredProcedure)
@@ -881,6 +889,10 @@ namespace ToolGood.ReadyGo.NPoco
             return cmd;
         }
 
+        /// <summary>
+        /// 发生异常时调用的钩子方法，子类可重写以记录或捕获异常。
+        /// </summary>
+        /// <param name="exception">捕获到的异常。</param>
         protected virtual void OnException(Exception exception)
         {
         }
@@ -900,6 +912,11 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 连接打开后调用的钩子方法，子类可重写。
+        /// </summary>
+        /// <param name="conn">已打开的连接。</param>
+        /// <returns>处理后的连接。</returns>
         protected virtual DbConnection OnConnectionOpened(DbConnection conn)
         {
             return conn;
@@ -932,6 +949,10 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 命令执行前调用的钩子方法，子类可重写。
+        /// </summary>
+        /// <param name="cmd">即将执行的命令。</param>
         protected virtual void OnExecutingCommand(DbCommand cmd)
         {
 
@@ -967,6 +988,11 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 插入前调用的钩子方法，返回 false 可取消插入。
+        /// </summary>
+        /// <param name="insertContext">插入上下文。</param>
+        /// <returns>是否允许继续插入。</returns>
         protected virtual bool OnInserting(InsertContext insertContext)
         {
             return true;
@@ -994,6 +1020,11 @@ namespace ToolGood.ReadyGo.NPoco
             return result && Interceptors.OfType<IDataInterceptor>().All(x => x.OnUpdating(this, updateContext));
         }
 
+        /// <summary>
+        /// 删除前调用的钩子方法，返回 false 可取消删除。
+        /// </summary>
+        /// <param name="deleteContext">删除上下文。</param>
+        /// <returns>是否允许继续删除。</returns>
         protected virtual bool OnDeleting(DeleteContext deleteContext)
         {
             return true;

@@ -59,7 +59,13 @@ namespace ToolGood.ReadyGo.NPoco.Linq
     /// <typeparam name="T">删除的实体类型。</typeparam>
     public class AsyncDeleteQueryProvider<T> : IAsyncDeleteQueryProvider<T>
     {
+        /// <summary>
+        /// 数据库实例。
+        /// </summary>
         protected readonly IDatabase _database;
+        /// <summary>
+        /// SQL 表达式。
+        /// </summary>
         protected ISqlExpression<T> _sqlExpression;
 
         /// <summary>

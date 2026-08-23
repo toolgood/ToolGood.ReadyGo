@@ -74,6 +74,12 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 若指定键不存在则添加缓存条目；若键已存在则不添加。
+        /// </summary>
+        /// <param name="key">缓存键。</param>
+        /// <param name="value">要缓存的值。</param>
+        /// <returns>若键已存在返回 true，否则返回 false。</returns>
         public bool AddIfNotExists(TKey key, TValue value)
         {
             // Cache it

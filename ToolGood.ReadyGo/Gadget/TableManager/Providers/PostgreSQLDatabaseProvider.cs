@@ -43,6 +43,11 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             return sql;
         }
 
+        /// <summary>
+        /// 获取创建索引 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>创建索引 SQL</returns>
         public override string GetCreateIndex(Type type)
         {
             string sql = "";
@@ -69,23 +74,43 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             return sb.ToString().Trim(',');
         }
 
+        /// <summary>
+        /// 获取删除表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>删除表 SQL</returns>
         public override string GetDropTable(Type type)
         {
             var ti = TableInfo.FromType(type);
             return "DROP TABLE IF EXISTS \"" + ti.TableName + "\";\r\nDROP SEQUENCE IF EXISTS seq_" + ti.TableName + ";";
         }
 
+        /// <summary>
+        /// 获取删除表 SQL
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <returns>删除表 SQL</returns>
         public override string GetDropTable(string tableName)
         {
             return "DROP TABLE IF EXISTS \"" + tableName + "\";\r\nDROP SEQUENCE IF EXISTS seq_" + tableName + ";";
         }
 
+        /// <summary>
+        /// 获取清空表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>清空表 SQL</returns>
         public override string GetTruncateTable(Type type)
         {
             var ti = TableInfo.FromType(type);
             return GetTruncateTable(ti.TableName);
         }
 
+        /// <summary>
+        /// 获取清空表 SQL
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <returns>清空表 SQL</returns>
         public override string GetTruncateTable(string tableName)
         {
             return $"TRUNCATE TABLE \"{tableName}\";";

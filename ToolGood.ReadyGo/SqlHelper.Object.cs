@@ -421,8 +421,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件从数据库中删除对象
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>受影响的行数</returns>
         public Task<int> Delete_Async<T>(object condition) where T : class
         {
             return Delete_Async<T>(ConditionObjectToWhere(condition));
@@ -442,8 +443,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件是判断否存在，异步操作
         /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
-        /// <returns></returns>
+        /// <returns>存在返回 true，否则返回 false</returns>
         public async Task<bool> Exists_Async<T>(object condition) where T : class
         {
             if (condition.GetType().IsClass) {

@@ -270,6 +270,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return original;
         }
 
+        /// <summary>
+        /// 访问成员赋值绑定。
+        /// </summary>
+        /// <param name="assignment">待访问的成员赋值绑定。</param>
+        /// <returns>访问后的成员赋值绑定。</returns>
         protected virtual MemberAssignment VisitMemberAssignment(MemberAssignment assignment)
         {
             Expression e = this.Visit(assignment.Expression);
@@ -280,6 +285,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return assignment;
         }
 
+        /// <summary>
+        /// 访问嵌套的成员成员绑定。
+        /// </summary>
+        /// <param name="binding">待访问的成员成员绑定。</param>
+        /// <returns>访问后的成员成员绑定。</returns>
         protected virtual MemberMemberBinding VisitMemberMemberBinding(MemberMemberBinding binding)
         {
             IEnumerable<MemberBinding> bindings = this.VisitBindingList(binding.Bindings);
@@ -290,6 +300,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return binding;
         }
 
+        /// <summary>
+        /// 访问成员列表绑定。
+        /// </summary>
+        /// <param name="binding">待访问的成员列表绑定。</param>
+        /// <returns>访问后的成员列表绑定。</returns>
         protected virtual MemberListBinding VisitMemberListBinding(MemberListBinding binding)
         {
             IEnumerable<ElementInit> initializers = this.VisitElementInitializerList(binding.Initializers);
@@ -300,6 +315,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return binding;
         }
 
+        /// <summary>
+        /// 访问成员绑定列表。
+        /// </summary>
+        /// <param name="original">待访问的成员绑定列表。</param>
+        /// <returns>访问后的成员绑定列表。</returns>
         protected virtual IEnumerable<MemberBinding> VisitBindingList(ReadOnlyCollection<MemberBinding> original)
         {
             List<MemberBinding> list = null;
@@ -355,6 +375,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return original;
         }
 
+        /// <summary>
+        /// 访问 Lambda 表达式。
+        /// </summary>
+        /// <param name="lambda">待访问的 Lambda 表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitLambda(LambdaExpression lambda)
         {
             Expression body = this.Visit(lambda.Body);
@@ -383,6 +408,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return nex;
         }
 
+        /// <summary>
+        /// 访问成员初始化表达式。
+        /// </summary>
+        /// <param name="init">待访问的成员初始化表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitMemberInit(MemberInitExpression init)
         {
             NewExpression n = this.VisitNew(init.NewExpression);
@@ -394,6 +424,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return init;
         }
 
+        /// <summary>
+        /// 访问列表初始化表达式。
+        /// </summary>
+        /// <param name="init">待访问的列表初始化表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitListInit(ListInitExpression init)
         {
             NewExpression n = this.VisitNew(init.NewExpression);

@@ -6,6 +6,9 @@ using System.Reflection;
 
 namespace ToolGood.ReadyGo.NPoco.Expressions
 {
+    /// <summary>
+    /// 提供从表达式中提取成员访问链的辅助方法。
+    /// </summary>
     public class MemberChainHelper
     {
         private static MemberExpression GetMemberExpression(Expression method)

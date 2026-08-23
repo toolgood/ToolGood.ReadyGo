@@ -13,17 +13,47 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         internal TableInfo()
         { }
 
+        /// <summary>
+        /// 数据库名
+        /// </summary>
         public string DatabaseName;
+        /// <summary>
+        /// 模式名（Schema）
+        /// </summary>
         public string SchemaName;
+        /// <summary>
+        /// 表名
+        /// </summary>
         public string TableName;
+        /// <summary>
+        /// 配置名称
+        /// </summary>
         public string SettingName;
 
+        /// <summary>
+        /// 主键列名
+        /// </summary>
         public string PrimaryKey;
+        /// <summary>
+        /// 主键是否自增
+        /// </summary>
         public bool AutoIncrement;
+        /// <summary>
+        /// 序列名称
+        /// </summary>
         public string SequenceName;
 
+        /// <summary>
+        /// 索引列集合
+        /// </summary>
         public List<List<string>> Indexs = new List<List<string>>();
+        /// <summary>
+        /// 唯一约束列集合
+        /// </summary>
         public List<List<string>> Uniques = new List<List<string>>();
+        /// <summary>
+        /// 列信息集合
+        /// </summary>
         public List<ColumnInfo> Columns = new List<ColumnInfo>();
 
         /// <summary>

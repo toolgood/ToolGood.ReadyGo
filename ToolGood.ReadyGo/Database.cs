@@ -60,7 +60,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 命令执行出错
         /// </summary>
-        /// <param name="exception"></param>
+        /// <param name="exception">执行出错时抛出的异常</param>
         protected override void OnException(Exception exception)
         {
             base.OnException(exception);

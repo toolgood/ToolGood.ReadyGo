@@ -12,8 +12,8 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据程序集限定名反射获取 DbProviderFactory
         /// </summary>
-        /// <param name="assemblyQualifiedNames"></param>
-        /// <returns></returns>
+        /// <param name="assemblyQualifiedNames">候选 DbProviderFactory 程序集限定名集合</param>
+        /// <returns>匹配到的 DbProviderFactory 实例</returns>
         public static DbProviderFactory GetFactory(params string[] assemblyQualifiedNames)
         {
             DbProviderFactory providerFactory = null;
@@ -34,8 +34,8 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 获取 NPoco 内核数据库类型
         /// </summary>
-        /// <param name="sqlType"></param>
-        /// <returns></returns>
+        /// <param name="sqlType">SQL 类型</param>
+        /// <returns>对应的 NPoco 数据库类型</returns>
         public static ToolGood.ReadyGo.NPoco.DatabaseType GetDatabaseType(SqlType sqlType)
         {
             switch (sqlType) {

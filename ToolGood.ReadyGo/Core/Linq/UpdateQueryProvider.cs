@@ -80,9 +80,21 @@ namespace ToolGood.ReadyGo.NPoco.Linq
     /// <typeparam name="T">更新的实体类型。</typeparam>
     public class AsyncUpdateQueryProvider<T> : IAsyncUpdateQueryProvider<T>
     {
+        /// <summary>
+        /// 数据库实例。
+        /// </summary>
         protected readonly IDatabase _database;
+        /// <summary>
+        /// SQL 表达式。
+        /// </summary>
         protected ISqlExpression<T> _sqlExpression;
+        /// <summary>
+        /// 是否排除默认值字段。
+        /// </summary>
         protected bool _excludeDefaults;
+        /// <summary>
+        /// 是否仅更新指定字段。
+        /// </summary>
         protected bool _onlyFields;
 
         /// <summary>

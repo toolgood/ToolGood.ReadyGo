@@ -8,6 +8,9 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
     /// </summary>
     public class DateColumnSerializer : NPoco.IColumnSerializer
     {
+        /// <summary>
+        /// 日期序列化所使用的格式字符串。
+        /// </summary>
         public const string DateFormat = "yyyy-MM-dd";
 
         /// <summary>
