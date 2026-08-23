@@ -323,17 +323,17 @@ namespace ToolGood.ReadyGo
             return GetDatabase().Page<T>(page, itemsPerPage, sql, args);
         }
 
-        #region FetchOneToMany
+        #region SelectOneToMany
         /// <summary>
         /// 一对多查询，将子表数据合并到主表的集合属性中（many 指定主表的子集合属性）
-        /// 例如：FetchOneToMany&lt;UserDto&gt;(x =&gt; x.Cars, "select u.*, c.* from Users u inner join Cars c on u.UserId = c.UserId order by u.UserId");
+        /// 例如：SelectOneToMany&lt;UserDto&gt;(x =&gt; x.Cars, "select u.*, c.* from Users u inner join Cars c on u.UserId = c.UserId order by u.UserId");
         /// </summary>
         /// <typeparam name="T">主表类型</typeparam>
         /// <param name="many">主表存放子表集合的属性</param>
         /// <param name="sql">SQL 语句，须同时返回主表与子表列</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> FetchOneToMany<T>(Expression<Func<T, IList>> many, string sql, params object[] args)
+        public List<T> SelectOneToMany<T>(Expression<Func<T, IList>> many, string sql, params object[] args)
         {
             return GetDatabase().FetchOneToMany(many, sql, args);
         }
@@ -347,18 +347,18 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public List<T> FetchOneToMany<T>(Expression<Func<T, IList>> many, Func<T, object> idFunc, string sql, params object[] args)
+        public List<T> SelectOneToMany<T>(Expression<Func<T, IList>> many, Func<T, object> idFunc, string sql, params object[] args)
         {
             return GetDatabase().FetchOneToMany(many, idFunc, sql, args);
         }
 
-        #endregion FetchOneToMany
+        #endregion SelectOneToMany
 
-        #region FetchMultiple
+        #region SelectMultiple
         /// <summary>
         /// 执行多条 SQL，返回多个结果集。
-        /// <para>var (users, addresses) = helper.FetchMultiple&lt;User, Address&gt;("select * from users;select * from addresses;");</para>
-        /// <para>var data = helper.FetchMultiple&lt;User, Address&gt;(sql);</para>
+        /// <para>var (users, addresses) = helper.SelectMultiple&lt;User, Address&gt;("select * from users;select * from addresses;");</para>
+        /// <para>var data = helper.SelectMultiple&lt;User, Address&gt;(sql);</para>
         /// <para>var users = data.Item1; var addresses = data.Item2;</para>
         /// </summary>
         /// <typeparam name="T1">第一个结果集类型</typeparam>
@@ -366,7 +366,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public (List<T1>, List<T2>) FetchMultiple<T1, T2>(string sql, params object[] args)
+        public (List<T1>, List<T2>) SelectMultiple<T1, T2>(string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple<T1, T2>(sql, args);
         }
@@ -380,7 +380,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public (List<T1>, List<T2>, List<T3>) FetchMultiple<T1, T2, T3>(string sql, params object[] args)
+        public (List<T1>, List<T2>, List<T3>) SelectMultiple<T1, T2, T3>(string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple<T1, T2, T3>(sql, args);
         }
@@ -395,14 +395,14 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public (List<T1>, List<T2>, List<T3>, List<T4>) FetchMultiple<T1, T2, T3, T4>(string sql, params object[] args)
+        public (List<T1>, List<T2>, List<T3>, List<T4>) SelectMultiple<T1, T2, T3, T4>(string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple<T1, T2, T3, T4>(sql, args);
         }
 
         /// <summary>
         /// 执行多条 SQL，并通过回调组合多个结果集。
-        /// <para>var tuple = helper.FetchMultiple&lt;User, Address, Tuple&lt;List&lt;User&gt;, List&lt;Address&gt;&gt;&gt;( (u, a) =&gt; Tuple.Create(u, a), sql);</para>
+        /// <para>var tuple = helper.SelectMultiple&lt;User, Address, Tuple&lt;List&lt;User&gt;, List&lt;Address&gt;&gt;&gt;( (u, a) =&gt; Tuple.Create(u, a), sql);</para>
         /// </summary>
         /// <typeparam name="T1">第一个结果集类型</typeparam>
         /// <typeparam name="T2">第二个结果集类型</typeparam>
@@ -411,7 +411,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public TRet FetchMultiple<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, params object[] args)
+        public TRet SelectMultiple<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple(cb, sql, args);
         }
@@ -427,7 +427,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public TRet FetchMultiple<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, params object[] args)
+        public TRet SelectMultiple<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple(cb, sql, args);
         }
@@ -444,12 +444,12 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
         /// <param name="args">SQL 参数</param>
         /// <returns></returns>
-        public TRet FetchMultiple<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, params object[] args)
+        public TRet SelectMultiple<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, params object[] args)
         {
             return GetDatabase().FetchMultiple(cb, sql, args);
         }
 
-        #endregion FetchMultiple
+        #endregion SelectMultiple
 
         #region Obsolete
         /// <summary>

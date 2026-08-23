@@ -158,7 +158,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
             helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
 
-            var data = helper.FetchMultiple<UserInfo, SimpleUser>("SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
+            var data = helper.SelectMultiple<UserInfo, SimpleUser>("SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
 
             Assert.Equal(2, data.Item1.Count);
             Assert.Equal(2, data.Item2.Count);
@@ -175,7 +175,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
             helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
 
-            var (users, simpleUsers, users2) = helper.FetchMultiple<UserInfo, SimpleUser, UserInfo>(
+            var (users, simpleUsers, users2) = helper.SelectMultiple<UserInfo, SimpleUser, UserInfo>(
                 "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;SELECT * FROM UserInfo;");
 
             Assert.Single(users);
@@ -191,7 +191,7 @@ namespace ToolGood.ReadyGo.Tests
             db.NewUser("张三", 20);
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
 
-            var tuple = helper.FetchMultiple<UserInfo, SimpleUser, Tuple<List<UserInfo>, List<SimpleUser>>>(
+            var tuple = helper.SelectMultiple<UserInfo, SimpleUser, Tuple<List<UserInfo>, List<SimpleUser>>>(
                 (u, s) => Tuple.Create(u, s),
                 "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
 
