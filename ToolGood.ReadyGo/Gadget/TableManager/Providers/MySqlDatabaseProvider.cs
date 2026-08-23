@@ -116,16 +116,16 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
                 ) {
                 if (int.TryParse(ci.FieldLength, out int fieldLength)) {
                     if (fieldLength <= 255) {
-                        return CreateField(ti, ci, "tinyblob", "", isRequired);
+                        return CreateField(ti, ci, "tinyblob", "", false);
                     } else if (fieldLength <= 65535) {
-                        return CreateField(ti, ci, "blob", "", isRequired);
+                        return CreateField(ti, ci, "blob", "", false);
                     } else if (fieldLength <= 16777215) {
-                        return CreateField(ti, ci, "mediumblob", "", isRequired);
+                        return CreateField(ti, ci, "mediumblob", "", false);
                     } else {
-                        return CreateField(ti, ci, "longBlob", "", isRequired);
+                        return CreateField(ti, ci, "longBlob", "", false);
                     }
                 } else {
-                    return CreateField(ti, ci, "tinyblob", "", isRequired);
+                    return CreateField(ti, ci, "tinyblob", "", false);
                 }
             }
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "varchar", ci.FieldLength, isRequired);
