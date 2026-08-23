@@ -10,6 +10,7 @@ using ToolGood.ReadyGo.NPoco.Extensions;
 using ToolGood.ReadyGo.NPoco.Linq;
 using System.Threading;
 using System.Runtime.CompilerServices;
+using ToolGood.ReadyGo;
 
 namespace ToolGood.ReadyGo.NPoco
 {

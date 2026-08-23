@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ToolGood.ReadyGo;
 using ToolGood.ReadyGo.NPoco.Expressions;
 
 namespace ToolGood.ReadyGo.NPoco.Linq
@@ -202,7 +203,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             // Setup the paged result
             var result = new Page<T>();
             result.CurrentPage = page;
-            result.ItemsPerPage = pageSize;
+            result.PageSize = pageSize;
             result.TotalItems = await Count(cancellationToken).ConfigureAwait(false);
             result.TotalPages = result.TotalItems / pageSize;
             if ((result.TotalItems % pageSize) != 0)
@@ -233,7 +234,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             // Setup the paged result
             var result = new Page<T2>();
             result.CurrentPage = page;
-            result.ItemsPerPage = pageSize;
+            result.PageSize = pageSize;
             result.TotalItems = await Count().ConfigureAwait(false);
             result.TotalPages = result.TotalItems / pageSize;
             if ((result.TotalItems % pageSize) != 0)
@@ -494,7 +495,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             // Setup the paged result
             var result = new Page<T>();
             result.CurrentPage = page;
-            result.ItemsPerPage = pageSize;
+            result.PageSize = pageSize;
             result.TotalItems = Count();
             result.TotalPages = result.TotalItems / pageSize;
             if ((result.TotalItems % pageSize) != 0)
@@ -525,7 +526,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             // Setup the paged result
             var result = new Page<T2>();
             result.CurrentPage = page;
-            result.ItemsPerPage = pageSize;
+            result.PageSize = pageSize;
             result.TotalItems = Count();
             result.TotalPages = result.TotalItems / pageSize;
             if ((result.TotalItems % pageSize) != 0)

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo.Internals;
-using ToolGood.ReadyGo.NPoco;
 
 namespace ToolGood.ReadyGo
 {

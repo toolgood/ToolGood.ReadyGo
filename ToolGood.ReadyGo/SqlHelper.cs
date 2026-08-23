@@ -124,11 +124,11 @@ namespace ToolGood.ReadyGo
             return txt;
         }
 
-        private Page<T> ToPage<T>(NPoco.Page<T> page) where T : class
+        private Page<T> ToPage<T>(Page<T> page) where T : class
         {
             return new Page<T> {
                 CurrentPage = (int)page.CurrentPage,
-                PageSize = (int)page.ItemsPerPage,
+                PageSize = (int)page.PageSize,
                 TotalItems = (int)page.TotalItems,
                 Items = page.Items,
             };

@@ -25,6 +25,7 @@ using ToolGood.ReadyGo.NPoco.Linq;
 using ToolGood.ReadyGo.NPoco.Internal;
 using System.Threading;
 using System.Runtime.CompilerServices;
+using ToolGood.ReadyGo;
 
 namespace ToolGood.ReadyGo.NPoco
 {
@@ -1351,7 +1352,7 @@ namespace ToolGood.ReadyGo.NPoco
             // Setup the paged result
             var result = new Page<T>();
             result.CurrentPage = page;
-            result.ItemsPerPage = itemsPerPage;
+            result.PageSize = itemsPerPage;
             result.TotalItems = sync ? ExecuteScalar<long>(sqlCount, args) : await ExecuteScalarAsync<long>(sqlCount, args, cancellationToken).ConfigureAwait(false);
             result.TotalPages = result.TotalItems / itemsPerPage;
             if ((result.TotalItems % itemsPerPage) != 0)
