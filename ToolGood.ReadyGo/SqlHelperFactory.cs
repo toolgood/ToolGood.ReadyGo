@@ -1,4 +1,6 @@
+using System;
 using System.Data.Common;
+using System.Reflection;
 using System.Text;
 
 namespace ToolGood.ReadyGo
@@ -139,7 +141,7 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        /// 打开Mysql数据库,SslMode默认none
+        /// 打开Mysql数据库,SslMode默认Disabled
         /// </summary>
         /// <param name="server">服务器</param>
         /// <param name="database">活动数据库</param>
@@ -148,16 +150,17 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenMysql(string server, string database, string user, string pwd)
         {
-            var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;Allow User Variables=True;";
+            var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;AllowUserVariables=true;";
             var factory = DatabaseProvider.GetProviderFactory(SqlType.MySql);
-            if (factory.GetType().Assembly.GetName().Version.Major >= 8) {
-                connstr += "SslMode=none;allowPublicKeyRetrieval=true;";
+            var options = GetMySqlConnectionOptions(factory.GetType().Assembly.GetName());
+            if (options != null) {
+                connstr += options;
             }
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
         }
 
         /// <summary>
-        /// 打开Mysql数据库,SslMode默认none
+        /// 打开Mysql数据库,SslMode默认Disabled
         /// </summary>
         /// <param name="server">服务器</param>
         /// <param name="port">端口号</param>
@@ -167,12 +170,40 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenMysql(string server, int port, string database, string user, string pwd)
         {
-            var connstr = $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;Allow User Variables=True;";
+            var connstr = $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;AllowUserVariables=true;";
             var factory = DatabaseProvider.GetProviderFactory(SqlType.MySql);
-            if (factory.GetType().Assembly.GetName().Version.Major >= 8) {
-                connstr += "SslMode=none;allowPublicKeyRetrieval=true;";
+            var options = GetMySqlConnectionOptions(factory.GetType().Assembly.GetName());
+            if (options != null) {
+                connstr += options;
             }
             return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
+        }
+
+        /// <summary>
+        /// 根据 MySQL 驱动程序集返回连接字符串的 SSL/公钥选项。
+        /// MySql.Data：SslMode=none 自 8.0.29 弃用、9.5.0 移除；SslMode=Disabled 自 8.0.29 引入。
+        /// MySqlConnector：SslMode=None 始终支持；SslMode=Disabled 自 2.1.9 引入。
+        /// </summary>
+        private static string GetMySqlConnectionOptions(AssemblyName assemblyName)
+        {
+            var name = assemblyName.Name;
+            var version = assemblyName.Version;
+
+            if (name != null && name.IndexOf("MySql.Data", StringComparison.OrdinalIgnoreCase) >= 0) {
+                // 程序集版本为四段结构（如 8.0.29.0），用整体比较而不是 Minor
+                if (version.CompareTo(new Version(8, 0, 29)) >= 0) {
+                    return "SslMode=Disabled;AllowPublicKeyRetrieval=true;";
+                }
+                if (version.Major >= 8) {
+                    return "SslMode=None;AllowPublicKeyRetrieval=true;";
+                }
+                return null;
+            }
+
+            // MySqlConnector 等其他 MySQL 兼容驱动（版本号为 2.x/3.x）
+            return version.CompareTo(new Version(2, 1, 9)) >= 0
+                ? "SslMode=Disabled;AllowPublicKeyRetrieval=true;"
+                : "SslMode=None;AllowPublicKeyRetrieval=true;";
         }
 
         /// <summary>

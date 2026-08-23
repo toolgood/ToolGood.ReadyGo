@@ -5,9 +5,6 @@ namespace ToolGood.ReadyGo.Tests
     /// </summary>
     internal sealed class MySqlTestDb : IDisposable
     {
-        public const string ConnectionString =
-            "Server=localhost;Port=3306;Database=test;Uid=test;Pwd=test123;charset=utf8mb4;Allow User Variables=True;SslMode=none;allowPublicKeyRetrieval=true;";
-
         public SqlHelper Helper { get; }
 
         private MySqlTestDb(SqlHelper helper)
@@ -17,7 +14,8 @@ namespace ToolGood.ReadyGo.Tests
 
         public static MySqlTestDb Create()
         {
-            var helper = SqlHelperFactory.OpenDatabase(ConnectionString, "MySql.Data.MySqlClient", SqlType.MySql);
+            // 通过 OpenMysql 生成连接字符串：主库会按 MySql.Data/MySqlConnector 版本自动选择 SslMode 等选项
+            var helper = SqlHelperFactory.OpenMysql("localhost", 3306, "test", "test", "test123");
 
             // DateTime 字段插入时自动填充当前时间
             helper._Config.Insert_DateTime_Default_Now = true;

@@ -1,3 +1,4 @@
+using System;
 using System.Data;
 using System.Data.Common;
 using ToolGood.ReadyGo.NPoco.Expressions;
@@ -16,7 +17,7 @@ namespace ToolGood.ReadyGo.NPoco.DatabaseTypes
         /// <returns>参数前缀字符串。</returns>
         public override string GetParameterPrefix(string connectionString)
         {
-            if (connectionString != null && connectionString.IndexOf("Allow User Variables=true") >= 0)
+            if (connectionString != null && connectionString.Replace(" ", string.Empty).IndexOf("AllowUserVariables=true", StringComparison.OrdinalIgnoreCase) >= 0)
                 return "?";
 
             return "@";
