@@ -165,6 +165,61 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
+        public void StartSnapshot_Update_OnlyChangedColumns()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("Ted", 21);
+            var user = helper.FirstOrDefault<UserInfo>(u.Id);
+
+            var snapshot = helper.StartSnapshot(user); // 之后发生的修改都会被记录
+
+            user.Name = "Bobby";
+            user.Age = 21; // 与快照一致，不算变更
+
+            helper.Update(user, snapshot.UpdatedColumns()); // 只更新 Name 列
+
+            var loaded = helper.FirstOrDefault<UserInfo>(u.Id);
+            Assert.Equal("Bobby", loaded.Name);
+            Assert.Equal(21, loaded.Age);
+        }
+
+        [Fact]
+        public void StartSnapshot_UpdateWithSnapshot_Works()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("Ted", 21);
+            var user = helper.FirstOrDefault<UserInfo>(u.Id);
+
+            var snapshot = helper.StartSnapshot(user);
+            user.Name = "Bobby";
+            user.Age = 22;
+
+            Assert.Equal(1, helper.Update(user, snapshot)); // 只更新 Name、Age 两列
+            var loaded = helper.FirstOrDefault<UserInfo>(u.Id);
+            Assert.Equal("Bobby", loaded.Name);
+            Assert.Equal(22, loaded.Age);
+        }
+
+        [Fact]
+        public void Update_OnlySpecifiedColumns()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("Ted", 21);
+            var user = helper.FirstOrDefault<UserInfo>(u.Id);
+
+            user.Name = "Bobby";
+            user.Age = 99;
+            helper.Update(user, new[] { "Name" }); // 只更新 Name 列
+
+            var loaded = helper.FirstOrDefault<UserInfo>(u.Id);
+            Assert.Equal("Bobby", loaded.Name);
+            Assert.Equal(21, loaded.Age); // Age 保持原值
+        }
+
+        [Fact]
         public void Delete_Poco_ById_Sql()
         {
             using var db = TestDb.Create();

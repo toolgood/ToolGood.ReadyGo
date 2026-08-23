@@ -602,6 +602,48 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
+        /// 开始跟踪对象快照，之后对对象属性的修改将被记录。
+        /// <para>var snapshot = helper.StartSnapshot(user);</para>
+        /// <para>user.Name = "Bobby";</para>
+        /// <para>helper.Update(user, snapshot.UpdatedColumns()); // 仅更新变更的列</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="poco">要跟踪的对象</param>
+        /// <returns>快照</returns>
+        public Snapshot<T> StartSnapshot<T>(T poco) where T : class
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            return Snapshotter.StartSnapshot(GetDatabase(), poco);
+        }
+
+        /// <summary>
+        /// 更新指定列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="poco">对象</param>
+        /// <param name="columns">要更新的列名集合</param>
+        /// <returns></returns>
+        public int Update<T>(T poco, IEnumerable<string> columns) where T : class
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            return GetDatabase().Update(poco, columns);
+        }
+
+        /// <summary>
+        /// 更新，仅更新快照中发生变更的列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="poco">对象</param>
+        /// <param name="snapshot">快照</param>
+        /// <returns></returns>
+        public int Update<T>(T poco, Snapshot<T> snapshot) where T : class
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            if (snapshot == null) throw new ArgumentNullException("snapshot is null");
+            return GetDatabase().Update(poco, snapshot.UpdatedColumns());
+        }
+
+        /// <summary>
         /// 删除
         /// </summary>
         /// <param name="poco">对象</param>
