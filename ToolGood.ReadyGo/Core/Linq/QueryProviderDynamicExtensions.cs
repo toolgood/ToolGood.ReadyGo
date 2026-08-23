@@ -204,6 +204,138 @@ namespace ToolGood.ReadyGo.NPoco.Linq
 
         #endregion WhereLike / IfTrueWhereLike
 
+        #region WhereNotIn / IfTrueWhereNotIn
+
+        /// <summary>
+        /// Where {column} Not In (values)。空集合生成 1=1，单值生成不等于判断。
+        /// </summary>
+        /// <param name="provider">查询器</param>
+        /// <param name="column">列名（可带别名，如 "t0.Age"）</param>
+        /// <param name="values">值集合</param>
+        public static IQueryProvider<T> WhereNotIn<T, TValue>(this IQueryProvider<T> provider, string column, IEnumerable<TValue> values)
+        {
+            if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
+            ApplyWhereNotIn(provider, column, values);
+            return provider;
+        }
+
+        /// <summary>
+        /// Where {field} Not In (values)。空集合生成 1=1，单值生成不等于判断。
+        /// </summary>
+        /// <param name="provider">查询器</param>
+        /// <param name="field">列表达式，如 x =&gt; x.Age</param>
+        /// <param name="values">值集合</param>
+        public static IQueryProvider<T> WhereNotIn<T, TValue>(this IQueryProvider<T> provider, Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
+        {
+            if (field == null) throw new ArgumentNullException(nameof(field));
+            ApplyWhereNotIn(provider, GetFieldName(field), values);
+            return provider;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Not In（字符串列名版本）
+        /// </summary>
+        public static IQueryProvider<T> IfTrueWhereNotIn<T, TValue>(this IQueryProvider<T> provider, bool condition, string column, IEnumerable<TValue> values)
+        {
+            return condition ? provider.WhereNotIn(column, values) : provider;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Not In（表达式版本）
+        /// </summary>
+        public static IQueryProvider<T> IfTrueWhereNotIn<T, TValue>(this IQueryProvider<T> provider, bool condition, Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
+        {
+            return condition ? provider.WhereNotIn(field, values) : provider;
+        }
+
+        #endregion WhereNotIn / IfTrueWhereNotIn
+
+        #region WhereLikeStart / IfTrueWhereLikeStart
+
+        /// <summary>
+        /// Where {column} Like '%pattern'（右匹配）
+        /// </summary>
+        /// <param name="provider">查询器</param>
+        /// <param name="column">列名（可带别名，如 "t0.Name"）</param>
+        /// <param name="pattern">匹配内容（自动加前缀 %）</param>
+        public static IQueryProvider<T> WhereLikeStart<T>(this IQueryProvider<T> provider, string column, string pattern)
+        {
+            if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
+            if (string.IsNullOrEmpty(pattern)) return provider;
+            provider.WhereSql($"{column} LIKE @0", $"%{pattern}");
+            return provider;
+        }
+
+        /// <summary>
+        /// Where {field} Like '%pattern'（右匹配）
+        /// </summary>
+        public static IQueryProvider<T> WhereLikeStart<T, TValue>(this IQueryProvider<T> provider, Expression<Func<T, TValue>> field, string pattern)
+        {
+            if (field == null) throw new ArgumentNullException(nameof(field));
+            return provider.WhereLikeStart(GetFieldName(field), pattern);
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Like Start（字符串列名版本）
+        /// </summary>
+        public static IQueryProvider<T> IfTrueWhereLikeStart<T>(this IQueryProvider<T> provider, bool condition, string column, string pattern)
+        {
+            return condition ? provider.WhereLikeStart(column, pattern) : provider;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Like Start（表达式版本）
+        /// </summary>
+        public static IQueryProvider<T> IfTrueWhereLikeStart<T, TValue>(this IQueryProvider<T> provider, bool condition, Expression<Func<T, TValue>> field, string pattern)
+        {
+            return condition ? provider.WhereLikeStart(field, pattern) : provider;
+        }
+
+        #endregion WhereLikeStart / IfTrueWhereLikeStart
+
+        #region WhereLikeEnd / IfTrueWhereLikeEnd
+
+        /// <summary>
+        /// Where {column} Like 'pattern%'（左匹配）
+        /// </summary>
+        /// <param name="provider">查询器</param>
+        /// <param name="column">列名（可带别名，如 "t0.Name"）</param>
+        /// <param name="pattern">匹配内容（自动加后缀 %）</param>
+        public static IQueryProvider<T> WhereLikeEnd<T>(this IQueryProvider<T> provider, string column, string pattern)
+        {
+            if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
+            if (string.IsNullOrEmpty(pattern)) return provider;
+            provider.WhereSql($"{column} LIKE @0", $"{pattern}%");
+            return provider;
+        }
+
+        /// <summary>
+        /// Where {field} Like 'pattern%'（左匹配）
+        /// </summary>
+        public static IQueryProvider<T> WhereLikeEnd<T, TValue>(this IQueryProvider<T> provider, Expression<Func<T, TValue>> field, string pattern)
+        {
+            if (field == null) throw new ArgumentNullException(nameof(field));
+            return provider.WhereLikeEnd(GetFieldName(field), pattern);
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Like End（字符串列名版本）
+        /// </summary>
+        public static IQueryProvider<T> IfTrueWhereLikeEnd<T>(this IQueryProvider<T> provider, bool condition, string column, string pattern)
+        {
+            return condition ? provider.WhereLikeEnd(column, pattern) : provider;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Like End（表达式版本）
+        /// </summary>
+        public static IQueryProvider<T> IfTrueWhereLikeEnd<T, TValue>(this IQueryProvider<T> provider, bool condition, Expression<Func<T, TValue>> field, string pattern)
+        {
+            return condition ? provider.WhereLikeEnd(field, pattern) : provider;
+        }
+
+        #endregion WhereLikeEnd / IfTrueWhereLikeEnd
+
         #region 私有辅助
 
         private static string BuildExistsSql(string sql)
@@ -231,6 +363,29 @@ namespace ToolGood.ReadyGo.NPoco.Linq
 
             var sb = new StringBuilder();
             sb.Append(column).Append(" IN (");
+            for (int i = 0; i < list.Count; i++) {
+                if (i > 0) sb.Append(", ");
+                sb.Append("@").Append(i);
+            }
+            sb.Append(")");
+            provider.WhereSql(sb.ToString(), list.Cast<object>().ToArray());
+        }
+
+        private static void ApplyWhereNotIn<T, TValue>(IQueryProvider<T> provider, string column, IEnumerable<TValue> values)
+        {
+            if (values == null) throw new ArgumentNullException(nameof(values));
+            var list = values as IReadOnlyList<TValue> ?? values.ToList();
+            if (list.Count == 0) {
+                provider.WhereSql("1 = 1");
+                return;
+            }
+            if (list.Count == 1) {
+                provider.WhereSql($"{column} <> @0", list[0]);
+                return;
+            }
+
+            var sb = new StringBuilder();
+            sb.Append(column).Append(" NOT IN (");
             for (int i = 0; i < list.Count; i++) {
                 if (i > 0) sb.Append(", ");
                 sb.Append("@").Append(i);
