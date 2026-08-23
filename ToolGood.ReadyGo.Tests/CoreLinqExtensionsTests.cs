@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using Microsoft.Data.Sqlite;
 using ToolGood.ReadyGo.NPoco;
-using ToolGood.ReadyGo.NPoco.Linq;
 using Xunit;
 using NPocoDatabase = ToolGood.ReadyGo.NPoco.Database;
 
@@ -165,6 +164,16 @@ namespace ToolGood.ReadyGo.Tests
                 .IfTrueLimit(true, 1, 2)
                 .ToList();
             Assert.Equal(new[] { 20, 30 }, paged.Select(x => x.Age).ToArray());
+        }
+
+        [Fact]
+        public void Select_EqualsToList()
+        {
+            var list = _db.Query<SimpleUser>().Select();
+            Assert.Equal(3, list.Count);
+
+            var withFilter = _db.Query<SimpleUser>().IfTrueWhere(true, x => x.Age > 20).Select();
+            Assert.Single(withFilter);
         }
 
         [Fact]

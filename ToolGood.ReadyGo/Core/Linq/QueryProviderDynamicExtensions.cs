@@ -3,15 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using ToolGood.ReadyGo.NPoco.Linq;
 
-namespace ToolGood.ReadyGo.NPoco.Linq
+namespace ToolGood.ReadyGo
 {
     /// <summary>
     /// IQueryProvider 动态条件扩展方法（独立文件，不改动 NPOCO 源码）。
-    /// 提供 IfTrue* 条件开关、WhereExists/WhereNotExists、WhereIn、WhereLike 等便捷方法。
+    /// 提供 IfTrue* 条件开关、WhereExists/WhereNotExists、WhereIn、WhereLike、Select 等便捷方法。
+    /// 放在 ToolGood.ReadyGo 命名空间，业务代码 using ToolGood.ReadyGo 后即可直接使用，无需额外 using。
     /// </summary>
     public static class QueryProviderDynamicExtensions
     {
+        #region Select
+
+        /// <summary>
+        /// 执行查询并返回结果集，等效于 ToList()
+        /// </summary>
+        public static List<T> Select<T>(this IQueryProvider<T> provider)
+        {
+            return provider.ToList();
+        }
+
+        #endregion Select
+
         #region IfTrueWhere / IfTrueOrderBy / IfTrueOrderByDescending / IfTrueLimit
 
         /// <summary>

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ToolGood.ReadyGo.Attributes;
-using ToolGood.ReadyGo.LinQ;
 using Xunit;
 
 namespace ToolGood.ReadyGo.Tests
@@ -17,7 +16,7 @@ namespace ToolGood.ReadyGo.Tests
     }
 
     /// <summary>
-    /// WhereHelper 动态SQL拼接
+    /// SqlHelper.Where（Core/Linq QueryProvider 链式查询）、UpdateMany、DeleteMany 测试
     /// </summary>
     public class WhereHelperTests
     {
@@ -39,7 +38,7 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            var list = helper.Where<Tb_WhereTest>("Age > @0", 30).OrderBy(q => q.Age).Select();
+            var list = helper.Where<Tb_WhereTest>("Age > @0", 30).OrderBy(q => q.Age).ToList();
             Assert.Equal(2, list.Count);
             Assert.Equal("王五", list[0].Name);
             Assert.Equal("张伟", list[1].Name);
@@ -51,7 +50,7 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            var list = helper.Where<Tb_WhereTest>(q => q.Age >= 30 && q.Vip).Select();
+            var list = helper.Where<Tb_WhereTest>(q => q.Age >= 30 && q.Vip).ToList();
             Assert.Equal(2, list.Count);
 
             var one = helper.Where<Tb_WhereTest>(q => q.Name == "张三").FirstOrDefault();
@@ -65,7 +64,7 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            var list = helper.Where<Tb_WhereTest>(q => q.Name.Contains("张")).Select();
+            var list = helper.Where<Tb_WhereTest>(q => q.Name.Contains("张")).ToList();
             Assert.Equal(2, list.Count);
         }
 
@@ -75,13 +74,13 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            var list = helper.Where<Tb_WhereTest>().WhereIn(q => q.Age, new int[] { 20, 50 }).Select();
+            var list = helper.Where<Tb_WhereTest>().WhereIn(q => q.Age, new int[] { 20, 50 }).ToList();
             Assert.Equal(2, list.Count);
 
-            var list2 = helper.Where<Tb_WhereTest>().WhereNotIn(q => q.Age, new int[] { 20, 50 }).Select();
+            var list2 = helper.Where<Tb_WhereTest>().WhereNotIn(q => q.Age, new int[] { 20, 50 }).ToList();
             Assert.Equal(2, list2.Count);
 
-            var list3 = helper.Where<Tb_WhereTest>("Age").WhereIn("Age", new object[] { 30, 40 }).Select();
+            var list3 = helper.Where<Tb_WhereTest>("Age").WhereIn("Age", new object[] { 30, 40 }).ToList();
             Assert.Equal(2, list3.Count);
         }
 
@@ -91,10 +90,10 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            // 旧库语义：WhereLike = '%args%'，WhereLikeStart = '%args'（右匹配），WhereLikeEnd = 'args%'（左匹配）
-            Assert.Equal(2, helper.Where<Tb_WhereTest>().WhereLike(q => q.Name, "张").Select().Count);
-            Assert.Single(helper.Where<Tb_WhereTest>().WhereLikeStart(q => q.Name, "张三").Select());
-            Assert.Single(helper.Where<Tb_WhereTest>().WhereLikeEnd(q => q.Name, "王五").Select());
+            // WhereLike = '%args%'，WhereLikeStart = '%args'（右匹配），WhereLikeEnd = 'args%'（左匹配）
+            Assert.Equal(2, helper.Where<Tb_WhereTest>().WhereLike(q => q.Name, "张").ToList().Count);
+            Assert.Single(helper.Where<Tb_WhereTest>().WhereLikeStart(q => q.Name, "张三").ToList());
+            Assert.Single(helper.Where<Tb_WhereTest>().WhereLikeEnd(q => q.Name, "王五").ToList());
         }
 
         [Fact]
@@ -104,18 +103,16 @@ namespace ToolGood.ReadyGo.Tests
             var helper = db.Helper;
 
             var age = 0;
-            // age <= 0 时 IfPositiveInteger 为假，Where/OrderBy 全部跳过
+            // age <= 0 时条件为假，Where/OrderBy 全部跳过
             var list = helper.Where<Tb_WhereTest>()
-                .IfPositiveInteger(age)
-                .Where(q => q.Age > 0)
-                .OrderBy(q => q.Age)
-                .Select();
+                .IfTrueWhere(age > 0, q => q.Age > 0)
+                .IfTrueOrderBy(age > 0, q => q.Age)
+                .ToList();
             Assert.Equal(4, list.Count);
 
             var list2 = helper.Where<Tb_WhereTest>()
-                .IfPositiveInteger(30)
-                .Where(q => q.Age > 40)
-                .Select();
+                .IfTrueWhere(30 > 0, q => q.Age > 40)
+                .ToList();
             Assert.Single(list2);
         }
 
@@ -125,23 +122,12 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            var list = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age, OrderType.Desc).Select();
+            var list = helper.Where<Tb_WhereTest>().OrderByDescending(q => q.Age).ToList();
             Assert.Equal("张伟", list[0].Name);
             Assert.Equal("张三", list[3].Name);
-        }
 
-        [Fact]
-        public void AddColumn_RemoveColumn()
-        {
-            using var db = CreateWithUsers();
-            var helper = db.Helper;
-
-            var sql = helper.Where<Tb_WhereTest>()
-                .RemoveColumn(q => q.Vip)
-                .AddColumn(q => q.Age, "Age2")
-                .GetFullSelectSql();
-            Assert.Contains("Age2", sql);
-            Assert.DoesNotContain("Vip", sql);
+            var distinct = helper.Where<Tb_WhereTest>().Distinct(q => new { q.Age }).ToList();
+            Assert.Equal(4, distinct.Count);
         }
 
         [Fact]
@@ -150,8 +136,8 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            Assert.Equal(4, helper.Where<Tb_WhereTest>().SelectCount());
-            Assert.Equal(2, helper.Where<Tb_WhereTest>(q => q.Age > 30).SelectCount());
+            Assert.Equal(4, helper.Where<Tb_WhereTest>().Count());
+            Assert.Equal(2, helper.Where<Tb_WhereTest>(q => q.Age > 30).Count());
         }
 
         [Fact]
@@ -160,12 +146,12 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            var page = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).Page(1, 2);
+            var page = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).ToPage(1, 2);
             Assert.Equal(4, page.TotalItems);
             Assert.Equal(2, page.Items.Count);
             Assert.Equal("张三", page.Items[0].Name);
 
-            var list = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).SelectPage(2, 2);
+            var list = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).ToPage(2, 2).Items;
             Assert.Equal(2, list.Count);
             Assert.Equal("王五", list[0].Name);
         }
@@ -177,88 +163,48 @@ namespace ToolGood.ReadyGo.Tests
             var helper = db.Helper;
 
             var list = helper.Where<Tb_WhereTest>(q => q.Age > 30).OrderBy(q => q.Age)
-                .Select(q => new { q.Name, q.Age });
+                .ProjectTo(q => new { q.Name, q.Age });
             Assert.Equal(2, list.Count);
             Assert.Equal("王五", list[0].Name);
             Assert.Equal(40, list[0].Age);
         }
 
         [Fact]
-        public void Select_T_指定列()
+        public void UpdateMany_对象()
         {
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            var list = helper.Where<Tb_WhereTest>(q => q.Age > 30)
-                .Select<Tb_WhereTest>("Name, Age");
-            Assert.Equal(2, list.Count);
-        }
-
-        [Fact]
-        public void GroupBy_Having()
-        {
-            using var db = CreateWithUsers();
-            var helper = db.Helper;
-
-            var dt = helper.Where<Tb_WhereTest>()
-                .GroupBy(q => q.Age)
-                .Having("COUNT(1) >= 1")
-                .ExecuteDataTable("Age, COUNT(1) AS C");
-            Assert.Equal(4, dt.Rows.Count);
-        }
-
-        [Fact]
-        public void Update_对象_字典_Sql()
-        {
-            using var db = CreateWithUsers();
-            var helper = db.Helper;
-
-            var r1 = helper.Where<Tb_WhereTest>(q => q.Name == "张三").Update(new { Age = 21 });
+            var r1 = helper.UpdateMany<Tb_WhereTest>()
+                .Where(q => q.Name == "张三")
+                .ExcludeDefaults()
+                .Execute(new Tb_WhereTest { Age = 21 });
             Assert.Equal(1, r1);
             Assert.Equal(21, helper.Where<Tb_WhereTest>(q => q.Name == "张三").FirstOrDefault().Age);
-
-            var r2 = helper.Where<Tb_WhereTest>(q => q.Name == "李四").Update(new Dictionary<string, object> { ["Vip"] = false });
-            Assert.Equal(1, r2);
-            Assert.False(helper.Where<Tb_WhereTest>(q => q.Name == "李四").FirstOrDefault().Vip);
-
-            var r3 = helper.Where<Tb_WhereTest>(q => q.Name == "王五").Update("Age = Age + 1");
-            Assert.Equal(1, r3);
-            Assert.Equal(41, helper.Where<Tb_WhereTest>(q => q.Name == "王五").FirstOrDefault().Age);
         }
 
         [Fact]
-        public void Delete()
+        public void DeleteMany()
         {
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            var r = helper.Where<Tb_WhereTest>(q => q.Age == 20).Delete();
+            var r = helper.DeleteMany<Tb_WhereTest>().Where(q => q.Age == 20).Execute();
             Assert.Equal(1, r);
-            Assert.Equal(3, helper.Where<Tb_WhereTest>().SelectCount());
+            Assert.Equal(3, helper.Where<Tb_WhereTest>().Count());
         }
 
         [Fact]
-        public void GetFullSelectSql_GetArgs()
+        public void Contains_IsIn()
         {
             using var db = CreateWithUsers();
             var helper = db.Helper;
+            var ids = new[] { 20, 50 };
 
-            var wh = helper.Where<Tb_WhereTest>("Age > @0 AND Age < @1", 25, 45);
-            var sql = wh.GetFullSelectSql();
-            Assert.Contains("Age > @0", sql);
-            Assert.Equal(new object[] { 25, 45 }, wh.GetArgs());
-        }
-
-        [Fact]
-        public void ObjectExtend_IsIn()
-        {
-            using var db = CreateWithUsers();
-            var helper = db.Helper;
-
-            var list = helper.Where<Tb_WhereTest>(q => q.Age.IsIn(new[] { 20, 50 })).Select();
+            var list = helper.Where<Tb_WhereTest>(q => ids.Contains(q.Age)).ToList();
             Assert.Equal(2, list.Count);
 
-            var list2 = helper.Where<Tb_WhereTest>(q => q.Age.IsNotIn(new[] { 20, 50 })).Select();
+            var list2 = helper.Where<Tb_WhereTest>(q => !ids.Contains(q.Age)).ToList();
             Assert.Equal(2, list2.Count);
         }
 
@@ -268,14 +214,15 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
+            // 关联子查询（NPOCO 主表别名 TT = 类型名首字母缩写）
             var list = helper.Where<Tb_WhereTest>()
-                .WhereExists("SELECT 1 FROM Tb_WhereTest t2 WHERE t2.Age > 40 AND t2.Id = t1.Id")
-                .Select();
+                .WhereExists("SELECT 1 FROM Tb_WhereTest t2 WHERE t2.Age > 40 AND t2.Id = TT.Id")
+                .ToList();
             Assert.Single(list);
 
             var list2 = helper.Where<Tb_WhereTest>()
-                .WhereNotExists("SELECT 1 FROM Tb_WhereTest t2 WHERE t2.Age > 40 AND t2.Id = t1.Id")
-                .Select();
+                .WhereNotExists("SELECT 1 FROM Tb_WhereTest t2 WHERE t2.Age > 40 AND t2.Id = TT.Id")
+                .ToList();
             Assert.Equal(3, list2.Count);
         }
     }
