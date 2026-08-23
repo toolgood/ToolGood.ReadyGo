@@ -89,9 +89,9 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
                 case SqlType.SQLite: return Singleton<SQLiteDatabaseProvider>.Instance;
                 case SqlType.DuckDb: return Singleton<DuckDbDatabaseProvider>.Instance;
                 //case SqlType.MsAccessDb: return Singleton<MsAccessDbDatabaseProvider>.Instance;
-                //case SqlType.Oracle: return Singleton<OracleDatabaseProvider>.Instance;
-                //case SqlType.PostgreSQL: return Singleton<PostgreSQLDatabaseProvider>.Instance;
-                //case SqlType.FirebirdDb: return Singleton<FirebirdDbDatabaseProvider>.Instance;
+                case SqlType.Oracle: return Singleton<OracleDatabaseProvider>.Instance;
+                case SqlType.PostgreSQL: return Singleton<PostgreSQLDatabaseProvider>.Instance;
+                case SqlType.FirebirdDb: return Singleton<FirebirdDbDatabaseProvider>.Instance;
                 case SqlType.MariaDb: return Singleton<MariaDbDatabaseProvider>.Instance;
                 //case SqlType.SqlServerCE: return Singleton<SqlServerCEDatabaseProviders>.Instance;
                 default: break;

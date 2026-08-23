@@ -34,7 +34,7 @@ var users = helper.Where<User>().Where(x => x.Age > 18).OrderBy(x => x.Name).ToL
 
 ##### 1.1、简单的数据表操作
 
-目前支持【表操作】的数据库有 SqlServer、MySql、SQLite。
+目前支持【表操作】的数据库有 SqlServer、SqlServer2012、MySql、MariaDb、SQLite、DuckDb、Oracle、PostgreSQL、FirebirdDb。
 
 ```csharp
 using ToolGood.ReadyGo.Attributes;

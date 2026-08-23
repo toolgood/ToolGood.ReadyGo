@@ -12,7 +12,7 @@ ToolGood.ReadyGo 是一个轻量级、高性能的 .NET ORM（对象关系映射
 ### 核心特性
 
 - **轻量快速**：直接执行 SQL，开销最小
-- **多数据库支持**：SqlServer、SqlServer2012、MySql、SQLite、Oracle、Access、DuckDB（SqlType 枚举还预留 MariaDb、PostgreSQL、FirebirdDb 等）
+- **多数据库支持**：SqlServer、SqlServer2012、MySql、MariaDb、SQLite、Oracle、PostgreSQL、FirebirdDb、Access、DuckDB
 - **LINQ 表达式支持**：使用 Lambda 表达式构建类型安全的动态查询
 - **异步操作**：所有核心操作均提供 `_Async` 后缀的异步版本
 - **动态 SQL 构建**：`Where<T>()` 流式 API 构建复杂查询
@@ -629,7 +629,7 @@ SqlHelperFactory 提供以下连接方法：
 | DuckDB | OpenDuckDbFile | DuckDB.NET.Data.Full |
 | MS Access | OpenAccessFile（32位）/ OpenAccessFile64x（64位） | System.Data.OleDb |
 
-`SqlType` 枚举还包含 MariaDb、PostgreSQL、FirebirdDb、SqlServerCE 等类型。
+`SqlType` 枚举还包含 SqlServerCE、MsAccessDb 等类型（表操作暂不支持）。
 
 ## 最佳实践
 
