@@ -4,38 +4,78 @@ using ToolGood.ReadyGo.NPoco;
 
 namespace ToolGood.ReadyGo.Gadget.TableManager
 {
+    /// <summary>
+    /// 数据库提供程序基类（生成各数据库方言的建表/删表/清空表 SQL）
+    /// </summary>
     public abstract class DatabaseProvider
     {
+        /// <summary>
+        /// 获取“表不存在时创建”的建表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <param name="withIndex">是否同时生成索引</param>
+        /// <returns>建表 SQL，默认返回 null</returns>
         public virtual string GetTryCreateTable(Type type, bool withIndex = true)
         {
             return null;
         }
 
+        /// <summary>
+        /// 获取建表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <param name="withIndex">是否同时生成索引</param>
+        /// <returns>建表 SQL</returns>
         public virtual string GetCreateTable(Type type, bool withIndex = true)
         {
             return GetTryCreateTable(type, withIndex);
         }
 
+        /// <summary>
+        /// 获取创建索引 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>创建索引 SQL，默认返回 null</returns>
         public virtual string GetCreateIndex(Type type)
         {
             return null;
         }
 
+        /// <summary>
+        /// 获取删除表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>删除表 SQL，默认返回 null</returns>
         public virtual string GetDropTable(Type type)
         {
             return null;
         }
 
+        /// <summary>
+        /// 获取删除表 SQL
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <returns>删除表 SQL，默认返回 null</returns>
         public virtual string GetDropTable(string tableName)
         {
             return null;
         }
 
+        /// <summary>
+        /// 获取清空表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>清空表 SQL，默认返回 null</returns>
         public virtual string GetTruncateTable(Type type)
         {
             return null;
         }
 
+        /// <summary>
+        /// 获取清空表 SQL
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <returns>清空表 SQL，默认返回 null</returns>
         public virtual string GetTruncateTable(string tableName)
         {
             return null;
@@ -49,8 +89,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         /// <summary>
         /// 获取表名
         /// </summary>
-        /// <param name="data"></param>
-        /// <returns></returns>
+        /// <param name="data">表结构信息</param>
+        /// <returns>转义后的表名</returns>
         public string GetTableName(TableInfo data)
         {
             var ti = data;
@@ -63,10 +103,10 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         /// <summary>
         /// 获取表名
         /// </summary>
-        /// <param name="databaseName"></param>
-        /// <param name="schemaName"></param>
-        /// <param name="tableName"></param>
-        /// <returns></returns>
+        /// <param name="databaseName">数据库名</param>
+        /// <param name="schemaName">模式名</param>
+        /// <param name="tableName">表名</param>
+        /// <returns>转义后的表名</returns>
         public virtual string GetTableName(string databaseName, string schemaName, string tableName)
         {
             if (string.IsNullOrEmpty(databaseName) == false) {

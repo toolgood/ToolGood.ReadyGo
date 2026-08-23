@@ -34,7 +34,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 命令执行前
         /// </summary>
-        /// <param name="cmd"></param>
+        /// <param name="cmd">即将执行的数据库命令</param>
         protected override void OnExecutingCommand(DbCommand cmd)
         {
             base.OnExecutingCommand(cmd);
@@ -47,7 +47,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 命令执行后
         /// </summary>
-        /// <param name="cmd"></param>
+        /// <param name="cmd">已执行的数据库命令</param>
         protected override void OnExecutedCommand(DbCommand cmd)
         {
             base.OnExecutedCommand(cmd);
@@ -83,9 +83,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行查询，返回 DataTable
         /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns>查询结果 DataTable</returns>
         public DataTable ExecuteDataTable(string sql, object[] args)
         {
             OpenSharedConnection();
@@ -110,9 +110,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行查询，返回 DataSet（多结果集）
         /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns>查询结果 DataSet</returns>
         public DataSet ExecuteDataSet(string sql, object[] args)
         {
             OpenSharedConnection();
@@ -143,10 +143,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行查询，返回 DataTable
         /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <param name="cancellationToken">取消标记</param>
+        /// <returns>查询结果 DataTable</returns>
         public async Task<DataTable> ExecuteDataTable_Async(string sql, object[] args, CancellationToken cancellationToken = default)
         {
             await OpenSharedConnectionAsync(cancellationToken).ConfigureAwait(false);
@@ -171,10 +171,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行查询，返回 DataSet（多结果集）
         /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <param name="cancellationToken"></param>
-        /// <returns></returns>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <param name="cancellationToken">取消标记</param>
+        /// <returns>查询结果 DataSet</returns>
         public async Task<DataSet> ExecuteDataSet_Async(string sql, object[] args, CancellationToken cancellationToken = default)
         {
             await OpenSharedConnectionAsync(cancellationToken).ConfigureAwait(false);

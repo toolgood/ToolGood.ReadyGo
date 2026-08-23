@@ -6,22 +6,57 @@ using AnsiString = ToolGood.ReadyGo.NPoco.AnsiString;
 
 namespace ToolGood.ReadyGo.Gadget.TableManager
 {
+    /// <summary>
+    /// 列信息
+    /// </summary>
     public class ColumnInfo
     {
         private ColumnInfo()
         { }
 
+        /// <summary>
+        /// 列名
+        /// </summary>
         public string ColumnName;
+
+        /// <summary>
+        /// 列注释
+        /// </summary>
         public string Comment;
 
+        /// <summary>
+        /// 默认值
+        /// </summary>
         public string DefaultValue;
+
+        /// <summary>
+        /// 是否必填
+        /// </summary>
         public bool Required;
 
+        /// <summary>
+        /// 属性类型
+        /// </summary>
         public Type PropertyType;
 
+        /// <summary>
+        /// 字段长度
+        /// </summary>
         public string FieldLength;
+
+        /// <summary>
+        /// 是否为文本类型
+        /// </summary>
         public bool IsText;
+
+        /// <summary>
+        /// 是否为中等文本类型
+        /// </summary>
         public bool IsMediumText;
+
+        /// <summary>
+        /// 是否为长文本类型
+        /// </summary>
         public bool IsLongText;
 
         internal static ColumnInfo FromProperty(PropertyInfo pi)

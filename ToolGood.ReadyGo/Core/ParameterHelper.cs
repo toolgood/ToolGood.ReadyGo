@@ -10,13 +10,30 @@ using System.Text.RegularExpressions;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 参数处理帮助类，用于解析 SQL 中的命名参数、展开集合参数以及设置命令参数值。
+    /// </summary>
     public class ParameterHelper
     {
+        /// <summary>
+        /// 需要排除在集合展开之外的 <see cref="IEnumerable"/> 类型列表。
+        /// </summary>
         public static List<Type> ExcludedIEnumerableTypes = new();
 
         // Helper to handle named parameters from object properties
+        /// <summary>
+        /// 用于匹配命名参数的正则表达式。
+        /// </summary>
         public static Regex rxParamsPrefix = new Regex(@"(?<!@)@\w+", RegexOptions.Compiled);
 
+        /// <summary>
+        /// 处理 SQL 中的命名参数，将其替换为目标参数列表中的位置参数。
+        /// </summary>
+        /// <param name="sql">原始 SQL 语句。</param>
+        /// <param name="args_src">原始参数数组。</param>
+        /// <param name="args_dest">目标参数列表。</param>
+        /// <param name="reuseParameters">是否复用相同参数值。</param>
+        /// <returns>处理后的 SQL 语句。</returns>
         public static string ProcessParams(string sql, object[] args_src, List<object> args_dest, bool reuseParameters = false)
         {
             var parameters = new Dictionary<string, string>();
@@ -139,6 +156,11 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 获取指定类型的默认值。
+        /// </summary>
+        /// <param name="type">目标类型。</param>
+        /// <returns>值类型返回其默认实例，引用类型返回 null。</returns>
         public static object GetDefault(Type type)
         {
             if (type.GetTypeInfo().IsValueType)
@@ -148,6 +170,12 @@ namespace ToolGood.ReadyGo.NPoco
             return null;
         }
 
+        /// <summary>
+        /// 将值设置到命令参数中，并根据类型进行必要的转换。
+        /// </summary>
+        /// <param name="dbType">数据库类型。</param>
+        /// <param name="p">要设置的命令参数。</param>
+        /// <param name="value">参数值。</param>
         public static void SetParameterValue(IDatabaseType dbType, DbParameter p, object value)
         {
             if (value == null)

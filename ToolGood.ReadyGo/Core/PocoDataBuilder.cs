@@ -9,32 +9,67 @@ using ToolGood.ReadyGo.NPoco.RowMappers;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 表示已初始化的 POCO 数据构建器，可据此构建表信息或 POCO 数据。
+    /// </summary>
     public interface InitializedPocoDataBuilder
     {
+        /// <summary>
+        /// 构建表信息。
+        /// </summary>
+        /// <returns>构建出的表信息。</returns>
         TableInfo BuildTableInfo();
+        /// <summary>
+        /// 构建 POCO 数据。
+        /// </summary>
+        /// <returns>构建出的 POCO 数据。</returns>
         PocoData Build();
     }
 
+    /// <summary>
+    /// 根据实体类型构建 POCO 映射数据（表信息、列与成员结构）。
+    /// </summary>
     public class PocoDataBuilder : InitializedPocoDataBuilder
     {
         private readonly Cache<string, Type> _aliasToType = Cache<string, Type>.CreateStaticCache();
         private IFastCreate _generator;
 
+        /// <summary>
+        /// 正在构建映射的实体类型。
+        /// </summary>
         protected Type Type { get; set; }
         private IMapperCollection Mapper { get; set; }
 
         private List<PocoMemberPlan> _memberPlans { get; set; }
         private TableInfoPlan _tableInfoPlan { get; set; }
 
+        /// <summary>
+        /// 根据表信息构建成员的计划委托。
+        /// </summary>
+        /// <param name="tableInfo">表信息。</param>
+        /// <returns>构建出的成员。</returns>
         public delegate PocoMember PocoMemberPlan(TableInfo tableInfo);
+        /// <summary>
+        /// 构建表信息的计划委托。
+        /// </summary>
+        /// <returns>构建出的表信息。</returns>
         protected delegate TableInfo TableInfoPlan();
 
+        /// <summary>
+        /// 初始化 PocoDataBuilder 类的新实例。
+        /// </summary>
+        /// <param name="type">实体类型。</param>
+        /// <param name="mapper">映射器集合。</param>
         public PocoDataBuilder(Type type, IMapperCollection mapper)
         {
             Type = type;
             Mapper = mapper;
         }
 
+        /// <summary>
+        /// 初始化构建器，收集列信息并生成表信息计划与成员计划。
+        /// </summary>
+        /// <returns>当前构建器实例。</returns>
         public InitializedPocoDataBuilder Init()
         {
             var memberInfos = new List<MemberInfo>();
@@ -52,8 +87,19 @@ namespace ToolGood.ReadyGo.NPoco
             return this;
         }
 
+        /// <summary>
+        /// 判断是否应将某个私有成员纳入列映射（默认仅当带有 ColumnAttribute 特性时）。
+        /// </summary>
+        /// <param name="mi">成员信息。</param>
+        /// <param name="t">所属类型。</param>
+        /// <returns>若应纳入则返回 true，否则返回 false。</returns>
         protected virtual bool ShouldIncludePrivateColumn(MemberInfo mi, Type t) => mi.GetCustomAttribute<ColumnAttribute>() != null;
 
+        /// <summary>
+        /// 获取指定类型的列信息集合（包含公开字段、属性以及符合条件的私有成员）。
+        /// </summary>
+        /// <param name="type">实体类型。</param>
+        /// <returns>列信息数组。</returns>
         public ColumnInfo[] GetColumnInfos(Type type)
         {
             return ReflectionUtils.GetFieldsAndPropertiesForClasses(type)
@@ -64,6 +110,11 @@ namespace ToolGood.ReadyGo.NPoco
                 .ToArray();
         }
 
+        /// <summary>
+        /// 判断指定类型是否为字典类型。
+        /// </summary>
+        /// <param name="type">要判断的类型。</param>
+        /// <returns>若是字典类型则返回 true，否则返回 false。</returns>
         public static bool IsDictionaryType(Type type)
         {
             return new[] {typeof(object), typeof(IDictionary<string, object>), typeof(Dictionary<string, object>), typeof(OrderedDictionary)}.Contains(type)
@@ -89,6 +140,13 @@ namespace ToolGood.ReadyGo.NPoco
             return pocoData;
         }
 
+        /// <summary>
+        /// 生成表信息计划（根据类型解析表名、主键等并生成表别名）。
+        /// </summary>
+        /// <param name="type">实体类型。</param>
+        /// <param name="columnInfos">列信息集合。</param>
+        /// <param name="memberInfos">成员信息集合。</param>
+        /// <returns>表信息计划委托。</returns>
         protected virtual TableInfoPlan GetTableInfo(Type type, ColumnInfo[] columnInfos, List<MemberInfo> memberInfos)
         {
             var alias = CreateAlias(type.Name, type);
@@ -97,6 +155,12 @@ namespace ToolGood.ReadyGo.NPoco
             return () => tableInfo.Clone();
         }
 
+        /// <summary>
+        /// 根据成员信息生成对应的列信息。
+        /// </summary>
+        /// <param name="mi">成员信息。</param>
+        /// <param name="type">所属类型。</param>
+        /// <returns>列信息。</returns>
         protected virtual ColumnInfo GetColumnInfo(MemberInfo mi, Type type)
         {
             return ColumnInfoCreator.FromMemberInfo(mi);
@@ -124,6 +188,13 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 递归生成成员计划集合。
+        /// </summary>
+        /// <param name="columnInfos">列信息集合。</param>
+        /// <param name="memberInfos">成员信息集合。</param>
+        /// <param name="prefix">列名前缀。</param>
+        /// <returns>成员计划集合。</returns>
         public IEnumerable<PocoMemberPlan> GetPocoMembers(ColumnInfo[] columnInfos, List<MemberInfo> memberInfos, string prefix = null)
         {
             var capturedMembers = memberInfos.ToArray();
@@ -267,6 +338,11 @@ namespace ToolGood.ReadyGo.NPoco
                 : null;
         }
 
+        /// <summary>
+        /// 根据成员信息链生成成员访问器列表。
+        /// </summary>
+        /// <param name="memberInfos">成员信息链。</param>
+        /// <returns>成员访问器列表。</returns>
         public List<MemberAccessor> GetMemberAccessors(IEnumerable<MemberInfo> memberInfos)
         {
             return memberInfos
@@ -274,16 +350,33 @@ namespace ToolGood.ReadyGo.NPoco
                 .ToList();
         }
 
+        /// <summary>
+        /// 判断成员类型是否为 IList 列表类型（且不是数组）。
+        /// </summary>
+        /// <param name="mi">成员信息。</param>
+        /// <returns>若是列表类型则返回 true，否则返回 false。</returns>
         public static bool IsList(MemberInfo mi)
         {
             return mi.GetMemberInfoType().IsOfGenericType(typeof(IList<>)) && !mi.GetMemberInfoType().IsArray;
         }
 
+        /// <summary>
+        /// 拼接前缀与列名生成最终列名。
+        /// </summary>
+        /// <param name="prefix">列名前缀。</param>
+        /// <param name="columnName">列名。</param>
+        /// <returns>拼接后的列名。</returns>
         protected virtual string GetColumnName(string prefix, string columnName)
         {
             return JoinStrings(prefix, columnName);
         }
 
+        /// <summary>
+        /// 使用分隔符连接前缀与结尾字符串。
+        /// </summary>
+        /// <param name="prefix">前缀。</param>
+        /// <param name="end">结尾字符串。</param>
+        /// <returns>连接后的字符串。</returns>
         public static string JoinStrings(string prefix, string end)
         {
             var list = new List<string>();
@@ -294,6 +387,12 @@ namespace ToolGood.ReadyGo.NPoco
             return string.Join(PocoData.Separator, list.ToArray());
         }
 
+        /// <summary>
+        /// 根据类型名生成唯一表别名。
+        /// </summary>
+        /// <param name="typeName">类型名称。</param>
+        /// <param name="typeIn">类型。</param>
+        /// <returns>生成的别名。</returns>
         protected string CreateAlias(string typeName, Type typeIn)
         {
             string alias;

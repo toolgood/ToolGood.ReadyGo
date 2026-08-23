@@ -5,11 +5,26 @@ using System.Text.RegularExpressions;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 分页帮助类，用于拆分 SQL 语句并构建分页查询。
+    /// </summary>
     public class PagingHelper
     {
+        /// <summary>
+        /// 用于匹配 SELECT 列列表的正则表达式。
+        /// </summary>
         public static Regex rxColumns = new Regex(@"\A\s*SELECT\s+((?:\((?>\((?<depth>)|\)(?<-depth>)|.?)*(?(depth)(?!))\)|.)*?)(?<!,\s+)\bFROM\b", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
+        /// <summary>
+        /// 用于匹配 ORDER BY 子句的正则表达式。
+        /// </summary>
         public static Regex rxOrderBy = new Regex(@"(?!.*(?:\s+FROM[\s\(]+))ORDER\s+BY\s+([\w\.\[\]\(\)\s""`,]+)(?!.*\))", RegexOptions.IgnoreCase | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.Compiled);
                 
+        /// <summary>
+        /// 拆分 SQL 语句，提取列列表、排序子句并生成计数 SQL。
+        /// </summary>
+        /// <param name="sql">原始 SQL 语句。</param>
+        /// <param name="parts">用于接收拆分结果的 SQL 片段。</param>
+        /// <returns>拆分成功返回 true，否则返回 false。</returns>
         public static bool SplitSQL(string sql, out SQLParts parts)
         {
             parts.sql = sql;
@@ -44,6 +59,14 @@ namespace ToolGood.ReadyGo.NPoco
 
         private static readonly Regex OrderByAlias = new Regex(@"[\""\[\]\w]+\.([\[\]\""\w]+)", RegexOptions.Compiled | RegexOptions.Multiline | RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
+        /// <summary>
+        /// 基于拆分后的 SQL 片段构建分页查询语句。
+        /// </summary>
+        /// <param name="skip">要跳过的记录数。</param>
+        /// <param name="take">要获取的记录数。</param>
+        /// <param name="parts">拆分后的 SQL 片段。</param>
+        /// <param name="args">查询参数数组，按引用传递。</param>
+        /// <returns>分页查询语句。</returns>
         public static string BuildPaging(long skip, long take, SQLParts parts, ref object[] args)
         {
             parts.sqlOrderBy = string.IsNullOrEmpty(parts.sqlOrderBy) ? null : OrderByAlias.Replace(parts.sqlOrderBy, "$1");

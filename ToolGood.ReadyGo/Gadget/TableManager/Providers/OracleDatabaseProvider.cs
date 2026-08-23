@@ -5,8 +5,17 @@ using ToolGood.ReadyGo.NPoco;
 
 namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 {
+    /// <summary>
+    /// Oracle 数据库提供程序
+    /// </summary>
     public class OracleDatabaseProvider : DatabaseProvider
     {
+        /// <summary>
+        /// 获取“表不存在时创建”的建表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <param name="withIndex">是否同时生成索引</param>
+        /// <returns>建表 SQL</returns>
         public override string GetTryCreateTable(Type type, bool withIndex = true)
         {
             var ti = TableInfo.FromType(type);
@@ -58,23 +67,43 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             return sb.ToString().Trim(',');
         }
 
+        /// <summary>
+        /// 获取删除表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>删除表 SQL</returns>
         public override string GetDropTable(Type type)
         {
             var ti = TableInfo.FromType(type);
             return "DROP TABLE " + GetTableName(ti) + ";";
         }
 
+        /// <summary>
+        /// 获取删除表 SQL
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <returns>删除表 SQL</returns>
         public override string GetDropTable(string tableName)
         {
             return "DROP TABLE \"" + tableName + "\";";
         }
 
+        /// <summary>
+        /// 获取清空表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>清空表 SQL</returns>
         public override string GetTruncateTable(Type type)
         {
             var ti = TableInfo.FromType(type);
             return "TRUNCATE TABLE " + GetTableName(ti) + ";";
         }
 
+        /// <summary>
+        /// 获取清空表 SQL
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <returns>清空表 SQL</returns>
         public override string GetTruncateTable(string tableName)
         {
             return "TRUNCATE TABLE \"" + tableName + "\";";
@@ -160,6 +189,13 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             return sb.ToString();
         }
 
+        /// <summary>
+        /// 获取表名
+        /// </summary>
+        /// <param name="databaseName">数据库名</param>
+        /// <param name="schemaName">模式名</param>
+        /// <param name="tableName">表名</param>
+        /// <returns>转义后的表名</returns>
         public override string GetTableName(string databaseName, string schemaName, string tableName)
         {
             if (string.IsNullOrEmpty(schemaName) == false) {

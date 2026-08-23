@@ -13,11 +13,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
     internal static class PartialEvaluator
     {
         /// <summary>
-        /// Performs evaluation & replacement of independent sub-trees
+        /// 评估并替换表达式树中可独立求值的子表达式。
         /// </summary>
-        /// <param retval="expression">The root of the expression tree.</param>
-        /// <param retval="fnCanBeEvaluated">A function that decides whether a given expression node can be part of the local function.</param>
-        /// <returns>A new tree with sub-trees evaluated and replaced.</returns>
+        /// <param name="expression">表达式树的根节点。</param>
+        /// <param name="fnCanBeEvaluated">判断给定表达式节点是否可被本地求值的函数。</param>
+        /// <returns>子表达式被求值并替换后的新表达式树。</returns>
         public static Expression Eval(Expression expression, Func<Expression, bool> fnCanBeEvaluated)
         {
             return SubtreeEvaluator.Eval(Nominator.Nominate(fnCanBeEvaluated, expression), expression);

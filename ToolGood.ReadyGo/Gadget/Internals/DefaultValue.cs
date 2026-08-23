@@ -17,12 +17,12 @@ namespace ToolGood.ReadyGo.Gadget.Internals
         /// <summary>
         /// 设置默认值
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="obj"></param>
-        /// <param name="setString"></param>
-        /// <param name="setDateTime"></param>
-        /// <param name="setGuid"></param>
-        /// <param name="pd"></param>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="obj">要设置默认值的对象</param>
+        /// <param name="setString">是否将空字符串列设为非空字符串</param>
+        /// <param name="setDateTime">是否将默认时间列设为当前时间</param>
+        /// <param name="setGuid">是否为空的 Guid 列生成新值</param>
+        /// <param name="pd">POCO 元数据</param>
         public static void SetDefaultValue<T>(T obj, bool setString, bool setDateTime, bool setGuid, PocoData pd)
         {
             // 缓存 key 需包含 PocoData 维度：同一类型映射到不同表（不同 PocoData）时，列集合不同

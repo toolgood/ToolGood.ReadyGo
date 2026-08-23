@@ -62,8 +62,8 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 获取 DbProviderFactory
         /// </summary>
-        /// <param name="sqlType"></param>
-        /// <returns></returns>
+        /// <param name="sqlType">SQL 类型</param>
+        /// <returns>对应的 DbProviderFactory 实例</returns>
         public static DbProviderFactory GetProviderFactory(SqlType sqlType)
         {
             switch (sqlType) {
@@ -128,9 +128,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据提供程序名/类型名解析 SqlType
         /// </summary>
-        /// <param name="providerNameOrTypeName"></param>
-        /// <param name="connectionString"></param>
-        /// <returns></returns>
+        /// <param name="providerNameOrTypeName">提供程序名或类型名</param>
+        /// <param name="connectionString">连接字符串</param>
+        /// <returns>解析出的 SqlType</returns>
         public static SqlType GetSqlType(string providerNameOrTypeName, string connectionString)
         {
             if (providerNameOrTypeName.IndexOf("MySql", StringComparison.InvariantCultureIgnoreCase) >= 0) return SqlType.MySql;

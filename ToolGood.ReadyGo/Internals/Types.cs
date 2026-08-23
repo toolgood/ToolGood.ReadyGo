@@ -10,6 +10,11 @@ namespace ToolGood.ReadyGo.Internals
         private static readonly Cache<Type, bool> IsNullTypeCache = new Cache<Type, bool>();
         private static readonly Cache<Type, Type> GetBaseTypeCache = new Cache<Type, Type>();
 
+        /// <summary>
+        /// 判断类型是否为受支持的数据库字段类型
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <returns>若为受支持类型则返回 true，否则返回 false</returns>
         public static bool IsAllowType(Type type)
         {
             if (type == null) return false;
@@ -96,6 +101,11 @@ namespace ToolGood.ReadyGo.Internals
             });
         }
 
+        /// <summary>
+        /// 获取类型的基础类型（去掉 Nullable 包装）
+        /// </summary>
+        /// <param name="type">类型</param>
+        /// <returns>基础类型</returns>
         public static Type GetBaseType(Type type)
         {
             return GetBaseTypeCache.Get(type, () => {

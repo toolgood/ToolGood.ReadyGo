@@ -13,7 +13,7 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="connectionString">链接字符串</param>
         /// <param name="type">SqlType类型</param>
-        /// <returns></returns>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenDatabase(string connectionString, SqlType type = SqlType.SqlServer)
         {
             if (type == SqlType.None) {
@@ -29,7 +29,7 @@ namespace ToolGood.ReadyGo
         /// <param name="connectionString">链接字符串</param>
         /// <param name="providerName">适配器名称</param>
         /// <param name="type">SqlType类型</param>
-        /// <returns></returns>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenDatabase(string connectionString, string providerName, SqlType type = SqlType.None)
         {
             if (type == SqlType.None) {
@@ -45,7 +45,7 @@ namespace ToolGood.ReadyGo
         /// <param name="connectionString">链接字符串</param>
         /// <param name="factory">适配器工厂</param>
         /// <param name="type">SqlType类型</param>
-        /// <returns></returns>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenDatabase(string connectionString, DbProviderFactory factory, SqlType type = SqlType.None)
         {
             return new SqlHelper(connectionString, factory, type);
@@ -54,10 +54,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 打开Sql Server本地数据库
         /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="database"></param>
-        /// <param name="server"></param>
-        /// <returns></returns>
+        /// <param name="filePath">数据库文件路径</param>
+        /// <param name="database">数据库名</param>
+        /// <param name="server">服务器实例</param>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenSqlServerFile(string filePath, string database, string server = "(LocalDb)\v11.0")
         {
             var connstr = string.Format(@"Data Source={0};Initial Catalog={2};Integrated Security=SSPI;AttachDBFilename={1}", server, filePath, database);
@@ -71,8 +71,8 @@ namespace ToolGood.ReadyGo
         /// <param name="database">活动数据库</param>
         /// <param name="user">用户</param>
         /// <param name="pwd">密码</param>
-        /// <param name="trustServerCertificate"></param>
-        /// <returns></returns>
+        /// <param name="trustServerCertificate">是否信任服务器证书</param>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenSqlServer(string server, string database, string user, string pwd, bool trustServerCertificate = false)
         {
             var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd}";
@@ -90,8 +90,8 @@ namespace ToolGood.ReadyGo
         /// <param name="database">活动数据库</param>
         /// <param name="user">用户</param>
         /// <param name="pwd">密码</param>
-        /// <param name="trustServerCertificate"></param>
-        /// <returns></returns>
+        /// <param name="trustServerCertificate">是否信任服务器证书</param>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenSqlServer(string server, int port, string database, string user, string pwd, bool trustServerCertificate = false)
         {
             var connstr = $"Server={server},{port};Database={database};Uid={user};Pwd={pwd}";
@@ -108,8 +108,8 @@ namespace ToolGood.ReadyGo
         /// <param name="database">活动数据库</param>
         /// <param name="user">用户</param>
         /// <param name="pwd">密码</param>
-        /// <param name="trustServerCertificate"></param>
-        /// <returns></returns>
+        /// <param name="trustServerCertificate">是否信任服务器证书</param>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenSqlServer2012(string server, string database, string user, string pwd, bool trustServerCertificate = false)
         {
             var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd}";
@@ -127,8 +127,8 @@ namespace ToolGood.ReadyGo
         /// <param name="database">活动数据库</param>
         /// <param name="user">用户</param>
         /// <param name="pwd">密码</param>
-        /// <param name="trustServerCertificate"></param>
-        /// <returns></returns>
+        /// <param name="trustServerCertificate">是否信任服务器证书</param>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenSqlServer2012(string server, int port, string database, string user, string pwd, bool trustServerCertificate = false)
         {
             var connstr = $"Server={server},{port};Database={database};Uid={user};Pwd={pwd}";
@@ -145,7 +145,7 @@ namespace ToolGood.ReadyGo
         /// <param name="database">活动数据库</param>
         /// <param name="user">用户</param>
         /// <param name="pwd">密码</param>
-        /// <returns></returns>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenMysql(string server, string database, string user, string pwd)
         {
             var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;Allow User Variables=True;";
@@ -164,7 +164,7 @@ namespace ToolGood.ReadyGo
         /// <param name="database">活动数据库</param>
         /// <param name="user">用户</param>
         /// <param name="pwd">密码</param>
-        /// <returns></returns>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenMysql(string server, int port, string database, string user, string pwd)
         {
             var connstr = $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;Allow User Variables=True;";
@@ -183,7 +183,7 @@ namespace ToolGood.ReadyGo
         /// <param name="serviceName">服务名</param>
         /// <param name="user">用户</param>
         /// <param name="pwd">密码</param>
-        /// <returns></returns>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenOracle(string server, int port, string serviceName, string user, string pwd)
         {
             var conn = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={server})(PORT={port}))(CONNECT_DATA=(SERVICE_NAME={serviceName})));User Id={user};Password={pwd}";
@@ -197,7 +197,7 @@ namespace ToolGood.ReadyGo
         /// <param name="pwd">密码, 新版本dll不支持密码</param>
         /// <param name="useSynchronous">使用同步，为False则更快</param>
         /// <param name="journalMode">Journal模式</param>
-        /// <returns></returns>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenSqliteFile(string filePath, string pwd = null, bool useSynchronous = true, JournalMode journalMode = JournalMode.None)
         {
             StringBuilder sb = new StringBuilder();
@@ -223,9 +223,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 打开微软的Sqlite，支持密码
         /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="pwd"></param>
-        /// <returns></returns>
+        /// <param name="filePath">数据库文件路径</param>
+        /// <param name="pwd">密码</param>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenMsSqliteFile(string filePath, string pwd = null)
         {
             StringBuilder sb = new StringBuilder();
@@ -239,7 +239,7 @@ namespace ToolGood.ReadyGo
 		/// <summary>
 		/// 打开微软的Sqlite
 		/// </summary>
-		/// <returns></returns>
+		/// <returns>打开的 SqlHelper 实例</returns>
 		public static SqlHelper OpenSqliteMemory()
 		{
 			return OpenDatabase("Data Source=:memory:", SqlType.SQLite);
@@ -248,9 +248,9 @@ namespace ToolGood.ReadyGo
 		/// <summary>
 		/// 打开DuckDB数据库，支持密码
 		/// </summary>
-		/// <param name="filePath"></param>
-		/// <param name="pwd"></param>
-		/// <returns></returns>
+		/// <param name="filePath">数据库文件路径</param>
+		/// <param name="pwd">密码</param>
+		/// <returns>打开的 SqlHelper 实例</returns>
 		public static SqlHelper OpenDuckDbFile(string filePath, string pwd = null)
         {
             StringBuilder sb = new StringBuilder();
@@ -281,7 +281,7 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="filePath">文件目录</param>
         /// <param name="pwd">密码</param>
-        /// <returns></returns>
+        /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenAccessFile64x(string filePath, string pwd = null)
         {
             var connstr = $"Provider=Microsoft.ACE.OLEDB.12.0;data source={filePath};";

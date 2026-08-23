@@ -27,10 +27,10 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         public List<ColumnInfo> Columns = new List<ColumnInfo>();
 
         /// <summary>
-        /// 解析类型
+        /// 从类型解析出表结构信息
         /// </summary>
-        /// <param name="t"></param>
-        /// <returns></returns>
+        /// <param name="t">要解析的类型</param>
+        /// <returns>解析出的表结构信息</returns>
         public static TableInfo FromType(Type t)
         {
             TableInfo ti = new TableInfo();

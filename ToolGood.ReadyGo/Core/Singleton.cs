@@ -7,13 +7,24 @@ namespace ToolGood.ReadyGo.NPoco
 {
     static class Singleton<T> where T : new()
     {
+        /// <summary>
+        /// 该泛型单例的实例。
+        /// </summary>
         public static T Instance = new T();
     }
 
     class DynamicDatabaseType
     {
+        /// <summary>
+        /// 数据库类型缓存。
+        /// </summary>
         public static Cache<string, DatabaseType> cache = Cache<string, DatabaseType>.CreateStaticCache();
 
+        /// <summary>
+        /// 根据类型名称创建对应的 SqlServer 数据库类型实例。
+        /// </summary>
+        /// <param name="type">数据库类型名称。</param>
+        /// <returns>对应的数据库类型实例。</returns>
         public static DatabaseType MakeSqlServerType(string type)
         {
             try

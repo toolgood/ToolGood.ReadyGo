@@ -94,6 +94,11 @@ namespace ToolGood.ReadyGo.NPoco
             SetDelegate?.Invoke(target, value);
         }
 
+        /// <summary>
+        /// 获取指定目标对象的成员值。
+        /// </summary>
+        /// <param name="target">目标对象。</param>
+        /// <returns>成员值。</returns>
         public object Get(object target)
         {
             return GetDelegate?.Invoke(target);

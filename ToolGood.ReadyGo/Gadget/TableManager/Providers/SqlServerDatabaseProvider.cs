@@ -39,6 +39,11 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             return sql;
         }
 
+        /// <summary>
+        /// 获取创建索引 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>创建索引 SQL</returns>
         public override string GetCreateIndex(Type type)
         {
             //CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX 索引名 ON 表名（字段名[(长度)][ASC | DESC]）;
@@ -66,27 +71,54 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             return sb.ToString().Replace("[[", "[").Replace("]]", "]").Trim(',');
         }
 
+        /// <summary>
+        /// 获取删除表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>删除表 SQL</returns>
         public override string GetDropTable(Type type)
         {
             var ti = TableInfo.FromType(type);
             return "DROP TABLE IF EXISTS " + GetTableName(ti) + ";";
         }
+
+        /// <summary>
+        /// 获取删除表 SQL
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <returns>删除表 SQL</returns>
         public override string GetDropTable(string tableName)
         {
             return "DROP TABLE IF EXISTS " + tableName + ";";
         }
 
+        /// <summary>
+        /// 获取清空表 SQL
+        /// </summary>
+        /// <param name="type">实体类型</param>
+        /// <returns>清空表 SQL</returns>
         public override string GetTruncateTable(Type type)
         {
             var ti = TableInfo.FromType(type);
             return "TRUNCATE TABLE " + GetTableName(ti) + ";";
         }
 
+        /// <summary>
+        /// 获取清空表 SQL
+        /// </summary>
+        /// <param name="tableName">表名</param>
+        /// <returns>清空表 SQL</returns>
         public override string GetTruncateTable(string tableName)
         {
             return "TRUNCATE TABLE " + tableName + ";";
         }
 
+        /// <summary>
+        /// 生成列定义 SQL
+        /// </summary>
+        /// <param name="ti">表结构信息</param>
+        /// <param name="ci">列信息</param>
+        /// <returns>列定义 SQL</returns>
         public string CreateColumn(TableInfo ti, ColumnInfo ci)
         {
             var type = ci.PropertyType;

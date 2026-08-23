@@ -10,6 +10,12 @@ namespace ToolGood.ReadyGo.Internals
         private static readonly Cache<Type, Dictionary<string, object>> _types = new Cache<Type, Dictionary<string, object>>();
         private static readonly Cache<Type, bool> _useString = new Cache<Type, bool>();
 
+        /// <summary>
+        /// 根据枚举值名称（忽略大小写）查找对应的枚举值
+        /// </summary>
+        /// <param name="enumType">枚举类型</param>
+        /// <param name="value">枚举值名称</param>
+        /// <returns>对应的枚举值</returns>
         public static object EnumFromString(Type enumType, string value)
         {
             Dictionary<string, object> map = _types.Get(enumType, () => {

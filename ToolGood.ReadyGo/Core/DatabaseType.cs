@@ -383,6 +383,10 @@ namespace ToolGood.ReadyGo.NPoco
         /// <summary>
         /// 创建 SQL 表达式访问器实例。
         /// </summary>
+        /// <typeparam name="T">POCO 类型。</typeparam>
+        /// <param name="db">数据库实例。</param>
+        /// <param name="pocoData">POCO 元数据。</param>
+        /// <returns>SQL 表达式访问器实例。</returns>
         public ISqlExpression<T> ExpressionVisitor<T>(IDatabase db, PocoData pocoData)
         {
             return ExpressionVisitor<T>(db, pocoData, false);

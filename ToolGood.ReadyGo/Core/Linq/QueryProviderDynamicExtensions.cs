@@ -19,6 +19,8 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行查询并返回结果集，等效于 ToList()
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <returns>结果集列表。</returns>
         public static List<T> Select<T>(this IQueryProvider<T> provider)
         {
             return provider.ToList();
@@ -31,6 +33,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where 条件
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="predicate">筛选条件表达式。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhere<T>(this IQueryProvider<T> provider, bool condition, Expression<Func<T, bool>> predicate)
         {
             if (condition && predicate != null)
@@ -41,6 +47,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Order By
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueOrderBy<T>(this IQueryProvider<T> provider, bool condition, Expression<Func<T, object>> column)
         {
             if (condition && column != null)
@@ -51,6 +61,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Order By Descending
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueOrderByDescending<T>(this IQueryProvider<T> provider, bool condition, Expression<Func<T, object>> column)
         {
             if (condition && column != null)
@@ -61,6 +75,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Limit（行数需大于 0）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="rows">返回行数。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueLimit<T>(this IQueryProvider<T> provider, bool condition, int rows)
         {
             if (condition && rows > 0)
@@ -71,6 +89,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Limit（跳过 skip 行，取 rows 行）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="skip">跳过的行数。</param>
+        /// <param name="rows">返回行数。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueLimit<T>(this IQueryProvider<T> provider, bool condition, int skip, int rows)
         {
             if (condition && rows > 0)
@@ -88,6 +111,7 @@ namespace ToolGood.ReadyGo
         /// <param name="provider">查询器</param>
         /// <param name="sql">子查询 SQL 或表名/过滤条件</param>
         /// <param name="args">SQL 参数</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereExists<T>(this IQueryProvider<T> provider, string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException(nameof(sql));
@@ -101,6 +125,7 @@ namespace ToolGood.ReadyGo
         /// <param name="provider">查询器</param>
         /// <param name="sql">子查询 SQL 或表名/过滤条件</param>
         /// <param name="args">SQL 参数</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereNotExists<T>(this IQueryProvider<T> provider, string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException(nameof(sql));
@@ -111,6 +136,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where Exists
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="sql">子查询 SQL 或表名/过滤条件。</param>
+        /// <param name="args">SQL 参数。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereExists<T>(this IQueryProvider<T> provider, bool condition, string sql, params object[] args)
         {
             return condition ? provider.WhereExists(sql, args) : provider;
@@ -119,6 +149,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where Not Exists
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="sql">子查询 SQL 或表名/过滤条件。</param>
+        /// <param name="args">SQL 参数。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereNotExists<T>(this IQueryProvider<T> provider, bool condition, string sql, params object[] args)
         {
             return condition ? provider.WhereNotExists(sql, args) : provider;
@@ -134,6 +169,7 @@ namespace ToolGood.ReadyGo
         /// <param name="provider">查询器</param>
         /// <param name="column">列名（可带别名，如 "t0.Age"）</param>
         /// <param name="values">值集合</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereIn<T, TValue>(this IQueryProvider<T> provider, string column, IEnumerable<TValue> values)
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
@@ -147,6 +183,7 @@ namespace ToolGood.ReadyGo
         /// <param name="provider">查询器</param>
         /// <param name="field">列表达式，如 x =&gt; x.Age</param>
         /// <param name="values">值集合</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereIn<T, TValue>(this IQueryProvider<T> provider, Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
@@ -157,6 +194,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where In（字符串列名版本）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereIn<T, TValue>(this IQueryProvider<T> provider, bool condition, string column, IEnumerable<TValue> values)
         {
             return condition ? provider.WhereIn(column, values) : provider;
@@ -165,6 +207,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where In（表达式版本）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereIn<T, TValue>(this IQueryProvider<T> provider, bool condition, Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
         {
             return condition ? provider.WhereIn(field, values) : provider;
@@ -180,6 +227,7 @@ namespace ToolGood.ReadyGo
         /// <param name="provider">查询器</param>
         /// <param name="column">列名（可带别名，如 "t0.Name"）</param>
         /// <param name="pattern">匹配内容（自动加前后 %）</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereLike<T>(this IQueryProvider<T> provider, string column, string pattern)
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
@@ -194,6 +242,7 @@ namespace ToolGood.ReadyGo
         /// <param name="provider">查询器</param>
         /// <param name="field">列表达式，如 x =&gt; x.Name</param>
         /// <param name="pattern">匹配内容（自动加前后 %）</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereLike<T, TValue>(this IQueryProvider<T> provider, Expression<Func<T, TValue>> field, string pattern)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
@@ -203,6 +252,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where Like（字符串列名版本）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereLike<T>(this IQueryProvider<T> provider, bool condition, string column, string pattern)
         {
             return condition ? provider.WhereLike(column, pattern) : provider;
@@ -211,6 +265,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where Like（表达式版本）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereLike<T, TValue>(this IQueryProvider<T> provider, bool condition, Expression<Func<T, TValue>> field, string pattern)
         {
             return condition ? provider.WhereLike(field, pattern) : provider;
@@ -226,6 +285,7 @@ namespace ToolGood.ReadyGo
         /// <param name="provider">查询器</param>
         /// <param name="column">列名（可带别名，如 "t0.Age"）</param>
         /// <param name="values">值集合</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereNotIn<T, TValue>(this IQueryProvider<T> provider, string column, IEnumerable<TValue> values)
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
@@ -239,6 +299,7 @@ namespace ToolGood.ReadyGo
         /// <param name="provider">查询器</param>
         /// <param name="field">列表达式，如 x =&gt; x.Age</param>
         /// <param name="values">值集合</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereNotIn<T, TValue>(this IQueryProvider<T> provider, Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
@@ -249,6 +310,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where Not In（字符串列名版本）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereNotIn<T, TValue>(this IQueryProvider<T> provider, bool condition, string column, IEnumerable<TValue> values)
         {
             return condition ? provider.WhereNotIn(column, values) : provider;
@@ -257,6 +323,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where Not In（表达式版本）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereNotIn<T, TValue>(this IQueryProvider<T> provider, bool condition, Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
         {
             return condition ? provider.WhereNotIn(field, values) : provider;
@@ -272,6 +343,7 @@ namespace ToolGood.ReadyGo
         /// <param name="provider">查询器</param>
         /// <param name="column">列名（可带别名，如 "t0.Name"）</param>
         /// <param name="pattern">匹配内容（自动加前缀 %）</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereLikeStart<T>(this IQueryProvider<T> provider, string column, string pattern)
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
@@ -283,6 +355,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Where {field} Like '%pattern'（右匹配）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereLikeStart<T, TValue>(this IQueryProvider<T> provider, Expression<Func<T, TValue>> field, string pattern)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
@@ -292,6 +368,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where Like Start（字符串列名版本）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereLikeStart<T>(this IQueryProvider<T> provider, bool condition, string column, string pattern)
         {
             return condition ? provider.WhereLikeStart(column, pattern) : provider;
@@ -300,6 +381,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where Like Start（表达式版本）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereLikeStart<T, TValue>(this IQueryProvider<T> provider, bool condition, Expression<Func<T, TValue>> field, string pattern)
         {
             return condition ? provider.WhereLikeStart(field, pattern) : provider;
@@ -315,6 +401,7 @@ namespace ToolGood.ReadyGo
         /// <param name="provider">查询器</param>
         /// <param name="column">列名（可带别名，如 "t0.Name"）</param>
         /// <param name="pattern">匹配内容（自动加后缀 %）</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereLikeEnd<T>(this IQueryProvider<T> provider, string column, string pattern)
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
@@ -326,6 +413,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// Where {field} Like 'pattern%'（左匹配）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> WhereLikeEnd<T, TValue>(this IQueryProvider<T> provider, Expression<Func<T, TValue>> field, string pattern)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
@@ -335,6 +426,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where Like End（字符串列名版本）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereLikeEnd<T>(this IQueryProvider<T> provider, bool condition, string column, string pattern)
         {
             return condition ? provider.WhereLikeEnd(column, pattern) : provider;
@@ -343,6 +439,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 条件成立时添加 Where Like End（表达式版本）
         /// </summary>
+        /// <param name="provider">查询器。</param>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
         public static IQueryProvider<T> IfTrueWhereLikeEnd<T, TValue>(this IQueryProvider<T> provider, bool condition, Expression<Func<T, TValue>> field, string pattern)
         {
             return condition ? provider.WhereLikeEnd(field, pattern) : provider;

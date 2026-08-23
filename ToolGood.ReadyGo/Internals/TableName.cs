@@ -14,6 +14,12 @@ namespace ToolGood.ReadyGo.Internals
         internal PocoData _pocoData;
         internal IDatabaseType _databaseType;
 
+        /// <summary>
+        /// 初始化表名动态对象
+        /// </summary>
+        /// <param name="pocoData">POCO 元数据</param>
+        /// <param name="databaseType">数据库类型</param>
+        /// <param name="asName">表别名</param>
         public TableName(PocoData pocoData, IDatabaseType databaseType, string asName)
         {
             _pocoData = pocoData;
@@ -69,9 +75,9 @@ namespace ToolGood.ReadyGo.Internals
         /// <summary>
         /// 获取字段名
         /// </summary>
-        /// <typeparam name="T1"></typeparam>
-        /// <param name="field"></param>
-        /// <returns></returns>
+        /// <typeparam name="T1">字段类型</typeparam>
+        /// <param name="field">字段选择表达式，如 x =&gt; x.Name</param>
+        /// <returns>转义后的字段名（含别名前缀）</returns>
         public string F<T1>(Expression<Func<T, T1>> field)
         {
             var fieldName = GetFieldName(field.Body);

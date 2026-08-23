@@ -6,11 +6,22 @@ using System.Reflection;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 映射帮助类，用于按列信息、源类型与目标类型构建值转换委托。
+    /// </summary>
     public class MappingHelper
     {
         static readonly EnumMapper EnumMapper = new EnumMapper();
         static readonly Cache<Type, Type> UnderlyingTypes = Cache<Type, Type>.CreateStaticCache();
 
+        /// <summary>
+        /// 根据列信息、源类型和目标类型获取值转换委托。
+        /// </summary>
+        /// <param name="mapper">映射器集合，可为 null。</param>
+        /// <param name="pc">列信息，可为 null。</param>
+        /// <param name="srcType">源类型。</param>
+        /// <param name="dstType">目标类型。</param>
+        /// <returns>值转换委托，若无需转换则返回 null。</returns>
         public static Func<object, object> GetConverter(IMapperCollection mapper, PocoColumn pc, Type srcType, Type dstType)
         {
             Func<object, object> converter = null;
@@ -87,6 +98,11 @@ namespace ToolGood.ReadyGo.NPoco
             }.Contains(t);
         }
 
+        /// <summary>
+        /// 获取指定类型的默认值。
+        /// </summary>
+        /// <param name="type">目标类型。</param>
+        /// <returns>值类型返回其默认实例，引用类型返回 null。</returns>
         public static object GetDefault(Type type)
         {
             if (type.GetTypeInfo().IsValueType)

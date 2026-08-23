@@ -9,8 +9,22 @@ namespace ToolGood.ReadyGo.NPoco
 {
     public partial class Database
     {
+        /// <summary>
+        /// 插入语句的构建与主键、版本号赋值的帮助类。
+        /// </summary>
         public class InsertStatements
         {
+            /// <summary>
+            /// 根据 POCO 元数据构建插入语句。
+            /// </summary>
+            /// <typeparam name="T">POCO 类型。</typeparam>
+            /// <param name="database">当前数据库实例。</param>
+            /// <param name="pd">POCO 元数据。</param>
+            /// <param name="tableName">表名。</param>
+            /// <param name="primaryKeyName">主键列名。</param>
+            /// <param name="autoIncrement">主键是否自增。</param>
+            /// <param name="poco">待插入的对象。</param>
+            /// <returns>准备好的插入语句。</returns>
             public static PreparedInsertStatement PrepareInsertSql<T>(Database database, PocoData pd, string tableName, string primaryKeyName, bool autoIncrement, T poco)
             {
                 var names = new List<string>();
@@ -102,6 +116,14 @@ namespace ToolGood.ReadyGo.NPoco
                 return prep;
             }
 
+            /// <summary>
+            /// 获取非自增主键的当前值。
+            /// </summary>
+            /// <typeparam name="T">POCO 类型。</typeparam>
+            /// <param name="primaryKeyName">主键列名。</param>
+            /// <param name="poco">POCO 对象。</param>
+            /// <param name="preparedSql">准备好的插入语句。</param>
+            /// <returns>主键值，若不存在则返回 null。</returns>
             public static object AssignNonIncrementPrimaryKey<T>(string primaryKeyName, T poco, PreparedInsertStatement preparedSql)
             {
                 PocoColumn pkColumn;
@@ -110,6 +132,12 @@ namespace ToolGood.ReadyGo.NPoco
                 return null;
             }
 
+            /// <summary>
+            /// 为对象分配版本号。
+            /// </summary>
+            /// <typeparam name="T">POCO 类型。</typeparam>
+            /// <param name="poco">POCO 对象。</param>
+            /// <param name="preparedSql">准备好的插入语句。</param>
             public static void AssignVersion<T>(T poco, PreparedInsertStatement preparedSql)
             {
                 if (!string.IsNullOrEmpty(preparedSql.VersionName))
@@ -122,6 +150,14 @@ namespace ToolGood.ReadyGo.NPoco
                 }
             }
 
+            /// <summary>
+            /// 为对象分配主键值。
+            /// </summary>
+            /// <typeparam name="T">POCO 类型。</typeparam>
+            /// <param name="primaryKeyName">主键列名。</param>
+            /// <param name="poco">POCO 对象。</param>
+            /// <param name="id">主键值。</param>
+            /// <param name="preparedSql">准备好的插入语句。</param>
             public static void AssignPrimaryKey<T>(string primaryKeyName, T poco, object id, PreparedInsertStatement preparedSql)
             {
                 if (primaryKeyName != null && id != null && id.GetType().GetTypeInfo().IsValueType)

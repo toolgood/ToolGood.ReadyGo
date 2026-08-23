@@ -7,8 +7,17 @@ using ToolGood.ReadyGo.NPoco;
 
 namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 {
+	/// <summary>
+	/// DuckDB 数据库提供程序
+	/// </summary>
 	public class DuckDbDatabaseProvider : DatabaseProvider
 	{
+		/// <summary>
+		/// 获取“表不存在时创建”的建表 SQL
+		/// </summary>
+		/// <param name="type">实体类型</param>
+		/// <param name="withIndex">是否同时生成索引</param>
+		/// <returns>建表 SQL</returns>
 		public override string GetTryCreateTable(Type type, bool withIndex = true)
 		{
 			var ti = TableInfo.FromType(type);
@@ -63,23 +72,43 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 			return sb.ToString().Trim(',');
 		}
 
+		/// <summary>
+		/// 获取删除表 SQL
+		/// </summary>
+		/// <param name="type">实体类型</param>
+		/// <returns>删除表 SQL</returns>
 		public override string GetDropTable(Type type)
 		{
 			var ti = TableInfo.FromType(type);
 			return "DROP TABLE IF EXISTS \"" + ti.TableName + "\";\r\nDROP SEQUENCE IF EXISTS seq_" + ti.TableName + ";";
 		}
 
+		/// <summary>
+		/// 获取删除表 SQL
+		/// </summary>
+		/// <param name="tableName">表名</param>
+		/// <returns>删除表 SQL</returns>
 		public override string GetDropTable(string tableName)
 		{
 			return "DROP TABLE IF EXISTS \"" + tableName + "\";\r\nDROP SEQUENCE IF EXISTS seq_" + tableName + ";";
 		}
 
+		/// <summary>
+		/// 获取清空表 SQL
+		/// </summary>
+		/// <param name="type">实体类型</param>
+		/// <returns>清空表 SQL</returns>
 		public override string GetTruncateTable(Type type)
 		{
 			var ti = TableInfo.FromType(type);
 			return GetTruncateTable(ti.TableName);
 		}
 
+		/// <summary>
+		/// 获取清空表 SQL
+		/// </summary>
+		/// <param name="tableName">表名</param>
+		/// <returns>清空表 SQL</returns>
 		public override string GetTruncateTable(string tableName)
 		{
 			return $"DELETE FROM \"{tableName}\";";

@@ -69,7 +69,7 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="connectionString">数据库链接字符串</param>
         /// <param name="factory">provider工厂</param>
-        /// <param name="type"></param>
+        /// <param name="type">SQL 类型</param>
         public SqlHelper(string connectionString, DbProviderFactory factory, SqlType type)
         {
             _sqlType = type;
@@ -130,7 +130,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 使用事务
         /// </summary>
-        /// <returns></returns>
+        /// <returns>事务对象</returns>
         public Transaction UseTransaction()
         {
             return new Transaction(GetDatabase(), _isolationLevel ?? IsolationLevel.Unspecified);
@@ -195,10 +195,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,判断是否存在，返回bool类型
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>存在返回 true，否则返回 false</returns>
         public bool Exists<T>(string sql, params object[] args)
         {
             return Count<T>(sql, args) > 0;
@@ -207,10 +207,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         ///  执行SQL 查询,返回数量
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>记录数量</returns>
         public int Count<T>(string sql = "", params object[] args)
         {
             sql = sql.Trim();
@@ -226,10 +226,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         ///  执行SQL 查询,返回数量
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>记录数量</returns>
         public int Select_Count<T>(string sql = "", params object[] args)
         {
             return Count<T>(sql, args);
@@ -238,9 +238,9 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回数量
         /// </summary>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns>记录数量</returns>
         public int Count(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
@@ -253,10 +253,10 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public List<T> Select<T>(string sql = "", params object[] args)
         {
             return GetDatabase().Query<T>(sql, args).ToList();
@@ -265,11 +265,11 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="limit">获取个数</param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public List<T> Select<T>(int limit, string sql = "", params object[] args) where T : class
         {
             return GetDatabase().SkipTake<T>(0, limit, sql, args);
@@ -278,12 +278,12 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="offset">跳过</param>
         /// <param name="limit">获取个数</param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>查询结果集合</returns>
         public List<T> Select<T>(int limit, int offset, string sql = "", params object[] args) where T : class
         {
             return GetDatabase().SkipTake<T>(offset, limit, sql, args);
@@ -292,12 +292,12 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回集合
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="page"></param>
-        /// <param name="itemsPerPage"></param>
-        /// <param name="sql"></param>
-        /// <param name="args"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="page">页数</param>
+        /// <param name="itemsPerPage">每页数量</param>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns>查询结果集合</returns>
         public List<T> SelectPage<T>(int page, int itemsPerPage, string sql = "", params object[] args) where T : class
         {
             if (page <= 0) { page = 1; }
@@ -309,12 +309,12 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 执行SQL 查询,返回Page类型
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">实体类型</typeparam>
         /// <param name="page">页数</param>
         /// <param name="itemsPerPage">每页数量</param>
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
-        /// <returns></returns>
+        /// <returns>分页结果</returns>
         public Page<T> Page<T>(int page, int itemsPerPage, string sql = "", params object[] args) where T : class
         {
             if (page <= 0) { page = 1; }
