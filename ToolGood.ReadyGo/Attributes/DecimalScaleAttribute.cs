@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using ToolGood.ReadyGo.Attributes.ColumnSerializers;
 
 namespace ToolGood.ReadyGo.Attributes
@@ -29,7 +30,7 @@ namespace ToolGood.ReadyGo.Attributes
             Scale = scale;
             Serializer = new DecimalScaleColumnSerializer(scale);
         }
-
+        
         /// <summary>
         /// 小数转整数标签
         /// </summary>

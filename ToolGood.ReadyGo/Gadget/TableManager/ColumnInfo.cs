@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using ToolGood.ReadyGo.Attributes;
 using ToolGood.ReadyGo.Internals;
@@ -59,17 +60,26 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         /// </summary>
         public bool IsLongText;
 
+        /// <summary>
+        /// 是否为序列化列（带 Serializer 的 SerializedColumnAttribute 子类，如 [DictionaryUintUint]）
+        /// </summary>
+        public bool IsSerialized;
+
         internal static ColumnInfo FromProperty(PropertyInfo pi)
         {
             if (pi.CanRead == false || pi.CanWrite == false) return null;
-            if (Types.IsAllowType(pi.PropertyType) == false) return null;
+            var isSerialized = pi.GetCustomAttributes(typeof(SerializedColumnAttribute), true)
+                .OfType<SerializedColumnAttribute>()
+                .Any(a => a.GetType().GetProperty("Serializer") != null);
+            if (isSerialized == false && Types.IsAllowType(pi.PropertyType) == false) return null;
             var a = pi.GetCustomAttributes(typeof(IgnoreAttribute), true);
             if (a.Length > 0) return null;
             a = pi.GetCustomAttributes(typeof(ResultColumnAttribute), true);
             if (a.Length > 0) return null;
 
             ColumnInfo ci = new ColumnInfo {
-                PropertyType = pi.PropertyType
+                PropertyType = pi.PropertyType,
+                IsSerialized = isSerialized
             };
 
             a = pi.GetCustomAttributes(typeof(ColumnAttribute), true);

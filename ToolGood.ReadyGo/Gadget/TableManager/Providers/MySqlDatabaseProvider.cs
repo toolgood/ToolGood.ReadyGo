@@ -192,6 +192,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 
             if (type == typeof(Guid)) return CreateField(ti, ci, "char", "40", isRequired);
 
+            if (ci.IsSerialized) return CreateField(ti, ci, "blob", "", false);
+
             throw new Exception($"Unsupported column type: {ci.PropertyType.Name}");
         }
 

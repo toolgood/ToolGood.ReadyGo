@@ -181,6 +181,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(TimeSpan)) return CreateField(ti, ci, "time", ci.FieldLength, isRequired);
             if (type == typeof(Guid)) return CreateField(ti, ci, "uniqueidentifier", ci.FieldLength, isRequired);
 
+            if (ci.IsSerialized) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+
             throw new Exception($"Unsupported column type: {ci.PropertyType.Name}");
         }
 

@@ -165,6 +165,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(DateTimeOffset)) return CreateField(ti, ci, "TIMESTAMP WITH TIME ZONE", ci.FieldLength, isRequired);
             if (type == typeof(Guid)) return CreateField(ti, ci, "CHAR", "36", isRequired);
 
+            if (ci.IsSerialized) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+
             throw new Exception($"Firebird does not support column type: {ci.PropertyType.Name}");
         }
 

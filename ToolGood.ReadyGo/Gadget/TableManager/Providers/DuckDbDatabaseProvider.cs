@@ -171,6 +171,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 
 			if(type == typeof(Guid)) return CreateField(ti, ci, "TEXT", "40", isRequired);
 
+			if(ci.IsSerialized) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+
 			throw new Exception($"DuckDB does not support column type: {ci.PropertyType.Name}");
 		}
 

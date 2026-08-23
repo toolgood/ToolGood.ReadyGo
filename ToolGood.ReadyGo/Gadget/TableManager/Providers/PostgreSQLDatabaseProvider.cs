@@ -167,6 +167,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(DateTimeOffset)) return CreateField(ti, ci, "timestamptz", ci.FieldLength, isRequired);
             if (type == typeof(Guid)) return CreateField(ti, ci, "uuid", ci.FieldLength, isRequired);
 
+            if (ci.IsSerialized) return CreateField(ti, ci, "bytea", ci.FieldLength, false);
+
             throw new Exception($"PostgreSQL does not support column type: {ci.PropertyType.Name}");
         }
 
