@@ -23,6 +23,21 @@ namespace ToolGood.ReadyGo.Tests
         public int Id { get; set; }
     }
 
+    [Table("Tb_Provider_DecimalScale")]
+    [PrimaryKey("Id")]
+    public class Tb_Provider_DecimalScale
+    {
+        public int Id { get; set; }
+
+        [DecimalScale(2)]
+        public decimal Money { get; set; }
+
+        [DecimalScale(3)]
+        public double? Weight { get; set; }
+
+        public decimal NormalMoney { get; set; }
+    }
+
     /// <summary>
     /// Gadget TableManager Provider 生成 SQL 的正确性验证
     /// </summary>
@@ -99,6 +114,33 @@ namespace ToolGood.ReadyGo.Tests
             var c = new Tb_Provider_AutoInc { Name = "c" };
             helper.Insert(c);
             Assert.Equal(1, c.Id); // 自增计数已重置
+        }
+
+        public static IEnumerable<object[]> DecimalScaleProviderData()
+        {
+            // [DecimalScale] 字段：各数据库方言应保存为整数；普通 decimal 字段不受影响
+            yield return new object[] { new SqlServerDatabaseProvider(), "[Money] bigint", "[Weight] bigint", "[NormalMoney] decimal" };
+            yield return new object[] { new SqlServer2012DatabaseProvider(), "[Money] bigint", "[Weight] bigint", "[NormalMoney] decimal" };
+            yield return new object[] { new MySqlDatabaseProvider(), "`Money` bigint", "`Weight` bigint", "`NormalMoney` decimal" };
+            yield return new object[] { new MariaDbDatabaseProvider(), "`Money` bigint", "`Weight` bigint", "`NormalMoney` decimal" };
+            yield return new object[] { new SQLiteDatabaseProvider(), "[Money] INTEGER", "[Weight] INTEGER", "[NormalMoney] REAL" };
+            yield return new object[] { new DuckDbDatabaseProvider(), "\"Money\" BIGINT", "\"Weight\" BIGINT", "\"NormalMoney\" NUMERIC" };
+            yield return new object[] { new OracleDatabaseProvider(), "\"Money\" NUMBER(19)", "\"Weight\" NUMBER(19)", "\"NormalMoney\" NUMBER" };
+            yield return new object[] { new PostgreSQLDatabaseProvider(), "\"Money\" bigint", "\"Weight\" bigint", "\"NormalMoney\" numeric" };
+            yield return new object[] { new FirebirdDbDatabaseProvider(), "\"Money\" BIGINT", "\"Weight\" BIGINT", "\"NormalMoney\" DECIMAL" };
+        }
+
+        [Theory]
+        [MemberData(nameof(DecimalScaleProviderData))]
+        public void 建表SQL_DecimalScale字段保存为整数(ToolGood.ReadyGo.Gadget.TableManager.DatabaseProvider provider, string moneyColumn, string weightColumn, string normalColumn)
+        {
+            var sql = provider.GetTryCreateTable(typeof(Tb_Provider_DecimalScale), false);
+
+            // decimal/double? 的 [DecimalScale] 字段保存为整数
+            Assert.Contains(moneyColumn, sql);
+            Assert.Contains(weightColumn, sql);
+            // 普通 decimal 字段类型保持不变
+            Assert.Contains(normalColumn, sql);
         }
     }
 }

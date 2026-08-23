@@ -65,6 +65,11 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         /// </summary>
         public bool IsSerialized;
 
+        /// <summary>
+        /// 是否为小数转整数列（带 [DecimalScale]，建表时保存为整数）
+        /// </summary>
+        public bool IsDecimalScale;
+
         internal static ColumnInfo FromProperty(PropertyInfo pi)
         {
             if (pi.CanRead == false || pi.CanWrite == false) return null;
@@ -79,7 +84,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
 
             ColumnInfo ci = new ColumnInfo {
                 PropertyType = pi.PropertyType,
-                IsSerialized = isSerialized
+                IsSerialized = isSerialized,
+                IsDecimalScale = pi.GetCustomAttributes(typeof(DecimalScaleAttribute), true).Length > 0
             };
 
             a = pi.GetCustomAttributes(typeof(ColumnAttribute), true);

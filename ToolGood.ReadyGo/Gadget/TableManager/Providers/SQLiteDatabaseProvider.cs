@@ -131,6 +131,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         {
             var type = ci.PropertyType;
             var isRequired = ci.Required;
+            if (ci.IsDecimalScale) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
             if (type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, true);
             if (type == typeof(string)) return CreateField(ti, ci, "Text", "", false);
             if (type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
