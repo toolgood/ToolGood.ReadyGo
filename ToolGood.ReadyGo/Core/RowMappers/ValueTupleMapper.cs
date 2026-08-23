@@ -7,6 +7,9 @@ using System.Text;
 
 namespace ToolGood.ReadyGo.NPoco.RowMappers
 {
+    /// <summary>
+    /// 将查询结果行映射为 ValueTuple（值元组）的行映射器。
+    /// </summary>
     public class ValueTupleRowMapper : IRowMapper
     {
         private Func<DbDataReader, object> mapper = default!;
@@ -14,21 +17,41 @@ namespace ToolGood.ReadyGo.NPoco.RowMappers
 
         private static Cache<(Type, string, IMapperCollection), Func<DbDataReader, object>> cache = new();
 
+        /// <summary>
+        /// 初始化 ValueTuple 行映射器。
+        /// </summary>
+        /// <param name="mappers">映射器集合。</param>
         public ValueTupleRowMapper(IMapperCollection mappers)
         {
             this.mappers = mappers;
         }
 
+        /// <summary>
+        /// 初始化映射器，构建当前元组类型的行映射委托。
+        /// </summary>
+        /// <param name="dataReader">数据读取器。</param>
+        /// <param name="pocoData">POCO 元数据。</param>
         public void Init(DbDataReader dataReader, PocoData pocoData)
         {
             mapper = GetRowMapper(pocoData.Type, this.mappers, dataReader);
         }
 
+        /// <summary>
+        /// 将当前数据行映射为 ValueTuple 实例。
+        /// </summary>
+        /// <param name="dataReader">数据读取器。</param>
+        /// <param name="context">行映射上下文。</param>
+        /// <returns>映射得到的 ValueTuple 实例。</returns>
         public object Map(DbDataReader dataReader, RowMapperContext context)
         {
             return mapper(dataReader);
         }
 
+        /// <summary>
+        /// 判断指定类型是否为 ValueTuple 类型。
+        /// </summary>
+        /// <param name="type">待判断的类型。</param>
+        /// <returns>若为 ValueTuple 类型则返回 true，否则返回 false。</returns>
         public static bool IsValueTuple(Type type)
         {
             if (!type.IsGenericType)
@@ -47,6 +70,11 @@ namespace ToolGood.ReadyGo.NPoco.RowMappers
             );
         }
 
+        /// <summary>
+        /// 判断该映射器是否适用于指定 POCO 类型。
+        /// </summary>
+        /// <param name="pocoData">POCO 元数据。</param>
+        /// <returns>若类型为 ValueTuple 则返回 true，否则返回 false。</returns>
         public bool ShouldMap(PocoData pocoData)
         {
             return IsValueTuple(pocoData.Type);

@@ -12,8 +12,8 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 唯一特征
         /// </summary>
-        /// <param name="column"></param>
-        /// <param name="columns"></param>
+        /// <param name="column">唯一列名</param>
+        /// <param name="columns">其它唯一列名</param>
         public UniqueAttribute(string column, params string[] columns)
         {
             ColumnNames = new List<string>();

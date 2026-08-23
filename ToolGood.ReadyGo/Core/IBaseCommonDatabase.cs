@@ -5,6 +5,9 @@ using System.Data.Common;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 定义数据库实例共有的底层能力，包括连接、事务、命令与参数管理。
+    /// </summary>
     public interface IBaseCommonDatabase : IDatabaseConfig
     {
         /// <summary>

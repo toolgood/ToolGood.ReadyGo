@@ -27,6 +27,8 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <summary>
         /// 数值 × 10^scale，四舍五入后保存为整数
         /// </summary>
+        /// <param name="value">要序列化的小数值</param>
+        /// <returns>四舍五入后的整数字符串</returns>
         public object Serialize(object value)
         {
             if (value == null) {
@@ -40,6 +42,9 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <summary>
         /// 整数 ÷ 10^scale，四舍五入后还原小数
         /// </summary>
+        /// <param name="value">数据库中的整数值</param>
+        /// <param name="targetType">目标类型</param>
+        /// <returns>还原后的小数值</returns>
         public object Deserialize(object value, Type targetType)
         {
             var s = value as string ?? value?.ToString();

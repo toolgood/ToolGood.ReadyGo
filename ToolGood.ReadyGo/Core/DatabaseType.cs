@@ -19,16 +19,46 @@ namespace ToolGood.ReadyGo.NPoco
     public abstract partial class DatabaseType : IDatabaseType
     {
         // Helper Properties
+        /// <summary>
+        /// 获取 SQL Server 2012 数据库类型处理器实例。
+        /// </summary>
         public static DatabaseType SqlServer2012 { get { return DynamicDatabaseType.MakeSqlServerType("SqlServer2012DatabaseType"); } }
+
+        /// <summary>
+        /// 获取 PostgreSQL 数据库类型处理器实例。
+        /// </summary>
         public static DatabaseType PostgreSQL { get { return Singleton<PostgreSQLDatabaseType>.Instance; } }
+
+        /// <summary>
+        /// 获取 Oracle 数据库类型处理器实例。
+        /// </summary>
         public static DatabaseType Oracle { get { return Singleton<OracleDatabaseType>.Instance; } }
+
+        /// <summary>
+        /// 获取 MySQL 数据库类型处理器实例。
+        /// </summary>
         public static DatabaseType MySQL { get { return Singleton<MySqlDatabaseType>.Instance; } }
+
+        /// <summary>
+        /// 获取 SQLite 数据库类型处理器实例。
+        /// </summary>
         public static DatabaseType SQLite { get { return Singleton<SQLiteDatabaseType>.Instance; } }
+
+        /// <summary>
+        /// 获取 Firebird 数据库类型处理器实例。
+        /// </summary>
         public static DatabaseType Firebird { get { return Singleton<FirebirdDatabaseType>.Instance; } }
+
+        /// <summary>
+        /// 获取 DuckDb 数据库类型处理器实例。
+        /// </summary>
         public static DatabaseType DuckDb { get { return Singleton<DuckDbDatabaseType>.Instance; } }
 
         readonly Dictionary<Type, DbType> typeMap;
 
+        /// <summary>
+        /// 初始化 <see cref="DatabaseType"/> 实例，并注册常见 .NET 类型到 <see cref="DbType"/> 的映射。
+        /// </summary>
         public DatabaseType()
         {
             typeMap = new Dictionary<Type, DbType>();
@@ -76,6 +106,12 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         private const string LinqBinary = "System.Data.Linq.Binary";
+        /// <summary>
+        /// 根据 CLR 类型与列名查找对应的 <see cref="DbType"/>。
+        /// </summary>
+        /// <param name="type">CLR 类型。</param>
+        /// <param name="name">列名。</param>
+        /// <returns>对应的 DbType；若无法确定则返回 null。</returns>
         public virtual DbType? LookupDbType(Type type, string name)
         {
             DbType dbType;
@@ -100,8 +136,8 @@ namespace ToolGood.ReadyGo.NPoco
         /// <summary>
         /// Returns the prefix used to delimit parameters in SQL query strings.
         /// </summary>
-        /// <param name="connectionString"></param>
-        /// <returns></returns>
+        /// <param name="connectionString">连接字符串。</param>
+        /// <returns>参数前缀字符串。</returns>
         public virtual string GetParameterPrefix(string connectionString)
         {
             return "@";
@@ -127,7 +163,7 @@ namespace ToolGood.ReadyGo.NPoco
         /// <summary>
         /// Called immediately before a command is executed, allowing for modification of the DbCommand before it's passed to the database provider
         /// </summary>
-        /// <param name="cmd"></param>
+        /// <param name="cmd">即将执行的数据库命令。</param>
         public virtual void PreExecute(DbCommand cmd)
         {
         }
@@ -147,6 +183,10 @@ namespace ToolGood.ReadyGo.NPoco
             return sql;
         }
 
+        /// <summary>
+        /// 指示是否在查询中使用列别名。
+        /// </summary>
+        /// <returns>默认返回 false。</returns>
         public virtual bool UseColumnAliases()
         {
             return false;
@@ -155,7 +195,7 @@ namespace ToolGood.ReadyGo.NPoco
         /// <summary>
         /// Returns an SQL Statement that can check for the existance of a row in the database.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>用于检查记录是否存在的 SQL 语句模板。</returns>
         public virtual string GetExistsSql()
         {
             return "SELECT COUNT(*) FROM {0} WHERE {1}";
@@ -210,9 +250,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// <param name="db">The calling Database object</param>
         /// <param name="cmd">The insert command to be executed</param>
         /// <param name="primaryKeyName">The primary key of the table being inserted into</param>
-        /// <param name="useOutputClause"></param>
-        /// <param name="poco"></param>
-        /// <param name="args"></param>
+        /// <param name="useOutputClause">是否使用输出子句返回自增值。</param>
+        /// <param name="poco">要插入的 POCO 对象。</param>
+        /// <param name="args">插入语句的参数。</param>
         /// <returns>The ID of the newly inserted record</returns>
         public virtual object ExecuteInsert<T>(IDatabase db, DbCommand cmd, string primaryKeyName, bool useOutputClause, T poco, object[] args)
         {
@@ -220,12 +260,30 @@ namespace ToolGood.ReadyGo.NPoco
             return ((IDatabaseHelpers)db).ExecuteScalarHelper(cmd);
         }
 
+        /// <summary>
+        /// 异步执行插入操作。
+        /// </summary>
+        /// <param name="db">调用方数据库实例。</param>
+        /// <param name="cmd">要执行的插入命令。</param>
+        /// <param name="primaryKeyName">表的主键列名。</param>
+        /// <param name="useOutputClause">是否使用输出子句返回自增值。</param>
+        /// <param name="poco">要插入的 POCO 对象。</param>
+        /// <param name="args">插入语句的参数。</param>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
+        /// <returns>新插入记录的主键值。</returns>
         public virtual async Task<object> ExecuteInsertAsync<T>(IDatabase db, DbCommand cmd, string primaryKeyName, bool useOutputClause, T poco, object[] args, CancellationToken cancellationToken = default)
         {
             cmd.CommandText += ";\nSELECT @@IDENTITY AS NewID;";
             return await ((IDatabaseHelpers)db).ExecuteScalarHelperAsync(cmd, cancellationToken).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// 批量插入 POCO 集合，默认逐条插入。
+        /// </summary>
+        /// <typeparam name="T">POCO 类型。</typeparam>
+        /// <param name="db">数据库实例。</param>
+        /// <param name="pocos">要插入的 POCO 集合。</param>
+        /// <param name="options">批量插入选项。</param>
         public virtual void InsertBulk<T>(IDatabase db, IEnumerable<T> pocos, InsertBulkOptions options)
         {
             foreach (var poco in pocos)
@@ -234,6 +292,14 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 异步批量插入 POCO 集合，默认逐条插入。
+        /// </summary>
+        /// <typeparam name="T">POCO 类型。</typeparam>
+        /// <param name="db">数据库实例。</param>
+        /// <param name="pocos">要插入的 POCO 集合。</param>
+        /// <param name="options">批量插入选项。</param>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
         public virtual async Task InsertBulkAsync<T>(IDatabase db, IEnumerable<T> pocos, InsertBulkOptions options, CancellationToken cancellationToken = default)
         {
             foreach (var poco in pocos)
@@ -245,9 +311,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// <summary>
         /// Look at the type and provider name being used and instantiate a suitable DatabaseType instance.
         /// </summary>
-        /// <param name="typeName"></param>
-        /// <param name="providerName"></param>
-        /// <returns></returns>
+        /// <param name="typeName">数据库连接类型名称。</param>
+        /// <param name="providerName">数据库提供程序名称。</param>
+        /// <returns>解析出的数据库类型处理器实例。</returns>
         public static DatabaseType Resolve(string typeName, string providerName)
         {
             // Try using type name first (more reliable)
@@ -291,56 +357,122 @@ namespace ToolGood.ReadyGo.NPoco
             return DynamicDatabaseType.MakeSqlServerType("SqlServerDatabaseType");
         }
 
+        /// <summary>
+        /// 生成默认的插入 SQL 语句。
+        /// </summary>
+        /// <param name="tableName">表名。</param>
+        /// <param name="primaryKeyName">主键列名。</param>
+        /// <param name="useOutputClause">是否使用输出子句。</param>
+        /// <param name="names">列名数组。</param>
+        /// <param name="parameters">参数名数组。</param>
+        /// <returns>默认插入 SQL 语句。</returns>
         public virtual string GetDefaultInsertSql(string tableName, string primaryKeyName, bool useOutputClause, string[] names, string[] parameters)
         {
             return string.Format("INSERT INTO {0} DEFAULT VALUES", EscapeTableName(tableName));
         }
 
+        /// <summary>
+        /// 获取默认的事务隔离级别。
+        /// </summary>
+        /// <returns>默认事务隔离级别（ReadCommitted）。</returns>
         public virtual IsolationLevel GetDefaultTransactionIsolationLevel()
         {
             return IsolationLevel.ReadCommitted;
         }
 
+        /// <summary>
+        /// 创建 SQL 表达式访问器实例。
+        /// </summary>
         public ISqlExpression<T> ExpressionVisitor<T>(IDatabase db, PocoData pocoData)
         {
             return ExpressionVisitor<T>(db, pocoData, false);
         }
 
+        /// <summary>
+        /// 创建 SQL 表达式访问器实例。
+        /// </summary>
+        /// <typeparam name="T">POCO 类型。</typeparam>
+        /// <param name="db">数据库实例。</param>
+        /// <param name="pocoData">POCO 元数据。</param>
+        /// <param name="prefixTableName">是否为列名添加表名前缀。</param>
+        /// <returns>SQL 表达式访问器实例。</returns>
         public virtual ISqlExpression<T> ExpressionVisitor<T>(IDatabase db, PocoData pocoData, bool prefixTableName)
         {
             return new DefaultSqlExpression<T>(db, pocoData, prefixTableName);
         }
 
+        /// <summary>
+        /// 获取数据库提供程序名称。
+        /// </summary>
+        /// <returns>提供程序名称字符串。</returns>
         public virtual string GetProviderName()
         {
             return "Microsoft.Data.SqlClient";
         }
 
+        /// <summary>
+        /// 异步执行非查询命令。
+        /// </summary>
+        /// <param name="database">数据库实例。</param>
+        /// <param name="cmd">要执行的命令。</param>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
+        /// <returns>受影响的行数。</returns>
         public virtual Task<int> ExecuteNonQueryAsync(IDatabase database, DbCommand cmd, CancellationToken cancellationToken = default)
         {
             return cmd.ExecuteNonQueryAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// 异步执行标量查询。
+        /// </summary>
+        /// <param name="database">数据库实例。</param>
+        /// <param name="cmd">要执行的命令。</param>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
+        /// <returns>查询结果的首行首列值。</returns>
         public virtual Task<object> ExecuteScalarAsync(IDatabase database, DbCommand cmd, CancellationToken cancellationToken = default)
         {
             return cmd.ExecuteScalarAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// 异步执行返回数据读取器的查询。
+        /// </summary>
+        /// <param name="database">数据库实例。</param>
+        /// <param name="cmd">要执行的命令。</param>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
+        /// <returns>数据读取器。</returns>
         public virtual Task<DbDataReader> ExecuteReaderAsync(IDatabase database, DbCommand cmd, CancellationToken cancellationToken = default)
         {
             return cmd.ExecuteReaderAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// 对从数据库读取的列值执行默认映射处理。
+        /// </summary>
+        /// <param name="pocoColumn">列元数据。</param>
+        /// <param name="value">列值。</param>
+        /// <returns>处理后的值。</returns>
         public virtual object ProcessDefaultMappings(PocoColumn pocoColumn, object value)
         {
             return value;
         }
 
+        /// <summary>
+        /// 格式化数据库命令为可读字符串。
+        /// </summary>
+        /// <param name="cmd">要格式化的命令。</param>
+        /// <returns>格式化后的命令文本。</returns>
         public virtual string FormatCommand(DbCommand cmd)
         {
             return FormatCommand(cmd.CommandText, cmd.Parameters.Cast<object>().ToArray());
         }
 
+        /// <summary>
+        /// 格式化 SQL 语句与参数为可读字符串。
+        /// </summary>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>格式化后的命令文本。</returns>
         public virtual string FormatCommand(string sql, object[] args)
         {
             if (sql == null)

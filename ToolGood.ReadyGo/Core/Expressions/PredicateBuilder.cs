@@ -6,21 +6,28 @@ using System.Linq.Expressions;
 namespace ToolGood.ReadyGo.NPoco.Expressions
 {
     /// <summary>
-    /// Enables the efficient, dynamic composition of query predicates.
+    /// 提供查询谓词表达式的高效动态组合能力。
     /// </summary>
     public static class PredicateBuilder
     {
         /// <summary>
-        /// Creates a predicate expression from the specified lambda expression.
+        /// 根据指定 Lambda 表达式创建谓词表达式。
         /// </summary>
+        /// <typeparam name="T">实体类型。</typeparam>
+        /// <param name="predicate">谓词 Lambda 表达式。</param>
+        /// <returns>与输入等价的谓词表达式。</returns>
         public static Expression<Func<T, bool>> Create<T>(Expression<Func<T, bool>> predicate)
         {
             return predicate;
         }
 
         /// <summary>
-        /// Combines the first predicate with the second using the logical "and".
+        /// 使用逻辑“与”组合第一个谓词与第二个谓词。
         /// </summary>
+        /// <typeparam name="T">实体类型。</typeparam>
+        /// <param name="first">第一个谓词。</param>
+        /// <param name="second">第二个谓词。</param>
+        /// <returns>组合后的谓词表达式。</returns>
         public static Expression<Func<T, bool>> And<T>(this Expression<Func<T, bool>> first,
                                                        Expression<Func<T, bool>> second)
         {

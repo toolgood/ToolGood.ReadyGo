@@ -12,6 +12,10 @@ using ToolGood.ReadyGo.NPoco.Linq;
 
 namespace ToolGood.ReadyGo.NPoco.Expressions
 {
+    /// <summary>
+    /// 泛型 SQL 表达式生成器基类，负责将 Lambda 表达式树转换为数据库方言的 SQL 语句。
+    /// </summary>
+    /// <typeparam name="T">查询对应的实体类型。</typeparam>
     public abstract class SqlExpression<T> : ISqlExpression<T>
     {
         private List<OrderByMember> orderByMembers = new List<OrderByMember>();
@@ -38,6 +42,9 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         }
 
         private string sep = string.Empty;
+        /// <summary>
+        /// LIKE 语句中使用的转义字符。
+        /// </summary>
         protected string EscapeChar = "\\";
         private PocoData _pocoData;
         private readonly IDatabase _database;
@@ -45,6 +52,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         private bool PrefixFieldWithTableName { get; set; }
         private Type _type { get; set; }
 
+        /// <summary>
+        /// 使用指定数据库、Poco 元数据与表名前缀标志初始化实例。
+        /// </summary>
+        /// <param name="database">数据库实例。</param>
+        /// <param name="pocoData">实体的 Poco 元数据。</param>
+        /// <param name="prefixTableName">是否在字段前添加表名前缀。</param>
         public SqlExpression(IDatabase database, PocoData pocoData, bool prefixTableName)
         {
             _type = typeof(T);
@@ -56,24 +69,48 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             Context = new SqlExpressionContext(this);
         }
 
+        /// <summary>
+        /// SQL 表达式上下文，提供语句生成与参数、更新字段访问。
+        /// </summary>
         public class SqlExpressionContext : ISqlExpression<T>.ISqlExpressionContext
         {
             private readonly SqlExpression<T> _expression;
 
+            /// <summary>
+            /// 使用所属表达式初始化上下文。
+            /// </summary>
+            /// <param name="expression">所属的 SQL 表达式。</param>
             public SqlExpressionContext(SqlExpression<T> expression)
             {
                 _expression = expression;
                 UpdateFields = new List<string>();
             }
 
+            /// <summary>
+            /// 更新字段名称集合。
+            /// </summary>
             public List<string> UpdateFields { get; set; }
+            /// <summary>
+            /// 查询参数数组。
+            /// </summary>
             public object[] Params { get { return _expression._params.ToArray(); } }
 
+            /// <summary>
+            /// 生成删除语句。
+            /// </summary>
+            /// <returns>删除 SQL。</returns>
             public virtual string ToDeleteStatement()
             {
                 return _expression.ToDeleteStatement();
             }
 
+            /// <summary>
+            /// 生成更新语句。
+            /// </summary>
+            /// <param name="item">待更新的实体。</param>
+            /// <param name="excludeDefaults">是否排除默认值字段。</param>
+            /// <param name="allFields">是否更新所有字段。</param>
+            /// <returns>更新 SQL。</returns>
             public virtual string ToUpdateStatement(T item, bool excludeDefaults, bool allFields)
             {
                 if (allFields)
@@ -82,16 +119,30 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                 return _expression.ToUpdateStatement(item, excludeDefaults);
             }
 
+            /// <summary>
+            /// 生成 WHERE 条件语句。
+            /// </summary>
+            /// <returns>WHERE 条件 SQL。</returns>
             public string ToWhereStatement()
             {
                 return _expression.ToWhereStatement();
             }
 
+            /// <summary>
+            /// 生成查询语句（应用分页、不去重）。
+            /// </summary>
+            /// <returns>查询 SQL。</returns>
             public virtual string ToSelectStatement()
             {
                 return ToSelectStatement(true, false);
             }
 
+            /// <summary>
+            /// 生成查询语句。
+            /// </summary>
+            /// <param name="applyPaging">是否应用分页。</param>
+            /// <param name="distinct">是否去重。</param>
+            /// <returns>查询 SQL。</returns>
             public virtual string ToSelectStatement(bool applyPaging, bool distinct)
             {
                 return _expression.ToSelectStatement(applyPaging, distinct);
@@ -99,14 +150,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         }
 
         /// <summary>
-        /// Fields to be selected.
+        /// 设置查询字段。
         /// </summary>
-        /// <param name='fields'>
-        /// x=> x.SomeProperty1 or x=> new{ x.SomeProperty1, x.SomeProperty2}
-        /// </param>
-        /// <typeparam name='TKey'>
-        /// objectWithProperties
-        /// </typeparam>
+        /// <typeparam name="TKey">字段返回类型。</typeparam>
+        /// <param name="fields">字段选择器，如 x=&gt;x.SomeProperty1 或 x=&gt;new{ x.SomeProperty1, x.SomeProperty2 }。</param>
+        /// <returns>当前表达式。</returns>
         public virtual ISqlExpression<T> Select<TKey>(Expression<Func<T, TKey>> fields)
         {
             sep = string.Empty;
@@ -115,6 +163,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return this;
         }
 
+        /// <summary>
+        /// 设置投影查询字段并返回选择成员集合。
+        /// </summary>
+        /// <typeparam name="TKey">字段返回类型。</typeparam>
+        /// <param name="fields">字段选择器。</param>
+        /// <returns>投影选择成员集合。</returns>
         public virtual List<SelectMember> SelectProjection<TKey>(Expression<Func<T, TKey>> fields)
         {
             sep = string.Empty;
@@ -128,11 +182,23 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return proj;
         }
 
+        /// <summary>
+        /// 设置去重查询字段并返回选择成员集合。
+        /// </summary>
+        /// <typeparam name="TKey">字段返回类型。</typeparam>
+        /// <param name="fields">字段选择器。</param>
+        /// <returns>去重选择成员集合。</returns>
         public virtual List<SelectMember> SelectDistinct<TKey>(Expression<Func<T, TKey>> fields)
         {
             return SelectProjection(fields);
         }
 
+        /// <summary>
+        /// 添加 WHERE 条件 SQL。
+        /// </summary>
+        /// <param name="sqlFilter">条件 SQL。</param>
+        /// <param name="filterParams">条件参数。</param>
+        /// <returns>当前表达式。</returns>
         public virtual ISqlExpression<T> Where(string sqlFilter, params object[] filterParams)
         {
             if (string.IsNullOrEmpty(sqlFilter))
@@ -157,6 +223,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             }
         }
 
+        /// <summary>
+        /// 生成关联（JOIN ON）条件 SQL。
+        /// </summary>
+        /// <typeparam name="T2">关联实体类型。</typeparam>
+        /// <param name="predicate">关联条件。</param>
+        /// <returns>ON 条件 SQL。</returns>
         public string On<T2>(Expression<Func<T, T2, bool>> predicate)
         {
             sep = " ";
@@ -164,6 +236,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return onSql;
         }
 
+        /// <summary>
+        /// 添加 WHERE 条件。
+        /// </summary>
+        /// <param name="predicate">条件表达式，为 null 时清空条件。</param>
+        /// <returns>当前表达式。</returns>
         public virtual ISqlExpression<T> Where(Expression<Func<T, bool>> predicate)
         {
             if (predicate != null)
@@ -178,6 +255,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return this;
         }
 
+        /// <summary>
+        /// 以 AND 方式追加 WHERE 条件。
+        /// </summary>
+        /// <param name="predicate">条件表达式。</param>
+        /// <returns>当前表达式。</returns>
         protected virtual ISqlExpression<T> And(Expression<Func<T, bool>> predicate)
         {
             if (predicate != null)
@@ -223,6 +305,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                    expression.NodeType != ExpressionType.Lambda;
         }
 
+        /// <summary>
+        /// 添加分组字段。
+        /// </summary>
+        /// <typeparam name="TKey">分组字段类型。</typeparam>
+        /// <param name="keySelector">分组字段选择器。</param>
+        /// <returns>当前表达式。</returns>
         public virtual ISqlExpression<T> GroupBy<TKey>(Expression<Func<T, TKey>> keySelector)
         {
             sep = string.Empty;
@@ -231,6 +319,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return this;
         }
 
+        /// <summary>
+        /// 添加升序排序字段。
+        /// </summary>
+        /// <typeparam name="TKey">排序字段类型。</typeparam>
+        /// <param name="keySelector">排序字段选择器。</param>
+        /// <returns>当前表达式。</returns>
         public virtual ISqlExpression<T> OrderBy<TKey>(Expression<Func<T, TKey>> keySelector)
         {
             sep = string.Empty;
@@ -243,6 +337,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return this;
         }
 
+        /// <summary>
+        /// 追加升序排序字段。
+        /// </summary>
+        /// <typeparam name="TKey">排序字段类型。</typeparam>
+        /// <param name="keySelector">排序字段选择器。</param>
+        /// <returns>当前表达式。</returns>
         public virtual ISqlExpression<T> ThenBy<TKey>(Expression<Func<T, TKey>> keySelector)
         {
             sep = string.Empty;
@@ -254,6 +354,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return this;
         }
 
+        /// <summary>
+        /// 添加降序排序字段。
+        /// </summary>
+        /// <typeparam name="TKey">排序字段类型。</typeparam>
+        /// <param name="keySelector">排序字段选择器。</param>
+        /// <returns>当前表达式。</returns>
         public virtual ISqlExpression<T> OrderByDescending<TKey>(Expression<Func<T, TKey>> keySelector)
         {
             sep = string.Empty;
@@ -289,20 +395,21 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             }
         }
 
+        /// <summary>
+        /// 添加表提示。
+        /// </summary>
+        /// <param name="hint">表提示内容。</param>
         public virtual void Hint(string hint)
         {
             tableHint += " " + hint;
         }
 
         /// <summary>
-        /// Set the specified offset and rows for SQL Limit clause.
+        /// 设置 LIMIT 子句的偏移量与返回行数。
         /// </summary>
-        /// <param name='skip'>
-        /// Offset of the first row to return. The offset of the initial row is 0
-        /// </param>
-        /// <param name='rows'>
-        /// Number of rows returned by a SELECT statement
-        /// </param>
+        /// <param name="skip">跳过的行数（首行偏移量为 0）。</param>
+        /// <param name="rows">返回行数。</param>
+        /// <returns>当前表达式。</returns>
         public virtual ISqlExpression<T> Limit(int skip, int rows)
         {
             Rows = rows;
@@ -350,6 +457,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                 WhereExpression);
         }
 
+        /// <summary>
+        /// 生成更新语句。
+        /// </summary>
+        /// <param name="item">待更新的实体。</param>
+        /// <param name="excludeDefaults">是否排除默认值字段。</param>
+        /// <returns>更新 SQL。</returns>
         protected virtual string ToUpdateStatement(T item, bool excludeDefaults)
         {
             var setFields = new StringBuilder();
@@ -378,6 +491,10 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                 return string.Format("UPDATE {0} SET {1} {2}", _databaseType.EscapeTableName(_pocoData.TableInfo.TableName), setFields, WhereExpression);
         }
 
+        /// <summary>
+        /// 生成 WHERE 条件语句。
+        /// </summary>
+        /// <returns>WHERE 条件 SQL。</returns>
         protected string ToWhereStatement()
         {
             return WhereExpression;
@@ -464,6 +581,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             }
         }
 
+        /// <summary>
+        /// 访问表达式节点，根据节点类型分派到对应的访问方法。
+        /// </summary>
+        /// <param name="exp">待访问的表达式。</param>
+        /// <returns>访问结果（可能是 SQL 片段、参数值或成员信息）。</returns>
         protected internal virtual object Visit(Expression exp)
         {
 
@@ -538,6 +660,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return init;
         }
 
+        /// <summary>
+        /// 访问成员绑定列表。
+        /// </summary>
+        /// <param name="original">待访问的成员绑定列表。</param>
+        /// <returns>访问后的成员绑定列表。</returns>
         protected virtual IEnumerable<MemberBinding> VisitBindingList(ReadOnlyCollection<MemberBinding> original)
         {
             for (int i = 0, n = original.Count; i < n; i++)
@@ -547,6 +674,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return original;
         }
 
+        /// <summary>
+        /// 访问成员绑定。
+        /// </summary>
+        /// <param name="binding">待访问的成员绑定。</param>
+        /// <returns>访问结果。</returns>
         protected virtual object VisitBinding(MemberBinding binding)
         {
             switch (binding.BindingType)
@@ -567,11 +699,21 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return VisitBindingList(binding.Bindings);
         }
 
+        /// <summary>
+        /// 访问成员赋值。
+        /// </summary>
+        /// <param name="assignment">待访问的成员赋值。</param>
+        /// <returns>访问结果。</returns>
         protected virtual object VisitMemberAssignment(MemberAssignment assignment)
         {
             return this.Visit(assignment.Expression);
         }
 
+        /// <summary>
+        /// 访问 Lambda 表达式。
+        /// </summary>
+        /// <param name="lambda">待访问的 Lambda 表达式。</param>
+        /// <returns>访问结果。</returns>
         protected virtual object VisitLambda(LambdaExpression lambda)
         {
             if (lambda.Body.NodeType == ExpressionType.MemberAccess && sep == " ")
@@ -617,6 +759,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                 && member.Type.GetTypeInfo().IsGenericType && member.Type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
+        /// <summary>
+        /// 访问二元表达式。
+        /// </summary>
+        /// <param name="b">待访问的二元表达式。</param>
+        /// <returns>访问结果（通常为 PartialSqlString）。</returns>
         protected virtual object VisitBinary(BinaryExpression b)
         {
             // Fix VB and CompareString
@@ -802,6 +949,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return Nullable.GetUnderlyingType(pc.MemberInfoData.MemberType);
         }
 
+        /// <summary>
+        /// 访问成员访问表达式，将其转换为对应的列访问信息。
+        /// </summary>
+        /// <param name="m">待访问的成员访问表达式。</param>
+        /// <returns>成员访问结果。</returns>
         protected virtual object VisitMemberAccess(MemberExpression m)
         {
             bool isNull = false;
@@ -923,6 +1075,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return type;
         }
 
+        /// <summary>
+        /// 访问 new 表达式。
+        /// </summary>
+        /// <param name="nex">待访问的 new 表达式。</param>
+        /// <returns>访问结果。</returns>
         protected virtual object VisitNew(NewExpression nex)
         {
             var member = Expression.Convert(nex, typeof(object));
@@ -953,6 +1110,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
 
         }
 
+        /// <summary>
+        /// 访问参数表达式。
+        /// </summary>
+        /// <param name="p">待访问的参数表达式。</param>
+        /// <returns>参数名。</returns>
         protected virtual object VisitParameter(ParameterExpression p)
         {
             return p.Name;
@@ -962,8 +1124,16 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
 
         string paramPrefix;
         private bool _projection;
+        /// <summary>
+        /// 表达式上下文。
+        /// </summary>
         public ISqlExpression<T>.ISqlExpressionContext Context { get; private set; }
 
+        /// <summary>
+        /// 访问常量表达式。
+        /// </summary>
+        /// <param name="c">待访问的常量表达式。</param>
+        /// <returns>常量值，null 时返回 "null" 片段。</returns>
         protected virtual object VisitConstant(ConstantExpression c)
         {
             if (c.Value == null)
@@ -972,6 +1142,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return c.Value;
         }
 
+        /// <summary>
+        /// 访问条件表达式。
+        /// </summary>
+        /// <param name="conditional">待访问的条件表达式。</param>
+        /// <returns>CASE WHEN 条件片段。</returns>
         protected virtual object VisitConditional(ConditionalExpression conditional)
         {
             sep = " ";
@@ -982,6 +1157,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return new PartialSqlString(string.Format("(case when {0} then {1} else {2} end)", test, trueSql, falseSql));
         }
 
+        /// <summary>
+        /// 创建参数占位符并记录参数值。
+        /// </summary>
+        /// <param name="value">参数值。</param>
+        /// <returns>参数占位符。</returns>
         protected string CreateParam(object value)
         {
             string paramPlaceholder = paramPrefix + _params.Count;
@@ -989,6 +1169,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return paramPlaceholder;
         }
 
+        /// <summary>
+        /// 访问一元表达式。
+        /// </summary>
+        /// <param name="u">待访问的一元表达式。</param>
+        /// <returns>访问结果。</returns>
         protected virtual object VisitUnary(UnaryExpression u)
         {
             switch (u.NodeType)
@@ -1033,6 +1218,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                     || exp.Expression.NodeType == ExpressionType.MemberAccess));
         }
 
+        /// <summary>
+        /// 访问方法调用表达式。
+        /// </summary>
+        /// <param name="m">待访问的方法调用表达式。</param>
+        /// <returns>访问结果。</returns>
         protected virtual object VisitMethodCall(MethodCallExpression m)
         {
             if (IsStaticArrayMethod(m))
@@ -1127,6 +1317,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return false;
         }
 
+        /// <summary>
+        /// 访问 IEnumerable 扩展方法调用（如 Contains）。
+        /// </summary>
+        /// <param name="m">待访问的方法调用表达式。</param>
+        /// <returns>访问结果。</returns>
         protected virtual object VisitEnumerableMethodCall(MethodCallExpression m)
         {
             switch (m.Method.Name)
@@ -1140,6 +1335,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             }
         }
 
+        /// <summary>
+        /// 访问静态数组方法调用（如 Contains）。
+        /// </summary>
+        /// <param name="m">待访问的方法调用表达式。</param>
+        /// <returns>访问结果。</returns>
         protected virtual object VisitStaticArrayMethodCall(MethodCallExpression m)
         {
             switch (m.Method.Name)
@@ -1207,6 +1407,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return e;
         }
 
+        /// <summary>
+        /// 访问表达式列表。
+        /// </summary>
+        /// <param name="original">待访问的表达式列表。</param>
+        /// <returns>访问结果列表。</returns>
         protected virtual List<Object> VisitExpressionList(ReadOnlyCollection<Expression> original)
         {
             List<Object> list = new List<Object>();
@@ -1238,6 +1443,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return r.ToString();
         }
 
+        /// <summary>
+        /// 从表达式列表中访问数组创建表达式。
+        /// </summary>
+        /// <param name="na">待访问的数组创建表达式。</param>
+        /// <returns>访问结果列表。</returns>
         protected virtual List<Object> VisitNewArrayFromExpressionList(NewArrayExpression na)
         {
 
@@ -1246,6 +1456,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         }
 
 
+        /// <summary>
+        /// 将表达式节点类型映射为对应的 SQL 运算符。
+        /// </summary>
+        /// <param name="e">表达式节点类型。</param>
+        /// <returns>SQL 运算符字符串。</returns>
         protected virtual string BindOperant(ExpressionType e)
         {
             switch (e)
@@ -1291,6 +1506,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             }
         }
 
+        /// <summary>
+        /// 移除别名首尾的引号。
+        /// </summary>
+        /// <param name="exp">待处理的别名。</param>
+        /// <returns>移除首尾引号后的别名。</returns>
         protected string RemoveQuoteFromAlias(string exp)
         {
 
@@ -1303,6 +1523,10 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return exp;
         }
 
+        /// <summary>
+        /// 生成恒真的 SQL 表达式片段。
+        /// </summary>
+        /// <returns>真值表达式片段。</returns>
         protected object GetTrueExpression()
         {
             return new PartialSqlString(string.Format("({0}={1})", GetQuotedTrueValue(), GetQuotedTrueValue()));
@@ -1313,11 +1537,19 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return new PartialSqlString(string.Format("({0}={1})", GetQuotedTrueValue(), GetQuotedFalseValue()));
         }
 
+        /// <summary>
+        /// 创建布尔 true 参数并返回其占位符。
+        /// </summary>
+        /// <returns>参数占位符。</returns>
         protected object GetQuotedTrueValue()
         {
             return CreateParam(true);
         }
 
+        /// <summary>
+        /// 创建布尔 false 参数并返回其占位符。
+        /// </summary>
+        /// <returns>参数占位符。</returns>
         protected object GetQuotedFalseValue()
         {
             return CreateParam(false);
@@ -1353,6 +1585,13 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return _pocoData.Columns.Values.ToList();
         }
 
+        /// <summary>
+        /// 对 SQL 应用分页处理。
+        /// </summary>
+        /// <param name="sql">待分页的 SQL。</param>
+        /// <param name="columns">分页涉及的列集合。</param>
+        /// <param name="joinSqlExpressions">关联查询表达式集合。</param>
+        /// <returns>分页后的 SQL。</returns>
         protected virtual string ApplyPaging(string sql, IEnumerable<PocoColumn[]> columns, Dictionary<string, JoinData> joinSqlExpressions)
         {
             if (!Rows.HasValue || Rows == 0)
@@ -1398,6 +1637,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return statement;
         }
 
+        /// <summary>
+        /// 访问列上的方法调用（如 ToUpper、StartsWith、Substring 等）。
+        /// </summary>
+        /// <param name="m">待访问的方法调用表达式。</param>
+        /// <returns>对应的 SQL 片段。</returns>
         protected virtual object VisitColumnAccessMethod(MethodCallExpression m)
         {
             var expression = (PartialSqlString)Visit(m.Object);
@@ -1452,11 +1696,24 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return new PartialSqlString(statement);
         }
 
+        /// <summary>
+        /// 生成 LIKE 语句。
+        /// </summary>
+        /// <param name="expression">列表达式片段。</param>
+        /// <param name="param">匹配模式参数占位符。</param>
+        /// <returns>LIKE 语句。</returns>
         protected virtual string CreateLikeStatement(PartialSqlString expression, string param)
         {
             return string.Format("upper({0}) like {1} escape '{2}'", expression, param, EscapeChar);
         }
 
+        /// <summary>
+        /// 生成 TRIM 语句。
+        /// </summary>
+        /// <param name="expression">列表达式片段。</param>
+        /// <param name="start">是否去除左侧空白。</param>
+        /// <param name="end">是否去除右侧空白。</param>
+        /// <returns>TRIM 语句。</returns>
         protected virtual string CreateTrimStatement(PartialSqlString expression, bool start, bool end)
         {
             var result = expression.ToString();
@@ -1467,6 +1724,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return result;
         }
 
+        /// <summary>
+        /// 对模糊匹配参数中的特殊字符进行转义。
+        /// </summary>
+        /// <param name="par">待转义的参数。</param>
+        /// <returns>转义后的字符串。</returns>
         protected virtual string EscapeParam(object par)
         {
             var param = par.ToString().ToUpper();
@@ -1477,6 +1739,13 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         }
 
         // Easy to override
+        /// <summary>
+        /// 生成 substring 子串 SQL。
+        /// </summary>
+        /// <param name="columnName">列名 SQL 片段。</param>
+        /// <param name="startIndex">起始位置。</param>
+        /// <param name="length">子串长度，小于 0 表示取到末尾。</param>
+        /// <returns>substring 子串 SQL。</returns>
         protected virtual string SubstringStatement(PartialSqlString columnName, int startIndex, int length)
         {
             if (length >= 0)
@@ -1485,6 +1754,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                 return string.Format("substring({0},{1},8000)", columnName, CreateParam(startIndex));
         }
 
+        /// <summary>
+        /// 根据成员名生成日期时间取值 SQL。
+        /// </summary>
+        /// <param name="memberName">DateTime 成员名，如 Year、Month、Day 等。</param>
+        /// <param name="m">字段的 SQL 片段。</param>
+        /// <returns>对应的日期时间取值 SQL。</returns>
         protected virtual string GetDateTimeSql(string memberName, object m)
         {
             string sql;
@@ -1502,21 +1777,45 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         }
     }
 
+    /// <summary>
+    /// 表示部分 SQL 字符串片段。
+    /// </summary>
     public class PartialSqlString
     {
+        /// <summary>
+        /// 使用指定文本初始化片段。
+        /// </summary>
+        /// <param name="text">SQL 文本。</param>
         public PartialSqlString(string text)
         {
             Text = text;
         }
+        /// <summary>
+        /// SQL 文本内容。
+        /// </summary>
         public string Text { get; set; }
+        /// <summary>
+        /// 返回 SQL 文本。
+        /// </summary>
+        /// <returns>SQL 文本。</returns>
         public override string ToString()
         {
             return Text;
         }
     }
 
+    /// <summary>
+    /// 表示列成员的访问片段，携带列与实体类型信息。
+    /// </summary>
     public class MemberAccessString : PartialSqlString
     {
+        /// <summary>
+        /// 使用指定列信息、文本与类型初始化实例。
+        /// </summary>
+        /// <param name="pocoColumn">对应的列信息。</param>
+        /// <param name="pocoColumns">关联的列信息数组。</param>
+        /// <param name="text">SQL 文本。</param>
+        /// <param name="type">实体类型。</param>
         public MemberAccessString(PocoColumn pocoColumn, PocoColumn[] pocoColumns, string text, Type type)
             : base(text)
         {
@@ -1525,21 +1824,50 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             Type = type;
         }
 
+        /// <summary>
+        /// 对应的列信息。
+        /// </summary>
         public PocoColumn PocoColumn { get; private set; }
+        /// <summary>
+        /// 关联的列信息数组。
+        /// </summary>
         public PocoColumn[] PocoColumns { get; private set; }
+        /// <summary>
+        /// 实体类型。
+        /// </summary>
         public Type Type { get; set; }
     }
 
+    /// <summary>
+    /// 表示可空成员的列访问片段。
+    /// </summary>
     public class NullableMemberAccess : MemberAccessString
     {
+        /// <summary>
+        /// 使用指定列信息、文本与类型初始化实例。
+        /// </summary>
+        /// <param name="pocoColumn">对应的列信息。</param>
+        /// <param name="pocoColumns">关联的列信息数组。</param>
+        /// <param name="text">SQL 文本。</param>
+        /// <param name="type">实体类型。</param>
         public NullableMemberAccess(PocoColumn pocoColumn, PocoColumn[] pocoColumns, string text, Type type)
             : base(pocoColumn, pocoColumns, text, type)
         {
         }
     }
 
+    /// <summary>
+    /// 表示枚举成员的列访问片段。
+    /// </summary>
     public class EnumMemberAccess : MemberAccessString
     {
+        /// <summary>
+        /// 使用指定列信息、文本与类型初始化实例。
+        /// </summary>
+        /// <param name="pocoColumn">对应的列信息。</param>
+        /// <param name="pocoColumns">关联的列信息数组。</param>
+        /// <param name="text">SQL 文本。</param>
+        /// <param name="type">实体类型。</param>
         public EnumMemberAccess(PocoColumn pocoColumn, PocoColumn[] pocoColumns, string text, Type type)
             : base(pocoColumn, pocoColumns, text, type)
         {

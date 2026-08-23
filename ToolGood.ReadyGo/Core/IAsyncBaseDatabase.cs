@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 定义异步数据库操作的基础能力，包括连接与事务的异步管理。
+    /// </summary>
     public interface IAsyncBaseDatabase : IBaseCommonDatabase, IAsyncDisposable
     {
         /// <summary>

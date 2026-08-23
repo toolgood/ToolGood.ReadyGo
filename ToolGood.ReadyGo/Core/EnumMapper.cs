@@ -67,6 +67,9 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 释放映射资源。
+        /// </summary>
         public void Dispose()
         {
             _lock.Dispose();

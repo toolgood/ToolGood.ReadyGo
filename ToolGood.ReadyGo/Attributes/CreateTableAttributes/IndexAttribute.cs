@@ -12,8 +12,8 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 索引特征
         /// </summary>
-        /// <param name="column"></param>
-        /// <param name="columns"></param>
+        /// <param name="column">索引列名</param>
+        /// <param name="columns">其它索引列名</param>
         public IndexAttribute(string column, params string[] columns)
         {
             ColumnNames = new List<string>();

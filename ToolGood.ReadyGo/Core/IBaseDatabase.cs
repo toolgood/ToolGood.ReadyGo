@@ -5,6 +5,9 @@ using System.Data.Common;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 定义同步数据库操作的能力，包括事务管理与手动连接管理。
+    /// </summary>
     public interface IBaseDatabase : IAsyncBaseDatabase, IDisposable
     {
         /// <summary>

@@ -9,7 +9,7 @@
     <AssemblyName>ToolGood.ReadyGo</AssemblyName>
     <RootNamespace>ToolGood.ReadyGo</RootNamespace>
     <PackageId>ToolGood.ReadyGo</PackageId>
-    <Version>5.0.6</Version>
+    <Version>5.0.7</Version>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
@@ -21,11 +21,12 @@
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Nullable>disable</Nullable>
     <LangVersion>latest</LangVersion>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
 
   <ItemGroup>
-    <PackageReference Condition="'$(TargetFramework)' == 'net8.0' or '$(TargetFramework)' == 'net9.0'" Include="System.Linq.Async" Version="6.0.1" />
+    <PackageReference Condition="'$(TargetFramework)' == 'net8.0' or '$(TargetFramework)' == 'net9.0'" Include="System.Linq.Async" Version="7.0.1" />
   </ItemGroup>
 
   <ItemGroup>

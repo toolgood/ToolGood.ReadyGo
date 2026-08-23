@@ -1,5 +1,8 @@
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 指定计算列的判定时机。
+    /// </summary>
     public enum ComputedColumnType
     {
         /// <summary>

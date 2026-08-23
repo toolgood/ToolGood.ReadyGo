@@ -7,16 +7,29 @@ using ToolGood.ReadyGo.NPoco.ArrayExtensions;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 提供对象的深拷贝与类型判断扩展方法。
+    /// </summary>
     public static class ObjectExtensions
     {
         private static readonly MethodInfo CloneMethod = typeof(Object).GetMethod("MemberwiseClone", BindingFlags.NonPublic | BindingFlags.Instance);
 
+        /// <summary>
+        /// 判断类型是否为基础类型或字符串。
+        /// </summary>
+        /// <param name="type">要判断的类型。</param>
+        /// <returns>若是字符串或基础值类型返回 true，否则返回 false。</returns>
         public static bool IsPrimitive(this Type type)
         {
             if (type == typeof(String)) return true;
             return (type.GetTypeInfo().IsValueType & type.GetTypeInfo().IsPrimitive);
         }
 
+        /// <summary>
+        /// 对对象进行深拷贝。
+        /// </summary>
+        /// <param name="originalObject">要拷贝的源对象。</param>
+        /// <returns>拷贝出的新对象。</returns>
         public static Object Copy(this Object originalObject)
         {
             return InternalCopy(originalObject, new Dictionary<object, object>(new ReferenceEqualityComparer()));
@@ -64,11 +77,24 @@ namespace ToolGood.ReadyGo.NPoco
                 fieldInfo.SetValue(cloneObject, clonedFieldValue);
             }
         }
+        /// <summary>
+        /// 对对象进行深拷贝并返回指定类型。
+        /// </summary>
+        /// <typeparam name="T">目标类型。</typeparam>
+        /// <param name="original">要拷贝的源对象。</param>
+        /// <returns>拷贝出的新对象。</returns>
         public static T Copy<T>(this T original)
         {
             return (T)Copy((Object)original);
         }
 
+        /// <summary>
+        /// 尝试将对象转换为指定类型。
+        /// </summary>
+        /// <typeparam name="TCastType">目标类型。</typeparam>
+        /// <param name="inValue">源对象。</param>
+        /// <param name="value">转换成功时输出转换后的值。</param>
+        /// <returns>转换是否成功。</returns>
         public static bool CanBeCastTo<TCastType>(this object inValue, out TCastType value)
         {
             var result = inValue is TCastType;
@@ -77,12 +103,22 @@ namespace ToolGood.ReadyGo.NPoco
         }
     }
 
+    /// <summary>
+    /// 基于引用相等的对象比较器，用于深拷贝时跟踪已访问对象。
+    /// </summary>
     public class ReferenceEqualityComparer : EqualityComparer<Object>
     {
+        /// <summary>
+        /// 判断两个对象是否为同一引用。
+        /// </summary>
         public override bool Equals(object x, object y)
         {
             return ReferenceEquals(x, y);
         }
+
+        /// <summary>
+        /// 返回对象的哈希码。
+        /// </summary>
         public override int GetHashCode(object obj)
         {
             if (obj == null) return 0;
@@ -92,8 +128,16 @@ namespace ToolGood.ReadyGo.NPoco
 
     namespace ArrayExtensions
     {
+        /// <summary>
+        /// 提供遍历多维数组的扩展方法。
+        /// </summary>
         public static class ArrayExtensions
         {
+            /// <summary>
+            /// 遍历数组中的每个元素并对其位置执行操作。
+            /// </summary>
+            /// <param name="array">要遍历的数组。</param>
+            /// <param name="action">对数组及元素索引执行的操作。</param>
             public static void ForEach(this Array array, Action<Array, int[]> action)
             {
                 if (array.Length == 0) return;

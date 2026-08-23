@@ -5,8 +5,14 @@ using System.Linq;
 
 namespace ToolGood.ReadyGo.NPoco.RowMappers
 {
+    /// <summary>
+    /// 定义查询列名与 POCO 成员之间的命名约定转换规则。
+    /// </summary>
     public static class PropertyMapperNameConvention
     {
+        /// <summary>
+        /// 新版列名约定的前缀（NPoco_），用于标识分组的成员范围。
+        /// </summary>
         public static string SplitPrefix = "NPoco_";
 
         internal static IEnumerable<PosName> ConvertFromNewConvention(this IEnumerable<PosName> posNames, PocoData pocoData)

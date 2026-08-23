@@ -6,11 +6,21 @@ using System.Text.RegularExpressions;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 提供根据 POCO 类型自动为 SQL 语句补全 SELECT 子句的辅助功能。
+    /// </summary>
     public class AutoSelectHelper
     {
         private static Regex rxSelect = new Regex(@"\A\s*(SELECT|EXECUTE|CALL|EXEC)\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
         private static Regex rxFrom = new Regex(@"\A\s*FROM\s", RegexOptions.Compiled | RegexOptions.Singleline | RegexOptions.IgnoreCase | RegexOptions.Multiline);
 
+        /// <summary>
+        /// 当 SQL 语句未显式包含 SELECT 子句时，根据类型映射信息自动拼接出完整的查询列与表名。
+        /// </summary>
+        /// <param name="database">用于获取表名、列名转义规则与 POCO 元数据的数据库实例。</param>
+        /// <param name="type">要查询的 POCO 类型。</param>
+        /// <param name="sql">待处理的 SQL 语句。</param>
+        /// <returns>补全 SELECT 子句后的 SQL 语句。</returns>
         public static string AddSelectClause(Database database, Type type, string sql)
         {
             if (sql.StartsWith(";"))

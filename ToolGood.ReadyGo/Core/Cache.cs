@@ -6,12 +6,17 @@ using System.Threading;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 基于读写锁实现的线程安全缓存字典。
+    /// </summary>
+    /// <typeparam name="TKey">缓存的键类型。</typeparam>
+    /// <typeparam name="TValue">缓存的值类型。</typeparam>
     public class Cache<TKey, TValue>
     {
         /// <summary>
         /// Creates a cache that uses static storage
         /// </summary>
-        /// <returns></returns>
+        /// <returns>新建的缓存实例。</returns>
         public static Cache<TKey, TValue> CreateStaticCache()
         {
             return new Cache<TKey, TValue>();
@@ -20,8 +25,17 @@ namespace ToolGood.ReadyGo.NPoco
         readonly Dictionary<TKey, TValue> _map = new Dictionary<TKey, TValue>();
         readonly ReaderWriterLockSlim _lock = new ReaderWriterLockSlim();
         
+        /// <summary>
+        /// 获取缓存中当前存储的条目数量。
+        /// </summary>
         public int Count => _map.Count;
 
+        /// <summary>
+        /// 获取指定键对应的值；若不存在则调用工厂方法创建并缓存后返回。
+        /// </summary>
+        /// <param name="key">缓存键。</param>
+        /// <param name="factory">当键不存在时用于创建值的工厂方法。</param>
+        /// <returns>与键关联的值。</returns>
         public TValue Get(TKey key, Func<TValue> factory)
         {
             // Check cache
@@ -86,6 +100,9 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 清空缓存中的所有条目。
+        /// </summary>
         public void Flush()
         {
             // Cache it

@@ -5,8 +5,16 @@ using ToolGood.ReadyGo.Attributes;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 根据成员上的特性创建对应的 <see cref="ColumnInfo"/> 元数据。
+    /// </summary>
     public class ColumnInfoCreator
     {
+        /// <summary>
+        /// 从成员信息（属性或字段）中读取映射特性并构造列元数据。
+        /// </summary>
+        /// <param name="mi">成员信息。</param>
+        /// <returns>构造出的列元数据。</returns>
         public static ColumnInfo FromMemberInfo(MemberInfo mi)
         {
             var ci = new ColumnInfo { MemberInfo = mi };

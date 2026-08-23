@@ -32,6 +32,9 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <summary>
         /// 从日期字符串反序列化
         /// </summary>
+        /// <param name="value">格式为 yyyy-MM-dd 的日期字符串</param>
+        /// <param name="targetType">目标类型</param>
+        /// <returns>反序列化后的日期值</returns>
         public object Deserialize(object value, Type targetType)
         {
             var s = value as string ?? value?.ToString();

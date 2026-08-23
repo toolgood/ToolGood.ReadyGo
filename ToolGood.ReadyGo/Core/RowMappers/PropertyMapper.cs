@@ -8,17 +8,30 @@ using System.Reflection;
 
 namespace ToolGood.ReadyGo.NPoco.RowMappers
 {
+    /// <summary>
+    /// 将查询结果行映射到 POCO 对象属性/字段的默认行映射器。
+    /// </summary>
     public class PropertyMapper : RowMapper
     {
         private List<GroupResult<PosName>> _groupedNames;
         private MapPlan _mapPlan;
         private bool _mappingOntoExistingInstance;
 
+        /// <summary>
+        /// 判断该映射器是否适用；作为默认映射器，始终返回 true。
+        /// </summary>
+        /// <param name="pocoData">POCO 元数据。</param>
+        /// <returns>始终返回 true。</returns>
         public override bool ShouldMap(PocoData pocoData)
         {
             return true;
         }
 
+        /// <summary>
+        /// 初始化映射器，对结果集列进行分组并构建映射计划。
+        /// </summary>
+        /// <param name="dataReader">数据读取器。</param>
+        /// <param name="pocoData">POCO 元数据。</param>
         public override void Init(DbDataReader dataReader, PocoData pocoData)
         {
             var fields = GetColumnNames(dataReader, pocoData);
@@ -30,6 +43,12 @@ namespace ToolGood.ReadyGo.NPoco.RowMappers
             _mapPlan = BuildMapPlan(dataReader, pocoData);
         }
 
+        /// <summary>
+        /// 将当前数据行映射到目标 POCO 实例并填充其成员值。
+        /// </summary>
+        /// <param name="dataReader">数据读取器。</param>
+        /// <param name="context">行映射上下文。</param>
+        /// <returns>映射后的目标实例。</returns>
         public override object Map(DbDataReader dataReader, RowMapperContext context)
         {
             if (context.Instance == null)
@@ -56,6 +75,13 @@ namespace ToolGood.ReadyGo.NPoco.RowMappers
             return context.Instance;
         }
 
+        /// <summary>
+        /// 表示将数据行值写入目标实例的映射计划委托。
+        /// </summary>
+        /// <param name="dataReader">数据读取器。</param>
+        /// <param name="values">当前行的原始值数组。</param>
+        /// <param name="instance">目标实例。</param>
+        /// <returns>是否成功写入了值。</returns>
         public delegate bool MapPlan(DbDataReader dataReader, object[] values, object instance);
 
         private MapPlan BuildMapPlan(DbDataReader dataReader, PocoData pocoData)
@@ -128,6 +154,13 @@ namespace ToolGood.ReadyGo.NPoco.RowMappers
             }
         }
 
+        /// <summary>
+        /// 判断列名与成员名是否相等；非精确匹配时忽略下划线。
+        /// </summary>
+        /// <param name="name">列名。</param>
+        /// <param name="value">成员名（或列别名）。</param>
+        /// <param name="exactMatch">是否要求精确匹配。</param>
+        /// <returns>若相等则返回 true，否则返回 false。</returns>
         public static bool IsEqual(string name, string value, bool exactMatch)
         {
             if (value is null)

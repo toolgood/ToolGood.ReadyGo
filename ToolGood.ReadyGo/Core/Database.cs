@@ -29,22 +29,50 @@ using ToolGood.ReadyGo;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 表示数据库上下文，提供对数据库的连接管理、事务、查询与增删改操作的统一入口。
+    /// </summary>
     public partial class Database : IDatabase, IDatabaseHelpers
     {
+        /// <summary>
+        /// 默认是否启用自动补全 SELECT 子句。
+        /// </summary>
         public const bool DefaultEnableAutoSelect = true;
 
+        /// <summary>
+        /// 使用现有连接初始化数据库实例。
+        /// </summary>
+        /// <param name="connection">要使用的数据库连接。</param>
         public Database(DbConnection connection)
             : this(connection, null, null, DefaultEnableAutoSelect)
         { }
 
+        /// <summary>
+        /// 使用现有连接与数据库类型初始化数据库实例。
+        /// </summary>
+        /// <param name="connection">要使用的数据库连接。</param>
+        /// <param name="dbType">数据库类型处理器；为 null 时自动解析。</param>
         public Database(DbConnection connection, DatabaseType? dbType)
             : this(connection, dbType, null, DefaultEnableAutoSelect)
         { }
 
+        /// <summary>
+        /// 使用现有连接、数据库类型与事务隔离级别初始化数据库实例。
+        /// </summary>
+        /// <param name="connection">要使用的数据库连接。</param>
+        /// <param name="dbType">数据库类型处理器；为 null 时自动解析。</param>
+        /// <param name="isolationLevel">事务隔离级别；为 null 时使用数据库默认级别。</param>
         public Database(DbConnection connection, DatabaseType? dbType, IsolationLevel? isolationLevel)
             : this(connection, dbType, isolationLevel, DefaultEnableAutoSelect)
         { }
 
+        /// <summary>
+        /// 使用现有连接、数据库类型、事务隔离级别与自动补全开关初始化数据库实例。
+        /// </summary>
+        /// <param name="connection">要使用的数据库连接。</param>
+        /// <param name="dbType">数据库类型处理器；为 null 时自动解析。</param>
+        /// <param name="isolationLevel">事务隔离级别；为 null 时使用数据库默认级别。</param>
+        /// <param name="enableAutoSelect">是否启用自动补全 SELECT 子句。</param>
         public Database(DbConnection connection, DatabaseType? dbType, IsolationLevel? isolationLevel, bool enableAutoSelect)
         {
             EnableAutoSelect = enableAutoSelect;
@@ -67,10 +95,24 @@ namespace ToolGood.ReadyGo.NPoco
             //}
         }
 
+        /// <summary>
+        /// 使用连接字符串与数据库类型初始化数据库实例。
+        /// </summary>
+        /// <param name="connectionString">连接字符串。</param>
+        /// <param name="databaseType">数据库类型处理器。</param>
+        /// <param name="provider">数据库提供程序工厂。</param>
         public Database(string connectionString, DatabaseType databaseType, DbProviderFactory provider)
             : this(connectionString, databaseType, provider, null)
         { }
 
+        /// <summary>
+        /// 使用连接字符串、数据库类型、提供程序工厂、事务隔离级别与自动补全开关初始化数据库实例。
+        /// </summary>
+        /// <param name="connectionString">连接字符串。</param>
+        /// <param name="databaseType">数据库类型处理器。</param>
+        /// <param name="provider">数据库提供程序工厂。</param>
+        /// <param name="isolationLevel">事务隔离级别；为 null 时使用数据库默认级别。</param>
+        /// <param name="enableAutoSelect">是否启用自动补全 SELECT 子句。</param>
         public Database(string connectionString, DatabaseType databaseType, DbProviderFactory provider, IsolationLevel? isolationLevel = null, bool enableAutoSelect = DefaultEnableAutoSelect)
         {
             EnableAutoSelect = enableAutoSelect;
@@ -86,13 +128,28 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         private readonly IDatabaseType _dbType;
+
+        /// <summary>
+        /// 获取数据库类型处理器。
+        /// </summary>
         public IDatabaseType DatabaseType => _dbType;
+
+        /// <summary>
+        /// 获取事务隔离级别。
+        /// </summary>
         public IsolationLevel IsolationLevel => _isolationLevel;
 
         private IDictionary<string, object>? _data;
+
+        /// <summary>
+        /// 获取用于存储自定义数据的键值集合。
+        /// </summary>
         public IDictionary<string, object> Data => _data ??= new Dictionary<string, object>();
 
         // Automatically close connection
+        /// <summary>
+        /// 释放数据库实例并关闭共享连接。
+        /// </summary>
         public void Dispose()
         {
             if (KeepConnectionAlive) return;
@@ -100,6 +157,9 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         // Set to true to keep the first opened connection alive until this object is disposed
+        /// <summary>
+        /// 获取或设置是否在实例存续期间保持连接存活。
+        /// </summary>
         public bool KeepConnectionAlive { get; set; }
 
         private bool ShouldCloseConnectionAutomatically { get; set; }
@@ -107,6 +167,11 @@ namespace ToolGood.ReadyGo.NPoco
         private OpenConnectionOptions OpenConnectionOptions { get; set; } = new();
 
         // Open a connection (can be nested)
+        /// <summary>
+        /// 手动打开共享连接。
+        /// </summary>
+        /// <param name="options">打开连接的选项。</param>
+        /// <returns>当前数据库实例。</returns>
         public IDatabase OpenSharedConnection(OpenConnectionOptions? options = null)
         {
             OpenConnectionOptions = options ?? new();
@@ -114,6 +179,11 @@ namespace ToolGood.ReadyGo.NPoco
             return this;
         }
 
+        /// <summary>
+        /// 异步手动打开共享连接。
+        /// </summary>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
+        /// <returns>当前数据库实例。</returns>
         public async Task<IAsyncDatabase> OpenSharedConnectionAsync(CancellationToken cancellationToken = default)
         {
             await OpenSharedConnectionImp(false, false, cancellationToken);
@@ -122,6 +192,12 @@ namespace ToolGood.ReadyGo.NPoco
 
         private static readonly OpenConnectionOptions defaultOpenConnectionOptions = new();
 
+        /// <summary>
+        /// 使用指定选项异步手动打开共享连接。
+        /// </summary>
+        /// <param name="options">打开连接的选项。</param>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
+        /// <returns>当前数据库实例。</returns>
         public async Task<IAsyncDatabase> OpenSharedConnectionAsync(OpenConnectionOptions options, CancellationToken cancellationToken = default)
         {
             OpenConnectionOptions = options ?? defaultOpenConnectionOptions;
@@ -200,11 +276,17 @@ namespace ToolGood.ReadyGo.NPoco
                 await CloseSharedConnectionAsync();
         }
 
+        /// <summary>
+        /// 手动关闭共享连接。
+        /// </summary>
         public void CloseSharedConnection()
         {
             CloseSharedConnectionImp(true).RunSync();
         }
 
+        /// <summary>
+        /// 异步手动关闭共享连接。
+        /// </summary>
         public async Task CloseSharedConnectionAsync()
         {
             await CloseSharedConnectionImp(false);
@@ -255,13 +337,26 @@ namespace ToolGood.ReadyGo.NPoco
             _sharedConnection = null!;
         }
 
+        /// <summary>
+        /// 获取或设置版本冲突时的处理方式。
+        /// </summary>
         public VersionExceptionHandling VersionException { get; set; } = VersionExceptionHandling.Exception;
 
         // Access to our shared connection
+        /// <summary>
+        /// 获取底层共享数据库连接。
+        /// </summary>
         public DbConnection Connection => _sharedConnection;
 
+        /// <summary>
+        /// 获取当前活动的事务。
+        /// </summary>
         public DbTransaction? Transaction => _transaction;
 
+        /// <summary>
+        /// 创建适用于当前数据库提供程序的参数对象。
+        /// </summary>
+        /// <returns>新建的数据库参数。</returns>
         public DbParameter CreateParameter()
         {
             using (var conn = _sharedConnection ?? _factory?.CreateConnection())
@@ -275,16 +370,29 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         // Helper to create a transaction scope
+        /// <summary>
+        /// 以默认隔离级别创建事务。
+        /// </summary>
+        /// <returns>可用于 using 语句的事务对象。</returns>
         public ITransaction GetTransaction()
         {
             return GetTransaction(_isolationLevel);
         }
 
+        /// <summary>
+        /// 以指定隔离级别创建事务。
+        /// </summary>
+        /// <param name="isolationLevel">事务隔离级别。</param>
+        /// <returns>可用于 using 语句的事务对象。</returns>
         public ITransaction GetTransaction(IsolationLevel isolationLevel)
         {
             return new Transaction(this, isolationLevel);
         }
 
+        /// <summary>
+        /// 设置当前事务为已存在的事务对象。
+        /// </summary>
+        /// <param name="tran">要设置的事务。</param>
         public void SetTransaction(DbTransaction tran)
         {
             _transaction = tran;
@@ -302,6 +410,9 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 事务开启时调用的钩子方法，子类可重写。
+        /// </summary>
         protected virtual void OnBeginTransaction()
         {
         }
@@ -318,6 +429,9 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 事务回滚时调用的钩子方法，子类可重写。
+        /// </summary>
         protected virtual void OnAbortTransaction()
         {
         }
@@ -334,10 +448,16 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 事务提交时调用的钩子方法，子类可重写。
+        /// </summary>
         protected virtual void OnCompleteTransaction()
         {
         }
 
+        /// <summary>
+        /// 以默认隔离级别手动开启事务。
+        /// </summary>
         public void BeginTransaction()
         {
             BeginTransaction(_isolationLevel);
@@ -346,6 +466,10 @@ namespace ToolGood.ReadyGo.NPoco
         // Start a new transaction, can be nested, every call must be
         //	matched by a call to AbortTransaction or CompleteTransaction
         // Use `using (var scope=db.Transaction) { scope.Complete(); }` to ensure correct semantics
+        /// <summary>
+        /// 以指定隔离级别手动开启事务，可嵌套。
+        /// </summary>
+        /// <param name="isolationLevel">事务隔离级别。</param>
         public void BeginTransaction(IsolationLevel isolationLevel)
         {
             if (_transaction == null)
@@ -362,21 +486,39 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 以默认隔离级别异步创建事务。
+        /// </summary>
+        /// <returns>异步事务实例。</returns>
         public async Task<IAsyncTransaction> GetTransactionAsync()
         {
             return await AsyncTransaction.Init(this, _isolationLevel);
         }
 
+        /// <summary>
+        /// 以指定隔离级别异步创建事务。
+        /// </summary>
+        /// <param name="isolationLevel">事务隔离级别。</param>
+        /// <returns>异步事务实例。</returns>
         public async Task<IAsyncTransaction> GetTransactionAsync(IsolationLevel isolationLevel)
         {
             return await AsyncTransaction.Init(this, isolationLevel);
         }
 
+        /// <summary>
+        /// 以默认隔离级别异步手动开启事务。
+        /// </summary>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
         public Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             return BeginTransactionAsync(_isolationLevel, cancellationToken);
         }
 
+        /// <summary>
+        /// 以指定隔离级别异步手动开启事务。
+        /// </summary>
+        /// <param name="isolationLevel">事务隔离级别。</param>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
         public async Task BeginTransactionAsync(IsolationLevel isolationLevel, CancellationToken cancellationToken = default)
         {
             if (_transaction == null)
@@ -409,11 +551,19 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 异步事务开启时调用的钩子方法，子类可重写。
+        /// </summary>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
         protected virtual Task OnBeginTransactionAsync(CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// 异步手动回滚事务。
+        /// </summary>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
         public Task AbortTransactionAsync(CancellationToken cancellationToken = default)
         {
             return AbortTransaction(false, false, cancellationToken);
@@ -431,11 +581,19 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 异步事务回滚时调用的钩子方法，子类可重写。
+        /// </summary>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
         protected virtual Task OnAbortTransactionAsync(CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
         }
 
+        /// <summary>
+        /// 异步手动提交事务。
+        /// </summary>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
         public Task CompleteTransactionAsync(CancellationToken cancellationToken = default)
         {
             return CompleteTransactionImp(false, cancellationToken);
@@ -453,12 +611,19 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 异步事务提交时调用的钩子方法，子类可重写。
+        /// </summary>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
         protected virtual Task OnCompleteTransactionAsync(CancellationToken cancellationToken = default)
         {
             return Task.CompletedTask;
         }
 
         // Abort the entire outer most transaction scope
+        /// <summary>
+        /// 回滚最外层事务。
+        /// </summary>
         public void AbortTransaction()
         {
             TransactionIsAborted = true;
@@ -560,6 +725,9 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 提交当前事务。
+        /// </summary>
         public void CompleteTransaction()
         {
             CompleteTransactionImp(true).RunSync();
@@ -646,6 +814,11 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         // Add a parameter to a DB command
+        /// <summary>
+        /// 向数据库命令添加参数。
+        /// </summary>
+        /// <param name="cmd">要添加参数的命令。</param>
+        /// <param name="value">参数值。</param>
         public virtual void AddParameter(DbCommand cmd, object? value)
         {
             // Convert value to from poco type to db type
@@ -742,6 +915,10 @@ namespace ToolGood.ReadyGo.NPoco
             return newConnection;
         }
 
+        /// <summary>
+        /// 连接关闭前调用的钩子方法，子类可重写。
+        /// </summary>
+        /// <param name="conn">即将关闭的连接。</param>
         protected virtual void OnConnectionClosing(DbConnection conn)
         {
         }
@@ -769,6 +946,10 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 命令执行后调用的钩子方法，子类可重写。
+        /// </summary>
+        /// <param name="cmd">已执行的命令。</param>
         protected virtual void OnExecutedCommand(DbCommand cmd)
         {
 
@@ -797,6 +978,11 @@ namespace ToolGood.ReadyGo.NPoco
             return result && Interceptors.OfType<IDataInterceptor>().All(x => x.OnInserting(this, insertContext));
         }
 
+        /// <summary>
+        /// 更新前调用的钩子方法，返回 false 可取消更新。
+        /// </summary>
+        /// <param name="updateContext">更新上下文。</param>
+        /// <returns>是否允许继续更新。</returns>
         protected virtual bool OnUpdating(UpdateContext updateContext)
         {
             return true;
@@ -819,6 +1005,13 @@ namespace ToolGood.ReadyGo.NPoco
             return result && Interceptors.OfType<IDataInterceptor>().All(x => x.OnDeleting(this, deleteContext));
         }
 
+        /// <summary>
+        /// 创建用于调用存储过程的命令。
+        /// </summary>
+        /// <param name="connection">命令使用的连接。</param>
+        /// <param name="name">存储过程名称。</param>
+        /// <param name="args">参数。</param>
+        /// <returns>存储过程命令。</returns>
         public DbCommand CreateStoredProcedureCommand(DbConnection connection, string name, params object[] args)
         {
             DbCommand cmd = connection.CreateCommand();
@@ -860,16 +1053,34 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         // Execute a non-query command
+        /// <summary>
+        /// 执行非查询 SQL 语句。
+        /// </summary>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>受影响的行数。</returns>
         public int Execute(string sql, params object[] args)
         {
             return Execute(new Sql(sql, args));
         }
 
+        /// <summary>
+        /// 执行非查询 SQL 语句。
+        /// </summary>
+        /// <param name="Sql">封装 SQL 与参数的对象。</param>
+        /// <returns>受影响的行数。</returns>
         public int Execute(Sql Sql)
         {
             return Execute(Sql.SQL, CommandType.Text, Sql.Arguments);
         }
 
+        /// <summary>
+        /// 以指定命令类型执行 SQL 语句。
+        /// </summary>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="commandType">命令类型。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>受影响的行数。</returns>
         public int Execute(string sql, CommandType commandType, params object[] args)
         {
             try
@@ -893,16 +1104,37 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         // Execute and cast a scalar property
+        /// <summary>
+        /// 执行标量查询并将结果转换为指定类型。
+        /// </summary>
+        /// <typeparam name="T">返回类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>查询结果的首行首列值。</returns>
         public T ExecuteScalar<T>(string sql, params object[] args)
         {
             return ExecuteScalar<T>(new Sql(sql, args));
         }
 
+        /// <summary>
+        /// 执行标量查询并将结果转换为指定类型。
+        /// </summary>
+        /// <typeparam name="T">返回类型。</typeparam>
+        /// <param name="Sql">封装 SQL 与参数的对象。</param>
+        /// <returns>查询结果的首行首列值。</returns>
         public T ExecuteScalar<T>(Sql Sql)
         {
             return ExecuteScalar<T>(Sql.SQL, CommandType.Text, Sql.Arguments);
         }
 
+        /// <summary>
+        /// 以指定命令类型执行标量查询并将结果转换为指定类型。
+        /// </summary>
+        /// <typeparam name="T">返回类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="commandType">命令类型。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>查询结果的首行首列值。</returns>
         public T ExecuteScalar<T>(string sql, CommandType commandType, params object[] args)
         {
             try
@@ -932,24 +1164,55 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 获取或设置是否在查询时自动补全 SELECT 子句。
+        /// </summary>
         public bool EnableAutoSelect { get; set; }
 
         // Return a typed list of pocos
+        /// <summary>
+        /// 查询并返回类型 T 的对象列表。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>对象列表。</returns>
         public List<T> Fetch<T>(string sql, params object[] args)
         {
             return Fetch<T>(new Sql(sql, args));
         }
 
+        /// <summary>
+        /// 查询并返回类型 T 的对象列表。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>对象列表。</returns>
         public List<T> Fetch<T>(Sql sql)
         {
             return Query<T>(sql).ToList();
         }
 
+        /// <summary>
+        /// 查询并返回类型 T 的全部对象。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <returns>对象列表。</returns>
         public List<T> Fetch<T>()
         {
             return Fetch<T>("");
         }
 
+        /// <summary>
+        /// 根据跳过/获取数量拆分 SQL 并生成分页查询与计数查询。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="skip">跳过的行数。</param>
+        /// <param name="take">获取的行数。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组（可能被修改）。</param>
+        /// <param name="sqlCount">输出的计数 SQL。</param>
+        /// <param name="sqlPage">输出的分页 SQL。</param>
         public void BuildPageQueries<T>(long skip, long take, string sql, ref object[] args, out string sqlCount, out string sqlPage)
         {
             // Add auto select clause
@@ -965,21 +1228,55 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         // Fetch a page
+        /// <summary>
+        /// 分页查询并返回类型 T 的对象与分页元数据。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="itemsPerPage">每页条数。</param>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>分页结果。</returns>
         public Page<T> Page<T>(long page, long itemsPerPage, Sql sql)
         {
             return Page<T>(page, itemsPerPage, sql.SQL, sql.Arguments);
         }
 
+        /// <summary>
+        /// 分页查询并返回类型 T 的对象列表。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="itemsPerPage">每页条数。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>对象列表。</returns>
         public List<T> Fetch<T>(long page, long itemsPerPage, string sql, params object[] args)
         {
             return SkipTake<T>((page - 1) * itemsPerPage, itemsPerPage, sql, args);
         }
 
+        /// <summary>
+        /// 分页查询并返回类型 T 的对象列表。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="itemsPerPage">每页条数。</param>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>对象列表。</returns>
         public List<T> Fetch<T>(long page, long itemsPerPage, Sql sql)
         {
             return SkipTake<T>((page - 1) * itemsPerPage, itemsPerPage, sql.SQL, sql.Arguments);
         }
 
+        /// <summary>
+        /// 按跳过/获取数量查询并返回类型 T 的对象列表。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="skip">跳过的行数。</param>
+        /// <param name="take">获取的行数。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>对象列表。</returns>
         public List<T> SkipTake<T>(long skip, long take, string sql, params object[] args)
         {
             string sqlCount, sqlPage;
@@ -987,16 +1284,39 @@ namespace ToolGood.ReadyGo.NPoco
             return Fetch<T>(sqlPage, args);
         }
 
+        /// <summary>
+        /// 按跳过/获取数量查询并返回类型 T 的对象列表。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="skip">跳过的行数。</param>
+        /// <param name="take">获取的行数。</param>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>对象列表。</returns>
         public List<T> SkipTake<T>(long skip, long take, Sql sql)
         {
             return SkipTake<T>(skip, take, sql.SQL, sql.Arguments);
         }
 
+        /// <summary>
+        /// 查询两列结果并转换为字典。
+        /// </summary>
+        /// <typeparam name="TKey">字典键类型。</typeparam>
+        /// <typeparam name="TValue">字典值类型。</typeparam>
+        /// <param name="Sql">封装 SQL 与参数的对象。</param>
+        /// <returns>查询结果字典。</returns>
         public Dictionary<TKey, TValue> Dictionary<TKey, TValue>(Sql Sql) where TKey : notnull
         {
             return Dictionary<TKey, TValue>(Sql.SQL, Sql.Arguments);
         }
 
+        /// <summary>
+        /// 查询两列结果并转换为字典。
+        /// </summary>
+        /// <typeparam name="TKey">字典键类型。</typeparam>
+        /// <typeparam name="TValue">字典值类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>查询结果字典。</returns>
         public Dictionary<TKey, TValue> Dictionary<TKey, TValue>(string sql, params object[] args) where TKey : notnull
         {
             var newDict = new Dictionary<TKey, TValue>();
@@ -1030,11 +1350,24 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         // Return an enumerable collection of pocos
+        /// <summary>
+        /// 查询并返回类型 T 的对象序列。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>对象序列。</returns>
         public IEnumerable<T> Query<T>(string sql, params object[] args)
         {
             return Query<T>(new Sql(sql, args));
         }
 
+        /// <summary>
+        /// 查询并返回类型 T 的对象序列。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="Sql">封装 SQL 与参数的对象。</param>
+        /// <returns>对象序列。</returns>
         public IEnumerable<T> Query<T>(Sql Sql)
         {
             return Query(default(T)!, Sql);
@@ -1195,11 +1528,20 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 获取用于 LINQ 查询的查询提供程序。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <returns>查询提供程序。</returns>
         public IQueryProviderWithIncludes<T> Query<T>()
         {
             return new QueryProvider<T>(this);
         }
 
+        /// <summary>
+        /// 组合多个 LINQ 查询并一次性执行，返回各结果集。
+        /// </summary>
+        /// <returns>由各结果集组成的元组。</returns>
         public (List<T>, List<T1>, List<T2>, List<T3>) QueryMultiple<T, T1, T2, T3>(
             Func<IQueryProviderWithIncludes<T>, IQueryProvider<T>> query1,
             Func<IQueryProviderWithIncludes<T1>, IQueryProvider<T1>> query2,
@@ -1227,21 +1569,47 @@ namespace ToolGood.ReadyGo.NPoco
             return QueryImp(instance, null, null, Sql);
         }
 
+        /// <summary>
+        /// 按运行时类型查询并返回对象列表。
+        /// </summary>
+        /// <param name="type">对象类型。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>对象列表。</returns>
         public List<object> Fetch(Type type, string sql, params object[] args)
         {
             return Fetch(type, new Sql(sql, args));
         }
 
+        /// <summary>
+        /// 按运行时类型查询并返回对象列表。
+        /// </summary>
+        /// <param name="type">对象类型。</param>
+        /// <param name="Sql">封装 SQL 与参数的对象。</param>
+        /// <returns>对象列表。</returns>
         public List<object> Fetch(Type type, Sql Sql)
         {
             return Query(type, Sql).ToList();
         }
 
+        /// <summary>
+        /// 按运行时类型查询并返回对象序列。
+        /// </summary>
+        /// <param name="type">对象类型。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>对象序列。</returns>
         public IEnumerable<object> Query(Type type, string sql, params object[] args)
         {
             return Query(type, new Sql(sql, args));
         }
 
+        /// <summary>
+        /// 按运行时类型查询并返回对象序列。
+        /// </summary>
+        /// <param name="type">对象类型。</param>
+        /// <param name="Sql">封装 SQL 与参数的对象。</param>
+        /// <returns>对象序列。</returns>
         public IEnumerable<object> Query(Type type, Sql Sql)
         {
             var sql = Sql.SQL;
@@ -1307,26 +1675,67 @@ namespace ToolGood.ReadyGo.NPoco
             return r;
         }
 
+        /// <summary>
+        /// 查询一对多数据，将子记录填充到指定的列表属性中。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="many">指向列表属性的表达式。</param>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>对象列表。</returns>
         public List<T> FetchOneToMany<T>(Expression<Func<T, IList>> many, Sql sql)
         {
             return QueryImp(default!, many, null, sql).ToList();
         }
 
+        /// <summary>
+        /// 查询一对多数据，将子记录填充到指定的列表属性中。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="many">指向列表属性的表达式。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>对象列表。</returns>
         public List<T> FetchOneToMany<T>(Expression<Func<T, IList>> many, string sql, params object[] args)
         {
             return FetchOneToMany(many, new Sql(sql, args));
         }
 
+        /// <summary>
+        /// 查询一对多数据，使用自定义主键提取函数将子记录填充到列表属性中。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="many">指向列表属性的表达式。</param>
+        /// <param name="idFunc">提取主键的函数。</param>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>对象列表。</returns>
         public List<T> FetchOneToMany<T>(Expression<Func<T, IList>> many, Func<T, object> idFunc, Sql sql)
         {
             return QueryImp(default!, many, x => new[] { idFunc(x) }, sql).ToList();
         }
 
+        /// <summary>
+        /// 查询一对多数据，使用自定义主键提取函数将子记录填充到列表属性中。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="many">指向列表属性的表达式。</param>
+        /// <param name="idFunc">提取主键的函数。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>对象列表。</returns>
         public List<T> FetchOneToMany<T>(Expression<Func<T, IList>> many, Func<T, object> idFunc, string sql, params object[] args)
         {
             return FetchOneToMany(many, idFunc, new Sql(sql, args));
         }
 
+        /// <summary>
+        /// 分页查询并返回类型 T 的对象与分页元数据。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="itemsPerPage">每页条数。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>分页结果。</returns>
         public Page<T> Page<T>(long page, long itemsPerPage, string sql, params object[] args)
         {
             return PageImpAsync<T>(page, itemsPerPage, sql, args, true).RunSync();
@@ -1368,20 +1777,147 @@ namespace ToolGood.ReadyGo.NPoco
             return result;
         }
 
+        /// <summary>
+        /// 获取多个结果集，并由回调合并为一个对象。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <typeparam name="TRet">返回类型。</typeparam>
+        /// <param name="cb">合并各结果集的回调。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>合并后的对象。</returns>
         public TRet FetchMultiple<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, params object[] args) { return FetchMultipleImp<T1, T2, DontMap, DontMap, TRet>(new[] { typeof(T1), typeof(T2) }, cb, new Sql(sql, args), true).RunSync(); }
+
+        /// <summary>
+        /// 获取多个结果集，并由回调合并为一个对象。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <typeparam name="T3">第三个结果集元素类型。</typeparam>
+        /// <typeparam name="TRet">返回类型。</typeparam>
+        /// <param name="cb">合并各结果集的回调。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>合并后的对象。</returns>
         public TRet FetchMultiple<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, params object[] args) { return FetchMultipleImp<T1, T2, T3, DontMap, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3) }, cb, new Sql(sql, args), true).RunSync(); }
+
+        /// <summary>
+        /// 获取多个结果集，并由回调合并为一个对象。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <typeparam name="T3">第三个结果集元素类型。</typeparam>
+        /// <typeparam name="T4">第四个结果集元素类型。</typeparam>
+        /// <typeparam name="TRet">返回类型。</typeparam>
+        /// <param name="cb">合并各结果集的回调。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>合并后的对象。</returns>
         public TRet FetchMultiple<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, params object[] args) { return FetchMultipleImp<T1, T2, T3, T4, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, cb, new Sql(sql, args), true).RunSync(); }
+
+        /// <summary>
+        /// 获取多个结果集，并由回调合并为一个对象。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <typeparam name="TRet">返回类型。</typeparam>
+        /// <param name="cb">合并各结果集的回调。</param>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>合并后的对象。</returns>
         public TRet FetchMultiple<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, Sql sql) { return FetchMultipleImp<T1, T2, DontMap, DontMap, TRet>(new[] { typeof(T1), typeof(T2) }, cb, sql, true).RunSync(); }
+
+        /// <summary>
+        /// 获取多个结果集，并由回调合并为一个对象。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <typeparam name="T3">第三个结果集元素类型。</typeparam>
+        /// <typeparam name="TRet">返回类型。</typeparam>
+        /// <param name="cb">合并各结果集的回调。</param>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>合并后的对象。</returns>
         public TRet FetchMultiple<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, Sql sql) { return FetchMultipleImp<T1, T2, T3, DontMap, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3) }, cb, sql, true).RunSync(); }
+
+        /// <summary>
+        /// 获取多个结果集，并由回调合并为一个对象。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <typeparam name="T3">第三个结果集元素类型。</typeparam>
+        /// <typeparam name="T4">第四个结果集元素类型。</typeparam>
+        /// <typeparam name="TRet">返回类型。</typeparam>
+        /// <param name="cb">合并各结果集的回调。</param>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>合并后的对象。</returns>
         public TRet FetchMultiple<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, Sql sql) { return FetchMultipleImp<T1, T2, T3, T4, TRet>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, cb, sql, true).RunSync(); }
 
+        /// <summary>
+        /// 获取多个结果集并合并为元组。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>由各结果集组成的元组。</returns>
         public (List<T1>, List<T2>) FetchMultiple<T1, T2>(string sql, params object[] args) { return FetchMultipleImp<T1, T2, DontMap, DontMap, (List<T1>, List<T2>)>(new[] { typeof(T1), typeof(T2) }, new Func<List<T1>, List<T2>, (List<T1>, List<T2>)>((y, z) => (y, z)), new Sql(sql, args), true).RunSync(); }
+
+        /// <summary>
+        /// 获取多个结果集并合并为元组。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <typeparam name="T3">第三个结果集元素类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>由各结果集组成的元组。</returns>
         public (List<T1>, List<T2>, List<T3>) FetchMultiple<T1, T2, T3>(string sql, params object[] args) { return FetchMultipleImp<T1, T2, T3, DontMap, (List<T1>, List<T2>, List<T3>)>(new[] { typeof(T1), typeof(T2), typeof(T3) }, new Func<List<T1>, List<T2>, List<T3>, (List<T1>, List<T2>, List<T3>)>((x, y, z) => (x, y, z)), new Sql(sql, args), true).RunSync(); }
+
+        /// <summary>
+        /// 获取多个结果集并合并为元组。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <typeparam name="T3">第三个结果集元素类型。</typeparam>
+        /// <typeparam name="T4">第四个结果集元素类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>由各结果集组成的元组。</returns>
         public (List<T1>, List<T2>, List<T3>, List<T4>) FetchMultiple<T1, T2, T3, T4>(string sql, params object[] args) { return FetchMultipleImp<T1, T2, T3, T4, (List<T1>, List<T2>, List<T3>, List<T4>)>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, new Func<List<T1>, List<T2>, List<T3>, List<T4>, (List<T1>, List<T2>, List<T3>, List<T4>)>((w, x, y, z) => (w, x, y, z)), new Sql(sql, args), true).RunSync(); }
+
+        /// <summary>
+        /// 获取多个结果集并合并为元组。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>由各结果集组成的元组。</returns>
         public (List<T1>, List<T2>) FetchMultiple<T1, T2>(Sql sql) { return FetchMultipleImp<T1, T2, DontMap, DontMap, (List<T1>, List<T2>)>(new[] { typeof(T1), typeof(T2) }, new Func<List<T1>, List<T2>, (List<T1>, List<T2>)>((y, z) => (y, z)), sql, true).RunSync(); }
+
+        /// <summary>
+        /// 获取多个结果集并合并为元组。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <typeparam name="T3">第三个结果集元素类型。</typeparam>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>由各结果集组成的元组。</returns>
         public (List<T1>, List<T2>, List<T3>) FetchMultiple<T1, T2, T3>(Sql sql) { return FetchMultipleImp<T1, T2, T3, DontMap, (List<T1>, List<T2>, List<T3>)>(new[] { typeof(T1), typeof(T2), typeof(T3) }, new Func<List<T1>, List<T2>, List<T3>, (List<T1>, List<T2>, List<T3>)>((x, y, z) => (x, y, z)), sql, true).RunSync(); }
+
+        /// <summary>
+        /// 获取多个结果集并合并为元组。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集元素类型。</typeparam>
+        /// <typeparam name="T2">第二个结果集元素类型。</typeparam>
+        /// <typeparam name="T3">第三个结果集元素类型。</typeparam>
+        /// <typeparam name="T4">第四个结果集元素类型。</typeparam>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>由各结果集组成的元组。</returns>
         public (List<T1>, List<T2>, List<T3>, List<T4>) FetchMultiple<T1, T2, T3, T4>(Sql sql) { return FetchMultipleImp<T1, T2, T3, T4, (List<T1>, List<T2>, List<T3>, List<T4>)>(new[] { typeof(T1), typeof(T2), typeof(T3), typeof(T4) }, new Func<List<T1>, List<T2>, List<T3>, List<T4>, (List<T1>, List<T2>, List<T3>, List<T4>)>((w, x, y, z) => (w, x, y, z)), sql, true).RunSync(); }
 
+        /// <summary>
+        /// 内部占位类型，表示不映射的结果集。
+        /// </summary>
         public class DontMap { }
 
         // Actual implementation of the multi query
@@ -1463,17 +1999,35 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 判断主键对应的记录是否存在。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="primaryKey">主键值。</param>
+        /// <returns>若存在返回 true，否则返回 false。</returns>
         public bool Exists<T>(object primaryKey)
         {
             return ExistsAsync<T>(primaryKey, true).RunSync();
         }
 
+        /// <summary>
+        /// 按主键获取类型 T 的唯一对象。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="primaryKey">主键值。</param>
+        /// <returns>匹配的对象。</returns>
         public T SingleById<T>(object primaryKey)
         {
             var sql = GenerateSingleByIdSql<T>(primaryKey);
             return Single<T>(sql);
         }
 
+        /// <summary>
+        /// 按主键获取类型 T 的唯一对象，若无结果返回默认值。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="primaryKey">主键值。</param>
+        /// <returns>匹配的对象或默认值。</returns>
         public T? SingleOrDefaultById<T>(object primaryKey)
         {
             var sql = GenerateSingleByIdSql<T>(primaryKey);
@@ -1490,72 +2044,177 @@ namespace ToolGood.ReadyGo.NPoco
             return new Sql(true, sql, args);
         }
 
+        /// <summary>
+        /// 查询类型 T 的唯一一行。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>唯一结果。</returns>
         public T Single<T>(string sql, params object[] args)
         {
             return Query<T>(sql, args).Single();
         }
+
+        /// <summary>
+        /// 查询类型 T 的唯一一行并映射到现有实例。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="instance">接收映射结果的实例。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>唯一结果。</returns>
         public T SingleInto<T>(T instance, string sql, params object[] args)
         {
             return Query(instance, new Sql(sql, args)).Single();
         }
+
+        /// <summary>
+        /// 查询类型 T 的唯一一行，若无结果返回默认值。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>唯一结果或默认值。</returns>
         public T? SingleOrDefault<T>(string sql, params object[] args)
         {
             return Query<T>(sql, args).SingleOrDefault();
         }
+
+        /// <summary>
+        /// 查询类型 T 的唯一一行并映射到现有实例，若无结果返回默认值。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="instance">接收映射结果的实例。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>唯一结果或默认值。</returns>
         public T? SingleOrDefaultInto<T>(T instance, string sql, params object[] args)
         {
             return Query(instance, new Sql(sql, args)).SingleOrDefault();
         }
+
+        /// <summary>
+        /// 查询类型 T 的第一行。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>第一行结果。</returns>
         public T First<T>(string sql, params object[] args)
         {
             return Query<T>(sql, args).First();
         }
+
+        /// <summary>
+        /// 查询类型 T 的第一行并映射到现有实例。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="instance">接收映射结果的实例。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>第一行结果。</returns>
         public T FirstInto<T>(T instance, string sql, params object[] args)
         {
             return Query(instance, new Sql(sql, args)).First();
         }
+
+        /// <summary>
+        /// 查询类型 T 的第一行，若无结果返回默认值。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>第一行结果或默认值。</returns>
         public T? FirstOrDefault<T>(string sql, params object[] args)
         {
             return Query<T>(sql, args).FirstOrDefault();
         }
+
+        /// <summary>
+        /// 查询类型 T 的第一行并映射到现有实例，若无结果返回默认值。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="instance">接收映射结果的实例。</param>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>第一行结果或默认值。</returns>
         public T? FirstOrDefaultInto<T>(T instance, string sql, params object[] args)
         {
             return Query(instance, new Sql(sql, args)).FirstOrDefault();
         }
+
+        /// <summary>
+        /// 查询类型 T 的唯一一行。
+        /// </summary>
         public T Single<T>(Sql sql)
         {
             return Query<T>(sql).Single();
         }
+
+        /// <summary>
+        /// 查询类型 T 的唯一一行并映射到现有实例。
+        /// </summary>
         public T SingleInto<T>(T instance, Sql sql)
         {
             return Query(instance, sql).Single();
         }
+
+        /// <summary>
+        /// 查询类型 T 的唯一一行，若无结果返回默认值。
+        /// </summary>
         public T? SingleOrDefault<T>(Sql sql)
         {
             return Query<T>(sql).SingleOrDefault();
         }
+
+        /// <summary>
+        /// 查询类型 T 的唯一一行并映射到现有实例，若无结果返回默认值。
+        /// </summary>
         public T? SingleOrDefaultInto<T>(T instance, Sql sql)
         {
             return Query(instance, sql).SingleOrDefault();
         }
+
+        /// <summary>
+        /// 查询类型 T 的第一行。
+        /// </summary>
         public T First<T>(Sql sql)
         {
             return Query<T>(sql).First();
         }
+
+        /// <summary>
+        /// 查询类型 T 的第一行并映射到现有实例。
+        /// </summary>
         public T FirstInto<T>(T instance, Sql sql)
         {
             return Query(instance, sql).First();
         }
+
+        /// <summary>
+        /// 查询类型 T 的第一行，若无结果返回默认值。
+        /// </summary>
         public T? FirstOrDefault<T>(Sql sql)
         {
             return Query<T>(sql).FirstOrDefault();
         }
+
+        /// <summary>
+        /// 查询类型 T 的第一行并映射到现有实例，若无结果返回默认值。
+        /// </summary>
         public T? FirstOrDefaultInto<T>(T instance, Sql sql)
         {
             return Query(instance, sql).FirstOrDefault();
         }
 
         // Insert an annotated poco object
+        /// <summary>
+        /// 插入 POCO 对象，表名、主键等信息由类型特性或约定确定。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="poco">要插入的对象。</param>
+        /// <returns>新记录的主键值。</returns>
         public object Insert<T>(T poco)
         {
             if (poco == null) throw new ArgumentNullException(nameof(poco));
@@ -1563,6 +2222,14 @@ namespace ToolGood.ReadyGo.NPoco
             return Insert(tableInfo.TableName, tableInfo.PrimaryKey, tableInfo.AutoIncrement, poco);
         }
 
+        /// <summary>
+        /// 将 POCO 对象插入到指定表。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="tableName">表名。</param>
+        /// <param name="primaryKeyName">主键列名。</param>
+        /// <param name="poco">要插入的对象。</param>
+        /// <returns>新记录的主键值。</returns>
         public object Insert<T>(string tableName, string primaryKeyName, T poco)
         {
             return Insert(tableName, primaryKeyName, true, poco);
@@ -1571,17 +2238,39 @@ namespace ToolGood.ReadyGo.NPoco
         // Insert a poco into a table.  If the poco has a property with the same name
         // as the primary key the id of the new record is assigned to it.  Either way,
         // the new id is returned.
+        /// <summary>
+        /// 将 POCO 对象插入到指定表，并指定主键是否自增。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="tableName">表名。</param>
+        /// <param name="primaryKeyName">主键列名。</param>
+        /// <param name="autoIncrement">主键是否由数据库自动生成。</param>
+        /// <param name="poco">要插入的对象。</param>
+        /// <returns>新记录的主键值。</returns>
         public virtual object Insert<T>(string tableName, string primaryKeyName, bool autoIncrement, T poco)
         {
             var pd = PocoDataFactory.ForObject(poco, primaryKeyName, autoIncrement);
             return InsertAsyncImp(pd, tableName, primaryKeyName, autoIncrement, poco, true).RunSync();
         }
 
+        /// <summary>
+        /// 批量插入 POCO 集合。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="pocos">要插入的对象集合。</param>
+        /// <param name="options">批量插入选项。</param>
+        /// <returns>受影响的行数。</returns>
         public int InsertBatch<T>(IEnumerable<T> pocos, BatchOptions? options = null)
         {
             return InsertBatchAsyncImp(pocos, options, true).RunSync();
         }
 
+        /// <summary>
+        /// 批量插入 POCO 集合。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="pocos">要插入的对象集合。</param>
+        /// <param name="options">批量插入选项。</param>
         public void InsertBulk<T>(IEnumerable<T> pocos, InsertBulkOptions? options = null)
         {
             try
@@ -1600,16 +2289,40 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 更新指定表中的记录。
+        /// </summary>
+        /// <param name="tableName">表名。</param>
+        /// <param name="primaryKeyName">主键列名。</param>
+        /// <param name="poco">包含更新值的对象。</param>
+        /// <param name="primaryKeyValue">主键值。</param>
+        /// <returns>受影响的行数。</returns>
         public int Update(string tableName, string primaryKeyName, object poco, object primaryKeyValue)
         {
             return Update(tableName, primaryKeyName, poco, primaryKeyValue, null);
         }
 
+        /// <summary>
+        /// 更新指定表中的记录，可指定要更新的列。
+        /// </summary>
+        /// <param name="tableName">表名。</param>
+        /// <param name="primaryKeyName">主键列名。</param>
+        /// <param name="poco">包含更新值的对象。</param>
+        /// <param name="primaryKeyValue">主键值。</param>
+        /// <param name="columns">要更新的列集合。</param>
+        /// <returns>受影响的行数。</returns>
         public virtual int Update(string tableName, string primaryKeyName, object poco, object? primaryKeyValue, IEnumerable<string>? columns)
         {
             return UpdateImpAsync(tableName, primaryKeyName, poco, primaryKeyValue, columns, true).RunSync();
         }
 
+        /// <summary>
+        /// 批量更新 POCO 集合。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="pocos">要更新的对象集合。</param>
+        /// <param name="options">批量更新选项。</param>
+        /// <returns>受影响的行数。</returns>
         public int UpdateBatch<T>(IEnumerable<UpdateBatch<T>> pocos, BatchOptions? options = null)
         {
             return UpdateBatchAsyncImp(pocos, options, true).RunSync();
@@ -1698,26 +2411,59 @@ namespace ToolGood.ReadyGo.NPoco
             return primaryKeyValuePairs;
         }
 
+        /// <summary>
+        /// 获取用于构建 UPDATE 语句的流式更新提供程序。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <returns>更新查询提供程序。</returns>
         public IUpdateQueryProvider<T> UpdateMany<T>()
         {
             return new UpdateQueryProvider<T>(this);
         }
 
+        /// <summary>
+        /// 更新指定表中的记录。
+        /// </summary>
+        /// <param name="tableName">表名。</param>
+        /// <param name="primaryKeyName">主键列名。</param>
+        /// <param name="poco">包含更新值的对象。</param>
+        /// <returns>受影响的行数。</returns>
         public int Update(string tableName, string primaryKeyName, object poco)
         {
             return Update(tableName, primaryKeyName, poco, null);
         }
 
+        /// <summary>
+        /// 更新指定表中的记录，可指定要更新的列。
+        /// </summary>
+        /// <param name="tableName">表名。</param>
+        /// <param name="primaryKeyName">主键列名。</param>
+        /// <param name="poco">包含更新值的对象。</param>
+        /// <param name="columns">要更新的列集合。</param>
+        /// <returns>受影响的行数。</returns>
         public int Update(string tableName, string primaryKeyName, object poco, IEnumerable<string>? columns)
         {
             return Update(tableName, primaryKeyName, poco, null, columns);
         }
 
+        /// <summary>
+        /// 更新对象，仅更新指定的列。
+        /// </summary>
+        /// <param name="poco">包含更新值的对象。</param>
+        /// <param name="columns">要更新的列集合。</param>
+        /// <returns>受影响的行数。</returns>
         public int Update(object poco, IEnumerable<string> columns)
         {
             return Update(poco, null, columns);
         }
 
+        /// <summary>
+        /// 更新对象，仅更新表达式指定的字段。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="poco">包含更新值的对象。</param>
+        /// <param name="fields">指定要更新字段的表达式。</param>
+        /// <returns>受影响的行数。</returns>
         public int Update<T>(T poco, Expression<Func<T, object>> fields)
         {
             if (poco == null) throw new ArgumentNullException(nameof(poco));
@@ -1728,44 +2474,95 @@ namespace ToolGood.ReadyGo.NPoco
             return Update(poco, columnNames.Union(otherNames));
         }
 
+        /// <summary>
+        /// 按约定或配置更新对象。
+        /// </summary>
+        /// <param name="poco">包含更新值的对象。</param>
+        /// <returns>受影响的行数。</returns>
         public int Update(object poco)
         {
             return Update(poco, null, null);
         }
 
+        /// <summary>
+        /// 使用指定主键值更新对象。
+        /// </summary>
+        /// <param name="poco">包含更新值的对象。</param>
+        /// <param name="primaryKeyValue">主键值。</param>
+        /// <returns>受影响的行数。</returns>
         public int Update(object poco, object primaryKeyValue)
         {
             return Update(poco, primaryKeyValue, null);
         }
 
+        /// <summary>
+        /// 使用指定主键值与列集合更新对象。
+        /// </summary>
+        /// <param name="poco">包含更新值的对象。</param>
+        /// <param name="primaryKeyValue">主键值。</param>
+        /// <param name="columns">要更新的列集合。</param>
+        /// <returns>受影响的行数。</returns>
         public int Update(object poco, object? primaryKeyValue, IEnumerable<string>? columns)
         {
             var tableInfo = PocoDataFactory.TableInfoForType(poco.GetType());
             return Update(tableInfo.TableName, tableInfo.PrimaryKey, poco, primaryKeyValue, columns);
         }
 
+        /// <summary>
+        /// 根据 SQL 片段更新类型 T 对应表中的记录。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="sql">UPDATE 语句的 WHERE/SET 等片段。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>受影响的行数。</returns>
         public int Update<T>(string sql, params object[] args)
         {
             var tableInfo = PocoDataFactory.TableInfoForType(typeof(T));
             return Execute($"UPDATE {_dbType.EscapeTableName(tableInfo.TableName)} {sql}", args);
         }
 
+        /// <summary>
+        /// 根据 SQL 片段更新类型 T 对应表中的记录。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>受影响的行数。</returns>
         public int Update<T>(Sql sql)
         {
             var tableInfo = PocoDataFactory.TableInfoForType(typeof(T));
             return Execute(new Sql($"UPDATE {_dbType.EscapeTableName(tableInfo.TableName)}").Append(sql));
         }
 
+        /// <summary>
+        /// 获取用于构建 DELETE 语句的流式删除提供程序。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <returns>删除查询提供程序。</returns>
         public IDeleteQueryProvider<T> DeleteMany<T>()
         {
             return new DeleteQueryProvider<T>(this);
         }
 
+        /// <summary>
+        /// 删除指定表中的记录。
+        /// </summary>
+        /// <param name="tableName">表名。</param>
+        /// <param name="primaryKeyName">主键列名。</param>
+        /// <param name="poco">要删除的对象。</param>
+        /// <returns>受影响的行数。</returns>
         public int Delete(string tableName, string primaryKeyName, object poco)
         {
             return Delete(tableName, primaryKeyName, poco, null);
         }
 
+        /// <summary>
+        /// 删除指定表中的记录。
+        /// </summary>
+        /// <param name="tableName">表名。</param>
+        /// <param name="primaryKeyName">主键列名。</param>
+        /// <param name="poco">要删除的对象。</param>
+        /// <param name="primaryKeyValue">主键值。</param>
+        /// <returns>受影响的行数。</returns>
         public virtual int Delete(string tableName, string primaryKeyName, object? poco, object? primaryKeyValue)
         {
             return DeleteImpAsync(tableName, primaryKeyName, poco, primaryKeyValue, true).RunSync();
@@ -1815,12 +2612,23 @@ namespace ToolGood.ReadyGo.NPoco
             return result;
         }
 
+        /// <summary>
+        /// 删除对象对应的记录。
+        /// </summary>
+        /// <param name="poco">要删除的对象。</param>
+        /// <returns>受影响的行数。</returns>
         public int Delete(object poco)
         {
             var tableInfo = PocoDataFactory.TableInfoForType(poco.GetType());
             return Delete(tableInfo.TableName, tableInfo.PrimaryKey, poco);
         }
 
+        /// <summary>
+        /// 按类型删除记录，参数可以是对象或主键值。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="pocoOrPrimaryKey">要删除的对象或主键值。</param>
+        /// <returns>受影响的行数。</returns>
         public int Delete<T>(object pocoOrPrimaryKey)
         {
             if (pocoOrPrimaryKey.GetType() == typeof(T))
@@ -1829,12 +2637,25 @@ namespace ToolGood.ReadyGo.NPoco
             return Delete(tableInfo.TableName, tableInfo.PrimaryKey, null, pocoOrPrimaryKey);
         }
 
+        /// <summary>
+        /// 根据 SQL 片段删除类型 T 对应表中的记录。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="sql">DELETE 语句的 WHERE 等片段。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>受影响的行数。</returns>
         public int Delete<T>(string sql, params object[] args)
         {
             var tableInfo = PocoDataFactory.TableInfoForType(typeof(T));
             return Execute($"DELETE FROM {_dbType.EscapeTableName(tableInfo.TableName)} {sql}", args);
         }
 
+        /// <summary>
+        /// 根据 SQL 片段删除类型 T 对应表中的记录。
+        /// </summary>
+        /// <typeparam name="T">对象类型。</typeparam>
+        /// <param name="sql">封装 SQL 与参数的对象。</param>
+        /// <returns>受影响的行数。</returns>
         public int Delete<T>(Sql sql)
         {
             var tableInfo = PocoDataFactory.TableInfoForType(typeof(T));
@@ -1904,6 +2725,11 @@ namespace ToolGood.ReadyGo.NPoco
             return false;
         }
 
+        /// <summary>
+        /// 保存实体：若该对象为新记录则执行插入，否则执行更新。
+        /// </summary>
+        /// <typeparam name="T">实体类型。</typeparam>
+        /// <param name="poco">要保存的实体对象。</param>
         // Insert new record or Update existing record
         public void Save<T>(T poco)
         {
@@ -1919,7 +2745,13 @@ namespace ToolGood.ReadyGo.NPoco
             }
         }
 
+        /// <summary>
+        /// 设置该数据库实例所有命令的超时时间（秒）；为 0 时使用提供程序的默认值。
+        /// </summary>
         public int CommandTimeout { get; set; }
+        /// <summary>
+        /// 仅为下一条命令设置超时时间（秒），执行一次后自动还原。
+        /// </summary>
         public int OneTimeCommandTimeout { get; set; }
 
         void DoPreExecute(DbCommand cmd)
@@ -1943,25 +2775,51 @@ namespace ToolGood.ReadyGo.NPoco
             _lastParams = cmd.Parameters;
         }
 
+        /// <summary>
+        /// 最近一次执行命令的 SQL 文本。
+        /// </summary>
         public string? LastSQL => _lastSql;
+        /// <summary>
+        /// 最近一次执行命令所使用的参数值数组。
+        /// </summary>
         public object[]? LastArgs => _lastParams?.Cast<DbParameter>().Select(x => x.Value!).ToArray();
 
+        /// <summary>
+        /// 最近一次执行命令的完整 SQL（已替换参数占位符）。
+        /// </summary>
         public string LastCommand => FormatCommand(_lastSql, _lastParams?.Cast<object>().ToArray() ?? []);
 
+        /// <summary>
+        /// 将命令格式化为可读的 SQL 字符串。
+        /// </summary>
+        /// <param name="cmd">要格式化的数据库命令。</param>
+        /// <returns>格式化后的 SQL 字符串。</returns>
         public virtual string FormatCommand(DbCommand cmd)
         {
             return _dbType.FormatCommand(cmd);
         }
 
+        /// <summary>
+        /// 将 SQL 与参数格式化为可读的 SQL 字符串。
+        /// </summary>
+        /// <param name="sql">SQL 语句。</param>
+        /// <param name="args">参数数组。</param>
+        /// <returns>格式化后的 SQL 字符串。</returns>
         public string FormatCommand(string? sql, object[]? args)
         {
             return _dbType.FormatCommand(sql, args);
         }
 
         private List<IInterceptor>? _interceptors;
+        /// <summary>
+        /// 获取当前数据库实例的拦截器集合，用于在命令执行前后插入自定义逻辑。
+        /// </summary>
         public List<IInterceptor> Interceptors => _interceptors ??= new List<IInterceptor>();
 
         private IMapperCollection? _mappers;
+        /// <summary>
+        /// 获取或设置列映射器集合，用于配置实体与数据库列之间的映射。
+        /// </summary>
         public IMapperCollection Mappers
         {
             get => _mappers ??= new MapperCollection();
@@ -1969,12 +2827,18 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         private IPocoDataFactory? _pocoDataFactory;
+        /// <summary>
+        /// 获取或设置 POCO 数据工厂，用于生成实体类型对应的表信息。
+        /// </summary>
         public IPocoDataFactory PocoDataFactory
         {
             get => _pocoDataFactory ??= new PocoDataFactory(Mappers);
             set => _pocoDataFactory = value;
         }
 
+        /// <summary>
+        /// 当前数据库实例使用的连接字符串。
+        /// </summary>
         public string ConnectionString => _connectionString;
 
         // Member variables
@@ -2013,11 +2877,24 @@ namespace ToolGood.ReadyGo.NPoco
             return result!;
         }
 
+        /// <summary>
+        /// 执行钩子，允许派生类在命令执行前后包装执行逻辑。
+        /// </summary>
+        /// <typeparam name="T">返回值类型。</typeparam>
+        /// <param name="action">要执行的委托。</param>
+        /// <returns>委托的返回值。</returns>
         protected virtual T ExecutionHook<T>(Func<T> action)
         {
             return action();
         }
 
+        /// <summary>
+        /// 异步执行钩子，允许派生类在异步命令执行前后包装执行逻辑。
+        /// </summary>
+        /// <typeparam name="T">返回值类型。</typeparam>
+        /// <param name="action">要异步执行的委托。</param>
+        /// <param name="cancellationToken">用于取消操作的取消标记。</param>
+        /// <returns>委托的返回值。</returns>
         protected virtual async Task<T> ExecutionHookAsync<T>(Func<CancellationToken, Task<T>> action, CancellationToken cancellationToken = default)
         {
             return await action(cancellationToken).ConfigureAwait(false);
@@ -2035,6 +2912,11 @@ namespace ToolGood.ReadyGo.NPoco
 
         Task<DbDataReader> IDatabaseHelpers.ExecuteReaderHelperAsync(DbCommand cmd, CancellationToken cancellationToken) => ExecuteReaderHelperAsync(cmd, cancellationToken);
 
+        /// <summary>
+        /// 判断成员是否为枚举类型（包括可空枚举）。
+        /// </summary>
+        /// <param name="memberInfo">成员信息。</param>
+        /// <returns>若为枚举类型返回 true，否则返回 false。</returns>
         public static bool IsEnum(MemberInfoData memberInfo)
         {
             var underlyingType = Nullable.GetUnderlyingType(memberInfo.MemberType);

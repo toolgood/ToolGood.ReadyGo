@@ -9,12 +9,18 @@ using ToolGood.ReadyGo.NPoco.Linq;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 定义数据库的异步增删改查操作能力。
+    /// </summary>
     public interface IAsyncDatabase : IAsyncQueryDatabase
     {
         /// <summary>
         /// Executes the provided sql and parameters and casts the result to T
         /// </summary>
         Task<T> ExecuteScalarAsync<T>(string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 执行指定的 SQL 与参数，并将结果转换为 T 类型。
+        /// </summary>
         Task<T> ExecuteScalarAsync<T>(string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -26,6 +32,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// Executes the provided sql and parameters
         /// </summary>
         Task<int> ExecuteAsync(string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 执行指定的 SQL 与参数。
+        /// </summary>
         Task<int> ExecuteAsync(string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -100,6 +109,9 @@ namespace ToolGood.ReadyGo.NPoco
         Task SaveAsync<T>(T poco, CancellationToken cancellationToken = default);
     }
 
+    /// <summary>
+    /// 定义数据库的异步查询操作能力。
+    /// </summary>
     public interface IAsyncQueryDatabase : IAsyncBaseDatabase
     {
         /// <summary>
@@ -107,6 +119,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// Get an object of type T by primary key value
         /// </summary>
         Task<T> SingleAsync<T>(string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数获取类型 T 的唯一一行。
+        /// </summary>
         Task<T> SingleAsync<T>(string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -118,6 +133,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// Fetch the only row of type T using the sql and parameters specified
         /// </summary>
         Task<T?> SingleOrDefaultAsync<T>(string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数获取类型 T 的唯一一行，若无结果返回默认值。
+        /// </summary>
         Task<T?> SingleOrDefaultAsync<T>(string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -139,6 +157,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// Fetch the first row of type T using the sql and parameters specified
         /// </summary>
         Task<T> FirstAsync<T>(string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数获取类型 T 的第一行。
+        /// </summary>
         Task<T> FirstAsync<T>(string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -150,6 +171,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// Fetch the first row of type T using the sql and parameters specified
         /// </summary>
         Task<T?> FirstOrDefaultAsync<T>(string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数获取类型 T 的第一行，若无结果返回默认值。
+        /// </summary>
         Task<T?> FirstOrDefaultAsync<T>(string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -162,6 +186,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// Caution: This query will only be executed once you start iterating the result
         /// </summary>
         IAsyncEnumerable<T> QueryAsync<T>(string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数异步获取类型 T 的对象序列。
+        /// </summary>
         IAsyncEnumerable<T> QueryAsync<T>(string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -179,6 +206,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// Fetch objects of type T from the database using the sql and parameters specified. 
         /// </summary>
         Task<List<T>> FetchAsync<T>(string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数获取类型 T 的对象列表。
+        /// </summary>
         Task<List<T>> FetchAsync<T>(string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -198,6 +228,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// Note: This will perform two queries. One for the paged results and one for the count of all results.
         /// </summary>
         Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数分页获取类型 T 的对象，并附带分页元数据。
+        /// </summary>
         Task<Page<T>> PageAsync<T>(long page, long itemsPerPage, string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -213,6 +246,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// The sql provided will be converted so that only the results for the page and itemsPerPage values specified will be returned.
         /// </summary>
         Task<List<T>> FetchAsync<T>(long page, long itemsPerPage, string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数按页码与每页条目数获取类型 T 的对象列表。
+        /// </summary>
         Task<List<T>> FetchAsync<T>(long page, long itemsPerPage, string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -226,6 +262,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// The sql provided will be converted so that only the results for the skip and take values specified will be returned.
         /// </summary>
         Task<List<T>> SkipTakeAsync<T>(long skip, long take, string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数按跳过/获取数量返回类型 T 的对象列表。
+        /// </summary>
         Task<List<T>> SkipTakeAsync<T>(long skip, long take, string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -239,6 +278,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// In this method you must provide how you will take the results and combine them
         /// </summary>
         Task<TRet> FetchMultipleAsync<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数获取多个结果集，并由回调合并为一个对象。
+        /// </summary>
         Task<TRet> FetchMultipleAsync<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -246,6 +288,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// In this method you must provide how you will take the results and combine them
         /// </summary>
         Task<TRet> FetchMultipleAsync<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数获取多个结果集，并由回调合并为一个对象。
+        /// </summary>
         Task<TRet> FetchMultipleAsync<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -253,6 +298,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// In this method you must provide how you will take the results and combine them
         /// </summary>
         Task<TRet> FetchMultipleAsync<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数获取多个结果集，并由回调合并为一个对象。
+        /// </summary>
         Task<TRet> FetchMultipleAsync<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
@@ -277,18 +325,27 @@ namespace ToolGood.ReadyGo.NPoco
         /// Fetches multiple result sets into the one Tuple.
         /// </summary>
         Task<(List<T1>, List<T2>)> FetchMultipleAsync<T1, T2>(string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数获取多个结果集并合并为一个元组。
+        /// </summary>
         Task<(List<T1>, List<T2>)> FetchMultipleAsync<T1, T2>(string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Fetches multiple result sets into the one Tuple.
         /// </summary>
         Task<(List<T1>, List<T2>, List<T3>)> FetchMultipleAsync<T1, T2, T3>(string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数获取多个结果集并合并为一个元组。
+        /// </summary>
         Task<(List<T1>, List<T2>, List<T3>)> FetchMultipleAsync<T1, T2, T3>(string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Fetches multiple result sets into the one Tuple.
         /// </summary>
         Task<(List<T1>, List<T2>, List<T3>, List<T4>)> FetchMultipleAsync<T1, T2, T3, T4>(string sql, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 使用指定的 SQL 与参数获取多个结果集并合并为一个元组。
+        /// </summary>
         Task<(List<T1>, List<T2>, List<T3>, List<T4>)> FetchMultipleAsync<T1, T2, T3, T4>(string sql, object[] args, CancellationToken cancellationToken = default);
 
         /// <summary>

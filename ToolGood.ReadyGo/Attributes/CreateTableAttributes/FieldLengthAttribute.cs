@@ -27,8 +27,8 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 适用字段
         /// </summary>
-        /// <param name="length"></param>
-        /// <param name="pointLength"></param>
+        /// <param name="length">长度</param>
+        /// <param name="pointLength">小数位数</param>
         public FieldLengthAttribute(int length, int pointLength)
         {
             IsText = false;
@@ -51,7 +51,7 @@ namespace ToolGood.ReadyGo.Attributes
         public bool IsLongText;
 
         /// <summary>
-        ///
+        /// 字段长度定义（长度，或 长度,小数位数）
         /// </summary>
         public string FieldLength;
     }

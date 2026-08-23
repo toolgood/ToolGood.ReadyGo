@@ -15,7 +15,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 非空标签
         /// </summary>
-        /// <param name="required"></param>
+        /// <param name="required">是否非空，默认为 true</param>
         public RequiredAttribute(bool required = true)
         {
             Required = required;

@@ -236,13 +236,22 @@ namespace ToolGood.ReadyGo
             return OpenDatabase(sb.ToString(), "Microsoft.Data.Sqlite", SqlType.SQLite);
         }
 
-        /// <summary>
-        /// 打开DuckDB数据库，支持密码
-        /// </summary>
-        /// <param name="filePath"></param>
-        /// <param name="pwd"></param>
-        /// <returns></returns>
-        public static SqlHelper OpenDuckDbFile(string filePath, string pwd = null)
+		/// <summary>
+		/// 打开微软的Sqlite
+		/// </summary>
+		/// <returns></returns>
+		public static SqlHelper OpenSqliteMemory()
+		{
+			return OpenDatabase("Data Source=:memory:", SqlType.SQLite);
+		}
+
+		/// <summary>
+		/// 打开DuckDB数据库，支持密码
+		/// </summary>
+		/// <param name="filePath"></param>
+		/// <param name="pwd"></param>
+		/// <returns></returns>
+		public static SqlHelper OpenDuckDbFile(string filePath, string pwd = null)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Data Source={0};", filePath);

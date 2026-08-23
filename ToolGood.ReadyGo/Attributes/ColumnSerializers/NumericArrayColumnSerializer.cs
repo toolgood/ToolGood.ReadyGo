@@ -12,6 +12,8 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <summary>
         /// 序列化为 byte[]
         /// </summary>
+        /// <param name="value">要序列化的数值数组</param>
+        /// <returns>序列化后的 byte[]</returns>
         public object Serialize(object value)
         {
             switch (value) {
@@ -37,6 +39,9 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <summary>
         /// 从 byte[] 反序列化
         /// </summary>
+        /// <param name="value">byte[] 数据</param>
+        /// <param name="targetType">目标数组类型</param>
+        /// <returns>反序列化后的数值数组</returns>
         public object Deserialize(object value, Type targetType)
         {
             if (value == null || value is DBNull) {

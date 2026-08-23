@@ -6,8 +6,16 @@ using System.Linq.Expressions;
 namespace ToolGood.ReadyGo.NPoco.Expressions
 {
     //http://blogs.msdn.com/b/mattwar/archive/2007/07/31/linq-building-an-iqueryable-provider-part-ii.aspx
+    /// <summary>
+    /// 表达式树访问器基类，用于遍历并根据节点类型分派重建表达式树。
+    /// </summary>
     public abstract class ExpressionVisitor
     {
+        /// <summary>
+        /// 访问表达式节点，根据节点类型分派到对应的访问方法。
+        /// </summary>
+        /// <param name="exp">待访问的表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression Visit(Expression exp)
         {
             if (exp == null)
@@ -77,6 +85,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             }
         }
 
+        /// <summary>
+        /// 访问成员绑定，根据绑定类型分派到对应的访问方法。
+        /// </summary>
+        /// <param name="binding">待访问的成员绑定。</param>
+        /// <returns>访问后的成员绑定。</returns>
         protected virtual MemberBinding VisitBinding(MemberBinding binding)
         {
             switch (binding.BindingType)
@@ -92,6 +105,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             }
         }
 
+        /// <summary>
+        /// 访问元素初始化器。
+        /// </summary>
+        /// <param name="initializer">待访问的元素初始化器。</param>
+        /// <returns>访问后的元素初始化器。</returns>
         protected virtual ElementInit VisitElementInitializer(ElementInit initializer)
         {
             ReadOnlyCollection<Expression> arguments = this.VisitExpressionList(initializer.Arguments);
@@ -102,6 +120,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return initializer;
         }
 
+        /// <summary>
+        /// 访问一元表达式。
+        /// </summary>
+        /// <param name="u">待访问的一元表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitUnary(UnaryExpression u)
         {
             Expression operand = this.Visit(u.Operand);
@@ -112,6 +135,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return u;
         }
 
+        /// <summary>
+        /// 访问二元表达式。
+        /// </summary>
+        /// <param name="b">待访问的二元表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitBinary(BinaryExpression b)
         {
             Expression left = this.Visit(b.Left);
@@ -127,6 +155,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return b;
         }
 
+        /// <summary>
+        /// 访问类型判断表达式。
+        /// </summary>
+        /// <param name="b">待访问的类型判断表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitTypeIs(TypeBinaryExpression b)
         {
             Expression expr = this.Visit(b.Expression);
@@ -137,11 +170,21 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return b;
         }
 
+        /// <summary>
+        /// 访问常量表达式。
+        /// </summary>
+        /// <param name="c">待访问的常量表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitConstant(ConstantExpression c)
         {
             return c;
         }
 
+        /// <summary>
+        /// 访问条件表达式。
+        /// </summary>
+        /// <param name="c">待访问的条件表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitConditional(ConditionalExpression c)
         {
             Expression test = this.Visit(c.Test);
@@ -154,11 +197,21 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return c;
         }
 
+        /// <summary>
+        /// 访问参数表达式。
+        /// </summary>
+        /// <param name="p">待访问的参数表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitParameter(ParameterExpression p)
         {
             return p;
         }
 
+        /// <summary>
+        /// 访问成员访问表达式。
+        /// </summary>
+        /// <param name="m">待访问的成员访问表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitMemberAccess(MemberExpression m)
         {
             Expression exp = this.Visit(m.Expression);
@@ -169,6 +222,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return m;
         }
 
+        /// <summary>
+        /// 访问方法调用表达式。
+        /// </summary>
+        /// <param name="m">待访问的方法调用表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitMethodCall(MethodCallExpression m)
         {
             Expression obj = this.Visit(m.Object);
@@ -180,6 +238,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return m;
         }
 
+        /// <summary>
+        /// 访问表达式列表。
+        /// </summary>
+        /// <param name="original">待访问的表达式列表。</param>
+        /// <returns>访问后的表达式列表。</returns>
         protected virtual ReadOnlyCollection<Expression> VisitExpressionList(ReadOnlyCollection<Expression> original)
         {
             List<Expression> list = null;
@@ -262,6 +325,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return original;
         }
 
+        /// <summary>
+        /// 访问元素初始化器列表。
+        /// </summary>
+        /// <param name="original">待访问的元素初始化器列表。</param>
+        /// <returns>访问后的元素初始化器列表。</returns>
         protected virtual IEnumerable<ElementInit> VisitElementInitializerList(ReadOnlyCollection<ElementInit> original)
         {
             List<ElementInit> list = null;
@@ -297,6 +365,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return lambda;
         }
 
+        /// <summary>
+        /// 访问 new 表达式。
+        /// </summary>
+        /// <param name="nex">待访问的 new 表达式。</param>
+        /// <returns>访问后的 new 表达式。</returns>
         protected virtual NewExpression VisitNew(NewExpression nex)
         {
             IEnumerable<Expression> args = this.VisitExpressionList(nex.Arguments);
@@ -332,6 +405,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return init;
         }
 
+        /// <summary>
+        /// 访问数组创建表达式。
+        /// </summary>
+        /// <param name="na">待访问的数组创建表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitNewArray(NewArrayExpression na)
         {
             IEnumerable<Expression> exprs = this.VisitExpressionList(na.Expressions);
@@ -349,6 +427,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return na;
         }
 
+        /// <summary>
+        /// 访问调用表达式。
+        /// </summary>
+        /// <param name="iv">待访问的调用表达式。</param>
+        /// <returns>访问后的表达式。</returns>
         protected virtual Expression VisitInvocation(InvocationExpression iv)
         {
             IEnumerable<Expression> args = this.VisitExpressionList(iv.Arguments);

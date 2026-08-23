@@ -7,6 +7,10 @@ using ToolGood.ReadyGo.NPoco.Expressions;
 
 namespace ToolGood.ReadyGo.NPoco.Linq
 {
+    /// <summary>
+    /// 复杂查询（含投影、关联）SQL 构建器。
+    /// </summary>
+    /// <typeparam name="T">查询对应的实体类型。</typeparam>
     public class ComplexSqlBuilder<T>
     {
         private readonly IDatabase _database;
@@ -14,6 +18,13 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         private readonly ISqlExpression<T> _sqlExpression;
         private readonly Dictionary<string, JoinData> _joinSqlExpressions;
 
+        /// <summary>
+        /// 使用数据库、Poco 元数据、SQL 表达式与关联表达式初始化实例。
+        /// </summary>
+        /// <param name="database">数据库实例。</param>
+        /// <param name="pocoData">实体的 Poco 元数据。</param>
+        /// <param name="sqlExpression">SQL 表达式。</param>
+        /// <param name="joinSqlExpressions">关联查询表达式集合。</param>
         public ComplexSqlBuilder(IDatabase database, PocoData pocoData, ISqlExpression<T> sqlExpression, Dictionary<string, JoinData> joinSqlExpressions)
         {
             _database = database;
@@ -22,6 +33,13 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             _joinSqlExpressions = joinSqlExpressions;
         }
 
+        /// <summary>
+        /// 为投影查询生成 SQL。
+        /// </summary>
+        /// <typeparam name="T2">投影结果类型。</typeparam>
+        /// <param name="projectionExpression">投影表达式。</param>
+        /// <param name="distinct">是否去重。</param>
+        /// <returns>投影查询 SQL。</returns>
         public Sql GetSqlForProjection<T2>(Expression<Func<T, T2>> projectionExpression, bool distinct)
         {
             var selectMembers = _database.DatabaseType.ExpressionVisitor<T>(_database, _pocoData).SelectProjection(projectionExpression);
@@ -39,6 +57,15 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return sql;
         }
                 
+        /// <summary>
+        /// 为投影查询生成带分页的 SQL。
+        /// </summary>
+        /// <typeparam name="T2">投影结果类型。</typeparam>
+        /// <param name="projectionExpression">投影表达式。</param>
+        /// <param name="distinct">是否去重。</param>
+        /// <param name="skip">跳过的行数。</param>
+        /// <param name="rows">返回行数。</param>
+        /// <returns>投影查询 SQL。</returns>
         public Sql GetSqlForProjection<T2>(Expression<Func<T, T2>> projectionExpression, bool distinct, int skip, int rows)
         {
             var selectMembers = _database.DatabaseType.ExpressionVisitor<T>(_database, _pocoData).SelectProjection(projectionExpression);
@@ -58,6 +85,16 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return sql;
         }
 
+        /// <summary>
+        /// 构建关联查询 SQL。
+        /// </summary>
+        /// <param name="database">数据库实例。</param>
+        /// <param name="sqlExpression">SQL 表达式。</param>
+        /// <param name="joinSqlExpressions">关联查询表达式集合。</param>
+        /// <param name="newMembers">用于覆盖查询列的成员集合。</param>
+        /// <param name="count">是否生成 COUNT 语句。</param>
+        /// <param name="distinct">是否去重。</param>
+        /// <returns>关联查询 SQL。</returns>
         public Sql BuildJoin(IDatabase database, ISqlExpression<T> sqlExpression, List<JoinData> joinSqlExpressions, List<SelectMember> newMembers, bool count, bool distinct)
         {
             var modelDef = _pocoData;
@@ -176,6 +213,14 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return joins.Any() ? " \n" + string.Join(" \n", joins.ToArray()) : string.Empty;
         }
 
+        /// <summary>
+        /// 根据表达式解析关联查询信息。
+        /// </summary>
+        /// <param name="expression">关联表达式。</param>
+        /// <param name="tableAlias">表别名。</param>
+        /// <param name="joinType">关联类型。</param>
+        /// <param name="hint">表提示。</param>
+        /// <returns>关联查询表达式集合。</returns>
         public Dictionary<string, JoinData> GetJoinExpressions(Expression expression, string tableAlias, JoinType joinType, string hint)
         {
             var memberInfos = MemberChainHelper.GetMembers(expression);
@@ -219,9 +264,18 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
     }
 
+    /// <summary>
+    /// 表示字符串形式的查询列及其列信息。
+    /// </summary>
     public class StringPocoCol
     {
+        /// <summary>
+        /// 列的字符串 SQL。
+        /// </summary>
         public string StringCol { get; set; }
+        /// <summary>
+        /// 关联的列信息数组。
+        /// </summary>
         public PocoColumn[] PocoColumn { get; set; }
     }
 }

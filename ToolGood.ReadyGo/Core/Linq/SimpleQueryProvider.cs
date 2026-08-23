@@ -10,15 +10,42 @@ using ToolGood.ReadyGo.NPoco.Expressions;
 
 namespace ToolGood.ReadyGo.NPoco.Linq
 {
+    /// <summary>
+    /// 异步查询器，提供异步链式查询与结果获取能力。
+    /// </summary>
+    /// <typeparam name="T">查询对应的实体类型。</typeparam>
     public class AsyncQueryProvider<T> : IAsyncQueryProviderWithIncludes<T>, INeedDatabase, INeedSql
     {
+        /// <summary>
+        /// 数据库实例。
+        /// </summary>
         protected readonly Database _database;
+        /// <summary>
+        /// SQL 表达式构建器。
+        /// </summary>
         protected ISqlExpression<T> _sqlExpression;
+        /// <summary>
+        /// 关联查询集合，键为关联标识。
+        /// </summary>
         protected Dictionary<string, JoinData> _joinSqlExpressions = new Dictionary<string, JoinData>();
+        /// <summary>
+        /// 复杂 SQL 构建器。
+        /// </summary>
         protected readonly ComplexSqlBuilder<T> _buildComplexSql;
+        /// <summary>
+        /// 一对多关联的集合属性表达式。
+        /// </summary>
         protected Expression<Func<T, IList>> _listExpression = null;
+        /// <summary>
+        /// 实体元数据。
+        /// </summary>
         protected PocoData _pocoData;
 
+        /// <summary>
+        /// 使用数据库与筛选条件初始化实例。
+        /// </summary>
+        /// <param name="database">数据库实例。</param>
+        /// <param name="whereExpression">初始筛选条件。</param>
         public AsyncQueryProvider(Database database, Expression<Func<T, bool>> whereExpression)
         {
             _database = database;
@@ -29,16 +56,28 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             _sqlExpression = _sqlExpression.Where(whereExpression);
         }
 
+        /// <summary>
+        /// 使用数据库初始化实例。
+        /// </summary>
+        /// <param name="database">数据库实例。</param>
         public AsyncQueryProvider(Database database) : this(database, null)
         {
         }
 
+        /// <summary>
+        /// 添加筛选条件。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件表达式。</param>
         protected void AddWhere(Expression<Func<T, bool>> whereExpression)
         {
             if (whereExpression != null)
                 _sqlExpression = _sqlExpression.Where(whereExpression);
         }
 
+        /// <summary>
+        /// 构建当前查询的 SQL。
+        /// </summary>
+        /// <returns>查询 SQL。</returns>
         protected Sql BuildSql()
         {
             Sql sql;
@@ -49,12 +88,26 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return sql;
         }
 
+        /// <summary>
+        /// 添加一对多关联加载。
+        /// </summary>
+        /// <param name="expression">集合属性表达式。</param>
+        /// <param name="joinType">关联类型。</param>
+        /// <param name="joinTableHint">表提示。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> IncludeMany(Expression<Func<T, IList>> expression, JoinType joinType = JoinType.Left, string joinTableHint = "")
         {
             _listExpression = expression;
             return QueryProviderWithIncludes(expression, null, joinType, joinTableHint);
         }
         
+        /// <summary>
+        /// 按类型自动加载一对一或外键关联。
+        /// </summary>
+        /// <typeparam name="T2">关联实体类型。</typeparam>
+        /// <param name="joinType">关联类型。</param>
+        /// <param name="joinTableHint">表提示。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProviderWithIncludes<T> Include<T2>(JoinType joinType = JoinType.Left, string joinTableHint = "") where T2 : class
         {
             var oneToOneMembers = _database.PocoDataFactory.ForType(typeof(T))
@@ -71,16 +124,38 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return this;
         }
 
+        /// <summary>
+        /// 按表达式加载关联。
+        /// </summary>
+        /// <typeparam name="T2">关联实体类型。</typeparam>
+        /// <param name="expression">关联属性表达式。</param>
+        /// <param name="joinType">关联类型。</param>
+        /// <param name="joinTableHint">表提示。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProviderWithIncludes<T> Include<T2>(Expression<Func<T, T2>> expression, JoinType joinType = JoinType.Left, string joinTableHint = "") where T2 : class
         {
             return QueryProviderWithIncludes(expression, null, joinType, joinTableHint);
         }
 
+        /// <summary>
+        /// 按表达式加载关联并指定表别名。
+        /// </summary>
+        /// <typeparam name="T2">关联实体类型。</typeparam>
+        /// <param name="expression">关联属性表达式。</param>
+        /// <param name="tableAlias">表别名。</param>
+        /// <param name="joinType">关联类型。</param>
+        /// <param name="joinTableHint">表提示。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProviderWithIncludes<T> Include<T2>(Expression<Func<T, T2>> expression, string tableAlias, JoinType joinType = JoinType.Left, string joinTableHint = "") where T2 : class
         {
             return QueryProviderWithIncludes(expression, tableAlias, joinType, joinTableHint);
         }
 
+        /// <summary>
+        /// 指定主表别名。
+        /// </summary>
+        /// <param name="tableAlias">表别名。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProviderWithIncludes<T> UsingAlias(string tableAlias)
         {
             if (!string.IsNullOrEmpty(tableAlias))
@@ -88,6 +163,11 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return this;
         }
 
+        /// <summary>
+        /// 添加表提示。
+        /// </summary>
+        /// <param name="tableHint">表提示。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProviderWithIncludes<T> Hint(string tableHint)
         {
             _sqlExpression.Hint(tableHint);
@@ -105,16 +185,31 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return this;
         }
 
+        /// <summary>
+        /// 异步返回结果列表。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>结果列表。</returns>
         public Task<List<T>> ToList(CancellationToken cancellationToken)
         {
             return ToEnumerable(cancellationToken).ToListAsync(cancellationToken).AsTask();
         }
 
+        /// <summary>
+        /// 异步返回结果数组。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>结果数组。</returns>
         public Task<T[]> ToArray(CancellationToken cancellationToken)
         {
             return ToEnumerable(cancellationToken).ToArrayAsync(cancellationToken).AsTask();
         }
 
+        /// <summary>
+        /// 返回异步枚举序列。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>异步枚举序列。</returns>
         public IAsyncEnumerable<T> ToEnumerable(CancellationToken cancellationToken)
         {
             return ExecuteQueryAsync(BuildSql(), cancellationToken);
@@ -125,55 +220,110 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return _database.QueryAsync<T>(default, _listExpression, null, sql, _pocoData, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回第一个元素或默认值。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>第一个元素或默认值。</returns>
         public Task<T> FirstOrDefault(CancellationToken cancellationToken = default)
         {
             return FirstOrDefault(null, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回满足条件的第一个元素或默认值。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>第一个元素或默认值。</returns>
         public Task<T> FirstOrDefault(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             AddWhere(whereExpression);
             return ToEnumerable(cancellationToken).FirstOrDefaultAsync(cancellationToken).AsTask();
         }
 
+        /// <summary>
+        /// 异步返回第一个元素。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>第一个元素。</returns>
         public Task<T> First(CancellationToken cancellationToken = default)
         {
             return First(null, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回满足条件的第一个元素。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>第一个元素。</returns>
         public Task<T> First(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             AddWhere(whereExpression);
             return ToEnumerable(cancellationToken).FirstAsync(cancellationToken).AsTask();
         }
 
+        /// <summary>
+        /// 异步返回唯一元素或默认值。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>唯一元素或默认值。</returns>
         public Task<T> SingleOrDefault(CancellationToken cancellationToken = default)
         {
             return SingleOrDefault(null, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回满足条件的唯一元素或默认值。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>唯一元素或默认值。</returns>
         public Task<T> SingleOrDefault(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             AddWhere(whereExpression);
             return ToEnumerable(cancellationToken).SingleOrDefaultAsync(cancellationToken).AsTask();
         }
 
+        /// <summary>
+        /// 异步返回唯一元素。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>唯一元素。</returns>
         public Task<T> Single(CancellationToken cancellationToken = default)
         {
             return Single(null, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回满足条件的唯一元素。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>唯一元素。</returns>
         public Task<T> Single(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             AddWhere(whereExpression);
             return ToEnumerable(cancellationToken).SingleAsync(cancellationToken).AsTask();
         }
 
+        /// <summary>
+        /// 异步返回元素数量。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>元素数量。</returns>
         public Task<int> Count(CancellationToken cancellationToken = default)
         {
             return Count(null, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回满足条件的元素数量。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>元素数量。</returns>
         public Task<int> Count(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             AddWhere(whereExpression);
@@ -181,16 +331,34 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return _database.ExecuteScalarAsync<int>(sql, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步判断是否存在元素。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>存在返回 true，否则返回 false。</returns>
         public Task<bool> Any(CancellationToken cancellationToken = default)
         {
             return Any(null, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步判断是否存在满足条件的元素。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>存在返回 true，否则返回 false。</returns>
         public async Task<bool> Any(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             return (await Count(whereExpression, cancellationToken).ConfigureAwait(false)) > 0;
         }
 
+        /// <summary>
+        /// 异步分页返回结果。
+        /// </summary>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="pageSize">每页大小。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>分页结果。</returns>
         public async Task<Page<T>> ToPage(int page, int pageSize, CancellationToken cancellationToken = default)
         {
             int offset = (page - 1) * pageSize;
@@ -216,12 +384,28 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return result;
         }
 
+        /// <summary>
+        /// 异步投影返回结果列表。
+        /// </summary>
+        /// <typeparam name="T2">投影结果类型。</typeparam>
+        /// <param name="projectionExpression">投影表达式。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>投影结果列表。</returns>
         public Task<List<T2>> ProjectTo<T2>(Expression<Func<T, T2>> projectionExpression, CancellationToken cancellationToken = default)
         {
             var sql = _buildComplexSql.GetSqlForProjection(projectionExpression, false);
             return ExecuteQueryAsync(sql, cancellationToken).Select(projectionExpression.Compile()).ToListAsync(cancellationToken).AsTask();
         }
         
+        /// <summary>
+        /// 异步投影分页返回结果。
+        /// </summary>
+        /// <typeparam name="T2">投影结果类型。</typeparam>
+        /// <param name="projectionExpression">投影表达式。</param>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="pageSize">每页大小。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>投影分页结果。</returns>
         public async Task<Page<T2>> ToProjectedPage<T2>(Expression<Func<T, T2>> projectionExpression, int page, int pageSize, CancellationToken cancellationToken = default)
         {
             int offset = (page - 1) * pageSize;
@@ -246,41 +430,79 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return result;
         }
 
+        /// <summary>
+        /// 异步去重返回结果列表。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>去重后的结果列表。</returns>
         public Task<List<T>> Distinct(CancellationToken cancellationToken = default)
         {
             return ExecuteQueryAsync(new Sql(_sqlExpression.Context.ToSelectStatement(true, true), _sqlExpression.Context.Params), cancellationToken).ToListAsync(cancellationToken).AsTask();
         }
 
+        /// <summary>
+        /// 异步按投影去重返回结果列表。
+        /// </summary>
+        /// <typeparam name="T2">投影结果类型。</typeparam>
+        /// <param name="projectionExpression">投影表达式。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>去重后的投影结果列表。</returns>
         public Task<List<T2>> Distinct<T2>(Expression<Func<T, T2>> projectionExpression, CancellationToken cancellationToken = default)
         {
             var sql = _buildComplexSql.GetSqlForProjection(projectionExpression, true);
             return ExecuteQueryAsync(sql, cancellationToken).Select(projectionExpression.Compile()).ToListAsync(cancellationToken).AsTask();
         }
 
+        /// <summary>
+        /// 添加 WHERE 条件。
+        /// </summary>
+        /// <param name="whereExpression">条件表达式。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> Where(Expression<Func<T, bool>> whereExpression)
         {
             _sqlExpression = _sqlExpression.Where(whereExpression);
             return this;
         }
 
+        /// <summary>
+        /// 添加 WHERE 条件 SQL。
+        /// </summary>
+        /// <param name="sql">条件 SQL。</param>
+        /// <param name="args">条件参数。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> WhereSql(string sql, params object[] args)
         {
             _sqlExpression = _sqlExpression.Where(sql, args);
             return this;
         }
 
+        /// <summary>
+        /// 添加 WHERE 条件 SQL。
+        /// </summary>
+        /// <param name="sql">条件 SQL。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> WhereSql(Sql sql)
         {
             _sqlExpression = _sqlExpression.Where(sql.SQL, sql.Arguments);
             return this;
         }
 
+        /// <summary>
+        /// 添加 WHERE 条件 SQL（通过查询上下文构建）。
+        /// </summary>
+        /// <param name="queryBuilder">查询上下文构建函数。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> WhereSql(Func<QueryContext<T>, Sql> queryBuilder)
         {
             var sql = queryBuilder(new QueryContext<T>(_database, _pocoData, _joinSqlExpressions));
             return WhereSql(sql);
         }
 
+        /// <summary>
+        /// 限制返回行数。
+        /// </summary>
+        /// <param name="rows">返回行数。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> Limit(int rows)
         {
             ThrowIfOneToMany();
@@ -288,6 +510,12 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return this;
         }
 
+        /// <summary>
+        /// 限制返回行数并跳过指定行数。
+        /// </summary>
+        /// <param name="skip">跳过的行数。</param>
+        /// <param name="rows">返回行数。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> Limit(int skip, int rows)
         {
             ThrowIfOneToMany();
@@ -303,30 +531,55 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             }
         }
 
+        /// <summary>
+        /// 添加升序排序字段。
+        /// </summary>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> OrderBy(Expression<Func<T, object>> column)
         {
             _sqlExpression = _sqlExpression.OrderBy(column);
             return this;
         }
 
+        /// <summary>
+        /// 添加降序排序字段。
+        /// </summary>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> OrderByDescending(Expression<Func<T, object>> column)
         {
             _sqlExpression = _sqlExpression.OrderByDescending(column);
             return this;
         }
 
+        /// <summary>
+        /// 追加升序排序字段。
+        /// </summary>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> ThenBy(Expression<Func<T, object>> column)
         {
             _sqlExpression = _sqlExpression.ThenBy(column);
             return this;
         }
 
+        /// <summary>
+        /// 追加降序排序字段。
+        /// </summary>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> ThenByDescending(Expression<Func<T, object>> column)
         {
             _sqlExpression = _sqlExpression.ThenByDescending(column);
             return this;
         }
 
+        /// <summary>
+        /// 应用查询构建器中的条件、排序与分页。
+        /// </summary>
+        /// <param name="builder">查询构建器。</param>
+        /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> From(QueryBuilder<T> builder)
         {
             if (!builder.Data.Skip.HasValue && builder.Data.Rows.HasValue)
@@ -373,11 +626,19 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return this;
         }
 
+        /// <summary>
+        /// 返回动态对象列表。
+        /// </summary>
+        /// <returns>动态对象列表。</returns>
         public List<dynamic> ToDynamicList()
         {
             return ToDynamicEnumerable().ToList();
         }
 
+        /// <summary>
+        /// 返回动态对象枚举序列。
+        /// </summary>
+        /// <returns>动态对象枚举序列。</returns>
         public IEnumerable<dynamic> ToDynamicEnumerable()
         {
             var sql = BuildSql();
@@ -395,77 +656,149 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
     }
 
+    /// <summary>
+    /// 提供当前查询 SQL 的接口。
+    /// </summary>
     public interface INeedSql
     {
+        /// <summary>
+        /// 获取当前查询 SQL。
+        /// </summary>
+        /// <returns>查询 SQL。</returns>
         Sql GetSql();
     }
 
+    /// <summary>
+    /// 提供当前数据库实例的接口。
+    /// </summary>
     public interface INeedDatabase
     {
+        /// <summary>
+        /// 获取数据库实例。
+        /// </summary>
+        /// <returns>数据库实例。</returns>
         IDatabase GetDatabase();
     }
 
+    /// <summary>
+    /// 同步查询器，提供同步链式查询与结果获取能力。
+    /// </summary>
+    /// <typeparam name="T">查询对应的实体类型。</typeparam>
     public class QueryProvider<T> : AsyncQueryProvider<T>, IQueryProviderWithIncludes<T>
     {
 
+        /// <summary>
+        /// 使用数据库与筛选条件初始化实例。
+        /// </summary>
+        /// <param name="database">数据库实例。</param>
+        /// <param name="whereExpression">初始筛选条件。</param>
         public QueryProvider(Database database, Expression<Func<T, bool>> whereExpression) : base(database, whereExpression)
         {
         }
 
+        /// <summary>
+        /// 使用数据库初始化实例。
+        /// </summary>
+        /// <param name="database">数据库实例。</param>
         public QueryProvider(Database database) : base(database, null)
         {
         }
 
 #pragma warning disable CS0109
+        /// <summary>
+        /// 返回第一个元素或默认值。
+        /// </summary>
+        /// <returns>第一个元素或默认值。</returns>
         public new T FirstOrDefault()
         {
             return FirstOrDefault(null);
         }
 
+        /// <summary>
+        /// 返回满足条件的第一个元素或默认值。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <returns>第一个元素或默认值。</returns>
         public new T FirstOrDefault(Expression<Func<T, bool>> whereExpression)
         {
             AddWhere(whereExpression);
             return ToEnumerable().FirstOrDefault();
         }
 
+        /// <summary>
+        /// 返回第一个元素。
+        /// </summary>
+        /// <returns>第一个元素。</returns>
         public new T First()
         {
             return First(null);
         }
 
+        /// <summary>
+        /// 返回满足条件的第一个元素。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <returns>第一个元素。</returns>
         public new T First(Expression<Func<T, bool>> whereExpression)
         {
             AddWhere(whereExpression);
             return ToEnumerable().First();
         }
 
+        /// <summary>
+        /// 返回唯一元素或默认值。
+        /// </summary>
+        /// <returns>唯一元素或默认值。</returns>
         public new T SingleOrDefault()
         {
             return SingleOrDefault(null);
         }
 
+        /// <summary>
+        /// 返回满足条件的唯一元素或默认值。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <returns>唯一元素或默认值。</returns>
         public new T SingleOrDefault(Expression<Func<T, bool>> whereExpression)
         {
             AddWhere(whereExpression);
             return ToEnumerable().SingleOrDefault();
         }
 
+        /// <summary>
+        /// 返回唯一元素。
+        /// </summary>
+        /// <returns>唯一元素。</returns>
         public new T Single()
         {
             return Single(null);
         }
 
+        /// <summary>
+        /// 返回满足条件的唯一元素。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <returns>唯一元素。</returns>
         public new T Single(Expression<Func<T, bool>> whereExpression)
         {
             AddWhere(whereExpression);
             return ToEnumerable().Single();
         }
 
+        /// <summary>
+        /// 返回元素数量。
+        /// </summary>
+        /// <returns>元素数量。</returns>
         public new int Count()
         {
             return Count(null);
         }
 
+        /// <summary>
+        /// 返回满足条件的元素数量。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <returns>元素数量。</returns>
         public new int Count(Expression<Func<T, bool>> whereExpression)
         {
             AddWhere(whereExpression);
@@ -473,16 +806,31 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return _database.ExecuteScalar<int>(sql);
         }
 
+        /// <summary>
+        /// 判断是否存在元素。
+        /// </summary>
+        /// <returns>存在返回 true，否则返回 false。</returns>
         public new bool Any()
         {
             return Count() > 0;
         }
 
+        /// <summary>
+        /// 判断是否存在满足条件的元素。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <returns>存在返回 true，否则返回 false。</returns>
         public new bool Any(Expression<Func<T, bool>> whereExpression)
         {
             return Count(whereExpression) > 0;
         }
 
+        /// <summary>
+        /// 分页返回结果。
+        /// </summary>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="pageSize">每页大小。</param>
+        /// <returns>分页结果。</returns>
         public new Page<T> ToPage(int page, int pageSize)
         {
             int offset = (page - 1) * pageSize;
@@ -508,12 +856,26 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return result;
         }
 
+        /// <summary>
+        /// 投影返回结果列表。
+        /// </summary>
+        /// <typeparam name="T2">投影结果类型。</typeparam>
+        /// <param name="projectionExpression">投影表达式。</param>
+        /// <returns>投影结果列表。</returns>
         public new List<T2> ProjectTo<T2>(Expression<Func<T, T2>> projectionExpression)
         {
             var sql = _buildComplexSql.GetSqlForProjection(projectionExpression, false);
             return ExecuteQuery(sql).Select(projectionExpression.Compile()).ToList();
         }
 
+        /// <summary>
+        /// 投影分页返回结果。
+        /// </summary>
+        /// <typeparam name="T2">投影结果类型。</typeparam>
+        /// <param name="projectionExpression">投影表达式。</param>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="pageSize">每页大小。</param>
+        /// <returns>投影分页结果。</returns>
         public Page<T2> ToProjectedPage<T2>(Expression<Func<T, T2>> projectionExpression, int page, int pageSize)
         {
             int offset = (page - 1) * pageSize;
@@ -538,26 +900,48 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return result;
         }
 
+        /// <summary>
+        /// 按投影去重返回结果列表。
+        /// </summary>
+        /// <typeparam name="T2">投影结果类型。</typeparam>
+        /// <param name="projectionExpression">投影表达式。</param>
+        /// <returns>去重后的投影结果列表。</returns>
         public new List<T2> Distinct<T2>(Expression<Func<T, T2>> projectionExpression)
         {
             var sql = _buildComplexSql.GetSqlForProjection(projectionExpression, true);
             return ExecuteQuery(sql).Select(projectionExpression.Compile()).ToList();
         }
 
+        /// <summary>
+        /// 去重返回结果列表。
+        /// </summary>
+        /// <returns>去重后的结果列表。</returns>
         public new List<T> Distinct()
         {
             return ExecuteQuery(new Sql(_sqlExpression.Context.ToSelectStatement(true, true), _sqlExpression.Context.Params)).ToList();
         }
+        /// <summary>
+        /// 返回结果数组。
+        /// </summary>
+        /// <returns>结果数组。</returns>
         public new T[] ToArray()
         {
             return ToEnumerable().ToArray();
         }
 
+        /// <summary>
+        /// 返回结果列表。
+        /// </summary>
+        /// <returns>结果列表。</returns>
         public new List<T> ToList()
         {
             return ToEnumerable().ToList();
         }
 
+        /// <summary>
+        /// 返回枚举序列。
+        /// </summary>
+        /// <returns>枚举序列。</returns>
         public new IEnumerable<T> ToEnumerable()
         {
             return ExecuteQuery(BuildSql());
@@ -569,186 +953,400 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
 #pragma warning restore CS0109
 
+        /// <summary>
+        /// 异步返回结果列表。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>结果列表。</returns>
         public Task<List<T>> ToListAsync(CancellationToken cancellationToken = default)
         {
             return base.ToList(cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回结果数组。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>结果数组。</returns>
         public Task<T[]> ToArrayAsync(CancellationToken cancellationToken = default)
         {
             return base.ToArray(cancellationToken);
         }
 
+        /// <summary>
+        /// 返回异步枚举序列。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>异步枚举序列。</returns>
         public IAsyncEnumerable<T> ToEnumerableAsync(CancellationToken cancellationToken = default)
         {
             return base.ToEnumerable(cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回第一个元素或默认值。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>第一个元素或默认值。</returns>
         public Task<T> FirstOrDefaultAsync(CancellationToken cancellationToken = default)
         {
             return base.FirstOrDefault(cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回满足条件的第一个元素或默认值。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>第一个元素或默认值。</returns>
         public Task<T> FirstOrDefaultAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             return base.FirstOrDefault(whereExpression, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回第一个元素。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>第一个元素。</returns>
         public Task<T> FirstAsync(CancellationToken cancellationToken = default)
         {
             return base.First(cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回满足条件的第一个元素。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>第一个元素。</returns>
         public Task<T> FirstAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             return base.First(whereExpression, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回唯一元素或默认值。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>唯一元素或默认值。</returns>
         public Task<T> SingleOrDefaultAsync(CancellationToken cancellationToken = default)
         {
             return base.SingleOrDefault(cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回满足条件的唯一元素或默认值。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>唯一元素或默认值。</returns>
         public Task<T> SingleOrDefaultAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             return base.SingleOrDefault(whereExpression, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回唯一元素。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>唯一元素。</returns>
         public Task<T> SingleAsync(CancellationToken cancellationToken = default)
         {
             return base.Single(cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回满足条件的唯一元素。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>唯一元素。</returns>
         public Task<T> SingleAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             return base.Single(whereExpression, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回元素数量。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>元素数量。</returns>
         public Task<int> CountAsync(CancellationToken cancellationToken = default)
         {
             return base.Count(cancellationToken);
         }
 
+        /// <summary>
+        /// 异步返回满足条件的元素数量。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>元素数量。</returns>
         public Task<int> CountAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             return base.Count(whereExpression, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步判断是否存在元素。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>存在返回 true，否则返回 false。</returns>
         public Task<bool> AnyAsync(CancellationToken cancellationToken = default)
         {
             return base.Any(cancellationToken);
         }
 
+        /// <summary>
+        /// 异步判断是否存在满足条件的元素。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>存在返回 true，否则返回 false。</returns>
         public Task<bool> AnyAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default)
         {
             return base.Any(whereExpression, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步分页返回结果。
+        /// </summary>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="pageSize">每页大小。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>分页结果。</returns>
         public Task<Page<T>> ToPageAsync(int page, int pageSize, CancellationToken cancellationToken = default)
         {
             return base.ToPage(page, pageSize, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步投影返回结果列表。
+        /// </summary>
+        /// <typeparam name="T2">投影结果类型。</typeparam>
+        /// <param name="projectionExpression">投影表达式。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>投影结果列表。</returns>
         public Task<List<T2>> ProjectToAsync<T2>(Expression<Func<T, T2>> projectionExpression, CancellationToken cancellationToken = default)
         {
             return base.ProjectTo(projectionExpression, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步投影分页返回结果。
+        /// </summary>
+        /// <typeparam name="T2">投影结果类型。</typeparam>
+        /// <param name="projectionExpression">投影表达式。</param>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="pageSize">每页大小。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>投影分页结果。</returns>
         public Task<Page<T2>> ToProjectedPageAsync<T2>(Expression<Func<T, T2>> projectionExpression, int page, int pageSize, CancellationToken cancellationToken = default)
         {
             return base.ToProjectedPage(projectionExpression, page, pageSize, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步按投影去重返回结果列表。
+        /// </summary>
+        /// <typeparam name="T2">投影结果类型。</typeparam>
+        /// <param name="projectionExpression">投影表达式。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>去重后的投影结果列表。</returns>
         public Task<List<T2>> DistinctAsync<T2>(Expression<Func<T, T2>> projectionExpression, CancellationToken cancellationToken = default)
         {
             return base.Distinct(projectionExpression, cancellationToken);
         }
 
+        /// <summary>
+        /// 异步去重返回结果列表。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>去重后的结果列表。</returns>
         public Task<List<T>> DistinctAsync(CancellationToken cancellationToken = default)
         {
             return base.Distinct(cancellationToken);
         }
         
+        /// <summary>
+        /// 添加一对多关联加载。
+        /// </summary>
+        /// <param name="expression">集合属性表达式。</param>
+        /// <param name="joinType">关联类型。</param>
+        /// <param name="joinTableHint">表提示。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> IncludeMany(Expression<Func<T, IList>> expression, JoinType joinType = JoinType.Left, string joinTableHint = "")
         {
             return (IQueryProvider<T>)base.IncludeMany(expression, joinType, joinTableHint);
         }
 
+        /// <summary>
+        /// 按类型自动加载一对一或外键关联。
+        /// </summary>
+        /// <typeparam name="T2">关联实体类型。</typeparam>
+        /// <param name="joinType">关联类型。</param>
+        /// <param name="joinTableHint">表提示。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProviderWithIncludes<T> Include<T2>(JoinType joinType = JoinType.Left, string joinTableHint = "") where T2 : class
         {
             return (IQueryProviderWithIncludes<T>)base.Include<T2>(joinType, joinTableHint);
         }
 
+        /// <summary>
+        /// 按表达式加载关联。
+        /// </summary>
+        /// <typeparam name="T2">关联实体类型。</typeparam>
+        /// <param name="expression">关联属性表达式。</param>
+        /// <param name="joinType">关联类型。</param>
+        /// <param name="joinTableHint">表提示。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProviderWithIncludes<T> Include<T2>(Expression<Func<T, T2>> expression, JoinType joinType = JoinType.Left, string joinTableHint = "") where T2 : class
         {
             return (IQueryProviderWithIncludes<T>)base.Include(expression, joinType, joinTableHint);
         }
 
+        /// <summary>
+        /// 按表达式加载关联并指定表别名。
+        /// </summary>
+        /// <typeparam name="T2">关联实体类型。</typeparam>
+        /// <param name="expression">关联属性表达式。</param>
+        /// <param name="tableAlias">表别名。</param>
+        /// <param name="joinType">关联类型。</param>
+        /// <param name="joinTableHint">表提示。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProviderWithIncludes<T> Include<T2>(Expression<Func<T, T2>> expression, string tableAlias, JoinType joinType = JoinType.Left, string joinTableHint = "") where T2 : class
         {
             return (IQueryProviderWithIncludes<T>)base.Include(expression, tableAlias, joinType, joinTableHint);
         }
 
+        /// <summary>
+        /// 指定主表别名。
+        /// </summary>
+        /// <param name="tableAlias">表别名。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProviderWithIncludes<T> UsingAlias(string tableAlias)
         {
             return (IQueryProviderWithIncludes<T>)base.UsingAlias(tableAlias);
         }
 
+        /// <summary>
+        /// 添加表提示。
+        /// </summary>
+        /// <param name="tableHint">表提示。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProviderWithIncludes<T> Hint(string tableHint)
         {
             return (IQueryProviderWithIncludes<T>)base.Hint(tableHint);
         }
 
+        /// <summary>
+        /// 添加 WHERE 条件。
+        /// </summary>
+        /// <param name="whereExpression">条件表达式。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> Where(Expression<Func<T, bool>> whereExpression)
         {
             return (IQueryProvider<T>)base.Where(whereExpression);
         }
 
+        /// <summary>
+        /// 添加 WHERE 条件 SQL。
+        /// </summary>
+        /// <param name="sql">条件 SQL。</param>
+        /// <param name="args">条件参数。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> WhereSql(string sql, params object[] args)
         {
             return (IQueryProvider<T>)base.WhereSql(sql, args);
         }
 
+        /// <summary>
+        /// 添加 WHERE 条件 SQL。
+        /// </summary>
+        /// <param name="sql">条件 SQL。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> WhereSql(Sql sql)
         {
             return (IQueryProvider<T>)base.WhereSql(sql);
         }
 
+        /// <summary>
+        /// 添加 WHERE 条件 SQL（通过查询上下文构建）。
+        /// </summary>
+        /// <param name="queryBuilder">查询上下文构建函数。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> WhereSql(Func<QueryContext<T>, Sql> queryBuilder)
         {
             return (IQueryProvider<T>)base.WhereSql(queryBuilder);
         }
 
+        /// <summary>
+        /// 添加升序排序字段。
+        /// </summary>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> OrderBy(Expression<Func<T, object>> column)
         {
             return (IQueryProvider<T>)base.OrderBy(column);
         }
 
+        /// <summary>
+        /// 添加降序排序字段。
+        /// </summary>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> OrderByDescending(Expression<Func<T, object>> column)
         {
             return (IQueryProvider<T>)base.OrderByDescending(column);
         }
 
+        /// <summary>
+        /// 追加升序排序字段。
+        /// </summary>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> ThenBy(Expression<Func<T, object>> column)
         {
             return (IQueryProvider<T>)base.ThenBy(column);
         }
 
+        /// <summary>
+        /// 追加降序排序字段。
+        /// </summary>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> ThenByDescending(Expression<Func<T, object>> column)
         {
             return (IQueryProvider<T>)base.ThenByDescending(column);
         }
 
+        /// <summary>
+        /// 限制返回行数。
+        /// </summary>
+        /// <param name="rows">返回行数。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> Limit(int rows)
         {
             return (IQueryProvider<T>)base.Limit(rows);
         }
 
+        /// <summary>
+        /// 限制返回行数并跳过指定行数。
+        /// </summary>
+        /// <param name="skip">跳过的行数。</param>
+        /// <param name="rows">返回行数。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> Limit(int skip, int rows)
         {
             return (IQueryProvider<T>)base.Limit(skip, rows);
         }
 
+        /// <summary>
+        /// 应用查询构建器中的条件、排序与分页。
+        /// </summary>
+        /// <param name="builder">查询构建器。</param>
+        /// <returns>当前查询器。</returns>
         public new IQueryProvider<T> From(QueryBuilder<T> builder)
         {
             return (IQueryProvider<T>)base.From(builder);

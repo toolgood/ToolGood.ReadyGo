@@ -31,7 +31,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 数据表
         /// </summary>
-        /// <param name="tableName"></param>
+        /// <param name="tableName">数据表名</param>
         public TableAttribute(string tableName) : base(tableName)
         {
             TableName = tableName.Trim();
@@ -40,8 +40,8 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 数据表
         /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="schemaName"></param>
+        /// <param name="tableName">数据表名</param>
+        /// <param name="schemaName">Schema 名</param>
         public TableAttribute(string tableName, string schemaName) : base(tableName)
         {
             SchemaName = schemaName.Trim();
@@ -51,9 +51,9 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 数据表
         /// </summary>
-        /// <param name="tableName"></param>
-        /// <param name="schemaName"></param>
-        /// <param name="databaseName"></param>
+        /// <param name="tableName">数据表名</param>
+        /// <param name="schemaName">Schema 名</param>
+        /// <param name="databaseName">数据库名</param>
         public TableAttribute(string tableName, string schemaName, string databaseName) : base(tableName)
         {
             SchemaName = schemaName.Trim();

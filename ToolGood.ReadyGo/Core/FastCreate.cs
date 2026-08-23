@@ -10,6 +10,9 @@ using ToolGood.ReadyGo.Attributes;
 namespace ToolGood.ReadyGo.NPoco
 {
 
+    /// <summary>
+    /// 使用动态 IL 或映射工厂快速创建 POCO 实例。
+    /// </summary>
     public class FastCreate : IFastCreate
     {
         private readonly Type _type;
@@ -17,12 +20,22 @@ namespace ToolGood.ReadyGo.NPoco
         private ConstructorInfo _constructorInfo;
         private Func<DbDataReader, object> _createDelegate;
 
+        /// <summary>
+        /// 初始化 <see cref="FastCreate"/> 实例。
+        /// </summary>
+        /// <param name="type">要创建的目标类型。</param>
+        /// <param name="mapperCollection">用于查找自定义创建工厂的映射集合。</param>
         public FastCreate(Type type, IMapperCollection mapperCollection)
         {
             _type = type;
             _mapperCollection = mapperCollection;
         }
 
+        /// <summary>
+        /// 根据数据读取器创建目标类型实例。
+        /// </summary>
+        /// <param name="dataReader">当前数据读取器。</param>
+        /// <returns>创建出的目标类型实例。</returns>
         public object Create(DbDataReader dataReader)
         {
             try

@@ -2,15 +2,26 @@ using System;
 
 namespace ToolGood.ReadyGo.Attributes
 {
+    /// <summary>
+    /// 主键标签：用于指定数据表的主键列。
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class PrimaryKeyAttribute : Attribute
     {
+        /// <summary>
+        /// 主键标签（默认启用自增）
+        /// </summary>
+        /// <param name="primaryKey">主键列名（多列用逗号分隔）</param>
         public PrimaryKeyAttribute(string primaryKey)
         {
             Value = primaryKey;
             _autoIncrement = true;
         }
 
+        /// <summary>
+        /// 主键标签（默认启用自增）
+        /// </summary>
+        /// <param name="primaryKey">主键列名数组</param>
         public PrimaryKeyAttribute(string[] primaryKey) : this(string.Join(",", primaryKey))
         {
         }
@@ -18,9 +29,21 @@ namespace ToolGood.ReadyGo.Attributes
         ///     The column name.
         /// </summary>
         public string PrimaryKey => Value;
+
+        /// <summary>
+        /// 主键列名字符串（多列用逗号分隔）
+        /// </summary>
         public string Value { get; private set; }
+
+        /// <summary>
+        /// 序列名称
+        /// </summary>
         public string SequenceName { get; set; }
         private bool _autoIncrement;
+
+        /// <summary>
+        /// 是否自增
+        /// </summary>
         public bool AutoIncrement
         {
             get { return _autoIncrement; }
@@ -33,6 +56,10 @@ namespace ToolGood.ReadyGo.Attributes
                 }
             }
         }
+
+        /// <summary>
+        /// 是否使用 OUTPUT 子句返回自增值
+        /// </summary>
         public bool UseOutputClause { get; set; }
     }
 }

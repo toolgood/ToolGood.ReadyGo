@@ -7,6 +7,9 @@ using System.Text.Json.Serialization;
 
 namespace ToolGood.ReadyGo.NPoco
 {
+    /// <summary>
+    /// 基于 System.Text.Json 的列序列化器，用于序列化/反序列化 POCO 中被标记为序列化的列。
+    /// </summary>
     public class FastJsonColumnSerializer : IColumnSerializer
     {
         private static readonly JsonSerializerOptions SerializeOptions = new JsonSerializerOptions
@@ -20,12 +23,23 @@ namespace ToolGood.ReadyGo.NPoco
             Converters = { new JsonStringEnumConverter() }
         };
 
+        /// <summary>
+        /// 将对象序列化为 JSON 字符串。
+        /// </summary>
+        /// <param name="value">要序列化的对象。</param>
+        /// <returns>序列化后的 JSON 字符串；若值为 null 则返回 null。</returns>
         public object Serialize(object value)
         {
             if (value == null) return null;
             return JsonSerializer.Serialize(value, value.GetType(), SerializeOptions);
         }
 
+        /// <summary>
+        /// 将 JSON 字符串反序列化为目标类型的对象。
+        /// </summary>
+        /// <param name="value">JSON 字符串。</param>
+        /// <param name="targetType">目标类型。</param>
+        /// <returns>反序列化后的对象；若值为 null 则返回 null。</returns>
         public object Deserialize(object value, Type targetType)
         {
             if (value == null) return null;

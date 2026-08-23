@@ -38,6 +38,11 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
             return memberExpr;
         }
 
+        /// <summary>
+        /// 获取表达式中的成员访问链。
+        /// </summary>
+        /// <param name="expression">待解析的表达式。</param>
+        /// <returns>按访问顺序排列的成员信息集合。</returns>
         public static IEnumerable<MemberInfo> GetMembers(Expression expression)
         {
             var memberExpression = expression as MemberExpression ?? GetMemberExpression(expression);
