@@ -32,8 +32,11 @@ namespace ToolGood.ReadyGo.Tests
         [DecimalScale(2)]
         public decimal Money { get; set; }
 
-        [DecimalScale(3)]
-        public double? Weight { get; set; }
+        [Date2Int]
+        public DateTime? DateValue { get; set; }
+
+        [DateTime2Int]
+        public DateTime? DateTimeValue { get; set; }
 
         public decimal NormalMoney { get; set; }
     }
@@ -118,27 +121,28 @@ namespace ToolGood.ReadyGo.Tests
 
         public static IEnumerable<object[]> DecimalScaleProviderData()
         {
-            // [DecimalScale] 字段：各数据库方言应保存为整数；普通 decimal 字段不受影响
-            yield return new object[] { new SqlServerDatabaseProvider(), "[Money] bigint", "[Weight] bigint", "[NormalMoney] decimal" };
-            yield return new object[] { new SqlServer2012DatabaseProvider(), "[Money] bigint", "[Weight] bigint", "[NormalMoney] decimal" };
-            yield return new object[] { new MySqlDatabaseProvider(), "`Money` bigint", "`Weight` bigint", "`NormalMoney` decimal" };
-            yield return new object[] { new MariaDbDatabaseProvider(), "`Money` bigint", "`Weight` bigint", "`NormalMoney` decimal" };
-            yield return new object[] { new SQLiteDatabaseProvider(), "[Money] INTEGER", "[Weight] INTEGER", "[NormalMoney] REAL" };
-            yield return new object[] { new DuckDbDatabaseProvider(), "\"Money\" BIGINT", "\"Weight\" BIGINT", "\"NormalMoney\" NUMERIC" };
-            yield return new object[] { new OracleDatabaseProvider(), "\"Money\" NUMBER(19)", "\"Weight\" NUMBER(19)", "\"NormalMoney\" NUMBER" };
-            yield return new object[] { new PostgreSQLDatabaseProvider(), "\"Money\" bigint", "\"Weight\" bigint", "\"NormalMoney\" numeric" };
-            yield return new object[] { new FirebirdDbDatabaseProvider(), "\"Money\" BIGINT", "\"Weight\" BIGINT", "\"NormalMoney\" DECIMAL" };
+            // [DecimalScale] / [Date2Int] / [DateTime2Int] 字段：各数据库方言应保存为整数；普通 decimal 字段不受影响
+            yield return new object[] { new SqlServerDatabaseProvider(), "[Money] bigint", "[DateValue] bigint", "[DateTimeValue] bigint", "[NormalMoney] decimal" };
+            yield return new object[] { new SqlServer2012DatabaseProvider(), "[Money] bigint", "[DateValue] bigint", "[DateTimeValue] bigint", "[NormalMoney] decimal" };
+            yield return new object[] { new MySqlDatabaseProvider(), "`Money` bigint", "`DateValue` bigint", "`DateTimeValue` bigint", "`NormalMoney` decimal" };
+            yield return new object[] { new MariaDbDatabaseProvider(), "`Money` bigint", "`DateValue` bigint", "`DateTimeValue` bigint", "`NormalMoney` decimal" };
+            yield return new object[] { new SQLiteDatabaseProvider(), "[Money] INTEGER", "[DateValue] INTEGER", "[DateTimeValue] INTEGER", "[NormalMoney] REAL" };
+            yield return new object[] { new DuckDbDatabaseProvider(), "\"Money\" BIGINT", "\"DateValue\" BIGINT", "\"DateTimeValue\" BIGINT", "\"NormalMoney\" NUMERIC" };
+            yield return new object[] { new OracleDatabaseProvider(), "\"Money\" NUMBER(19)", "\"DateValue\" NUMBER(19)", "\"DateTimeValue\" NUMBER(19)", "\"NormalMoney\" NUMBER" };
+            yield return new object[] { new PostgreSQLDatabaseProvider(), "\"Money\" bigint", "\"DateValue\" bigint", "\"DateTimeValue\" bigint", "\"NormalMoney\" numeric" };
+            yield return new object[] { new FirebirdDbDatabaseProvider(), "\"Money\" BIGINT", "\"DateValue\" BIGINT", "\"DateTimeValue\" BIGINT", "\"NormalMoney\" DECIMAL" };
         }
 
         [Theory]
         [MemberData(nameof(DecimalScaleProviderData))]
-        public void 建表SQL_DecimalScale字段保存为整数(ToolGood.ReadyGo.Gadget.TableManager.DatabaseProvider provider, string moneyColumn, string weightColumn, string normalColumn)
+        public void 建表SQL_整数序列化字段保存为整数(ToolGood.ReadyGo.Gadget.TableManager.DatabaseProvider provider, string moneyColumn, string dateValueColumn, string dateTimeValueColumn, string normalColumn)
         {
             var sql = provider.GetTryCreateTable(typeof(Tb_Provider_DecimalScale), false);
 
-            // decimal/double? 的 [DecimalScale] 字段保存为整数
+            // [DecimalScale] / [Date2Int] / [DateTime2Int] 字段保存为整数
             Assert.Contains(moneyColumn, sql);
-            Assert.Contains(weightColumn, sql);
+            Assert.Contains(dateValueColumn, sql);
+            Assert.Contains(dateTimeValueColumn, sql);
             // 普通 decimal 字段类型保持不变
             Assert.Contains(normalColumn, sql);
         }
