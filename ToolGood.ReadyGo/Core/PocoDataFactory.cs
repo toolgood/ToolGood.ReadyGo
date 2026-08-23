@@ -4,49 +4,6 @@ using System.Collections.Generic;
 namespace ToolGood.ReadyGo.NPoco
 {
 
-    public class FluentPocoDataFactory : IPocoDataFactory
-    {
-        private readonly MapperCollection _mapperCollection;
-        private readonly Cache<Type, InitializedPocoDataBuilder> _pocoDatas = Cache<Type, InitializedPocoDataBuilder>.CreateStaticCache();
-        public Func<Type, IPocoDataFactory, InitializedPocoDataBuilder> Resolver { get; private set; }
-
-        public FluentPocoDataFactory(Func<Type, IPocoDataFactory, InitializedPocoDataBuilder> resolver, MapperCollection mapperCollection)
-        {
-            _mapperCollection = mapperCollection;
-            Resolver = resolver;
-        }
-        
-        public PocoData ForType(Type type)
-        {
-            PocoDataFactory.Guard(type);
-            var pocoDataBuilder = _pocoDatas.Get(type, () => BaseClassFalbackPocoDataBuilder(type));
-            return pocoDataBuilder.Build();
-        }
-
-        public TableInfo TableInfoForType(Type type)
-        {
-            PocoDataFactory.Guard(type);
-            var pocoDataBuilder = _pocoDatas.Get(type, () => BaseClassFalbackPocoDataBuilder(type));
-            return pocoDataBuilder.BuildTableInfo();
-        }
-
-        public PocoData ForObject(object o, string primaryKeyName, bool autoIncrement)
-        {
-            return PocoDataFactory.ForObjectStatic(o, primaryKeyName, autoIncrement, ForType, _mapperCollection);
-        }
-
-        private InitializedPocoDataBuilder BaseClassFalbackPocoDataBuilder(Type type)
-        {
-            var builder = Resolver(type, this);
-            var persistedType = builder.BuildTableInfo().PersistedType;
-            if (persistedType == null || persistedType == type)
-            {
-                return builder;
-            }
-            return Resolver(type, this);
-        }
-    }
-
     public class PocoDataFactory : IPocoDataFactory
     {
         private readonly static Cache<Type, InitializedPocoDataBuilder> _pocoDatas = Cache<Type, InitializedPocoDataBuilder>.CreateStaticCache();

@@ -4,7 +4,6 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text;
-using ToolGood.ReadyGo.NPoco.FluentMappings;
 
 namespace ToolGood.ReadyGo.NPoco
 {
@@ -55,7 +54,7 @@ namespace ToolGood.ReadyGo.NPoco
             database.Mappers = mappers;
             if (_options.PocoDataFactory != null)
             {
-                database.PocoDataFactory = _cachedPocoDataFactory ??= _options.PocoDataFactory.Config(mappers);
+                database.PocoDataFactory = _cachedPocoDataFactory ??= _options.PocoDataFactory;
             }
         }
 
@@ -78,7 +77,7 @@ namespace ToolGood.ReadyGo.NPoco
         {
             if (_options.PocoDataFactory != null)
             {
-                return _options.PocoDataFactory.Config(_options.Mapper);
+                return _options.PocoDataFactory;
             }
             throw new Exception("No PocoDataFactory configured");
         }
@@ -104,7 +103,7 @@ namespace ToolGood.ReadyGo.NPoco
 
         public Func<Database> Database { get; set; }
         public MapperCollection Mapper { get; private set; }
-        public FluentConfig PocoDataFactory { get; set; }
+        public IPocoDataFactory PocoDataFactory { get; set; }
         public List<IInterceptor> Interceptors { get; private set; }
         public IColumnSerializer ColumnSerializer { get; set; }
     }
@@ -127,12 +126,6 @@ namespace ToolGood.ReadyGo.NPoco
         public DatabaseFactoryConfig WithMapper(IMapper mapper)
         {
             _options.Mapper.Add(mapper);
-            return this;
-        }
-
-        public DatabaseFactoryConfig WithFluentConfig(FluentConfig fluentConfig)
-        {
-            _options.PocoDataFactory = fluentConfig;
             return this;
         }
 
