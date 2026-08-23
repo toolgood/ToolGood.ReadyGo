@@ -25,6 +25,7 @@ namespace ToolGood.ReadyGo.NPoco
         public static DatabaseType MySQL { get { return Singleton<MySqlDatabaseType>.Instance; } }
         public static DatabaseType SQLite { get { return Singleton<SQLiteDatabaseType>.Instance; } }
         public static DatabaseType Firebird { get { return Singleton<FirebirdDatabaseType>.Instance; } }
+        public static DatabaseType DuckDb { get { return Singleton<DuckDbDatabaseType>.Instance; } }
 
         readonly Dictionary<Type, DbType> typeMap;
 

@@ -48,8 +48,7 @@ namespace ToolGood.ReadyGo
                 case SqlType.PostgreSQL: return ToolGood.ReadyGo.NPoco.DatabaseType.PostgreSQL;
                 case SqlType.FirebirdDb: return ToolGood.ReadyGo.NPoco.DatabaseType.Firebird;
                 case SqlType.DuckDb:
-                    // DuckDB 参数语法为 $name，与 NPoco 内核默认的 @ 前缀不兼容，需自定义 IDatabaseType 后接入
-                    throw new DatabaseUnsupportException("DuckDB 暂不支持：NPoco 内核未提供 DuckDB 的 DatabaseType，且 DuckDB 参数语法($name)与内核默认参数前缀(@)不兼容。请自定义 DuckDB 的 IDatabaseType 实现后接入，或改用 SQLite。");
+                    return ToolGood.ReadyGo.NPoco.DatabaseType.DuckDb;
                 case SqlType.MsAccessDb:
                     // Jet/ACE SQL 方言（TOP 分页、? 参数）与现有 DatabaseType 不兼容
                     throw new DatabaseUnsupportException("Access(MsAccessDb) 暂不支持：Jet/ACE SQL 方言与 NPoco 内核现有 DatabaseType 不兼容，需自定义 Access 的 IDatabaseType 实现后接入。");
