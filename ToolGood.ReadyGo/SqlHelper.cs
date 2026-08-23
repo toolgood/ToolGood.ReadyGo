@@ -364,6 +364,103 @@ namespace ToolGood.ReadyGo
 
         #endregion FetchOneToMany
 
+        #region FetchMultiple
+        /// <summary>
+        /// 执行多条 SQL，返回多个结果集。
+        /// <para>var (users, addresses) = helper.FetchMultiple&lt;User, Address&gt;("select * from users;select * from addresses;");</para>
+        /// <para>var data = helper.FetchMultiple&lt;User, Address&gt;(sql);</para>
+        /// <para>var users = data.Item1; var addresses = data.Item2;</para>
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public (List<T1>, List<T2>) FetchMultiple<T1, T2>(string sql, params object[] args)
+        {
+            return GetDatabase().FetchMultiple<T1, T2>(sql, args);
+        }
+
+        /// <summary>
+        /// 执行多条 SQL，返回三个结果集。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <typeparam name="T3">第三个结果集类型</typeparam>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public (List<T1>, List<T2>, List<T3>) FetchMultiple<T1, T2, T3>(string sql, params object[] args)
+        {
+            return GetDatabase().FetchMultiple<T1, T2, T3>(sql, args);
+        }
+
+        /// <summary>
+        /// 执行多条 SQL，返回四个结果集。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <typeparam name="T3">第三个结果集类型</typeparam>
+        /// <typeparam name="T4">第四个结果集类型</typeparam>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public (List<T1>, List<T2>, List<T3>, List<T4>) FetchMultiple<T1, T2, T3, T4>(string sql, params object[] args)
+        {
+            return GetDatabase().FetchMultiple<T1, T2, T3, T4>(sql, args);
+        }
+
+        /// <summary>
+        /// 执行多条 SQL，并通过回调组合多个结果集。
+        /// <para>var tuple = helper.FetchMultiple&lt;User, Address, Tuple&lt;List&lt;User&gt;, List&lt;Address&gt;&gt;&gt;( (u, a) =&gt; Tuple.Create(u, a), sql);</para>
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <typeparam name="TRet">回调返回类型</typeparam>
+        /// <param name="cb">组合回调</param>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public TRet FetchMultiple<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, params object[] args)
+        {
+            return GetDatabase().FetchMultiple(cb, sql, args);
+        }
+
+        /// <summary>
+        /// 执行多条 SQL，并通过回调组合三个结果集。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <typeparam name="T3">第三个结果集类型</typeparam>
+        /// <typeparam name="TRet">回调返回类型</typeparam>
+        /// <param name="cb">组合回调</param>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public TRet FetchMultiple<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, params object[] args)
+        {
+            return GetDatabase().FetchMultiple(cb, sql, args);
+        }
+
+        /// <summary>
+        /// 执行多条 SQL，并通过回调组合四个结果集。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <typeparam name="T3">第三个结果集类型</typeparam>
+        /// <typeparam name="T4">第四个结果集类型</typeparam>
+        /// <typeparam name="TRet">回调返回类型</typeparam>
+        /// <param name="cb">组合回调</param>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public TRet FetchMultiple<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, params object[] args)
+        {
+            return GetDatabase().FetchMultiple(cb, sql, args);
+        }
+
+        #endregion FetchMultiple
+
         #region Obsolete
         /// <summary>
         /// 执行SQL 查询, 返回单个

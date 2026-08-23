@@ -219,6 +219,61 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal(100, (await helper.FirstOrDefault_Async<SimpleUser>(s.Id)).Age);
         }
 
+        [Fact]
+        public async Task StartSnapshot_Update_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("Ted", 21);
+            var user = await helper.FirstOrDefault_Async<UserInfo>(u.Id);
+
+            var snapshot = helper.StartSnapshot(user);
+            user.Name = "Bobby";
+            user.Age = 21; // 与快照一致，不算变更
+
+            Assert.Equal(1, await helper.Update_Async(user, snapshot.UpdatedColumns()));
+            Assert.Equal(1, await helper.Update_Async(user, snapshot)); // 两种方式均可
+
+            var loaded = await helper.FirstOrDefault_Async<UserInfo>(u.Id);
+            Assert.Equal("Bobby", loaded.Name);
+            Assert.Equal(21, loaded.Age);
+        }
+
+        [Fact]
+        public async Task FetchMultiple_Async_ReturnsTwoResultSets()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("张三", 20);
+            db.NewUser("李四", 30);
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            var data = await helper.FetchMultiple_Async<UserInfo, SimpleUser>("SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
+
+            Assert.Equal(2, data.Item1.Count);
+            Assert.Equal(2, data.Item2.Count);
+            Assert.Equal("张三", data.Item1[0].Name);
+            Assert.Equal("甲", data.Item2[0].Name);
+        }
+
+        [Fact]
+        public async Task FetchMultiple_Async_WithCallback()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("张三", 20);
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            var tuple = await helper.FetchMultiple_Async<UserInfo, SimpleUser, Tuple<List<UserInfo>, List<SimpleUser>>>(
+                (u, s) => Tuple.Create(u, s),
+                "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
+
+            Assert.Single(tuple.Item1);
+            Assert.Single(tuple.Item2);
+            Assert.Equal("张三", tuple.Item1[0].Name);
+        }
+
         #endregion
     }
 }

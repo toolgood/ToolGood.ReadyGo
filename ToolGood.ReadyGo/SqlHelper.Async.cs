@@ -382,6 +382,104 @@ namespace ToolGood.ReadyGo
 
         #endregion FetchOneToMany
 
+        #region FetchMultiple
+
+        /// <summary>
+        /// 执行多条 SQL，返回多个结果集。
+        /// <para>var (users, addresses) = await helper.FetchMultiple_Async&lt;User, Address&gt;("select * from users;select * from addresses;");</para>
+        /// <para>var data = await helper.FetchMultiple_Async&lt;User, Address&gt;(sql);</para>
+        /// <para>var users = data.Item1; var addresses = data.Item2;</para>
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<(List<T1>, List<T2>)> FetchMultiple_Async<T1, T2>(string sql, params object[] args)
+        {
+            return await GetDatabase().FetchMultipleAsync<T1, T2>(sql, args);
+        }
+
+        /// <summary>
+        /// 执行多条 SQL，返回三个结果集。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <typeparam name="T3">第三个结果集类型</typeparam>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<(List<T1>, List<T2>, List<T3>)> FetchMultiple_Async<T1, T2, T3>(string sql, params object[] args)
+        {
+            return await GetDatabase().FetchMultipleAsync<T1, T2, T3>(sql, args);
+        }
+
+        /// <summary>
+        /// 执行多条 SQL，返回四个结果集。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <typeparam name="T3">第三个结果集类型</typeparam>
+        /// <typeparam name="T4">第四个结果集类型</typeparam>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<(List<T1>, List<T2>, List<T3>, List<T4>)> FetchMultiple_Async<T1, T2, T3, T4>(string sql, params object[] args)
+        {
+            return await GetDatabase().FetchMultipleAsync<T1, T2, T3, T4>(sql, args);
+        }
+
+        /// <summary>
+        /// 执行多条 SQL，并通过回调组合多个结果集。
+        /// <para>var tuple = await helper.FetchMultiple_Async&lt;User, Address, Tuple&lt;List&lt;User&gt;, List&lt;Address&gt;&gt;&gt;( (u, a) =&gt; Tuple.Create(u, a), sql);</para>
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <typeparam name="TRet">回调返回类型</typeparam>
+        /// <param name="cb">组合回调</param>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<TRet> FetchMultiple_Async<T1, T2, TRet>(Func<List<T1>, List<T2>, TRet> cb, string sql, params object[] args)
+        {
+            return await GetDatabase().FetchMultipleAsync(cb, sql, args);
+        }
+
+        /// <summary>
+        /// 执行多条 SQL，并通过回调组合三个结果集。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <typeparam name="T3">第三个结果集类型</typeparam>
+        /// <typeparam name="TRet">回调返回类型</typeparam>
+        /// <param name="cb">组合回调</param>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<TRet> FetchMultiple_Async<T1, T2, T3, TRet>(Func<List<T1>, List<T2>, List<T3>, TRet> cb, string sql, params object[] args)
+        {
+            return await GetDatabase().FetchMultipleAsync(cb, sql, args);
+        }
+
+        /// <summary>
+        /// 执行多条 SQL，并通过回调组合四个结果集。
+        /// </summary>
+        /// <typeparam name="T1">第一个结果集类型</typeparam>
+        /// <typeparam name="T2">第二个结果集类型</typeparam>
+        /// <typeparam name="T3">第三个结果集类型</typeparam>
+        /// <typeparam name="T4">第四个结果集类型</typeparam>
+        /// <typeparam name="TRet">回调返回类型</typeparam>
+        /// <param name="cb">组合回调</param>
+        /// <param name="sql">SQL 语句，多个查询以分号分隔</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns></returns>
+        public async Task<TRet> FetchMultiple_Async<T1, T2, T3, T4, TRet>(Func<List<T1>, List<T2>, List<T3>, List<T4>, TRet> cb, string sql, params object[] args)
+        {
+            return await GetDatabase().FetchMultipleAsync(cb, sql, args);
+        }
+
+        #endregion FetchMultiple
+
         #region Single SingleOrDefault First FirstOrDefault
 
         /// <summary>
@@ -465,6 +563,33 @@ namespace ToolGood.ReadyGo
             int r = await GetDatabase().UpdateAsync(poco);
 
             return r;
+        }
+
+        /// <summary>
+        /// 更新指定列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="poco">对象</param>
+        /// <param name="columns">要更新的列名集合</param>
+        /// <returns></returns>
+        public async Task<int> Update_Async<T>(T poco, IEnumerable<string> columns) where T : class
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            return await GetDatabase().UpdateAsync(poco, columns);
+        }
+
+        /// <summary>
+        /// 更新，仅更新快照中发生变更的列
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="poco">对象</param>
+        /// <param name="snapshot">快照</param>
+        /// <returns></returns>
+        public async Task<int> Update_Async<T>(T poco, Snapshot<T> snapshot) where T : class
+        {
+            if (poco == null) throw new ArgumentNullException("poco is null");
+            if (snapshot == null) throw new ArgumentNullException("snapshot is null");
+            return await GetDatabase().UpdateAsync(poco, snapshot.UpdatedColumns());
         }
 
         /// <summary>

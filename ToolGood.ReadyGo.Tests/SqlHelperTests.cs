@@ -146,6 +146,62 @@ namespace ToolGood.ReadyGo.Tests
 
         #endregion
 
+        #region FetchMultiple
+
+        [Fact]
+        public void FetchMultiple_ReturnsTwoResultSets()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("张三", 20);
+            db.NewUser("李四", 30);
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            var data = helper.FetchMultiple<UserInfo, SimpleUser>("SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
+
+            Assert.Equal(2, data.Item1.Count);
+            Assert.Equal(2, data.Item2.Count);
+            Assert.Equal("张三", data.Item1[0].Name);
+            Assert.Equal("甲", data.Item2[0].Name);
+        }
+
+        [Fact]
+        public void FetchMultiple_ReturnsThreeResultSets()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("张三", 20);
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            var (users, simpleUsers, users2) = helper.FetchMultiple<UserInfo, SimpleUser, UserInfo>(
+                "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;SELECT * FROM UserInfo;");
+
+            Assert.Single(users);
+            Assert.Equal(2, simpleUsers.Count);
+            Assert.Single(users2);
+        }
+
+        [Fact]
+        public void FetchMultiple_WithCallback_Works()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("张三", 20);
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            var tuple = helper.FetchMultiple<UserInfo, SimpleUser, Tuple<List<UserInfo>, List<SimpleUser>>>(
+                (u, s) => Tuple.Create(u, s),
+                "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
+
+            Assert.Single(tuple.Item1);
+            Assert.Single(tuple.Item2);
+            Assert.Equal("张三", tuple.Item1[0].Name);
+        }
+
+        #endregion
+
         #region Update / Delete / Save
 
         [Fact]
