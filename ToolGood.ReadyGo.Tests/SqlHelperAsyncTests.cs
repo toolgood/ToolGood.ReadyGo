@@ -127,6 +127,31 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
+        public async Task SQL_Select_Async_AllOverloads()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            for (int i = 0; i < 10; i++) {
+                db.NewUser("用户" + i, 20 + i);
+            }
+
+            // 无分页重载
+            var all = await helper.SQL_Select_Async<UserInfo>("Id, Name", "UserInfo", "ORDER BY Id", "");
+            Assert.Equal(10, all.Count);
+            Assert.Equal("用户0", all[0].Name);
+
+            // limit 重载：取前 3 条
+            var limit = await helper.SQL_Select_Async<UserInfo>(3, "Id, Name", "UserInfo", "ORDER BY Id", "");
+            Assert.Equal(3, limit.Count);
+            Assert.Equal("用户2", limit[2].Name);
+
+            // page 重载：第 2 页，每页 4 条
+            var pageList = await helper.SQL_Select_Async<UserInfo>(2, 4, "Id, Name", "UserInfo", "ORDER BY Id", "");
+            Assert.Equal(4, pageList.Count);
+            Assert.Equal("用户4", pageList[0].Name);
+        }
+
+        [Fact]
         public async Task ObjectCondition_Async()
         {
             using var db = TestDb.Create();
@@ -272,6 +297,116 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Single(tuple.Item1);
             Assert.Single(tuple.Item2);
             Assert.Equal("张三", tuple.Item1[0].Name);
+        }
+
+        #endregion
+
+        #region 补充覆盖
+
+        [Fact]
+        public async Task Select_Count_And_RawCount_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("甲", 20);
+            db.NewUser("乙", 30);
+            db.NewUser("丙", 40);
+
+            Assert.Equal(3, await helper.Select_Count_Async<UserInfo>());
+            Assert.Equal(2, await helper.Select_Count_Async<UserInfo>("WHERE Age > 20"));
+            Assert.Equal(3, await helper.Count_Async<UserInfo>());
+            Assert.Equal(2, await helper.Count_Async<UserInfo>("WHERE Age > 20"));
+            Assert.Equal(3, await helper.Count_Async("SELECT COUNT(*) FROM UserInfo"));
+            Assert.Equal(1, await helper.Count_Async("SELECT COUNT(*) FROM UserInfo WHERE Name = @0", "甲"));
+        }
+
+        [Fact]
+        public async Task Exists_ObjectCondition_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var s = new SimpleUser { Name = "甲", Age = 10 };
+            helper.Insert(s);
+            var loaded = await helper.FirstOrDefault_Async<SimpleUser>(s.Id);
+
+            var cond = new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age };
+            Assert.True(await helper.Exists_Async<SimpleUser>(cond));
+            Assert.True(await helper.Exists_Async<SimpleUser>(loaded.Id));
+            Assert.False(await helper.Exists_Async<SimpleUser>(999));
+        }
+
+        [Fact]
+        public async Task FirstOrDefault_NumericPkOverloads_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("甲", 20);
+
+            Assert.Equal("甲", (await helper.FirstOrDefault_Async<UserInfo>((uint)u.Id)).Name);
+            Assert.Equal("甲", (await helper.FirstOrDefault_Async<UserInfo>((ulong)u.Id)).Name);
+            Assert.Null(await helper.FirstOrDefault_Async<UserInfo>((uint)9999));
+        }
+
+        [Fact]
+        public async Task Select_ObjectCondition_LimitAndPage_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var s = new SimpleUser { Name = "甲", Age = 10 };
+            helper.Insert(s);
+            var loaded = await helper.FirstOrDefault_Async<SimpleUser>(s.Id);
+            var cond = new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age };
+
+            Assert.Single(await helper.Select_Async<SimpleUser>(5, cond));
+            Assert.Single(await helper.Select_Async<SimpleUser>(5, 0, cond));
+            Assert.Single(await helper.SelectPage_Async<SimpleUser>(1, 3, cond));
+        }
+
+        [Fact]
+        public async Task Update_Async_RawSql()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("甲", 20);
+
+            Assert.Equal(1, await helper.Update_Async<UserInfo>("SET Remark = '原生sql异步' WHERE Id = @0", u.Id));
+            Assert.Equal("原生sql异步", (await helper.FirstOrDefault_Async<UserInfo>(u.Id)).Remark);
+        }
+
+        [Fact]
+        public async Task FetchMultiple_Async_FourResultSets()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("张三", 20);
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            var (users, simpleUsers, users2, simpleUsers2) = await helper.SelectMultiple_Async<UserInfo, SimpleUser, UserInfo, SimpleUser>(
+                "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
+
+            Assert.Single(users);
+            Assert.Single(simpleUsers);
+            Assert.Single(users2);
+            Assert.Single(simpleUsers2);
+        }
+
+        [Fact]
+        public async Task FetchMultiple_Async_ThreeFourTupleCallback()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("张三", 20);
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            var r3 = await helper.SelectMultiple_Async<UserInfo, SimpleUser, UserInfo, int>(
+                (u, s, u2) => u.Count + s.Count + u2.Count,
+                "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;SELECT * FROM UserInfo;");
+            Assert.Equal(3, r3);
+
+            var r4 = await helper.SelectMultiple_Async<UserInfo, SimpleUser, UserInfo, SimpleUser, int>(
+                (u, s, u2, s2) => u.Count + s.Count + u2.Count + s2.Count,
+                "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
+            Assert.Equal(4, r4);
         }
 
         #endregion

@@ -390,6 +390,38 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal(3, page.Items.Count);
         }
 
+        [Fact]
+        public void SQL_Select_LimitOverload()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            for (int i = 0; i < 10; i++) {
+                db.NewUser("用户" + i, 20 + i);
+            }
+
+            var list = helper.SQL_Select<UserInfo>(5, "Id, Name", "UserInfo", "ORDER BY Id", "");
+
+            Assert.Equal(5, list.Count);
+            Assert.Equal("用户0", list[0].Name);
+            Assert.Equal("用户4", list[4].Name);
+        }
+
+        [Fact]
+        public void SQL_Select_PageOverload()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            for (int i = 0; i < 10; i++) {
+                db.NewUser("用户" + i, 20 + i);
+            }
+
+            var list = helper.SQL_Select<UserInfo>(3, 4, "Id, Name", "UserInfo", "ORDER BY Id", "");
+
+            Assert.Equal(2, list.Count);
+            Assert.Equal("用户8", list[0].Name);
+            Assert.Equal("用户9", list[1].Name);
+        }
+
         #endregion
 
         #region ExecuteDataTable / ExecuteDataSet / ExecuteScalar
@@ -488,6 +520,131 @@ namespace ToolGood.ReadyGo.Tests
                 // 不调用 Complete，释放时应回滚
             }
             Assert.False(helper.Exists<UserInfo>("WHERE Name = '事务2'"));
+        }
+
+        #endregion
+
+        #region 补充覆盖
+
+        [Fact]
+        public void Select_Count_And_RawCount()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("甲", 20);
+            db.NewUser("乙", 30);
+            db.NewUser("丙", 40);
+
+            // Select_Count<T> 别名
+            Assert.Equal(3, helper.Select_Count<UserInfo>());
+            Assert.Equal(2, helper.Select_Count<UserInfo>("WHERE Age > 20"));
+            // Count<T>(sql) 包装为 SELECT COUNT(*)
+            Assert.Equal(3, helper.Count<UserInfo>());
+            Assert.Equal(2, helper.Count<UserInfo>("WHERE Age > 20"));
+            // 原生 SQL Count
+            Assert.Equal(3, helper.Count("SELECT COUNT(*) FROM UserInfo"));
+            Assert.Equal(1, helper.Count("SELECT COUNT(*) FROM UserInfo WHERE Name = @0", "甲"));
+        }
+
+        [Fact]
+        public void GetTableName_Generic()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("甲", 20);
+
+            // dynamic 访问
+            dynamic tb = helper.GetTableName<UserInfo>("u");
+            var sql = $"SELECT {tb.Id}, {tb.Name} FROM {tb} WHERE {tb.Age} > 0";
+            Assert.NotEmpty(helper.Select<UserInfo>(sql));
+
+            // 强类型 F() 访问
+            var tb2 = helper.GetTableName<UserInfo>("u");
+            var sql2 = $"SELECT {tb2.F(x => x.Id)}, {tb2.F(x => x.Name)} FROM {tb2} WHERE {tb2.F(x => x.Age)} > 0";
+            Assert.NotEmpty(helper.Select<UserInfo>(sql2));
+        }
+
+        [Fact]
+        public void Exists_ObjectCondition_ClassAndScalar()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var s = new SimpleUser { Name = "甲", Age = 10 };
+            helper.Insert(s);
+            var loaded = helper.FirstOrDefault<SimpleUser>(s.Id);
+
+            // 对象条件（class）
+            var cond = new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age };
+            Assert.True(helper.Exists<SimpleUser>(cond));
+            Assert.False(helper.Exists<SimpleUser>(new SimpleUser { Id = 999, Name = "不存在", Age = 0 }));
+
+            // 主键值（标量）
+            Assert.True(helper.Exists<SimpleUser>(loaded.Id));
+            Assert.False(helper.Exists<SimpleUser>(999));
+        }
+
+        [Fact]
+        public void FirstOrDefault_NumericPkOverloads()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("甲", 20);
+
+            Assert.Equal("甲", helper.FirstOrDefault<UserInfo>((long)u.Id).Name);
+            Assert.Equal("甲", helper.FirstOrDefault<UserInfo>((uint)u.Id).Name);
+            Assert.Equal("甲", helper.FirstOrDefault<UserInfo>((ulong)u.Id).Name);
+            Assert.Null(helper.FirstOrDefault<UserInfo>((uint)9999));
+        }
+
+        [Fact]
+        public void Select_ObjectCondition_LimitAndPage()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var s = new SimpleUser { Name = "甲", Age = 10 };
+            helper.Insert(s);
+            var loaded = helper.FirstOrDefault<SimpleUser>(s.Id);
+            var cond = new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age };
+
+            Assert.Single(helper.Select<SimpleUser>(5, cond));
+            Assert.Single(helper.Select<SimpleUser>(5, 0, cond));
+            Assert.Single(helper.SelectPage<SimpleUser>(1, 3, cond));
+        }
+
+        [Fact]
+        public void FetchMultiple_FourResultSets()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("张三", 20);
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            var (users, simpleUsers, users2, simpleUsers2) = helper.SelectMultiple<UserInfo, SimpleUser, UserInfo, SimpleUser>(
+                "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
+
+            Assert.Single(users);
+            Assert.Single(simpleUsers);
+            Assert.Single(users2);
+            Assert.Single(simpleUsers2);
+        }
+
+        [Fact]
+        public void FetchMultiple_ThreeFourTupleCallback()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("张三", 20);
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            var r3 = helper.SelectMultiple<UserInfo, SimpleUser, UserInfo, int>(
+                (u, s, u2) => u.Count + s.Count + u2.Count,
+                "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;SELECT * FROM UserInfo;");
+            Assert.Equal(3, r3);
+
+            var r4 = helper.SelectMultiple<UserInfo, SimpleUser, UserInfo, SimpleUser, int>(
+                (u, s, u2, s2) => u.Count + s.Count + u2.Count + s2.Count,
+                "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
+            Assert.Equal(4, r4);
         }
 
         #endregion
