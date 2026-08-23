@@ -1,200 +1,151 @@
 ---
 name: "toolgood-readygo"
-description: "基于PetaPoco的.NET轻量级ORM框架。在处理ToolGood.ReadyGo3数据库操作、CRUD、LINQ查询或多数据库支持时调用。"
+description: "基于NPoco的.NET轻量级ORM框架。在处理ToolGood.ReadyGo数据库操作、CRUD、LINQ查询或多数据库支持时调用。"
 ---
 
-# ToolGood.ReadyGo3 - 轻量级ORM框架
+# ToolGood.ReadyGo - 轻量级ORM框架
 
 ## 项目概述
 
-ToolGood.ReadyGo3 是一个轻量级、高性能的 .NET ORM（对象关系映射）框架，由 PetaPoco 演进而来。它提供了简单而强大的数据库操作 API，支持多种数据库系统，包括 SQL Server、MySQL、SQLite、Oracle、PostgreSQL 等。
+ToolGood.ReadyGo 是一个轻量级、高性能的 .NET ORM（对象关系映射）框架，由 NPOCO 核心修改而来。它提供了简单而强大的数据库操作 API，支持多种数据库系统，包括 SqlServer、MySql、SQLite、Oracle、Access、DuckDB 等。
 
 ### 核心特性
 
 - **轻量快速**：直接执行 SQL，开销最小
-- **多数据库支持**：SQL Server、MySQL、SQLite、Oracle、PostgreSQL、MS Access、Firebird
-- **LINQ 表达式支持**：使用 Lambda 表达式构建类型安全的查询
-- **异步操作**：所有数据库操作都支持 async/await
-- **动态 SQL 构建**：流式 API 构建复杂查询
+- **多数据库支持**：SqlServer、SqlServer2012、MySql、SQLite、Oracle、Access、DuckDB（SqlType 枚举还预留 MariaDb、PostgreSQL、FirebirdDb 等）
+- **LINQ 表达式支持**：使用 Lambda 表达式构建类型安全的动态查询
+- **异步操作**：所有核心操作均提供 `_Async` 后缀的异步版本
+- **动态 SQL 构建**：`Where<T>()` 流式 API 构建复杂查询
+- **object 条件查询**：以对象为条件执行 Select / Update / Delete / Count / Exists
+- **快照局部更新**：`StartSnapshot` 记录对象变更，只更新变更的列
 - **事务支持**：内置事务管理
-- **事件系统**：钩入数据库操作进行日志记录和审计
 - **表管理**：编程方式创建、删除、截断表
 
 ## 核心架构
 
-### 主要组件
+### 目录结构
 
 ```
-ToolGood.ReadyGo3/
-├── SqlHelper.cs              # 核心数据库操作类
+ToolGood.ReadyGo/
+├── SqlHelper.cs              # 核心数据库操作类（Execute/Select/CRUD/事务）
+├── SqlHelper.Async.cs        # 异步操作实现（_Async 后缀）
+├── SqlHelper.Object.cs       # object 条件查询（含主键重载）
+├── SqlHelper.Where.cs        # 动态查询入口（Where/UpdateMany/DeleteMany）
 ├── SqlHelperFactory.cs       # 创建 SqlHelper 实例的工厂
 ├── SqlUtil.cs                # SQL 工具函数
-├── Asyncs/                   # 异步操作实现
+├── SqlType.cs                # 数据库类型枚举
+├── DatabaseProvider.cs       # Provider/数据库类型解析
 ├── Attributes/               # 实体映射特性
-├── LinQ/                     # LINQ 表达式支持
-├── PetaPoco/                 # 核心 ORM 引擎
-├── Gadget/                   # 工具和辅助类
-└── Enums/                    # 枚举类型
+├── Core/                     # NPoco 核心引擎（含 Linq/ 动态查询）
+├── Gadget/                   # 表管理、配置（SqlConfig）、SQL 记录（SqlRecord）
+├── Internals/                # 内部辅助类
+├── Exceptions/               # 异常类型（SqlExecuteException 等）
+└── ConnectionStrings/        # JournalMode 等
 ```
 
 ### 核心类
 
 #### SqlHelper
-所有数据库操作的主入口点。提供以下方法：
-- CRUD 操作（Insert、Update、Delete、Select）
+所有数据库操作的主入口点（`partial class`，分布在 SqlHelper.cs / SqlHelper.Async.cs / SqlHelper.Object.cs / SqlHelper.Where.cs 中）：
+- CRUD 操作（Insert、Update、Delete、Save、InsertList）
 - 查询执行（Execute、ExecuteScalar、ExecuteDataTable、ExecuteDataSet）
-- 分页（Page、SelectPage）
-- 动态查询（Where helper）
-- 事务管理
+- 查询与分页（Select、SelectPage、Page、SelectOneToMany、SelectMultiple）
+- 计数与存在（Count、Select_Count、Exists）
+- 动态查询（Where、UpdateMany、DeleteMany）
+- object 条件查询
+- 快照局部更新（StartSnapshot）
+- 事务管理（UseTransaction）
+- 动态表名（GetTableName）
 
 #### SqlHelperFactory
-创建 SqlHelper 实例的工厂类，支持多种数据库连接：
-- `OpenDatabase()` - 通用数据库连接
-- `OpenSqlServer()` - SQL Server 专用
-- `OpenMysql()` - MySQL 专用
-- `OpenSqliteFile()` - SQLite 文件数据库
-- `OpenOracle()` - Oracle 专用
+创建 SqlHelper 实例的工厂类，支持多种数据库连接。
 
-#### WhereHelper<T>
-构建动态 SQL 查询的流式 API：
-- 条件 WHERE 子句
-- LIKE、IN、NOT IN 操作
-- ORDER BY、GROUP BY、HAVING
-- JOIN 支持
-- 列选择/排除
+#### IQueryProvider<T>（由 Where<T>() 返回）
+构建动态 SQL 查询的流式 API，提供条件、排序、分页、投影等能力。
 
-## API 参考
-
-### 实体特性
-
-#### TableAttribute
-将类映射到数据库表。
+## 快速上手
 
 ```csharp
-[Table("Users", "dbo", "MyDatabase")]
-public class User
-{
-    public int Id { get; set; }
-    public string Name { get; set; }
-}
+using ToolGood.ReadyGo;
+
+var helper = SqlHelperFactory.OpenSqliteFile("test.db");
+helper._TableHelper.CreateTable(typeof(User));
+
+helper.Insert(new User { Name = "Ted", Age = 21 });
+var user = helper.FirstOrDefault<User>("Where Name=@0", "Ted");
+var users = helper.Where<User>().Where(x => x.Age > 18).OrderBy(x => x.Name).ToList();
 ```
 
-#### PrimaryKeyAttribute
-指定主键列。
+## 数据库连接
+
+### 基本连接
 
 ```csharp
-[PrimaryKey("Id", autoIncrement: true)]
-public class User
-{
-    public int Id { get; set; }
-}
-```
-
-#### ColumnAttribute
-自定义列映射。
-
-```csharp
-[Column("user_name", "用户名字段")]
-public string UserName { get; set; }
-```
-
-#### IgnoreAttribute
-从映射中排除属性。
-
-```csharp
-[Ignore]
-public string CalculatedField { get; set; }
-```
-
-#### ResultColumnAttribute
-映射从查询结果填充但不用于 INSERT/UPDATE 的列。
-
-```csharp
-[ResultColumn]
-public int OrderCount { get; set; }
-```
-
-### 数据库连接
-
-#### 基本连接
-
-```csharp
-// SQL Server
-var helper = SqlHelperFactory.OpenSqlServer("server", "database", "user", "password");
-
-// MySQL
-var helper = SqlHelperFactory.OpenMysql("server", "database", "user", "password");
-
 // SQLite
 var helper = SqlHelperFactory.OpenSqliteFile("path/to/database.db");
 
-// 通用连接
+// Microsoft.Data.Sqlite（支持密码）
+var helper = SqlHelperFactory.OpenMsSqliteFile("path/to/database.db", "pwd");
+
+// SqlServer
+var helper = SqlHelperFactory.OpenSqlServer("server", "database", "user", "password");
+var helper = SqlHelperFactory.OpenSqlServer("server", 1433, "database", "user", "password");
+var helper = SqlHelperFactory.OpenSqlServer2012("server", "database", "user", "password");
+
+// MySQL
+var helper = SqlHelperFactory.OpenMysql("server", "database", "user", "password");
+var helper = SqlHelperFactory.OpenMysql("server", 3306, "database", "user", "password");
+
+// Oracle
+var helper = SqlHelperFactory.OpenOracle("server", 1521, "serviceName", "user", "password");
+
+// DuckDB
+var helper = SqlHelperFactory.OpenDuckDbFile("path/to/file.db");
+
+// Access（32 位 / 64 位）
+var helper = SqlHelperFactory.OpenAccessFile("path/to/file.mdb");
+var helper = SqlHelperFactory.OpenAccessFile64x("path/to/file.accdb");
+
+// 通用连接（按 SqlType）
 var helper = SqlHelperFactory.OpenDatabase(connectionString, SqlType.SqlServer);
+var helper = SqlHelperFactory.OpenDatabase(connectionString, "System.Data.SqlClient", SqlType.SqlServer);
 ```
 
-#### 使用配置对象连接
+## CRUD 操作
+
+### 插入
 
 ```csharp
-// SQL Server 使用连接字符串构建器
-var connStr = new SqlServerConnectionString();
-connStr.Server = "localhost";
-connStr.Database = "MyDB";
-connStr.UserId = "sa";
-connStr.Password = "password";
-var helper = SqlHelperFactory.OpenSqlServer(connStr);
+// 插入单个实体，返回主键
+var newId = helper.Insert(user);
 
-// MySQL 使用连接字符串构建器
-var mysqlConnStr = new MysqlConnectionString();
-mysqlConnStr.Server = "localhost";
-mysqlConnStr.Database = "MyDB";
-mysqlConnStr.UserId = "root";
-mysqlConnStr.Password = "password";
-var helper = SqlHelperFactory.OpenMysql(mysqlConnStr);
+// 批量插入（不返回主键）
+helper.InsertList(new List<User> { user1, user2, user3 });
 ```
 
-### CRUD 操作
-
-#### 插入
-
-```csharp
-// 插入单个实体
-var user = new User { Name = "张三", Email = "zhangsan@example.com" };
-var id = helper.Insert(user);
-
-// 插入并获取自增主键
-var newId = (int)helper.Insert(user);
-
-// 批量插入
-var users = new List<User> { user1, user2, user3 };
-helper.InsertList(users);
-
-// 插入到指定表
-helper.Table_Insert("Users", user);
-```
-
-#### 更新
+### 更新
 
 ```csharp
 // 根据主键更新实体
 user.Name = "李四";
 var affected = helper.Update(user);
 
-// 根据条件更新
-helper.Update<User>("SET Name = @0 WHERE Id = @1", "新名称", 1);
+// 使用 SQL 更新
+helper.Update<User>("Set [Name]=@0 WHERE [Id]=@1", "新名称", 1);
+
+// 指定列更新
+helper.Update(user, new[] { "Name" });
+
+// 快照局部更新（只更新变更的列）
+var snapshot = helper.StartSnapshot(user);
+user.Name = "Bobby";
+helper.Update(user, snapshot);
 
 // 使用对象条件更新
-helper.Update<User>(
-    new { Name = "已更新" },
-    new { Id = 1 }
-);
-
-// 使用 WhereHelper 更新
-helper.Where<User>()
-    .Where(u => u.Id == 1)
-    .Update(new { Name = "已更新" });
+helper.Update<User>(new { NickName = "新昵称" }, new { Id = 1 });
 ```
 
-#### 删除
+### 删除
 
 ```csharp
 // 删除实体
@@ -207,335 +158,243 @@ helper.DeleteById<User>(1);
 helper.Delete<User>("WHERE Age < @0", 18);
 
 // 使用对象条件删除
-helper.Delete<User>(new { Status = "Inactive" });
-
-// 使用 WhereHelper 删除
-helper.Where<User>()
-    .Where(u => u.Status == "Inactive")
-    .Delete();
+helper.Delete<User>(new { Id = 1 });
 ```
 
-#### 查询
+### 保存
 
 ```csharp
-// 查询所有
-var users = helper.Select<User>();
-
-// 根据条件查询
-var users = helper.Select<User>("WHERE Age > @0", 18);
-
-// 使用对象条件查询
-var users = helper.Select<User>(new { Status = "Active" });
-
-// 限制数量查询
-var users = helper.Select<User>(10, "WHERE Status = @0", "Active");
-
-// 分页查询（跳过和获取）
-var users = helper.Select<User>(10, 20, "WHERE Status = @0", "Active");
-
-// 查询第一条
-var user = helper.FirstOrDefault<User>(1); // 根据主键
-var user = helper.FirstOrDefault<User>("WHERE Email = @0", "test@example.com");
-var user = helper.FirstOrDefault<User>(new { Email = "test@example.com" });
+helper.Save(user); // 根据主键判断插入或更新
 ```
 
-### 分页查询
+## SQL 查询
+
+### 单个查询
 
 ```csharp
-// 分页查询
-var page = helper.Page<User>(1, 20, "WHERE Status = @0 ORDER BY Name", "Active");
-// page.Items - 用户列表
-// page.TotalItems - 总记录数
-// page.TotalPages - 总页数
-// page.CurrentPage - 当前页码
-// page.PageSize - 每页记录数
+var user1 = helper.FirstOrDefault<User>("SELECT * FROM Users where [Id]=@0", 1);
+var user2 = helper.FirstOrDefault<User>("Where [Id]=@0", 1);   // 简化 SQL（自动补 SELECT/FROM）
 
-// SelectPage（仅返回列表）
-var users = helper.SelectPage<User>(1, 20, "WHERE Status = @0", "Active");
+var dataset = helper.ExecuteDataSet("SELECT * FROM Users where [Id]=@0", 1);
+var datatable = helper.ExecuteDataTable("SELECT * FROM Users where [Id]=@0", 1);
+
+var userCount = helper.Count<User>("SELECT COUNT(*) FROM Users Where [UserType]=@0", 1);
+var userCount2 = helper.ExecuteScalar<int>("SELECT COUNT(*) FROM Users Where [UserType]=@0", 1);
 ```
 
-### 查询执行
+### 列表查询
 
 ```csharp
-// 执行非查询语句
-var affected = helper.Execute("UPDATE Users SET Status = @0", "Active");
-
-// 执行标量查询
-var count = helper.ExecuteScalar<int>("SELECT COUNT(*) FROM Users");
-
-// 执行返回 DataTable
-var dt = helper.ExecuteDataTable("SELECT * FROM Users WHERE Age > @0", 18);
-
-// 执行返回 DataSet
-var ds = helper.ExecuteDataSet("SELECT * FROM Users; SELECT * FROM Orders");
-
-// 计数
-var count = helper.Count<User>("WHERE Status = @0", "Active");
-
-// 判断是否存在
-var exists = helper.Exists<User>(1);
-var exists = helper.Exists<User>("WHERE Email = @0", "test@example.com");
+var users = helper.Select<User>("SELECT * FROM Users Where [UserType]=@0", 1);
+var users2 = helper.Select<User>(20, "SELECT * FROM Users Where [UserType]=@0", 1);     // 取前 20 条
+var users3 = helper.Select<User>(20, 0, "SELECT * FROM Users Where [UserType]=@0", 1);  // 取 20 条、跳过 0 条（limit, offset）
+var usersPage = helper.Page<User>(1, 20, "SELECT * FROM Users Where [UserType]=@0", 1); // 分页（含总页数）
 ```
 
-### 动态查询构建
+### 多结果集与一对多
 
 ```csharp
-// 基本条件
+var (users, addresses) = helper.SelectMultiple<User, Address>(
+    "select * from users;select * from addresses;");
+var data = helper.SelectMultiple<User, Address, Tuple<List<User>, List<Address>>>(
+    (u, a) => Tuple.Create(u, a), sql);  // 回调方式组合结果
+
+var userInfos = helper.SelectOneToMany<UserInfo>(x => x.Addresses, manySql);
+```
+
+### 简化 SQL
+
+```csharp
+var users1 = helper.Select<User>("SELECT * FROM Users Where [UserType]=@0", 1);
+var users2 = helper.Select<User>("FROM Users Where [UserType]=@0", 1);
+var users3 = helper.Select<User>("Where [UserType]=@0", 1);
+
+helper.Update<User>("UPDATE Users Set [Name]=@0 WHERE [Id]=@1", "Test", 1);
+helper.Update<User>("Set [Name]=@0 WHERE [Id]=@1", "Test", 1);
+```
+
+## object 条件查询
+
+以对象为条件，属性为默认值时忽略该条件：
+
+```csharp
+var user = helper.FirstOrDefault<User>(new { Id = 1 });
+var users = helper.Select<User>(new { UserType = 1, State = true });
+helper.Update<User>(new { NickName = "新昵称" }, new { Id = 1 });   // set 对象, 条件对象
+helper.Delete<User>(new { Id = 1 });
+var count = helper.Count<User>(new { UserType = 1 });
+var exists = helper.Exists<User>(new { UserName = "Ted" });
+```
+
+同时提供按主键查询的重载（`FirstOrDefault<T>(int / long / uint / ulong)` 等）：
+
+```csharp
+var user = helper.FirstOrDefault<User>(1);
+```
+
+## 动态查询
+
+### 链式查询（Where<T>()）
+
+`Where<T>()` 返回 `IQueryProvider<T>`，可链式调用后再执行。
+
+```csharp
+public User FindUser(int userId, string userName, string nickName)
+{
+    var helper = SqlHelperFactory.OpenMysql("127.0.0.1", "web", "root", "123456");
+    return helper.Where<User>()
+        .IfTrueWhere(userId > 0, u => u.Id == userId)           // 条件成立才追加 Where
+        .IfTrueWhere(userName != null, u => u.UserName == userName)
+        .IfTrueWhere(nickName != null, u => u.NickName == nickName)
+        .FirstOrDefault();
+}
+```
+
+构建方法：
+
+- `Where(expression)`、`WhereSql(sql, args)`、`OrderBy(column)`、`OrderByDescending(column)`、`ThenBy`、`ThenByDescending`、`Limit(rows)`、`Limit(skip, rows)`、`From(builder)`
+
+执行方法：
+
+- `ToList()`、`ToArray()`、`ToEnumerable()`、`First()`、`FirstOrDefault()`、`Single()`、`SingleOrDefault()`、`Count()`、`Any()`、`ToPage(page, pageSize)`、`ProjectTo<T2>(expression)`、`ToProjectedPage<T2>(expression, page, pageSize)`、`Distinct()`
+
+动态条件扩展（IfTrue* 条件成立才生效）：
+
+- `IfTrueWhere`、`IfTrueOrderBy`、`IfTrueOrderByDescending`、`IfTrueLimit`
+- `IfTrueWhereIn`、`IfTrueWhereNotIn`、`IfTrueWhereLike`、`IfTrueWhereLikeStart`、`IfTrueWhereLikeEnd`、`IfTrueWhereExists`、`IfTrueWhereNotExists`
+
+常用扩展：
+
+- `WhereIn(column|field, values)`、`WhereNotIn(...)`、`WhereLike(column|field, pattern)`（%关键字%）、`WhereLikeStart`、`WhereLikeEnd`、`WhereExists(sql, args)`、`WhereNotExists(sql, args)`
+
+```csharp
+// 排序 + 分页
 var users = helper.Where<User>()
     .Where(u => u.Age > 18)
-    .Where(u => u.Status == "Active")
-    .Select();
+    .OrderBy(u => u.Name)
+    .Limit(10, 20)                       // 跳过 20 条取 10 条
+    .ToList();
 
-// 带排序
-var users = helper.Where<User>()
-    .Where(u => u.Age > 18)
-    .OrderBy(u => u.Name, OrderType.Asc)
-    .Select();
-
-// 带分页
-var users = helper.Where<User>()
+var page = helper.Where<User>()
     .Where(u => u.Status == "Active")
-    .SelectPage(1, 20);
+    .ToPage(1, 20);
 
 // LIKE 查询
 var users = helper.Where<User>()
     .WhereLike(u => u.Name, "张")
-    .Select();
+    .ToList();
 
 // IN 查询
 var ids = new List<int> { 1, 2, 3, 4, 5 };
 var users = helper.Where<User>()
     .WhereIn(u => u.Id, ids)
-    .Select();
+    .ToList();
 
-// 条件构建
-var users = helper.Where<User>()
-    .IfTrue(!string.IsNullOrEmpty(name))
-        .WhereLike(u => u.Name, name)
-    .IfTrue(age > 0)
-        .Where(u => u.Age >= age)
-    .Select();
-
-// 使用 WhereHelper 更新
-helper.Where<User>()
-    .Where(u => u.Status == "Inactive")
-    .Update(new { Status = "Archived" });
-
-// 使用 WhereHelper 删除
-helper.Where<User>()
-    .Where(u => u.LastLogin < DateTime.Now.AddYears(-1))
-    .Delete();
-
-// 选择特定列
+// 投影
 var results = helper.Where<User>()
     .Where(u => u.Status == "Active")
-    .Select(u => new { u.Id, u.Name, u.Email });
-
-// Group By 和 Having
-var stats = helper.Where<User>()
-    .GroupBy(u => u.Department)
-    .Having("COUNT(*) > @0", 5)
-    .Select(u => new { u.Department, Count = SqlFunction.Count });
+    .ProjectTo(u => new { u.Id, u.Name });
 ```
 
-### LINQ 表达式支持
+### 批量更新与删除
 
 ```csharp
-// Where 中使用 Lambda 表达式
-var users = helper.Where<User>()
-    .Where(u => u.Age > 18 && u.Status == "Active")
-    .Select();
+helper.UpdateMany<User>()
+    .Where(x => x.Age > 30)
+    .ExcludeDefaults()                  // 跳过默认值字段
+    .Execute(new User { Vip = true });
 
-// 使用 Lambda 排序
-var users = helper.Where<User>()
-    .OrderBy(u => u.Name, OrderType.Asc)
-    .OrderByDescending(u => u.CreatedDate)
-    .Select();
-
-// 使用 Lambda 分组
-var groups = helper.Where<User>()
-    .GroupBy(u => u.Department)
-    .Select();
+helper.DeleteMany<User>()
+    .Where(x => x.Age < 18)
+    .Execute();
 ```
 
-### 异步操作
+## 异步 API
+
+所有核心操作均提供 `_Async` 后缀的异步版本：`Execute_Async`、`ExecuteScalar_Async`、`ExecuteDataTable_Async`、`Exists_Async`、`Count_Async`、`Select_Async`、`SelectPage_Async`、`Page_Async`、`SelectOneToMany_Async`、`SelectMultiple_Async`、`FirstOrDefault_Async`、`Insert_Async`、`InsertList_Async`、`Update_Async`（含快照/指定列/条件）、`Delete_Async`、`DeleteById_Async`、`Save_Async`。
 
 ```csharp
-// 异步插入
-var id = await helper.Insert_Async(user);
-
-// 异步更新
-var affected = await helper.Update_Async(user);
-
-// 异步删除
-var affected = await helper.Delete_Async(user);
-var affected = await helper.DeleteById_Async<User>(1);
-
-// 异步查询
-var users = await helper.Select_Async<User>();
-var users = await helper.Select_Async<User>("WHERE Status = @0", "Active");
-
-// 异步获取第一条
+var users = await helper.Select_Async<User>("Where [UserType]=@0", 1);
 var user = await helper.FirstOrDefault_Async<User>(1);
-
-// 异步分页
-var page = await helper.Page_Async<User>(1, 20, "WHERE Status = @0", "Active");
-
-// 异步计数
-var count = await helper.Count_Async<User>();
-
-// 异步判断存在
-var exists = await helper.Exists_Async<User>(1);
-
-// 异步执行
-var affected = await helper.Execute_Async("UPDATE Users SET Status = @0", "Active");
-var count = await helper.ExecuteScalar_Async<int>("SELECT COUNT(*) FROM Users");
+var page = await helper.Page_Async<User>(1, 20, "Where Status=@0", "Active");
+await helper.Insert_Async(user);
+await helper.Update_Async(user, snapshot);   // 异步快照局部更新
 ```
 
-### 事务管理
+## 事务管理
 
 ```csharp
-// 使用事务
-using (var tran = helper.UseTransaction())
-{
+using (var tran = helper.UseTransaction()) {
     helper.Insert(user1);
     helper.Insert(user2);
-    helper.Update(user3);
-    
-    tran.Complete(); // 提交事务
-    // 如果不调用 Complete()，事务将回滚
-}
-
-// 手动事务控制
-helper._Config.SetIsolationLevel(System.Data.IsolationLevel.ReadCommitted);
-using (var tran = helper.UseTransaction())
-{
-    try
-    {
-        helper.Insert(user);
-        helper.Update(order);
-        tran.Complete();
-    }
-    catch
-    {
-        // 事务将自动回滚
-        throw;
-    }
+    tran.Complete(); // 提交事务；若不调用 Complete()，Dispose 时将回滚
 }
 ```
 
-### 表管理
+## 表管理
+
+通过 `helper._TableHelper`（SqlTableHelper）编程方式创建、删除、截断表：
 
 ```csharp
-// 获取表管理助手
-var tableHelper = helper._Sql.GetTableHelper();
-
-// 根据实体创建表
-tableHelper.CreateTable(typeof(User));
-tableHelper.CreateTable(typeof(User), withIndex: true);
-
-// 尝试创建表（IF NOT EXISTS）
-tableHelper.TryCreateTable(typeof(User));
-
-// 创建索引
-tableHelper.CreateTableIndex(typeof(User));
-
-// 删除表
-tableHelper.DropTable(typeof(User));
-tableHelper.DropTable("Users");
-
-// 截断表
-tableHelper.TruncateTable(typeof(User));
-tableHelper.TruncateTable("Users");
+var table = helper._TableHelper;
+table.TryCreateTable(typeof(User));    // 表不存在则创建
+table.CreateTable(typeof(User));       // 创建表（可传 withIndex: true 同时创建索引）
+table.CreateTableIndex(typeof(User));  // 创建索引
+table.DropTable(typeof(User));         // 删除表
+table.TruncateTable(typeof(User));     // 清空表
 
 // 获取 SQL 脚本
-var createSql = tableHelper.GetCreateTable(typeof(User));
-var dropSql = tableHelper.GetDropTable(typeof(User));
-var truncateSql = tableHelper.GetTruncateTable(typeof(User));
+var createSql = table.GetCreateTable(typeof(User));
+var dropSql = table.GetDropTable(typeof(User));
+var truncateSql = table.GetTruncateTable(typeof(User));
 ```
 
-### 事件系统
+## 配置选项
+
+通过 `helper._Config`（SqlConfig）设置配置，均为属性：
 
 ```csharp
-// 设置事件处理器
-helper._Events.OnException = (ex, sql, args) => 
-{
-    Console.WriteLine($"SQL 错误: {ex.Message}");
-    Console.WriteLine($"SQL: {sql}");
-    return true; // 返回 true 以重新抛出异常
-};
+// 命令超时（秒）
+helper._Config.CommandTimeout = 30;
 
-helper._Events.OnExecutingCommand = (sql, args) => 
-{
-    Console.WriteLine($"正在执行: {sql}");
-};
+// 隔离级别
+helper._Config.IsolationLevel = System.Data.IsolationLevel.ReadCommitted;
 
-helper._Events.OnExecutedCommand = (sql, args) => 
-{
-    Console.WriteLine($"已执行: {sql}");
-};
+// 插入时为实体设置默认值
+helper._Config.Insert_String_Default_NotNull = true;  // 字符串默认空字符串
+helper._Config.Insert_DateTime_Default_Now = true;    // DateTime 默认当前时间
+helper._Config.Insert_Guid_Default_New = true;        // Guid 默认新 GUID
 
-helper._Events.OnBeforeInsert = (poco) => 
-{
-    // 返回 true 取消插入
-    return false;
-};
-
-helper._Events.OnAfterInsert = (poco) => 
-{
-    // 日志或审计
-};
-
-helper._Events.OnBeforeUpdate = (poco) => false;
-helper._Events.OnAfterUpdate = (poco) => { };
-helper._Events.OnBeforeDelete = (poco) => false;
-helper._Events.OnAfterDelete = (poco) => { };
+// First 查询使用 LIMIT 1
+helper._Config.Select_First_With_Limit_1 = true;
 ```
 
-### 配置选项
+## SQL 执行监控
+
+通过 `helper._Sql`（SqlRecord）获取最近一次执行信息：
 
 ```csharp
-// 设置命令超时
-helper._Config.SetCommandTimeout(30); // 30 秒
-
-// 设置隔离级别
-helper._Config.SetIsolationLevel(System.Data.IsolationLevel.ReadCommitted);
-
-// 为新实体设置默认值
-helper._Config.SetStringDefaultNotNull(true); // 字符串属性默认为空字符串
-helper._Config.SetDateTimeDefaultNow(true); // DateTime 属性默认为当前时间
-helper._Config.SetGuidDefaultNew(true); // Guid 属性默认为新 GUID
-
-// 启用 SQL 日志
-helper._Sql.LastSQL; // 最后执行的 SQL
-helper._Sql.LastArgs; // 最后的参数
-helper._Sql.LastCommand; // 最后的命令（带参数）
-helper._Sql.LastErrorMessage; // 最后的错误消息
+var sql = helper._Sql.LastSQL;          // 上次 SQL 语句
+var args = helper._Sql.LastArgs;        // 上次 SQL 参数
+var cmd = helper._Sql.LastCommand;      // 上次 SQL（带参数格式化）
+var err = helper._Sql.LastErrorMessage; // 上次错误信息
 ```
 
-### SQL 工具类
+## SQL 工具类（SqlUtil）
 
 ```csharp
-// 转义参数
-var escaped = SqlUtil.ToEscapeParam("O'Brien"); // O\'Brien
+var escaped = SqlUtil.ToEscapeParam("O'Brien");         // 转义参数
+var escaped = SqlUtil.ToEscapeLikeParam("test%value");  // 转义 LIKE 参数
 
-// 转义 LIKE 参数
-var escaped = SqlUtil.ToEscapeLikeParam("test%value"); // test\%value
+var where = SqlUtil.WhereLike("Name", "张");        // Name LIKE '张'
+var where = SqlUtil.WhereLikeStart("Name", "张");   // Name LIKE '%张'
+var where = SqlUtil.WhereLikeEnd("Name", "张");     // Name LIKE '张%'
 
-// 构建 LIKE 子句
-var where = SqlUtil.WhereLike("Name", "张"); // Name LIKE '%张%'
-var where = SqlUtil.WhereLikeStart("Name", "张"); // Name LIKE '%张'
-var where = SqlUtil.WhereLikeEnd("Name", "张"); // Name LIKE '张%'
-
-// 构建 IN 子句
-var where = SqlUtil.WhereIn("Id", new List<int> { 1, 2, 3 }); // Id IN (1,2,3)
-var where = SqlUtil.WhereIn("Name", new List<string> { "A", "B" }); // Name IN ('A','B')
-
-// 构建 NOT IN 子句
+var where = SqlUtil.WhereIn("Id", new List<int> { 1, 2, 3 });
 var where = SqlUtil.WhereNotIn("Id", new List<int> { 1, 2, 3 });
 ```
 
-### 动态表名
+## 动态表名
 
 ```csharp
 // 获取动态表名用于列绑定
@@ -549,42 +408,23 @@ var sql = $"SELECT {table.Id} FROM {table}";
 
 ## 支持的数据库
 
-| 数据库 | SqlType 枚举 | 提供程序 |
-|--------|--------------|----------|
-| SQL Server | SqlServer, SqlServer2012 | System.Data.SqlClient |
-| MySQL | MySql, MariaDb | MySql.Data.MySqlClient |
-| SQLite | SQLite | System.Data.SQLite |
-| Oracle | Oracle | Oracle.ManagedDataAccess |
-| PostgreSQL | PostgreSQL | Npgsql |
-| MS Access | MsAccessDb | System.Data.OleDb |
-| Firebird | FirebirdDb | FirebirdSql.Data.Firebird |
-| SQL Server CE | SqlServerCE | System.Data.SqlServerCe |
+SqlHelperFactory 提供以下连接方法：
+
+| 数据库 | 工厂方法 | 提供程序 |
+|--------|----------|----------|
+| SQL Server | OpenSqlServer / OpenSqlServer2012 | System.Data.SqlClient |
+| MySQL | OpenMysql | MySql.Data.MySqlClient |
+| SQLite | OpenSqliteFile | System.Data.SQLite |
+| SQLite | OpenMsSqliteFile | Microsoft.Data.Sqlite |
+| Oracle | OpenOracle | Oracle.ManagedDataAccess |
+| DuckDB | OpenDuckDbFile | DuckDB.NET.Data.Full |
+| MS Access | OpenAccessFile（32位）/ OpenAccessFile64x（64位） | System.Data.OleDb |
+
+`SqlType` 枚举还包含 MariaDb、PostgreSQL、FirebirdDb、SqlServerCE 等类型。
 
 ## 最佳实践
 
-### 1. 连接管理
-
-```csharp
-// 推荐：使用 using 语句
-using (var helper = SqlHelperFactory.OpenSqlServer(connectionString))
-{
-    var users = helper.Select<User>();
-}
-
-// 推荐：复用连接执行多个操作
-var helper = SqlHelperFactory.OpenSqlServer(connectionString);
-try
-{
-    helper.Insert(user1);
-    helper.Insert(user2);
-}
-finally
-{
-    helper.Dispose();
-}
-```
-
-### 2. 参数化查询
+### 1. 参数化查询
 
 ```csharp
 // 推荐：使用参数
@@ -594,67 +434,50 @@ var users = helper.Select<User>("WHERE Name = @0 AND Age > @1", name, age);
 var users = helper.Select<User>($"WHERE Name = '{name}'");
 ```
 
-### 3. 批量操作
+### 2. 批量操作
 
 ```csharp
 // 推荐：使用 InsertList 批量插入
-var users = new List<User>();
-for (int i = 0; i < 1000; i++)
-{
-    users.Add(new User { Name = $"用户{i}" });
-}
-helper.InsertList(users); // 高效批量插入
+helper.InsertList(users);
 
 // 不推荐：逐条插入
-foreach (var user in users)
-{
-    helper.Insert(user); // 大量数据时非常慢
-}
+foreach (var user in users) helper.Insert(user);
 ```
 
-### 4. 事务使用
+### 3. 事务使用
 
 ```csharp
-// 推荐：相关操作使用事务
-using (var tran = helper.UseTransaction())
-{
+using (var tran = helper.UseTransaction()) {
     helper.Delete<Order>(new { UserId = userId });
     helper.Delete<User>(userId);
     tran.Complete();
 }
 ```
 
-### 5. 异步操作
+### 4. 异步操作
 
 ```csharp
-// 推荐：I/O 密集型操作使用异步
 public async Task<List<User>> GetActiveUsersAsync()
 {
     return await helper.Select_Async<User>("WHERE Status = @0", "Active");
 }
-
-// 推荐：并行异步操作
-var usersTask = helper.Select_Async<User>();
-var ordersTask = helper.Select_Async<Order>();
-await Task.WhenAll(usersTask, ordersTask);
 ```
 
-### 6. 实体设计
+### 5. 实体设计
 
 ```csharp
-// 推荐：清晰的实体特性标注
 [Table("Users")]
 [PrimaryKey("Id", autoIncrement: true)]
 public class User
 {
     public int Id { get; set; }
-    
+
     [Column("user_name")]
     public string UserName { get; set; }
-    
+
     [Ignore]
     public string ComputedField { get; set; }
-    
+
     [ResultColumn]
     public int OrderCount { get; set; }
 }
@@ -668,108 +491,23 @@ public class User
 public class UserRepository
 {
     private readonly SqlHelper _db;
-    
-    public UserRepository(SqlHelper db)
-    {
-        _db = db;
-    }
-    
-    public User GetById(int id)
-    {
-        return _db.FirstOrDefault<User>(id);
-    }
-    
-    public List<User> GetActiveUsers()
-    {
-        return _db.Select<User>(new { Status = "Active" });
-    }
-    
-    public void Save(User user)
-    {
-        _db.Save(user);
-    }
-    
-    public void Delete(int id)
-    {
-        _db.DeleteById<User>(id);
-    }
+
+    public UserRepository(SqlHelper db) { _db = db; }
+
+    public User GetById(int id) => _db.FirstOrDefault<User>(id);
+    public List<User> GetActiveUsers() => _db.Select<User>(new { Status = "Active" });
+    public void Save(User user) => _db.Save(user);
+    public void Delete(int id) => _db.DeleteById<User>(id);
 }
-```
-
-### 查询构建器模式
-
-```csharp
-public class UserQuery
-{
-    private readonly WhereHelper<User> _query;
-    
-    public UserQuery(SqlHelper db)
-    {
-        _query = db.Where<User>();
-    }
-    
-    public UserQuery WithName(string name)
-    {
-        if (!string.IsNullOrEmpty(name))
-            _query.WhereLike(u => u.Name, name);
-        return this;
-    }
-    
-    public UserQuery WithAge(int? minAge, int? maxAge)
-    {
-        if (minAge.HasValue)
-            _query.Where(u => u.Age >= minAge.Value);
-        if (maxAge.HasValue)
-            _query.Where(u => u.Age <= maxAge.Value);
-        return this;
-    }
-    
-    public UserQuery ActiveOnly()
-    {
-        _query.Where(u => u.Status == "Active");
-        return this;
-    }
-    
-    public List<User> Execute()
-    {
-        return _query.OrderBy(u => u.Name).Select();
-    }
-    
-    public Page<User> ExecutePaged(int page, int pageSize)
-    {
-        return _query.OrderBy(u => u.Name).Page(page, pageSize);
-    }
-}
-
-// 使用示例
-var users = new UserQuery(db)
-    .WithName("张")
-    .WithAge(18, 65)
-    .ActiveOnly()
-    .Execute();
 ```
 
 ## 错误处理
 
 ```csharp
-// 配置错误处理
-helper._Events.OnException = (ex, sql, args) =>
-{
-    // 记录错误
-    Logger.Error(ex, $"SQL 错误: {sql}");
-    
-    // 返回 true 重新抛出，false 抑制异常
-    return true;
-};
-
-// Try-catch 模式
 try
 {
     var user = helper.FirstOrDefault<User>(id);
-    if (user == null)
-    {
-        throw new NotFoundException($"未找到用户 {id}");
-    }
+    if (user == null) throw new NotFoundException($"未找到用户 {id}");
     return user;
 }
 catch (SqlExecuteException ex)
@@ -779,63 +517,6 @@ catch (SqlExecuteException ex)
 }
 ```
 
-## 性能优化建议
-
-1. **批量插入使用 InsertList** - 批量插入性能更好
-2. **复用 SqlHelper 实例** - 避免每次操作都创建新连接
-3. **使用异步操作** - Web 应用更好的可扩展性
-4. **只选择需要的列** - 使用 Select<T>(expression) 投影特定列
-5. **使用分页** - 不要一次加载所有记录
-6. **合理创建索引** - 在经常查询的列上创建索引
-7. **使用连接池** - 配置连接字符串启用连接池
-
-## 从 PetaPoco 迁移
-
-ToolGood.ReadyGo3 基于 PetaPoco，并进行了多项增强：
-
-1. **异步支持** - 所有操作都有异步版本
-2. **流式 API** - WhereHelper 提供流式查询构建
-3. **更多数据库提供程序** - 扩展的数据库支持
-4. **更好的类型处理** - 改进的类型转换和映射
-5. **事件系统** - 内置日志和审计钩子
-6. **表管理** - 编程方式创建/删除/截断表
-
-大多数 PetaPoco 代码只需少量修改即可使用。主要区别：
-- 使用 `SqlHelper` 代替 `Database`
-- 使用 `SqlHelperFactory` 创建连接
-- 异步方法有 `_Async` 后缀
-- 额外的 `Table_` 前缀方法用于动态表名
-
-## 故障排除
-
-### 常见问题
-
-1. **连接无法打开**
-   - 检查连接字符串格式
-   - 验证数据库服务器是否运行
-   - 检查防火墙设置
-
-2. **映射错误**
-   - 确保属性有公共的 getter/setter
-   - 检查列名是否匹配（某些数据库区分大小写）
-   - 使用 ColumnAttribute 指定不同的列名
-
-3. **性能问题**
-   - 使用 InsertList 代替逐条插入
-   - 添加适当的索引
-   - 对大结果集使用分页
-   - 检查 N+1 查询问题
-
-4. **事务问题**
-   - 始终调用 Complete() 提交
-   - 使用 using 语句确保清理
-   - 检查隔离级别设置
-
 ## 许可证
 
-本项目是开源的。有关许可证详情，请参阅项目仓库。
-
-## 支持
-
-如有问题、疑问或贡献，请访问项目仓库：
-https://github.com/ToolGood/ToolGood.ReadyGo
+本项目是开源的。有关许可证详情，请参阅项目仓库：https://github.com/ToolGood/ToolGood.ReadyGo

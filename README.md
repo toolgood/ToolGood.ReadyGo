@@ -97,6 +97,7 @@ helper.DeleteById<User>(1);
 ```csharp
 using (var tran = helper.UseTransaction()) {
     ...
+    tran.Complete();  // 提交事务；若不调用 Complete()，Dispose 时将回滚
 }
 ```
 
@@ -143,19 +144,19 @@ var userCount2 = helper.ExecuteScalar<int>("SELECT COUNT(*) FROM Users Where [Us
 var helper = SqlHelperFactory.OpenSqliteFile(dbFile);
 var users = helper.Select<User>("SELECT * FROM Users Where [UserType]=@0", 1);
 var users2 = helper.Select<User>(20, "SELECT * FROM Users Where [UserType]=@0", 1);   // 取前 20 条
-var users3 = helper.Select<User>(0, 20, "SELECT * FROM Users Where [UserType]=@0", 1); // 跳过 0 取 20 条
+var users3 = helper.Select<User>(20, 0, "SELECT * FROM Users Where [UserType]=@0", 1); // 取 20 条、跳过 0 条（参数：limit, offset）
 var usersPage = helper.Page<User>(1, 20, "SELECT * FROM Users Where [UserType]=@0", 1); // 分页（含总页数）
 ```
 
 ##### 3.3、多结果集与一对多
 
 ```csharp
-var (users, addresses) = helper.FetchMultiple<User, Address>(
+var (users, addresses) = helper.SelectMultiple<User, Address>(
     "select * from users;select * from addresses;");
-var data = helper.FetchMultiple<User, Address, Tuple<List<User>, List<Address>>>(
+var data = helper.SelectMultiple<User, Address, Tuple<List<User>, List<Address>>>(
     (u, a) => Tuple.Create(u, a), sql);  // 回调方式组合结果
 
-var userInfos = helper.FetchOneToMany<UserInfo>(x => x.Addresses, manySql);
+var userInfos = helper.SelectOneToMany<UserInfo>(x => x.Addresses, manySql);
 ```
 
 ##### 3.4、简化 SQL
@@ -222,7 +223,7 @@ var err = helper._Sql.LastErrorMessage; // 上次错误信息
 所有核心操作均提供 `_Async` 后缀的异步版本：
 
 `Execute`、`ExecuteScalar`、`ExecuteDataTable`、`Exists`、`Count`、`Select_Count`、`Select`、`SelectPage`、
-`Page`、`SQL_FirstOrDefault`、`SQL_Select`、`SQL_Page`、`FetchOneToMany`、`FetchMultiple`、`FirstOrDefault`、
+`Page`、`SQL_FirstOrDefault`、`SQL_Select`、`SQL_Page`、`SelectOneToMany`、`SelectMultiple`、`FirstOrDefault`、
 `Insert`、`InsertList`、`Update`（含快照/指定列/条件）、`Delete`、`DeleteById`、`Save`。
 
 ```csharp
