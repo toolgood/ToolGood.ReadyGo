@@ -59,20 +59,29 @@ table.TruncateTable(typeof(User));     // 清空表
 
 ##### 1.2、ToolGood.ReadyGo.Attributes 介绍
 
-在`ToolGood.ReadyGo.Attributes`命名空间内提供以下几种 Attribute：
+在`ToolGood.ReadyGo.Attributes`命名空间内提供以下几种 Attribute（标注「类级」的可用于 Class，标注「属性级」的可用于 Property/Field）。
 
-* ExplicitColumns 用于 Class，所有列（Property）必须显式映射。
-* Table   用于 Class，定义表名、schema 名、表名修饰 TAG 名。
-* PrimaryKey 用于 Class，定义主键名、自动增加、Sequence 名。
-* Column 用于 Property，定义列。
-* ResultColumn 用于 Property，定义返回列。
-* Ignore 用于 Property，忽略该属性。
-* Index 用于 Class，定义索引。
-* Unique 用于 Class，定义唯一索引。
-* Required 用于 Property，定义非空列。
-* FieldLength 用于 Property，定义列长度。
-* Text 用于 Property，定义 TEXT 类型列。
-* DefaultValue 用于 Property，定义默认值。
+**类级：**
+
+* `Table`：定义表名、schema 名、数据库名。
+  `TableAttribute(string tableName)` / `TableAttribute(string tableName, string schemaName)` / `TableAttribute(string tableName, string schemaName, string databaseName)`
+* `PrimaryKey`：定义主键名（默认自增）、Sequence 名。
+  `PrimaryKeyAttribute(string primaryKey)` / `PrimaryKeyAttribute(string[] primaryKey)`（复合主键）
+* `Index`：定义索引（可多次使用）。`IndexAttribute(string column, params string[] columns)`
+* `Unique`：定义唯一索引（可多次使用）。`UniqueAttribute(string column, params string[] columns)`
+* `ExplicitColumns`：所有列必须显式映射（无参）。
+
+**属性级：**
+
+* `Column`：定义列名与备注。`ColumnAttribute(string name)` / `ColumnAttribute(string name, string comment)` / `ColumnAttribute()`
+* `ResultColumn`：定义返回列（只读，不参与 INSERT/UPDATE）。`ResultColumnAttribute()` / `ResultColumnAttribute(string name)`
+* `Ignore`：忽略该属性（无参）。
+* `Required`：定义非空列。`RequiredAttribute(bool required = true)`
+* `FieldLength`：定义列长度。`FieldLengthAttribute(int length)` / `FieldLengthAttribute(int length, int pointLength)`（decimal 长度与小数位）
+* `Text` / `MediumText` / `LongText`：定义 TEXT 类型列（无参）。
+* `DefaultValue`：定义默认值（默认 SQL）。`DefaultValueAttribute(string defaultstring)`
+
+> 更多特性（`Alias`、`ColumnType`、`ComputedColumn`、`VersionColumn`、`Reference`、`SerializedColumn`、`Date`、`DecimalScale`、`NumericArray`、`EnumString`、`ComplexMapping`、`PersistedType`、`Construct`、`StatementPreparationHook` 以及一系列预定义长度的便捷特性如 `PhoneLength`、`UserNameLength`、`EmailLength`、`UrlLength` 等）请参见 `skills/toolgood-readygo/SKILL.md` 中的完整清单。
 
 #### 2、数据表操作
 

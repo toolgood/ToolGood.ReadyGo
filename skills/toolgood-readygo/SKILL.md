@@ -76,6 +76,215 @@ var user = helper.FirstOrDefault<User>("Where Name=@0", "Ted");
 var users = helper.Where<User>().Where(x => x.Age > 18).OrderBy(x => x.Name).ToList();
 ```
 
+## 实体特性（Attributes）参考
+
+位于 `ToolGood.ReadyGo.Attributes` 命名空间。以下按作用目标分组。
+
+### 类级特性（用于 Class）
+
+#### Table
+定义表名、schema 名、数据库名。
+
+```csharp
+[Table("Users")]                          // 仅表名
+[Table("Users", "dbo")]                   // 表名 + schema
+[Table("Users", "dbo", "MyDatabase")]     // 表名 + schema + 数据库名
+```
+
+- `TableAttribute(string tableName)`
+- `TableAttribute(string tableName, string schemaName)`
+- `TableAttribute(string tableName, string schemaName, string databaseName)`
+
+#### PrimaryKey
+定义主键名（默认自增）、Sequence 名。
+
+```csharp
+[PrimaryKey("Id")]                          // 单主键，默认自增
+[PrimaryKey("Id", AutoIncrement = false)]   // 非自增
+[PrimaryKey(new[] { "UserId", "RoleId" })]  // 复合主键
+```
+
+- `PrimaryKeyAttribute(string primaryKey)` —— 默认 `AutoIncrement = true`
+- `PrimaryKeyAttribute(string[] primaryKey)` —— 复合主键
+- 属性：`SequenceName`、`AutoIncrement`、`UseOutputClause`
+
+#### Index
+定义索引，可多次使用。
+
+```csharp
+[Index("Name")]
+[Index("UserId", "Status")]   // 复合索引
+```
+
+- `IndexAttribute(string column, params string[] columns)`
+
+#### Unique
+定义唯一索引，可多次使用。
+
+```csharp
+[Unique("Email")]
+[Unique("UserId", "RoleId")]
+```
+
+- `UniqueAttribute(string column, params string[] columns)`
+
+#### ExplicitColumns
+所有列（Property/Field）必须显式映射。
+
+```csharp
+[ExplicitColumns]
+public class User { ... }
+```
+
+- 无参
+
+#### PersistedType
+指定持久化类型。
+
+- `PersistedTypeAttribute(Type persistedType)`
+
+#### StatementPreparationHook
+抽象特性，用于声明式 SQL 改写钩子。
+
+- 抽象属性：`IAlterStatementHook AlterStatementHook`
+
+### 属性级特性（用于 Property/Field）
+
+#### Column
+定义列名与备注。
+
+```csharp
+[Column("user_name")]
+[Column("user_name", "用户名字段")]
+```
+
+- `ColumnAttribute(string name)`
+- `ColumnAttribute(string name, string comment)`
+- `ColumnAttribute()`
+- 属性：`Name`、`Comment`、`ForceToUtc`、`ExactNameMatch`
+
+#### ResultColumn
+定义返回列（只读，不参与 INSERT/UPDATE）。
+
+```csharp
+[ResultColumn]
+public int OrderCount { get; set; }
+```
+
+- `ResultColumnAttribute()` / `ResultColumnAttribute(string name)`
+
+#### Ignore
+忽略该属性。
+
+- 无参
+
+#### Alias
+定义别名。
+
+- `AliasAttribute(string alias)`
+
+#### ColumnType
+指定列数据类型。
+
+- `ColumnTypeAttribute(Type type)`
+
+#### ComputedColumn
+标记计算列。
+
+- `ComputedColumnAttribute()`
+- `ComputedColumnAttribute(string name)`
+- `ComputedColumnAttribute(ComputedColumnType computedColumnType)`
+- `ComputedColumnAttribute(string name, ComputedColumnType computedColumnType)`
+
+#### VersionColumn
+标记并发版本列。
+
+- `VersionColumnAttribute()` —— 默认 `VersionColumnType.Number`
+- `VersionColumnAttribute(VersionColumnType versionColumnType)`
+- `VersionColumnAttribute(string name, VersionColumnType versionColumnType)`
+
+#### Reference
+标记关系引用（外键等）。
+
+- `ReferenceAttribute()` —— 默认 `ReferenceType.Foreign`
+- `ReferenceAttribute(ReferenceType referenceType)`
+- 属性：`ReferenceMemberName`、`ColumnName`
+
+#### SerializedColumn
+标记序列化列。
+
+- `SerializedColumnAttribute()` / `SerializedColumnAttribute(string name)`
+
+#### Date
+只保存日期（数据库中仅存 `yyyy-MM-dd`）。
+
+- `DateAttribute()` / `DateAttribute(string name)`
+
+#### DecimalScale
+小数转整数保存（保存时 ×10^scale，读取时 ÷10^scale）。
+
+```csharp
+[DecimalScale(2)]            // 1.23 存为 123
+[DecimalScale("price", 2)]
+```
+
+- `DecimalScaleAttribute(int scale = 2)`
+- `DecimalScaleAttribute(string name, int scale = 2)`
+
+#### NumericArray
+将 `float[]` / `double[]` / `int[]` 及其 `List<T>` 以 byte[]（BLOB 列）保存。
+
+- `NumericArrayAttribute()` / `NumericArrayAttribute(string name)`
+
+#### EnumString
+枚举显示名称（用于枚举类型）。
+
+- 无参
+
+#### ComplexMapping
+复杂映射。
+
+- `ComplexMappingAttribute()` / `ComplexMappingAttribute(string customPrefix)`
+
+#### Construct
+标记构造方法（用于构造函数）。
+
+- 无参
+
+### 建表特性（用于 Property，影响表结构）
+
+#### Required
+非空列。
+
+- `RequiredAttribute(bool required = true)`
+
+#### FieldLength
+列长度。
+
+```csharp
+[FieldLength(50)]     // 长度 50
+[FieldLength(10, 2)]  // decimal(10, 2)
+```
+
+- `FieldLengthAttribute(int length)`
+- `FieldLengthAttribute(int length, int pointLength)`
+
+#### Text / MediumText / LongText
+TEXT 类型列。
+
+- 均无参
+
+#### DefaultValue
+默认值（默认 SQL）。
+
+- `DefaultValueAttribute(string defaultstring)`
+
+### 预定义长度便捷特性
+
+以下特性继承 `FieldLengthAttribute`，无需参数，直接指定长度：
+
+`PhoneLength`(20)、`UserNameLength`(20)、`PasswrodLength`(32)、`CommentLength`(500)、`GuidLength`(40)、`UrlLength`(200)、`TitleNameLength`(100)、`ShortNameLength`(50)、`IpLength`(46)、`UserAgentLength`(250)、`EmailLength`(50)、`TagsLength`(500)、`MacAddressLength`(18)、`ErrorMessageLength`(200)、`ParentIdsLength`(250)。
+
 ## 数据库连接
 
 ### 基本连接
@@ -467,7 +676,7 @@ public async Task<List<User>> GetActiveUsersAsync()
 
 ```csharp
 [Table("Users")]
-[PrimaryKey("Id", autoIncrement: true)]
+[PrimaryKey("Id")]
 public class User
 {
     public int Id { get; set; }
