@@ -185,15 +185,5 @@ namespace ToolGood.ReadyGo.NPoco
                 return _sql;
             }
         }
-
-        public static implicit operator Sql(SqlBuilder.Template template)
-        {
-            return new Sql(true, template.RawSql, template.Parameters);
-        }
-
-        public static Sql<TContext> BuilderFor<TContext>(TContext context)
-        {
-            return new Sql<TContext>(context);
-        }
     }
 }
