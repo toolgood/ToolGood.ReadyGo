@@ -12,7 +12,7 @@ namespace ToolGood.ReadyGo.Gadget.Internals
     /// </summary>
     internal class DefaultValue
     {
-        private static readonly Cache<Type, Delegate> _setDefault = new Cache<Type, Delegate>();
+        private static readonly Cache<string, Delegate> _setDefault = new Cache<string, Delegate>();
 
         /// <summary>
         /// 设置默认值
@@ -25,7 +25,9 @@ namespace ToolGood.ReadyGo.Gadget.Internals
         /// <param name="pd"></param>
         public static void SetDefaultValue<T>(T obj, bool setString, bool setDateTime, bool setGuid, PocoData pd)
         {
-            var action = _setDefault.Get(typeof(T), () => CreateDefaultFunction<T>(pd));
+            // 缓存 key 需包含 PocoData 维度：同一类型映射到不同表（不同 PocoData）时，列集合不同
+            var key = typeof(T).FullName + "|" + (pd?.TableInfo?.TableName ?? string.Empty);
+            var action = _setDefault.Get(key, () => CreateDefaultFunction<T>(pd));
             var a = (action as Action<T, bool, bool, bool>);
             a(obj, setString, setDateTime, setGuid);
         }
@@ -88,18 +90,14 @@ namespace ToolGood.ReadyGo.Gadget.Internals
             if (strings.Count > 0) {
                 il.Emit(OpCodes.Ldarg_1);
                 var lab1 = il.DefineLabel();
-                if (strings.Count < 7) {
-                    il.Emit(OpCodes.Brfalse_S, lab1);
-                } else {
-                    il.Emit(OpCodes.Brfalse, lab1);
-                }
+                il.Emit(OpCodes.Brfalse, lab1);
                 for (int i = 0; i < strings.Count; i++) {
                     var item = strings[i];
 
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Callvirt, item.GetGetMethod());
                     var lab = il.DefineLabel();
-                    il.Emit(OpCodes.Brtrue_S, lab);
+                    il.Emit(OpCodes.Brtrue, lab);
 
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldstr, "");
@@ -116,11 +114,7 @@ namespace ToolGood.ReadyGo.Gadget.Internals
             if (ansiStrings.Count > 0) {
                 il.Emit(OpCodes.Ldarg_1);
                 var lab1 = il.DefineLabel();
-                if (ansiStrings.Count < 7) {
-                    il.Emit(OpCodes.Brfalse_S, lab1);
-                } else {
-                    il.Emit(OpCodes.Brfalse, lab1);
-                }
+                il.Emit(OpCodes.Brfalse, lab1);
 
                 for (int i = 0; i < ansiStrings.Count; i++) {
                     var item = ansiStrings[i];
@@ -128,7 +122,7 @@ namespace ToolGood.ReadyGo.Gadget.Internals
 
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Callvirt, item.GetGetMethod());
-                    il.Emit(OpCodes.Brtrue_S, lab);
+                    il.Emit(OpCodes.Brtrue, lab);
 
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Ldstr, "");
@@ -146,11 +140,7 @@ namespace ToolGood.ReadyGo.Gadget.Internals
             if (datetimes.Count + datetimeoffsets.Count > 0) {
                 il.Emit(OpCodes.Ldarg_2);
                 var lab2 = il.DefineLabel();
-                if (datetimes.Count + datetimeoffsets.Count < 5) {
-                    il.Emit(OpCodes.Brfalse_S, lab2);
-                } else {
-                    il.Emit(OpCodes.Brfalse, lab2);
-                }
+                il.Emit(OpCodes.Brfalse, lab2);
 
                 #region datetimes
 
@@ -160,7 +150,7 @@ namespace ToolGood.ReadyGo.Gadget.Internals
                     il.Emit(OpCodes.Callvirt, item.GetGetMethod());
                     il.Emit(OpCodes.Ldsfld, getMinValue);
                     il.Emit(OpCodes.Call, getop_Equality);
-                    il.Emit(OpCodes.Brfalse_S, lab);
+                    il.Emit(OpCodes.Brfalse, lab);
 
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Call, getNow.GetGetMethod());
@@ -178,7 +168,7 @@ namespace ToolGood.ReadyGo.Gadget.Internals
                     il.Emit(OpCodes.Callvirt, item.GetGetMethod());
                     il.Emit(OpCodes.Ldsfld, getMinValue2);
                     il.Emit(OpCodes.Call, getop_Equality2);
-                    il.Emit(OpCodes.Brfalse_S, lab);
+                    il.Emit(OpCodes.Brfalse, lab);
 
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Call, getNow2.GetGetMethod());
@@ -198,11 +188,7 @@ namespace ToolGood.ReadyGo.Gadget.Internals
             if (guids.Count > 0) {
                 il.Emit(OpCodes.Ldarg_3);
                 var lab3 = il.DefineLabel();
-                if (guids.Count < 5) {
-                    il.Emit(OpCodes.Brfalse_S, lab3);
-                } else {
-                    il.Emit(OpCodes.Brfalse, lab3);
-                }
+                il.Emit(OpCodes.Brfalse, lab3);
 
                 foreach (var item in guids) {
                     var lab = il.DefineLabel();
@@ -211,7 +197,7 @@ namespace ToolGood.ReadyGo.Gadget.Internals
                     il.Emit(OpCodes.Callvirt, item.GetGetMethod());
                     il.Emit(OpCodes.Ldsfld, getEmpty);
                     il.Emit(OpCodes.Call, getop_Equality3);
-                    il.Emit(OpCodes.Brfalse_S, lab);
+                    il.Emit(OpCodes.Brfalse, lab);
 
                     il.Emit(OpCodes.Ldarg_0);
                     il.Emit(OpCodes.Call, getNewGuid);

@@ -57,13 +57,5 @@ namespace ToolGood.ReadyGo.Gadget.Internals
         public IsolationLevel? IsolationLevel { get { return _sqlHelper._isolationLevel; } set { _sqlHelper._isolationLevel = value; } }
 
         #endregion 属性
-
-        /// <summary>
-        /// 清空缓存
-        /// </summary>
-        public void FlushFunctionCaches()
-        {
-            // TODO: 待 NPoco 内核开放静态缓存刷新接口后接入
-        }
     }
 }
