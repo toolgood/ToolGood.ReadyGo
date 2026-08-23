@@ -371,13 +371,6 @@ namespace ToolGood.ReadyGo.NPoco
             return value;
         }
 
-        public class FormattedParameter
-        {
-            public Type Type { get; set; }
-            public object Value { get; set; }
-            public DbParameter Parameter { get; set; }
-        }
-
         public virtual string FormatCommand(DbCommand cmd)
         {
             return FormatCommand(cmd.CommandText, cmd.Parameters.Cast<object>().ToArray());
