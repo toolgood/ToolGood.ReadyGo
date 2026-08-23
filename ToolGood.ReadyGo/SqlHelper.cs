@@ -124,16 +124,6 @@ namespace ToolGood.ReadyGo
             return txt;
         }
 
-        private Page<T> ToPage<T>(Page<T> page) where T : class
-        {
-            return new Page<T> {
-                CurrentPage = (int)page.CurrentPage,
-                PageSize = (int)page.PageSize,
-                TotalItems = (int)page.TotalItems,
-                Items = page.Items,
-            };
-        }
-
         #endregion 私有方法
 
         #region UseTransaction
@@ -330,7 +320,7 @@ namespace ToolGood.ReadyGo
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            return ToPage(GetDatabase().Page<T>(page, itemsPerPage, sql, args));
+            return GetDatabase().Page<T>(page, itemsPerPage, sql, args);
         }
 
         #region FetchOneToMany

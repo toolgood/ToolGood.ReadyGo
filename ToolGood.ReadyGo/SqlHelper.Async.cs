@@ -184,7 +184,7 @@ namespace ToolGood.ReadyGo
             if (page <= 0) { page = 1; }
             if (itemsPerPage <= 0) { itemsPerPage = 20; }
 
-            return ToPage(await GetDatabase().PageAsync<T>(page, itemsPerPage, sql, args));
+            return await GetDatabase().PageAsync<T>(page, itemsPerPage, sql, args);
         }
 
         #region Obsolete
