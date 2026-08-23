@@ -8,10 +8,6 @@ namespace ToolGood.ReadyGo.NPoco
 {
     public static class ReflectionUtils
     {
-        public static List<MemberInfo> GetFieldsAndProperties<T>(BindingFlags bindingAttr)
-        {
-            return GetFieldsAndProperties(typeof(T), bindingAttr);
-        }
 
         public static List<MemberInfo> GetFieldsAndPropertiesForClasses(Type type)
         {
@@ -114,19 +110,6 @@ namespace ToolGood.ReadyGo.NPoco
             return null;
         }
 
-        public static Type GetTypeWithInterfaceOf(this Type type, Type interfaceType)
-        {
-            if (type == interfaceType) return interfaceType;
-
-            foreach (var t in type.GetInterfaces())
-            {
-                if (t == interfaceType)
-                    return t;
-            }
-
-            return null;
-        }
-
         public static bool IsOfGenericType(this Type instanceType, Type genericType)
         {
             Type type = instanceType;
@@ -155,11 +138,6 @@ namespace ToolGood.ReadyGo.NPoco
             var attrs = memberInfo.GetCustomAttributes();
             return attrs;
         }
-
-        public static IEnumerable<Attribute> GetCustomAttributes(MemberInfo memberInfo, Type type)
-        {
-            var attrs = memberInfo.GetCustomAttributes(type);
-            return attrs;
-        }
+ 
     }
 }

@@ -1546,25 +1546,4 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         }
     }
 
-    public static class LinqExtensions
-    {
-        /// <summary>
-        /// Gets the constant value.
-        /// </summary>
-        /// <param retval="exp">The exp.</param>
-        /// <returns>The get constant value.</returns>
-        public static T GetConstantValue<T>(this Expression exp)
-        {
-            T result = default(T);
-            if (exp is ConstantExpression)
-            {
-                var c = (ConstantExpression)exp;
-
-                result = (T)c.Value;
-            }
-
-            return result;
-        }
-    }
-
 }
