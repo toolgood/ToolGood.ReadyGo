@@ -46,6 +46,21 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
+        public void Read_兼容带时间部分的日期字符串()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTest));
+
+            // 模拟历史数据：数据库中存在 "yyyy-MM-dd HH:mm:ss" 格式的日期
+            helper.Execute("INSERT INTO Tb_DateTest (Id, BirthDay, CreateTime) VALUES (@0, '1991-04-03 00:00:00', '2020-01-01 10:00:00')", 1);
+
+            var loaded = helper.FirstOrDefault<Tb_DateTest>(1);
+            Assert.NotNull(loaded);
+            Assert.Equal(new DateTime(1991, 4, 3), loaded.BirthDay);
+        }
+
+        [Fact]
         public void Update_只保存日期()
         {
             using var db = TestDb.Create();
