@@ -225,10 +225,25 @@ public bool IsVip { get; set; }
 
 - `Bool2IntAttribute()` / `Bool2IntAttribute(string name)`
 
+#### Bool2String
+bool 以 "true"/"false" 文本保存（需文本列）。如 `true` → `"true"`，`false` → `"false"`。
+
+- `Bool2StringAttribute()` / `Bool2StringAttribute(string name)`
+
 #### Date2String
 只保存日期（数据库中仅存 `yyyy-MM-dd`）。
 
 - `Date2StringAttribute()` / `Date2StringAttribute(string name)`
+
+#### DateTime2String
+时间以 "yyyy-MM-dd HH:mm:ss" 文本保存（需文本列）。支持 `DateTime` / `DateTimeOffset`。
+
+```csharp
+[DateTime2String]
+public DateTime CreateTime { get; set; }
+```
+
+- `DateTime2StringAttribute()` / `DateTime2StringAttribute(string name)`
 
 #### Date2Int
 只保存日期为 yyyyMMdd 整数（不保存时间），存为 int。

@@ -81,7 +81,7 @@ table.TruncateTable(typeof(User));     // 清空表
 * `Text` / `MediumText` / `LongText`：定义 TEXT 类型列（无参）。
 * `DefaultValue`：定义默认值（默认 SQL）。`DefaultValueAttribute(string defaultstring)`
 
-> 更多特性（`Alias`、`ColumnType`、`ComputedColumn`、`VersionColumn`、`Reference`、`SerializedColumn`、`Date2String`、`Date2Int`、`DateTime2Long`、`DateTime2Timestamp`、`Numeric2Int`、`Numeric2Long`、`NumericArray2Bytes`、`Enum2String`、`ComplexMapping`、`PersistedType`、`Construct`、`StatementPreparationHook` 以及一系列预定义长度的便捷特性如 `PhoneLength`、`UserNameLength`、`EmailLength`、`UrlLength` 等）请参见 `skills/toolgood-readygo/SKILL.md` 中的完整清单。
+> 更多特性（`Alias`、`ColumnType`、`ComputedColumn`、`VersionColumn`、`Reference`、`SerializedColumn`、`Bool2String`、`Date2String`、`Date2Int`、`DateTime2String`、`DateTime2Long`、`DateTime2Timestamp`、`Numeric2Int`、`Numeric2Long`、`NumericArray2Bytes`、`Enum2String`、`ComplexMapping`、`PersistedType`、`Construct`、`StatementPreparationHook` 以及一系列预定义长度的便捷特性如 `PhoneLength`、`UserNameLength`、`EmailLength`、`UrlLength` 等）请参见 `skills/toolgood-readygo/SKILL.md` 中的完整清单。
 
 #### 2、数据表操作
 
