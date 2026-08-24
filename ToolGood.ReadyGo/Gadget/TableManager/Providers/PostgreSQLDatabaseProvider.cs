@@ -122,6 +122,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             var isRequired = ci.Required;
             if (ci.IsSerializedAsInt) return CreateField(ti, ci, "integer", ci.FieldLength, isRequired);
             if (ci.IsSerializedAsLong) return CreateField(ti, ci, "bigint", ci.FieldLength, isRequired);
+            if (ci.IsSerializedAsString) return CreateField(ti, ci, "text", "", false);
             if (type.IsEnum) return CreateField(ti, ci, "integer", ci.FieldLength, isRequired);
             if (type == typeof(string)) return CreateField(ti, ci, ci.IsText ? "text" : "varchar", ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), isRequired);
             if (type == typeof(Byte[])) return CreateField(ti, ci, "bytea", ci.FieldLength, false);

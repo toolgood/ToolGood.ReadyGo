@@ -66,14 +66,19 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         public bool IsSerialized;
 
         /// <summary>
-        /// 是否为序列化后保存为 int 的列（[Numeric2Int] / [Date2Int]，建表时保存为 int）
+        /// 是否为序列化后保存为 int 的列（[Numeric2Int] / [Date2Int] / [Enum2Int] / [Bool2Int]，建表时保存为 int）
         /// </summary>
         public bool IsSerializedAsInt;
 
         /// <summary>
-        /// 是否为序列化后保存为 long 的列（[Numeric2Long] / [DateTime2Long]，建表时保存为 long）
+        /// 是否为序列化后保存为 long 的列（[Numeric2Long] / [DateTime2Long] / [Enum2Long] / [DateTime2Timestamp]，建表时保存为 long）
         /// </summary>
         public bool IsSerializedAsLong;
+
+        /// <summary>
+        /// 是否为序列化后保存为 string 的列（[Bool2String] / [Date2String] / [DateTime2String] / [NumericArray2String] / [StringArray2String]，建表时保存为文本）
+        /// </summary>
+        public bool IsSerializedAsString;
 
         internal static ColumnInfo FromProperty(PropertyInfo pi)
         {
@@ -92,10 +97,17 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
                 IsSerialized = isSerialized,
                 IsSerializedAsInt = pi.GetCustomAttributes(typeof(Numeric2IntAttribute), true).Length > 0
                     || pi.GetCustomAttributes(typeof(Date2IntAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(Enum2IntAttribute), true).Length > 0,
+                    || pi.GetCustomAttributes(typeof(Enum2IntAttribute), true).Length > 0
+                    || pi.GetCustomAttributes(typeof(Bool2IntAttribute), true).Length > 0,
                 IsSerializedAsLong = pi.GetCustomAttributes(typeof(Numeric2LongAttribute), true).Length > 0
                     || pi.GetCustomAttributes(typeof(DateTime2LongAttribute), true).Length > 0
                     || pi.GetCustomAttributes(typeof(Enum2LongAttribute), true).Length > 0
+                    || pi.GetCustomAttributes(typeof(DateTime2TimestampAttribute), true).Length > 0,
+                IsSerializedAsString = pi.GetCustomAttributes(typeof(Bool2StringAttribute), true).Length > 0
+                    || pi.GetCustomAttributes(typeof(Date2StringAttribute), true).Length > 0
+                    || pi.GetCustomAttributes(typeof(DateTime2StringAttribute), true).Length > 0
+                    || pi.GetCustomAttributes(typeof(NumericArray2StringAttribute), true).Length > 0
+                    || pi.GetCustomAttributes(typeof(StringArray2StringAttribute), true).Length > 0
             };
 
             a = pi.GetCustomAttributes(typeof(ColumnAttribute), true);
