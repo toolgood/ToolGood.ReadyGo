@@ -121,7 +121,7 @@ namespace ToolGood.ReadyGo.Tests
 
         public static IEnumerable<object[]> Decimal2ProviderData()
         {
-            // [Decimal2Int] / [Decimal2Long] / [Date2Int] / [DateTime2Long] 字段：各数据库方言应保存为对应整数；普通 decimal 字段不受影响
+            // [Numeric2Int] / [Numeric2Long] / [Date2Int] / [DateTime2Long] 字段：各数据库方言应保存为对应整数；普通 decimal 字段不受影响
             yield return new object[] { new SqlServerDatabaseProvider(), "[Money] int", "[DateValue] int", "[DateTimeValue] bigint", "[NormalMoney] decimal" };
             yield return new object[] { new SqlServer2012DatabaseProvider(), "[Money] int", "[DateValue] int", "[DateTimeValue] bigint", "[NormalMoney] decimal" };
             yield return new object[] { new MySqlDatabaseProvider(), "`Money` int", "`DateValue` int", "`DateTimeValue` bigint", "`NormalMoney` decimal" };
@@ -139,7 +139,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             var sql = provider.GetTryCreateTable(typeof(Tb_Provider_Decimal2), false);
 
-            // [Decimal2Int] / [Decimal2Long] / [Date2Int] / [DateTime2Long] 字段保存为整数
+            // [Numeric2Int] / [Numeric2Long] / [Date2Int] / [DateTime2Long] 字段保存为整数
             Assert.Contains(moneyColumn, sql);
             Assert.Contains(dateValueColumn, sql);
             Assert.Contains(dateTimeValueColumn, sql);

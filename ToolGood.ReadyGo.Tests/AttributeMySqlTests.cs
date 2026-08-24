@@ -85,7 +85,7 @@ namespace ToolGood.ReadyGo.Tests
     }
 
     /// <summary>
-    /// [Decimal2Int] / [Decimal2Long] 属性：小数转整数存储（基于 MySQL）
+    /// [Numeric2Int] / [Numeric2Long] 属性：小数转整数存储（基于 MySQL）
     /// </summary>
     [Collection("MySql")]
     public class Decimal2MySqlTests

@@ -6,7 +6,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// <summary>
     /// 小数转整数标签：保存时数值 × 10^scale 四舍五入存为 int，读取时 ÷ 10^scale 并四舍五入还原。
     /// 例：scale=2 时，1.23 存为 123，读取 123 还原为 1.23。
-    /// 值超出 int 范围（×10^scale 后超过 ±21.4 亿）会抛异常，大数请用 [Decimal2Long]。
+    /// 值超出 int 范围（×10^scale 后超过 ±21.4 亿）会抛异常，大数请用 [Numeric2Long]。
     /// 基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]

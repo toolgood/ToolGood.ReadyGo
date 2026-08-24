@@ -313,9 +313,14 @@ public DateTime TradeTime { get; set; }
 - `NumericArray2StringAttribute(string name, string separator)`
 
 #### Enum2Int
-enum 以底层整数值保存（需整数列）。如 `UserState.Vip` → 2。
+enum 以底层整数值（int）保存（需 int 列）。如 `UserState.Vip` → 2。
 
 - `Enum2IntAttribute()` / `Enum2IntAttribute(string name)`
+
+#### Enum2Long
+enum 以底层长整数值（long）保存（需 bigint 列）。如 `UserState.Vip` → 2。
+
+- `Enum2LongAttribute()` / `Enum2LongAttribute(string name)`
 
 #### Enum2String
 枚举显示名称（用于枚举类型）。

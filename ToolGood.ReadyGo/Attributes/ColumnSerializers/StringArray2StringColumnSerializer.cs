@@ -12,6 +12,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
     public class StringArray2StringColumnSerializer : NPoco.IColumnSerializer
     {
         private readonly string _separator;
+        private readonly string _escapedSeparator;
 
         /// <summary>
         /// 字符串列表列序列化器
@@ -23,6 +24,11 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 throw new ArgumentException("separator 不能为空", nameof(separator));
             }
             _separator = separator;
+            var sb = new StringBuilder();
+            foreach (var c in separator) {
+                sb.Append('\\').Append(c);
+            }
+            _escapedSeparator = sb.ToString();
         }
 
         /// <summary>
@@ -103,7 +109,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
 
         private string Escape(string item)
         {
-            return item.Replace("\\", "\\\\").Replace(_separator, "\\" + _separator);
+            return item.Replace("\\", "\\\\").Replace(_separator, _escapedSeparator);
         }
 
         private bool IsSeparatorAt(string s, int i)

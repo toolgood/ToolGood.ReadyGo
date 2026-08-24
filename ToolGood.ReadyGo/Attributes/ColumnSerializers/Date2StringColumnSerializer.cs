@@ -28,7 +28,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 case DateOnly dateOnly:
                     return dateOnly.ToString(DateFormat, CultureInfo.InvariantCulture);
                 default:
-                    return value.ToString();
+                    throw new NotSupportedException($"Date2String 不支持的类型：{value.GetType().Name}");
             }
         }
 

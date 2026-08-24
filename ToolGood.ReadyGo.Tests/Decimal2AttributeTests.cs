@@ -30,7 +30,7 @@ namespace ToolGood.ReadyGo.Tests
     }
 
     /// <summary>
-    /// [Decimal2Int] / [Decimal2Long] 属性：小数转整数存储
+    /// [Numeric2Int] / [Numeric2Long] 属性：小数转整数存储
     /// </summary>
     public class Decimal2AttributeTests
     {

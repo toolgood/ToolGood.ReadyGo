@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo.NPoco
             var serializedColumnAttributes = attrs.OfType<SerializedColumnAttribute>().ToArray();
             var reference = attrs.OfType<ReferenceAttribute>().ToArray();
             var aliasColumn = attrs.OfType<AliasAttribute>().FirstOrDefault();
-            // 探测带 Serializer 属性的 SerializedColumn 子类（如 [Date] / [Decimal2Int]）
+            // 探测带 Serializer 属性的 SerializedColumn 子类（如 [Date] / [Numeric2Int]）
             var customColumnSerializer = serializedColumnAttributes
                 .Select(a => a.GetType().GetProperty("Serializer")?.GetValue(a) as IColumnSerializer)
                 .FirstOrDefault(s => s != null);
