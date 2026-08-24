@@ -536,14 +536,25 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
 
         private string GetSelectExpression(bool distinct)
         {
-            var selectMembersFromOrderBys = orderByMembers
-                .Select(x => new SelectMember() { PocoColumn = x.PocoColumn, EntityType = x.EntityType, PocoColumns = new[] { x.PocoColumn } })
-                .Where(x => !selectMembers.Any(y => y.EntityType == x.EntityType && y.PocoColumn.MemberInfoData.Name == x.PocoColumn.MemberInfoData.Name));
+            // 未显式选择列时，直接返回默认列集合，无需构建 orderBy 去重
+            if (selectMembers.Count == 0)
+                return BuildSelectExpression(null, distinct);
 
-            var morecols = selectMembers.Concat(selectMembersFromOrderBys);
-            var cols = selectMembers.Count == 0 ? null : morecols.ToList();
-            var selectsql = BuildSelectExpression(cols, distinct);
-            return selectsql;
+            // 提前构建已选列的 (实体类型, 成员名) 集合，将去重判断由 O(n*m) 嵌套扫描降为 O(1)
+            var selectedKeys = new HashSet<(Type, string)>(selectMembers.Count);
+            foreach (var member in selectMembers)
+                selectedKeys.Add((member.EntityType, member.PocoColumn.MemberInfoData.Name));
+
+            var cols = new List<SelectMember>(selectMembers.Count + orderByMembers.Count);
+            cols.AddRange(selectMembers);
+            foreach (var x in orderByMembers)
+            {
+                if (!selectedKeys.Contains((x.EntityType, x.PocoColumn.MemberInfoData.Name)))
+                {
+                    cols.Add(new SelectMember() { PocoColumn = x.PocoColumn, EntityType = x.EntityType, PocoColumns = new[] { x.PocoColumn } });
+                }
+            }
+            return BuildSelectExpression(cols, distinct);
         }
 
         private string WhereExpression
