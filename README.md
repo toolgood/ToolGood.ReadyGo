@@ -233,7 +233,7 @@ var err = helper._Sql.LastErrorMessage; // 上次错误信息
 
 所有核心操作均提供 `_Async` 后缀的异步版本：
 
-`Execute`、`ExecuteScalar`、`ExecuteDataTable`、`Exists`、`Count`、`Select_Count`、`Select`、`SelectPage`、
+`Execute`、`ExecuteScalar`、`ExecuteDataTable`、`ExecuteDataSet`、`Exists`、`Count`、`Select_Count`、`Select`、`SelectPage`、
 `Page`、`SQL_FirstOrDefault`、`SQL_Select`、`SQL_Page`、`SelectOneToMany`、`SelectMultiple`、`FirstOrDefault`、
 `Insert`、`InsertList`、`Update`（含快照/指定列/条件）、`UpdateList`（含快照）、`Delete`、`DeleteById`、`Save`、`SaveList`。
 

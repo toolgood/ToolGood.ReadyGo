@@ -46,6 +46,20 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal(2, dt.Rows.Count);
         }
 
+        [Fact]
+        public async Task ExecuteDataSet_Async_MultiResultSet()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("甲", 20);
+            db.NewUser("乙", 30);
+
+            var ds = await helper.ExecuteDataSet_Async("SELECT Id FROM UserInfo; SELECT Name FROM UserInfo");
+            Assert.Equal(2, ds.Tables.Count);
+            Assert.Equal(2, ds.Tables[0].Rows.Count);
+            Assert.Equal(2, ds.Tables[1].Rows.Count);
+        }
+
         #endregion
 
         #region 查询
