@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.9.0" />
-    <PackageReference Include="MySql.Data" Version="8.0.30" />
+    <PackageReference Include="MySql.Data" Version="26.7.0" />
     <!--<PackageReference Include="MySqlConnector" Version="2.1.8" />-->
     <!--<PackageReference Include="MySql.Data" Version="6.10.9" />-->
     <!--<PackageReference Include="MySqlConnector" Version="2.6.2" />-->
