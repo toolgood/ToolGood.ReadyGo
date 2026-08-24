@@ -1,3 +1,4 @@
+using ToolGood.ReadyGo.NPoco;
 using Xunit;
 
 namespace ToolGood.ReadyGo.Tests
@@ -407,6 +408,130 @@ namespace ToolGood.ReadyGo.Tests
                 (u, s, u2, s2) => u.Count + s.Count + u2.Count + s2.Count,
                 "SELECT * FROM UserInfo;SELECT * FROM SimpleUser;SELECT * FROM UserInfo;SELECT * FROM SimpleUser;");
             Assert.Equal(4, r4);
+        }
+
+        #endregion
+
+        #region UpdateList
+
+        [Fact]
+        public async Task UpdateList_Async_EmptyList_ReturnsZero()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+
+            Assert.Equal(0, await helper.UpdateList_Async(new List<UserInfo>()));
+            Assert.Equal(0, await helper.UpdateList_Async(new List<UserInfo>(), new List<Snapshot<UserInfo>>()));
+        }
+
+        [Fact]
+        public async Task UpdateList_Async_MismatchedSnapshots_Throws()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("Ted", 21);
+            var user = await helper.FirstOrDefault_Async<UserInfo>(u.Id);
+            var snapshot = helper.StartSnapshot(user);
+
+            var list = new List<UserInfo> { user, user };
+            var snapshots = new List<Snapshot<UserInfo>> { snapshot };
+
+            var ex = await Assert.ThrowsAsync<ArgumentException>(() => helper.UpdateList_Async(list, snapshots));
+            Assert.Equal("list.Count must equal snapshots.Count.", ex.Message);
+        }
+
+        [Fact]
+        public async Task UpdateList_Async_WithSnapshots_OnlyUpdatesChangedColumns()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u1 = db.NewUser("Ted", 21);
+            var u2 = db.NewUser("Bobby", 30);
+
+            var users = await helper.Select_Async<UserInfo>("ORDER BY Id");
+            var snapshots = users.Select(x => helper.StartSnapshot(x)).ToList();
+
+            users[0].Name = "Ted改"; // 仅 Name 变更
+            users[1].Age = 31;       // 仅 Age 变更
+
+            Assert.Equal(2, await helper.UpdateList_Async(users, snapshots));
+
+            var loaded1 = await helper.FirstOrDefault_Async<UserInfo>(u1.Id);
+            var loaded2 = await helper.FirstOrDefault_Async<UserInfo>(u2.Id);
+            Assert.Equal("Ted改", loaded1.Name);
+            Assert.Equal(21, loaded1.Age);      // 未变更列保持原值
+            Assert.Equal("Bobby", loaded2.Name); // 未变更列保持原值
+            Assert.Equal(31, loaded2.Age);
+        }
+
+        #endregion
+
+        #region SaveList
+
+        [Fact]
+        public async Task SaveList_Async_EmptyList_DoesNothing()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("Ted", 21);
+
+            await helper.SaveList_Async(new List<UserInfo>());
+
+            Assert.Equal(1, await helper.Count_Async<UserInfo>());
+            Assert.Equal(21, (await helper.FirstOrDefault_Async<UserInfo>(u.Id)).Age);
+        }
+
+        [Fact]
+        public async Task SaveList_Async_AllNew_InsertsAll()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var newA = new UserInfo { Name = "NewA", Age = 20 };
+            var newB = new UserInfo { Name = "NewB", Age = 30 };
+
+            await helper.SaveList_Async(new List<UserInfo> { newA, newB });
+
+            Assert.Equal(2, await helper.Count_Async<UserInfo>());
+            Assert.NotNull(await helper.FirstOrDefault_Async<UserInfo>("Where Name=@0", "NewA"));
+            Assert.NotNull(await helper.FirstOrDefault_Async<UserInfo>("Where Name=@0", "NewB"));
+        }
+
+        [Fact]
+        public async Task SaveList_Async_AllExisting_UpdatesAll()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u1 = db.NewUser("Ted", 21);
+            var u2 = db.NewUser("Bobby", 30);
+
+            var users = await helper.Select_Async<UserInfo>("ORDER BY Id");
+            users[0].Name = "Ted改";
+            users[1].Age = 31;
+
+            await helper.SaveList_Async(users);
+
+            Assert.Equal(2, await helper.Count_Async<UserInfo>());
+            Assert.Equal("Ted改", (await helper.FirstOrDefault_Async<UserInfo>(u1.Id)).Name);
+            Assert.Equal(31, (await helper.FirstOrDefault_Async<UserInfo>(u2.Id)).Age);
+        }
+
+        [Fact]
+        public async Task SaveList_Async_Mixed_InsertsAndUpdates()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u1 = db.NewUser("Ted", 21);
+            var u2 = db.NewUser("Bobby", 30);
+
+            var existing = await helper.FirstOrDefault_Async<UserInfo>(u1.Id);
+            existing.Age = 22;
+            var newA = new UserInfo { Name = "NewA", Age = 20 };
+
+            await helper.SaveList_Async(new List<UserInfo> { existing, newA });
+
+            Assert.Equal(3, await helper.Count_Async<UserInfo>());
+            Assert.Equal(22, (await helper.FirstOrDefault_Async<UserInfo>(u1.Id)).Age);
+            Assert.NotNull(await helper.FirstOrDefault_Async<UserInfo>("Where Name=@0", "NewA"));
         }
 
         #endregion

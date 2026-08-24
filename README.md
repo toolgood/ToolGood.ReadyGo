@@ -21,9 +21,9 @@ var users = helper.Where<User>().Where(x => x.Age > 18).OrderBy(x => x.Name).ToL
 ### 功能简介
 
 * 表操作：支持表创建、删除、截断，支持索引与唯一索引，定制 Attribute。
-* Object 快速增删改：Insert / Update / Delete / Save。
+* Object 快速增删改：Insert / Update / Delete / Save，批量 SaveList / UpdateList / InsertList。
 * 快照局部更新：StartSnapshot 记录对象变更，只更新变更的列。
-* 批量更新与删除：UpdateMany / DeleteMany 链式操作。
+* 批量更新与删除：UpdateMany / DeleteMany 链式操作，集合批量 UpdateList（含快照）/ SaveList。
 * 原生 SQL：支持 SQL 简化、分页查询、多结果集 SelectMultiple、一对多 SelectOneToMany。
 * 动态查询：Where&lt;T&gt;() 链式，支持表达式、IfTrue* 条件开关、WhereIn / WhereLike / WhereExists。
 * object 条件查询：以对象为条件执行 Select / Update / Delete / Count / Exists。
@@ -96,6 +96,8 @@ helper.Insert(u);
 helper.Update(u);
 helper.Save(u);
 helper.Delete(u);
+helper.UpdateList(list);       // 批量更新（按主键更新全部列，或传快照仅更新变更列）
+helper.SaveList(list);         // 批量保存：新对象插入，已存在对象更新
 helper.Update<User>("Set [Name]=@0 WHERE [Id]=@1", "Test", 1);
 helper.Delete<User>("WHERE [Id]=@0", 1);
 helper.DeleteById<User>(1);
@@ -233,7 +235,7 @@ var err = helper._Sql.LastErrorMessage; // 上次错误信息
 
 `Execute`、`ExecuteScalar`、`ExecuteDataTable`、`Exists`、`Count`、`Select_Count`、`Select`、`SelectPage`、
 `Page`、`SQL_FirstOrDefault`、`SQL_Select`、`SQL_Page`、`SelectOneToMany`、`SelectMultiple`、`FirstOrDefault`、
-`Insert`、`InsertList`、`Update`（含快照/指定列/条件）、`Delete`、`DeleteById`、`Save`。
+`Insert`、`InsertList`、`Update`（含快照/指定列/条件）、`UpdateList`（含快照）、`Delete`、`DeleteById`、`Save`、`SaveList`。
 
 ```csharp
 var users = await helper.Select_Async<User>("Where [UserType]=@0", 1);

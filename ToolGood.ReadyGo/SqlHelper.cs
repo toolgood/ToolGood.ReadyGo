@@ -654,6 +654,41 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
+        /// 批量更新，每个对象按主键更新全部列。
+        /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="list">要更新的实体集合</param>
+        /// <returns>受影响的总行数</returns>
+        public int UpdateList<T>(List<T> list) where T : class
+        {
+            if (list == null) throw new ArgumentNullException("list is null.");
+            if (list.Count == 0) return 0;
+
+            return GetDatabase().UpdateBatch(list.Select(x => UpdateBatch.For(x)));
+        }
+
+        /// <summary>
+        /// 批量更新，仅更新快照中发生变更的列。
+        /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="list">要更新的实体集合</param>
+        /// <param name="snapshots">与 list 一一对应的快照集合（来自 StartSnapshot）</param>
+        /// <returns>受影响的总行数</returns>
+        public int UpdateList<T>(List<T> list, List<Snapshot<T>> snapshots) where T : class
+        {
+            if (list == null) throw new ArgumentNullException("list is null.");
+            if (snapshots == null) throw new ArgumentNullException("snapshots is null.");
+            if (list.Count == 0) return 0;
+            if (list.Count != snapshots.Count) throw new ArgumentException("list.Count must equal snapshots.Count.");
+
+            var batches = new List<UpdateBatch<T>>(list.Count);
+            for (int i = 0; i < list.Count; i++) {
+                batches.Add(UpdateBatch.For(list[i], snapshots[i]));
+            }
+            return GetDatabase().UpdateBatch(batches);
+        }
+
+        /// <summary>
         /// 插入，支持主键自动获取。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
@@ -780,6 +815,29 @@ namespace ToolGood.ReadyGo
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
             GetDatabase().Save(poco);
+        }
+
+        /// <summary>
+        /// 批量保存：新对象（主键为默认值）执行批量插入，已存在对象执行批量更新。
+        /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="list">要保存的实体集合</param>
+        public void SaveList<T>(List<T> list) where T : class
+        {
+            if (list == null) throw new ArgumentNullException("list is null.");
+            if (list.Count == 0) return;
+
+            var toInsert = new List<T>();
+            var toUpdate = new List<T>();
+            foreach (var item in list) {
+                if (GetDatabase().IsNew(item)) {
+                    toInsert.Add(item);
+                } else {
+                    toUpdate.Add(item);
+                }
+            }
+            if (toInsert.Count > 0) GetDatabase().InsertBatch(toInsert);
+            if (toUpdate.Count > 0) GetDatabase().UpdateBatch(toUpdate.Select(x => UpdateBatch.For(x)));
         }
 
         /// <summary>

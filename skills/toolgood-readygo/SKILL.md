@@ -47,7 +47,7 @@ ToolGood.ReadyGo/
 
 #### SqlHelper
 所有数据库操作的主入口点（`partial class`，分布在 SqlHelper.cs / SqlHelper.Async.cs / SqlHelper.Object.cs / SqlHelper.Where.cs 中）：
-- CRUD 操作（Insert、Update、Delete、Save、InsertList）
+- CRUD 操作（Insert、Update、Delete、Save、InsertList、UpdateList、SaveList）
 - 查询执行（Execute、ExecuteScalar、ExecuteDataTable、ExecuteDataSet）
 - 查询与分页（Select、SelectPage、Page、SelectOneToMany、SelectMultiple）
 - 计数与存在（Count、Select_Count、Exists）
@@ -402,6 +402,13 @@ var snapshot = helper.StartSnapshot(user);
 user.Name = "Bobby";
 helper.Update(user, snapshot);
 
+// 批量更新（按主键更新全部列）
+helper.UpdateList(new List<User> { user1, user2 });
+
+// 批量更新，仅更新快照中变更的列
+var snapshots = users.Select(x => helper.StartSnapshot(x)).ToList();
+helper.UpdateList(users, snapshots);
+
 // 使用对象条件更新
 helper.Update<User>(new { NickName = "新昵称" }, new { Id = 1 });
 ```
@@ -426,6 +433,9 @@ helper.Delete<User>(new { Id = 1 });
 
 ```csharp
 helper.Save(user); // 根据主键判断插入或更新
+
+// 批量保存：新对象（主键为默认值）插入，已存在对象更新
+helper.SaveList(new List<User> { newUser, existingUser });
 ```
 
 ## SQL 查询
@@ -568,11 +578,17 @@ helper.UpdateMany<User>()
 helper.DeleteMany<User>()
     .Where(x => x.Age < 18)
     .Execute();
+
+// 批量更新集合（按主键更新全部列）
+helper.UpdateList(users);
+
+// 批量保存：新对象插入、已存在对象更新
+helper.SaveList(new List<User> { newUser, existingUser });
 ```
 
 ## 异步 API
 
-所有核心操作均提供 `_Async` 后缀的异步版本：`Execute_Async`、`ExecuteScalar_Async`、`ExecuteDataTable_Async`、`Exists_Async`、`Count_Async`、`Select_Async`、`SelectPage_Async`、`Page_Async`、`SelectOneToMany_Async`、`SelectMultiple_Async`、`FirstOrDefault_Async`、`Insert_Async`、`InsertList_Async`、`Update_Async`（含快照/指定列/条件）、`Delete_Async`、`DeleteById_Async`、`Save_Async`。
+所有核心操作均提供 `_Async` 后缀的异步版本：`Execute_Async`、`ExecuteScalar_Async`、`ExecuteDataTable_Async`、`Exists_Async`、`Count_Async`、`Select_Async`、`SelectPage_Async`、`Page_Async`、`SelectOneToMany_Async`、`SelectMultiple_Async`、`FirstOrDefault_Async`、`Insert_Async`、`InsertList_Async`、`Update_Async`（含快照/指定列/条件）、`UpdateList_Async`（含快照）、`Delete_Async`、`DeleteById_Async`、`Save_Async`、`SaveList_Async`。
 
 ```csharp
 var users = await helper.Select_Async<User>("Where [UserType]=@0", 1);
@@ -701,6 +717,10 @@ var users = helper.Select<User>($"WHERE Name = '{name}'");
 ```csharp
 // 推荐：使用 InsertList 批量插入
 helper.InsertList(users);
+
+// 批量更新与批量保存
+helper.UpdateList(users);
+helper.SaveList(new List<User> { newUser, existingUser });
 
 // 不推荐：逐条插入
 foreach (var user in users) helper.Insert(user);
