@@ -215,6 +215,16 @@ public int OrderCount { get; set; }
 
 - `SerializedColumnAttribute()` / `SerializedColumnAttribute(string name)`
 
+#### Bool2Int
+bool 以 0/1 整数保存（需整数列）。如 `true` → 1，`false` → 0。
+
+```csharp
+[Bool2Int]
+public bool IsVip { get; set; }
+```
+
+- `Bool2IntAttribute()` / `Bool2IntAttribute(string name)`
+
 #### Date2String
 只保存日期（数据库中仅存 `yyyy-MM-dd`）。
 
@@ -281,10 +291,32 @@ public DateTime TradeTime { get; set; }
 
 - `NumericArray2BytesAttribute()` / `NumericArray2BytesAttribute(string name)`
 
+#### NumericArray2String
+将 `int[]` / `long[]` / `double[]` / `decimal[]` 等数值数组及其 `List<T>` 以分隔符文本保存（需文本列）。默认逗号分隔，支持自定义分隔符。
+
+- `NumericArray2StringAttribute(string separator = ",")`
+- `NumericArray2StringAttribute(string name, string separator)`
+
+#### Enum2Int
+enum 以底层整数值保存（需整数列）。如 `UserState.Vip` → 2。
+
+- `Enum2IntAttribute()` / `Enum2IntAttribute(string name)`
+
 #### Enum2String
 枚举显示名称（用于枚举类型）。
 
 - 无参
+
+#### DictionaryUintUint2Bytes
+将 `Dictionary<uint, uint>` 以 byte[]（BLOB 列）保存，按键升序、差值压缩存储。
+
+- `DictionaryUintUint2BytesAttribute()` / `DictionaryUintUint2BytesAttribute(string name)`
+
+#### StringArray2String
+将 `List<string>` / `string[]` 以分隔符文本保存（需文本列）。默认逗号分隔，支持自定义分隔符与转义（`\` 与分隔符前加 `\`）。
+
+- `StringArray2StringAttribute(string separator = ",")`
+- `StringArray2StringAttribute(string name, string separator)`
 
 #### ComplexMapping
 复杂映射。
