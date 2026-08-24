@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using ToolGood.ReadyGo.Exceptions;
 
@@ -16,19 +17,15 @@ namespace ToolGood.ReadyGo
         /// <returns>匹配到的 DbProviderFactory 实例</returns>
         public static DbProviderFactory GetFactory(params string[] assemblyQualifiedNames)
         {
-            DbProviderFactory providerFactory = null;
-            if (providerFactory == null) {
-                Type ft = null;
-                foreach (var assemblyName in assemblyQualifiedNames) {
-                    ft = Type.GetType(assemblyName);
-                    if (ft != null) break;
-                }
-
-                if (ft == null) throw new ArgumentException("Could not load the DbProviderFactory.");
-
-                providerFactory = (DbProviderFactory)ft.GetField("Instance").GetValue(null);
+            Type ft = null;
+            foreach (var assemblyName in assemblyQualifiedNames) {
+                ft = Type.GetType(assemblyName);
+                if (ft != null) break;
             }
-            return providerFactory;
+
+            if (ft == null) throw new ArgumentException("Could not load the DbProviderFactory.");
+
+            return (DbProviderFactory)ft.GetField("Instance").GetValue(null);
         }
 
         /// <summary>
@@ -66,36 +63,73 @@ namespace ToolGood.ReadyGo
         /// <returns>对应的 DbProviderFactory 实例</returns>
         public static DbProviderFactory GetProviderFactory(SqlType sqlType)
         {
+            return GetFactory(GetFactoryCandidates(sqlType));
+        }
+
+        /// <summary>
+        /// 获取 DbProviderFactory，并优先使用与 providerName 匹配的驱动。
+        /// 例如 SqlType.SQLite 同时支持 System.Data.SQLite 与 Microsoft.Data.Sqlite，
+        /// 传 providerName="Microsoft.Data.Sqlite" 时优先解析该驱动，失败后再回退其他候选。
+        /// </summary>
+        /// <param name="providerName">提供程序名（可为 DbProviderFactory 类型名或程序集名，如 MySql.Data.MySqlClient）</param>
+        /// <param name="sqlType">SQL 类型</param>
+        /// <returns>对应的 DbProviderFactory 实例</returns>
+        public static DbProviderFactory GetProviderFactory(string providerName, SqlType sqlType)
+        {
+            var candidates = GetFactoryCandidates(sqlType);
+            if (string.IsNullOrEmpty(providerName) == false && candidates.Length > 1) {
+                var list = new List<string>(candidates);
+                for (int i = 0; i < candidates.Length; i++) {
+                    var typeShortName = candidates[i].Split(',')[0].Trim();
+                    if (candidates[i].IndexOf(providerName, StringComparison.OrdinalIgnoreCase) >= 0
+                        || providerName.IndexOf(typeShortName, StringComparison.OrdinalIgnoreCase) >= 0) {
+                        if (i > 0) {
+                            list.RemoveAt(i);
+                            list.Insert(0, candidates[i]);
+                        }
+                        break;
+                    }
+                }
+                return GetFactory(list.ToArray());
+            }
+            return GetFactory(candidates);
+        }
+
+        /// <summary>
+        /// 获取各 SqlType 对应的 DbProviderFactory 候选程序集限定名列表（按优先级排列）
+        /// </summary>
+        private static string[] GetFactoryCandidates(SqlType sqlType)
+        {
             switch (sqlType) {
                 case SqlType.SqlServer:
                 case SqlType.SqlServer2012:
-                    return GetFactory(
+                    return new[] {
                         "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient",
                         "System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                         "System.Data.SqlClient.SqlClientFactory, System.Data",
                         "Microsoft.Data.SqlClient.SqlClientFactory, Microsoft.Data.SqlClient"
-                        );
+                        };
                 case SqlType.MySql:
                 case SqlType.MariaDb:
-                    return GetFactory(
+                    return new[] {
                         "MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Culture=neutral, PublicKeyToken=c5687fc88969c44d",
                         "MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data",
                         "MySqlConnector.MySqlConnectorFactory, MySqlConnector"
-                        );
+                        };
                 case SqlType.SQLite:
-                    return GetFactory(
+                    return new[] {
                         "System.Data.SQLite.SQLiteFactory, System.Data.SQLite, Culture=neutral, PublicKeyToken=db937bc2d44ff139",
                         "System.Data.SQLite.SQLiteFactory, System.Data.SQLite",
                         "Microsoft.Data.Sqlite.SqliteFactory, Microsoft.Data.Sqlite, Culture=neutral, PublicKeyToken=adb9793829ddae60",
                         "Microsoft.Data.Sqlite.SqliteFactory, Microsoft.Data.Sqlite"
-                        );
+                        };
                 case SqlType.PostgreSQL:
-                    return GetFactory(
+                    return new[] {
                         "Npgsql.NpgsqlFactory, Npgsql, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7",
                         "Npgsql.NpgsqlFactory, Npgsql"
-                        );
+                        };
                 case SqlType.Oracle:
-                    return GetFactory(
+                    return new[] {
                         "Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess, Culture=neutral, PublicKeyToken=89b483f429c47342",
                         "Oracle.ManagedDataAccess.Client.OracleClientFactory, Oracle.ManagedDataAccess",
                         "Oracle.DataAccess.Client.OracleClientFactory, Oracle.DataAccess, Culture=neutral, PublicKeyToken=89b483f429c47342",
@@ -103,25 +137,26 @@ namespace ToolGood.ReadyGo
                         "System.Data.OracleClient.OracleClientFactory, System.Data.OracleClient, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                         "System.Data.OracleClient.OracleClientFactory, System.Data.OracleClient, Culture=neutral, PublicKeyToken=b77a5c561934e089",
                         "System.Data.OracleClient.OracleClientFactory, System.Data.OracleClient"
-                        );
+                        };
                 case SqlType.FirebirdDb:
-                    return GetFactory(
+                    return new[] {
                         "FirebirdSql.Data.FirebirdClient.FirebirdClientFactory, FirebirdSql.Data.FirebirdClient, Culture=neutral, PublicKeyToken=3750abcc3150b00c",
                         "FirebirdSql.Data.FirebirdClient.FirebirdClientFactory, FirebirdSql.Data.FirebirdClient"
-                        );
+                        };
                 case SqlType.MsAccessDb:
-                    return GetFactory(
+                    return new[] {
                         "System.Data.OleDb.OleDbFactory, System.Data.OleDb, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51",
                         "System.Data.OleDb.OleDbFactory, System.Data.OleDb"
-                        );
+                        };
                 case SqlType.DuckDb:
-                    return GetFactory(
+                    return new[] {
                         "DuckDB.NET.Data.DuckDBFactory, DuckDB.NET.Data.Full",
                         "DuckDB.NET.Data.DuckDBFactory, DuckDB.NET.Data"
-                        );
+                        };
                 case SqlType.SqlServerCE:
                     throw new DatabaseUnsupportException("SqlServerCE 已停止维护，不再支持。");
-                default: throw new DatabaseUnsupportException($"未知的数据库类型: {sqlType}。");
+                default:
+                    throw new DatabaseUnsupportException($"未知的数据库类型: {sqlType}。");
             }
         }
 

@@ -37,7 +37,8 @@ namespace ToolGood.ReadyGo
             if (type == SqlType.None) {
                 type = DatabaseProvider.GetSqlType(providerName, connectionString);
             }
-            var factory = DatabaseProvider.GetProviderFactory(type);
+            // 优先解析 providerName 对应的驱动（如 Microsoft.Data.Sqlite），避免同 SqlType 多驱动时选错工厂
+            var factory = DatabaseProvider.GetProviderFactory(providerName, type);
             return new SqlHelper(connectionString, factory, type);
         }
 
@@ -60,8 +61,9 @@ namespace ToolGood.ReadyGo
         /// <param name="database">数据库名</param>
         /// <param name="server">服务器实例</param>
         /// <returns>打开的 SqlHelper 实例</returns>
-        public static SqlHelper OpenSqlServerFile(string filePath, string database, string server = "(LocalDb)\v11.0")
+        public static SqlHelper OpenSqlServerFile(string filePath, string database, string server = "(LocalDB)\\MSSQLLocalDB")
         {
+            // 注意：C# 字符串中 \\ 转义为 \，原默认值 "(LocalDb)\v11.0" 中的 \v 会被解释为垂直制表符
             var connstr = string.Format(@"Data Source={0};Initial Catalog={2};Integrated Security=SSPI;AttachDBFilename={1}", server, filePath, database);
             return OpenDatabase(connstr, "System.Data.SqlClient", SqlType.SqlServer);
         }
@@ -150,13 +152,17 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenMysql(string server, string database, string user, string pwd)
         {
-            var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;AllowUserVariables=true;";
             var factory = DatabaseProvider.GetProviderFactory(SqlType.MySql);
+            var isMySqlData = IsMySqlDataDriver(factory);
+            // MySql.Data 使用 charset/AllowUserVariables 关键字，MySqlConnector 使用 CharSet（默认允许用户变量）
+            var connstr = isMySqlData
+                ? $"Server={server};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;AllowUserVariables=true;"
+                : $"Server={server};Database={database};Uid={user};Pwd={pwd};CharSet=utf8mb4;";
             var options = GetMySqlConnectionOptions(factory.GetType().Assembly.GetName());
             if (options != null) {
                 connstr += options;
             }
-            return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
+            return OpenDatabase(connstr, isMySqlData ? "MySql.Data.MySqlClient" : "MySqlConnector", SqlType.MySql);
         }
 
         /// <summary>
@@ -170,13 +176,26 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenMysql(string server, int port, string database, string user, string pwd)
         {
-            var connstr = $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;AllowUserVariables=true;";
             var factory = DatabaseProvider.GetProviderFactory(SqlType.MySql);
+            var isMySqlData = IsMySqlDataDriver(factory);
+            // MySql.Data 使用 charset/AllowUserVariables 关键字，MySqlConnector 使用 CharSet（默认允许用户变量）
+            var connstr = isMySqlData
+                ? $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;AllowUserVariables=true;"
+                : $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};CharSet=utf8mb4;";
             var options = GetMySqlConnectionOptions(factory.GetType().Assembly.GetName());
             if (options != null) {
                 connstr += options;
             }
-            return OpenDatabase(connstr, "MySql.Data.MySqlClient", SqlType.MySql);
+            return OpenDatabase(connstr, isMySqlData ? "MySql.Data.MySqlClient" : "MySqlConnector", SqlType.MySql);
+        }
+
+        /// <summary>
+        /// 判断是否为 MySql.Data 驱动（否则视为 MySqlConnector 等兼容驱动）
+        /// </summary>
+        private static bool IsMySqlDataDriver(DbProviderFactory factory)
+        {
+            var name = factory.GetType().Assembly.GetName().Name;
+            return name != null && name.IndexOf("MySql.Data", StringComparison.OrdinalIgnoreCase) >= 0;
         }
 
         /// <summary>
@@ -186,6 +205,8 @@ namespace ToolGood.ReadyGo
         /// </summary>
         private static string GetMySqlConnectionOptions(AssemblyName assemblyName)
         {
+            if (assemblyName == null || assemblyName.Version == null) return null;
+
             var name = assemblyName.Name;
             var version = assemblyName.Version;
 
@@ -262,7 +283,8 @@ namespace ToolGood.ReadyGo
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Data Source={0};Pooling=False;", filePath);//Microsoft.Data.Sqlite的连接池有问题，防止内存爆涨，默认关闭连接池
             if (string.IsNullOrEmpty(pwd) == false) {
-                sb.Append("Mode=ReadWrite;Password=" + pwd);
+                // 值用双引号包裹并转义，防止密码含 ; = " 等字符破坏连接字符串
+                sb.Append("Mode=ReadWrite;Password=\"").Append(EscapeConnectionValue(pwd)).Append("\";");
             }
             return OpenDatabase(sb.ToString(), "Microsoft.Data.Sqlite", SqlType.SQLite);
         }
@@ -287,9 +309,19 @@ namespace ToolGood.ReadyGo
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Data Source={0};", filePath);
             if (string.IsNullOrEmpty(pwd) == false) {
-                sb.Append("Mode=ReadWrite;Password=" + pwd);
+                // 值用双引号包裹并转义，防止密码含 ; = " 等字符破坏连接字符串
+                sb.Append("Mode=ReadWrite;Password=\"").Append(EscapeConnectionValue(pwd)).Append("\";");
             }
             return OpenDatabase(sb.ToString(), "DuckDB.NET.Data.Full", SqlType.DuckDb);
+        }
+
+        /// <summary>
+        /// 连接字符串值转义：值内双引号翻倍后再整体用双引号包裹，
+        /// 防止值中含 ; = " 等字符破坏连接字符串（.NET DbConnectionStringBuilder 系列均支持该语法）
+        /// </summary>
+        private static string EscapeConnectionValue(string value)
+        {
+            return value.Replace("\"", "\"\"");
         }
 
         /// <summary>

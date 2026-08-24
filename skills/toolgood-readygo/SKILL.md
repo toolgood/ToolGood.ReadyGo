@@ -220,6 +220,40 @@ public int OrderCount { get; set; }
 
 - `DateAttribute()` / `DateAttribute(string name)`
 
+#### Date2Int
+只保存日期为 yyyyMMdd 整数（不保存时间），存为 int。
+如 `2026-08-23` → `20260823`。
+
+```csharp
+[Date2Int]
+public DateTime TradeDate { get; set; }
+```
+
+- `Date2IntAttribute()` / `Date2IntAttribute(string name)`
+
+#### DateTime2Long
+时间以 yyyyMMddHHmmss 整数保存（秒级精度，需 long 存储）。
+如 `2026-08-23 15:30:45` → `20260823153045`。
+
+```csharp
+[DateTime2Long]
+public DateTime TradeTime { get; set; }
+```
+
+- `DateTime2LongAttribute()` / `DateTime2LongAttribute(string name)`
+
+#### Timestamp
+以 Unix 时间戳（UTC 基准）保存，精度支持秒和毫秒，需 long 存储。
+
+```csharp
+[Timestamp]                                   // 秒级（默认）
+[Timestamp(TimestampPrecision.Milliseconds)]  // 毫秒级
+[Timestamp("create_time", TimestampPrecision.Milliseconds)]
+```
+
+- `TimestampAttribute(TimestampPrecision precision = TimestampPrecision.Seconds)`
+- `TimestampAttribute(string name, TimestampPrecision precision = TimestampPrecision.Seconds)`
+
 #### Decimal2Int
 小数转 int 保存（保存时 ×10^scale 四舍五入，读取时 ÷10^scale），值超出 int 范围会抛异常。
 
@@ -330,6 +364,13 @@ var helper = SqlHelperFactory.OpenAccessFile64x("path/to/file.accdb");
 var helper = SqlHelperFactory.OpenDatabase(connectionString, SqlType.SqlServer);
 var helper = SqlHelperFactory.OpenDatabase(connectionString, "System.Data.SqlClient", SqlType.SqlServer);
 ```
+
+#### 驱动选择说明
+
+* `OpenDatabase(connectionString, providerName, type)` 的 `providerName` 用于精确定位驱动：优先加载与 `providerName` 匹配的 `DbProviderFactory`，匹配失败再按默认候选顺序回退。同一 `SqlType` 存在多个驱动时（如 SQLite 同时支持 System.Data.SQLite 与 Microsoft.Data.Sqlite），应传入对应的 `providerName`（如 `"Microsoft.Data.Sqlite"`），避免选错驱动。
+* `OpenSqliteFile` 使用 System.Data.SQLite 驱动；`OpenMsSqliteFile` 使用 Microsoft.Data.Sqlite 驱动（支持密码，密码会转义后写入连接字符串）。
+* `OpenMysql` 自动识别已加载的驱动（MySql.Data / MySqlConnector），据此选择连接串关键字（MySql.Data 用 `charset=utf8mb4;AllowUserVariables`，MySqlConnector 用 `CharSet=utf8mb4`），并自动附加合适的 `SslMode`/`AllowPublicKeyRetrieval` 选项。
+* `OpenSqlServerFile` 默认 LocalDB 实例为 `(LocalDB)\MSSQLLocalDB`。
 
 ## CRUD 操作
 
@@ -633,7 +674,8 @@ SqlHelperFactory 提供以下连接方法：
 | 数据库 | 工厂方法 | 提供程序 |
 |--------|----------|----------|
 | SQL Server | OpenSqlServer / OpenSqlServer2012 | System.Data.SqlClient |
-| MySQL | OpenMysql | MySql.Data.MySqlClient |
+| SQL Server | OpenSqlServerFile（LocalDB 文件库，默认实例 `(LocalDB)\MSSQLLocalDB`） | System.Data.SqlClient |
+| MySQL | OpenMysql | MySql.Data 或 MySqlConnector（按已加载驱动自动识别） |
 | SQLite | OpenSqliteFile | System.Data.SQLite |
 | SQLite | OpenMsSqliteFile | Microsoft.Data.Sqlite |
 | Oracle | OpenOracle | Oracle.ManagedDataAccess |

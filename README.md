@@ -81,7 +81,7 @@ table.TruncateTable(typeof(User));     // 清空表
 * `Text` / `MediumText` / `LongText`：定义 TEXT 类型列（无参）。
 * `DefaultValue`：定义默认值（默认 SQL）。`DefaultValueAttribute(string defaultstring)`
 
-> 更多特性（`Alias`、`ColumnType`、`ComputedColumn`、`VersionColumn`、`Reference`、`SerializedColumn`、`Date`、`Date2Int`、`DateTime2Long`、`Decimal2Int`、`Decimal2Long`、`NumericArray`、`EnumString`、`ComplexMapping`、`PersistedType`、`Construct`、`StatementPreparationHook` 以及一系列预定义长度的便捷特性如 `PhoneLength`、`UserNameLength`、`EmailLength`、`UrlLength` 等）请参见 `skills/toolgood-readygo/SKILL.md` 中的完整清单。
+> 更多特性（`Alias`、`ColumnType`、`ComputedColumn`、`VersionColumn`、`Reference`、`SerializedColumn`、`Date`、`Date2Int`、`DateTime2Long`、`Timestamp`、`Decimal2Int`、`Decimal2Long`、`NumericArray`、`EnumString`、`ComplexMapping`、`PersistedType`、`Construct`、`StatementPreparationHook` 以及一系列预定义长度的便捷特性如 `PhoneLength`、`UserNameLength`、`EmailLength`、`UrlLength` 等）请参见 `skills/toolgood-readygo/SKILL.md` 中的完整清单。
 
 #### 2、数据表操作
 
@@ -254,3 +254,10 @@ var helper = SqlHelperFactory.OpenDuckDbFile(filePath);
 var helper = SqlHelperFactory.OpenAccessFile(filePath);      // 32 位
 var helper = SqlHelperFactory.OpenAccessFile64x(filePath);   // 64 位
 ```
+
+> **驱动选择说明**
+>
+> * `OpenDatabase(connectionString, providerName, type)` 的 `providerName` 用于精确定位驱动：优先加载与 `providerName` 匹配的 `DbProviderFactory`，匹配失败再按默认候选顺序回退。同一 `SqlType` 存在多个驱动时（如 SQLite 同时支持 System.Data.SQLite 与 Microsoft.Data.Sqlite），应传入对应的 `providerName`（如 `"Microsoft.Data.Sqlite"`），避免选错驱动。
+> * `OpenSqliteFile` 使用 System.Data.SQLite 驱动；`OpenMsSqliteFile` 使用 Microsoft.Data.Sqlite 驱动（支持密码，密码会转义后写入连接字符串）。
+> * `OpenMysql` 自动识别已加载的驱动（MySql.Data / MySqlConnector），据此选择连接串关键字（MySql.Data 用 `charset=utf8mb4;AllowUserVariables`，MySqlConnector 用 `CharSet=utf8mb4`），并自动附加合适的 `SslMode`/`AllowPublicKeyRetrieval` 选项。
+> * `OpenSqlServerFile` 默认 LocalDB 实例为 `(LocalDB)\MSSQLLocalDB`。
