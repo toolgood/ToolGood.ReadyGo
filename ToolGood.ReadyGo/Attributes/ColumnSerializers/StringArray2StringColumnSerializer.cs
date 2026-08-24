@@ -9,7 +9,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
     /// 字符串列表列序列化器：将 List&lt;string&gt; / string[] 序列化为以分隔符连接的文本列，
     /// 读取时按分隔符还原。支持转义（反斜杠与分隔符前加 \），可存储含分隔符的项。
     /// </summary>
-    public class StringListColumnSerializer : NPoco.IColumnSerializer
+    public class StringArray2StringColumnSerializer : NPoco.IColumnSerializer
     {
         private readonly string _separator;
 
@@ -17,7 +17,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// 字符串列表列序列化器
         /// </summary>
         /// <param name="separator">分隔符，默认逗号</param>
-        public StringListColumnSerializer(string separator = ",")
+        public StringArray2StringColumnSerializer(string separator = ",")
         {
             if (string.IsNullOrEmpty(separator)) {
                 throw new ArgumentException("separator 不能为空", nameof(separator));

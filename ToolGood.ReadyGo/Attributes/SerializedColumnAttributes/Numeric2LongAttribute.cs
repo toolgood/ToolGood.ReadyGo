@@ -9,7 +9,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class Decimal2LongAttribute : Attributes.SerializedColumnAttribute
+    public class Numeric2LongAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>
         /// 小数点位数
@@ -19,16 +19,16 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public Decimal2LongColumnSerializer Serializer { get; }
+        public Numeric2LongColumnSerializer Serializer { get; }
 
         /// <summary>
         /// 小数转长整数标签
         /// </summary>
         /// <param name="scale">小数点位数，如 2 表示 ×100</param>
-        public Decimal2LongAttribute(int scale = 2)
+        public Numeric2LongAttribute(int scale = 2)
         {
             Scale = scale;
-            Serializer = new Decimal2LongColumnSerializer(scale);
+            Serializer = new Numeric2LongColumnSerializer(scale);
         }
 
         /// <summary>
@@ -36,10 +36,10 @@ namespace ToolGood.ReadyGo.Attributes
         /// </summary>
         /// <param name="name">列名</param>
         /// <param name="scale">小数点位数，如 2 表示 ×100</param>
-        public Decimal2LongAttribute(string name, int scale = 2) : base(name)
+        public Numeric2LongAttribute(string name, int scale = 2) : base(name)
         {
             Scale = scale;
-            Serializer = new Decimal2LongColumnSerializer(scale);
+            Serializer = new Numeric2LongColumnSerializer(scale);
         }
     }
 }

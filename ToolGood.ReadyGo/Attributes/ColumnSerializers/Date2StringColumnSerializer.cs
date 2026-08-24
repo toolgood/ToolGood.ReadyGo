@@ -6,7 +6,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
     /// <summary>
     /// 日期列序列化器：序列化为 "yyyy-MM-dd"，反序列化回 DateTime / DateTimeOffset / DateOnly
     /// </summary>
-    public class DateColumnSerializer : NPoco.IColumnSerializer
+    public class Date2StringColumnSerializer : NPoco.IColumnSerializer
     {
         /// <summary>
         /// 日期序列化所使用的格式字符串。

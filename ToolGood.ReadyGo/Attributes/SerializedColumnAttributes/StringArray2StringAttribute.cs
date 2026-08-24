@@ -9,30 +9,30 @@ namespace ToolGood.ReadyGo.Attributes
     /// 基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class StringListAttribute : Attributes.SerializedColumnAttribute
+    public class StringArray2StringAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public StringListColumnSerializer Serializer { get; }
+        public StringArray2StringColumnSerializer Serializer { get; }
 
         /// <summary>
-        /// 字符串列表标签
+        /// 字符串数组标签
         /// </summary>
         /// <param name="separator">分隔符，默认逗号</param>
-        public StringListAttribute(string separator = ",")
+        public StringArray2StringAttribute(string separator = ",")
         {
-            Serializer = new StringListColumnSerializer(separator);
+            Serializer = new StringArray2StringColumnSerializer(separator);
         }
 
         /// <summary>
-        /// 字符串列表标签
+        /// 字符串数组标签
         /// </summary>
         /// <param name="name">列名</param>
         /// <param name="separator">分隔符，默认逗号</param>
-        public StringListAttribute(string name, string separator) : base(name)
+        public StringArray2StringAttribute(string name, string separator) : base(name)
         {
-            Serializer = new StringListColumnSerializer(separator);
+            Serializer = new StringArray2StringColumnSerializer(separator);
         }
     }
 }

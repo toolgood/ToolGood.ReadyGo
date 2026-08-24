@@ -11,7 +11,7 @@ namespace ToolGood.ReadyGo.Tests
     {
         public int Id { get; set; }
 
-        [DictionaryUintUint]
+        [DictionaryUintUint2Bytes]
         public Dictionary<uint, uint> PriceVolume { get; set; }
     }
 

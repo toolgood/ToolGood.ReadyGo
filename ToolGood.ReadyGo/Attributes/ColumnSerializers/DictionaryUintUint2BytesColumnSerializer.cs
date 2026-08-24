@@ -12,7 +12,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
 	/// uint→uint 字典列序列化器：将 Dictionary&lt;uint, uint&gt; 以 byte[]（BLOB 列）保存。
 	/// 价格键升序排列，差值 + 变长整数（VLQ）压缩编码，减少存储空间。
 	/// </summary>
-	public class DictionaryUintUintColumnSerializer : NPoco.IColumnSerializer
+	public class DictionaryUintUint2BytesColumnSerializer : NPoco.IColumnSerializer
 	{
 		/// <summary>
 		/// 反序列化：从 byte[] 还原 Dictionary&lt;uint, uint&gt;

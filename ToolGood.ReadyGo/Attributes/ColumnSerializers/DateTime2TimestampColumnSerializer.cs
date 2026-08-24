@@ -7,7 +7,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
     /// 时间戳列序列化器：将 DateTime / DateTimeOffset 序列化为 Unix 时间戳（UTC 基准），
     /// 精度支持秒和毫秒，需 long 存储。
     /// </summary>
-    public class TimestampColumnSerializer : NPoco.IColumnSerializer
+    public class DateTime2TimestampColumnSerializer : NPoco.IColumnSerializer
     {
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -20,7 +20,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// 时间戳列序列化器
         /// </summary>
         /// <param name="milliseconds">true 表示毫秒精度，false 表示秒精度</param>
-        public TimestampColumnSerializer(bool milliseconds = false)
+        public DateTime2TimestampColumnSerializer(bool milliseconds = false)
         {
             IsMilliseconds = milliseconds;
         }

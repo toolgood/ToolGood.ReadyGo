@@ -90,9 +90,9 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
             ColumnInfo ci = new ColumnInfo {
                 PropertyType = pi.PropertyType,
                 IsSerialized = isSerialized,
-                IsSerializedAsInt = pi.GetCustomAttributes(typeof(Decimal2IntAttribute), true).Length > 0
+                IsSerializedAsInt = pi.GetCustomAttributes(typeof(Numeric2IntAttribute), true).Length > 0
                     || pi.GetCustomAttributes(typeof(Date2IntAttribute), true).Length > 0,
-                IsSerializedAsLong = pi.GetCustomAttributes(typeof(Decimal2LongAttribute), true).Length > 0
+                IsSerializedAsLong = pi.GetCustomAttributes(typeof(Numeric2LongAttribute), true).Length > 0
                     || pi.GetCustomAttributes(typeof(DateTime2LongAttribute), true).Length > 0
             };
 

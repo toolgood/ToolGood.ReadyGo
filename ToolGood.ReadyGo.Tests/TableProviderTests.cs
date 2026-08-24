@@ -29,7 +29,7 @@ namespace ToolGood.ReadyGo.Tests
     {
         public int Id { get; set; }
 
-        [Decimal2Int(2)]
+        [Numeric2Int(2)]
         public decimal Money { get; set; }
 
         [Date2Int]

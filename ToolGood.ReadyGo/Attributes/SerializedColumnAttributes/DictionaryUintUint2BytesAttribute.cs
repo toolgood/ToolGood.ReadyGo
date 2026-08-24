@@ -7,17 +7,17 @@ namespace ToolGood.ReadyGo.Attributes
     /// 价格按键升序、差值压缩存储，基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
     [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class DictionaryUintUintAttribute : Attributes.SerializedColumnAttribute
+    public class DictionaryUintUint2BytesAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public static DictionaryUintUintColumnSerializer Serializer { get; } = new DictionaryUintUintColumnSerializer();
+        public static DictionaryUintUint2BytesColumnSerializer Serializer { get; } = new DictionaryUintUint2BytesColumnSerializer();
 
         /// <summary>
         /// uint→uint 字典标签
         /// </summary>
-        public DictionaryUintUintAttribute()
+        public DictionaryUintUint2BytesAttribute()
         {
         }
 
@@ -25,7 +25,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// uint→uint 字典标签
         /// </summary>
         /// <param name="name">列名</param>
-        public DictionaryUintUintAttribute(string name) : base(name)
+        public DictionaryUintUint2BytesAttribute(string name) : base(name)
         {
         }
     }

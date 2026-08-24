@@ -9,10 +9,10 @@ namespace ToolGood.ReadyGo.Tests
     {
         public int Id { get; set; }
 
-        [Decimal2Int(2)]
+        [Numeric2Int(2)]
         public decimal Money { get; set; }
 
-        [Decimal2Long(3)]
+        [Numeric2Long(3)]
         public double Weight { get; set; }
     }
 
@@ -22,10 +22,10 @@ namespace ToolGood.ReadyGo.Tests
     {
         public int Id { get; set; }
 
-        [Decimal2Int(2)]
+        [Numeric2Int(2)]
         public decimal? Money { get; set; }
 
-        [Decimal2Long(3)]
+        [Numeric2Long(3)]
         public double? Weight { get; set; }
     }
 

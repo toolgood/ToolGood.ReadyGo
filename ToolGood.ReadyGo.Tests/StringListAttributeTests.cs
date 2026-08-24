@@ -10,13 +10,13 @@ namespace ToolGood.ReadyGo.Tests
     {
         public int Id { get; set; }
 
-        [StringList]
+        [StringArray2String]
         public List<string> Tags { get; set; }
 
-        [StringList("|")]
+        [StringArray2String("|")]
         public List<string> Flags { get; set; }
 
-        [StringList]
+        [StringArray2String]
         public string[] Codes { get; set; }
     }
 

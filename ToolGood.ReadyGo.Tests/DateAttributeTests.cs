@@ -9,7 +9,7 @@ namespace ToolGood.ReadyGo.Tests
     {
         public int Id { get; set; }
 
-        [Date]
+        [Date2String]
         public DateTime BirthDay { get; set; }
 
         public DateTime CreateTime { get; set; }
@@ -21,7 +21,7 @@ namespace ToolGood.ReadyGo.Tests
     {
         public int Id { get; set; }
 
-        [Date]
+        [Date2String]
         public DateTime? NullableDay { get; set; }
     }
 

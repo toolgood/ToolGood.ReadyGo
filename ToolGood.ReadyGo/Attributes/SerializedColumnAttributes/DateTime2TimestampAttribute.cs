@@ -25,7 +25,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class TimestampAttribute : Attributes.SerializedColumnAttribute
+    public class DateTime2TimestampAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>
         /// 时间戳精度
@@ -35,16 +35,16 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public TimestampColumnSerializer Serializer { get; }
+        public DateTime2TimestampColumnSerializer Serializer { get; }
 
         /// <summary>
         /// 时间戳标签
         /// </summary>
         /// <param name="precision">时间戳精度，默认秒</param>
-        public TimestampAttribute(TimestampPrecision precision = TimestampPrecision.Seconds)
+        public DateTime2TimestampAttribute(TimestampPrecision precision = TimestampPrecision.Seconds)
         {
             Precision = precision;
-            Serializer = new TimestampColumnSerializer(precision == TimestampPrecision.Milliseconds);
+            Serializer = new DateTime2TimestampColumnSerializer(precision == TimestampPrecision.Milliseconds);
         }
 
         /// <summary>
@@ -52,10 +52,10 @@ namespace ToolGood.ReadyGo.Attributes
         /// </summary>
         /// <param name="name">列名</param>
         /// <param name="precision">时间戳精度，默认秒</param>
-        public TimestampAttribute(string name, TimestampPrecision precision = TimestampPrecision.Seconds) : base(name)
+        public DateTime2TimestampAttribute(string name, TimestampPrecision precision = TimestampPrecision.Seconds) : base(name)
         {
             Precision = precision;
-            Serializer = new TimestampColumnSerializer(precision == TimestampPrecision.Milliseconds);
+            Serializer = new DateTime2TimestampColumnSerializer(precision == TimestampPrecision.Milliseconds);
         }
     }
 }

@@ -7,17 +7,17 @@ namespace ToolGood.ReadyGo.Attributes
     /// 基于 SerializedColumn + IColumnSerializer 实现，数据库中仅存二进制数据。
     /// </summary>
     [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class NumericArrayAttribute : Attributes.SerializedColumnAttribute
+    public class NumericArray2BytesAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public static NumericArrayColumnSerializer Serializer { get; } = new NumericArrayColumnSerializer();
+        public static NumericArray2BytesColumnSerializer Serializer { get; } = new NumericArray2BytesColumnSerializer();
 
         /// <summary>
         /// 数值数组标签
         /// </summary>
-        public NumericArrayAttribute()
+        public NumericArray2BytesAttribute()
         {
         }
 
@@ -25,7 +25,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// 数值数组标签
         /// </summary>
         /// <param name="name">列名</param>
-        public NumericArrayAttribute(string name) : base(name)
+        public NumericArray2BytesAttribute(string name) : base(name)
         {
         }
     }

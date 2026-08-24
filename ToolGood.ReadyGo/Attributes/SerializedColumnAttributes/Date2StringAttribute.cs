@@ -8,17 +8,17 @@ namespace ToolGood.ReadyGo.Attributes
     /// 基于 SerializedColumn + IColumnSerializer 实现，数据库中仅存 "yyyy-MM-dd"。
     /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-    public class DateAttribute : Attributes.SerializedColumnAttribute
+    public class Date2StringAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public static DateColumnSerializer Serializer { get; } = new DateColumnSerializer();
+        public static Date2StringColumnSerializer Serializer { get; } = new Date2StringColumnSerializer();
 
         /// <summary>
         /// 日期标签
         /// </summary>
-        public DateAttribute()
+        public Date2StringAttribute()
         {
         }
 
@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// 日期标签
         /// </summary>
         /// <param name="name">列名</param>
-        public DateAttribute(string name) : base(name)
+        public Date2StringAttribute(string name) : base(name)
         {
         }
     }

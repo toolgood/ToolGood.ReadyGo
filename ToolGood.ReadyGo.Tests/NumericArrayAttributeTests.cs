@@ -12,16 +12,16 @@ namespace ToolGood.ReadyGo.Tests
     {
         public int Id { get; set; }
 
-        [NumericArray]
+        [NumericArray2Bytes]
         public float[] Floats { get; set; }
 
-        [NumericArray]
+        [NumericArray2Bytes]
         public List<float> ValueList { get; set; }
 
-        [NumericArray]
+        [NumericArray2Bytes]
         public double[] Doubles { get; set; }
 
-        [NumericArray]
+        [NumericArray2Bytes]
         public List<int> Ints { get; set; }
     }
 

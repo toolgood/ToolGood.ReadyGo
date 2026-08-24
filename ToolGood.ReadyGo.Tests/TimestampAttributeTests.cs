@@ -9,10 +9,10 @@ namespace ToolGood.ReadyGo.Tests
     {
         public int Id { get; set; }
 
-        [Timestamp]
+        [DateTime2Timestamp]
         public DateTime? CreateTime { get; set; }
 
-        [Timestamp(TimestampPrecision.Milliseconds)]
+        [DateTime2Timestamp(TimestampPrecision.Milliseconds)]
         public DateTime? UpdateTime { get; set; }
     }
 
