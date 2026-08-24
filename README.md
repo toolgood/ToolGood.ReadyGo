@@ -24,7 +24,7 @@ var users = helper.Where<User>().Where(x => x.Age > 18).OrderBy(x => x.Name).ToL
 * Object 快速增删改：Insert / Update / Delete / Save。
 * 快照局部更新：StartSnapshot 记录对象变更，只更新变更的列。
 * 批量更新与删除：UpdateMany / DeleteMany 链式操作。
-* 原生 SQL：支持 SQL 简化、分页查询、多结果集 FetchMultiple、一对多 FetchOneToMany。
+* 原生 SQL：支持 SQL 简化、分页查询、多结果集 SelectMultiple、一对多 SelectOneToMany。
 * 动态查询：Where&lt;T&gt;() 链式，支持表达式、IfTrue* 条件开关、WhereIn / WhereLike / WhereExists。
 * object 条件查询：以对象为条件执行 Select / Update / Delete / Count / Exists。
 * 异步 API：全部核心操作均提供 _Async 异步版本。
