@@ -15,6 +15,16 @@ namespace ToolGood.ReadyGo.Tests
         public DateTime CreateTime { get; set; }
     }
 
+    [Table("Tb_DateNullableTest")]
+    [PrimaryKey("Id")]
+    public class Tb_DateNullableTest
+    {
+        public int Id { get; set; }
+
+        [Date]
+        public DateTime? NullableDay { get; set; }
+    }
+
     /// <summary>
     /// [Date] 属性：只保存日期，不保存时间
     /// </summary>
@@ -76,6 +86,57 @@ namespace ToolGood.ReadyGo.Tests
             var loaded = helper.FirstOrDefault<Tb_DateTest>(item.Id);
             Assert.NotNull(loaded);
             Assert.Equal(new DateTime(2026, 12, 31), loaded.BirthDay);
+        }
+
+        [Fact]
+        public void 可空日期_Null值序列化与反序列化()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateNullableTest));
+
+            var item = new Tb_DateNullableTest { NullableDay = null };
+            helper.Insert(item);
+
+            // 数据库中实际存 NULL
+            var raw = helper.ExecuteScalar<object>("SELECT NullableDay FROM Tb_DateNullableTest WHERE Id = @0", item.Id);
+            Assert.True(raw == null || raw == DBNull.Value);
+
+            // 反序列化回 DateTime? 应为 null
+            var loaded = helper.FirstOrDefault<Tb_DateNullableTest>(item.Id);
+            Assert.NotNull(loaded);
+            Assert.Null(loaded.NullableDay);
+        }
+
+        [Fact]
+        public void 可空日期_数据库NULL值读取()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateNullableTest));
+
+            // 直接 SQL 插入 NULL，模拟历史数据
+            helper.Execute("INSERT INTO Tb_DateNullableTest (Id, NullableDay) VALUES (@0, NULL)", 1);
+
+            var loaded = helper.FirstOrDefault<Tb_DateNullableTest>(1);
+            Assert.NotNull(loaded);
+            Assert.Null(loaded.NullableDay);
+        }
+
+        [Fact]
+        public void 可空日期_有值反序列化()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateNullableTest));
+
+            var item = new Tb_DateNullableTest { NullableDay = new DateTime(1991, 4, 3, 23, 59, 59) };
+            helper.Insert(item);
+
+            var loaded = helper.FirstOrDefault<Tb_DateNullableTest>(item.Id);
+            Assert.NotNull(loaded);
+            Assert.NotNull(loaded.NullableDay);
+            Assert.Equal(new DateTime(1991, 4, 3), loaded.NullableDay.Value);
         }
     }
 }
