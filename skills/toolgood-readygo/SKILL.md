@@ -215,10 +215,10 @@ public int OrderCount { get; set; }
 
 - `SerializedColumnAttribute()` / `SerializedColumnAttribute(string name)`
 
-#### Date
+#### Date2String
 只保存日期（数据库中仅存 `yyyy-MM-dd`）。
 
-- `DateAttribute()` / `DateAttribute(string name)`
+- `Date2StringAttribute()` / `Date2StringAttribute(string name)`
 
 #### Date2Int
 只保存日期为 yyyyMMdd 整数（不保存时间），存为 int。
@@ -242,46 +242,46 @@ public DateTime TradeTime { get; set; }
 
 - `DateTime2LongAttribute()` / `DateTime2LongAttribute(string name)`
 
-#### Timestamp
+#### DateTime2Timestamp
 以 Unix 时间戳（UTC 基准）保存，精度支持秒和毫秒，需 long 存储。
 
 ```csharp
-[Timestamp]                                   // 秒级（默认）
-[Timestamp(TimestampPrecision.Milliseconds)]  // 毫秒级
-[Timestamp("create_time", TimestampPrecision.Milliseconds)]
+[DateTime2Timestamp]                                   // 秒级（默认）
+[DateTime2Timestamp(TimestampPrecision.Milliseconds)]  // 毫秒级
+[DateTime2Timestamp("create_time", TimestampPrecision.Milliseconds)]
 ```
 
-- `TimestampAttribute(TimestampPrecision precision = TimestampPrecision.Seconds)`
-- `TimestampAttribute(string name, TimestampPrecision precision = TimestampPrecision.Seconds)`
+- `DateTime2TimestampAttribute(TimestampPrecision precision = TimestampPrecision.Seconds)`
+- `DateTime2TimestampAttribute(string name, TimestampPrecision precision = TimestampPrecision.Seconds)`
 
-#### Decimal2Int
+#### Numeric2Int
 小数转 int 保存（保存时 ×10^scale 四舍五入，读取时 ÷10^scale），值超出 int 范围会抛异常。
 
 ```csharp
-[Decimal2Int(2)]            // 1.23 存为 123
-[Decimal2Int("price", 2)]
+[Numeric2Int(2)]            // 1.23 存为 123
+[Numeric2Int("price", 2)]
 ```
 
-- `Decimal2IntAttribute(int scale = 2)`
-- `Decimal2IntAttribute(string name, int scale = 2)`
+- `Numeric2IntAttribute(int scale = 2)`
+- `Numeric2IntAttribute(string name, int scale = 2)`
 
-#### Decimal2Long
+#### Numeric2Long
 小数转 long 保存（保存时 ×10^scale 四舍五入，读取时 ÷10^scale），适合大数。
 
 ```csharp
-[Decimal2Long(2)]           // 1.23 存为 123
-[Decimal2Long("price", 2)]
+[Numeric2Long(2)]           // 1.23 存为 123
+[Numeric2Long("price", 2)]
 ```
 
-- `Decimal2LongAttribute(int scale = 2)`
-- `Decimal2LongAttribute(string name, int scale = 2)`
+- `Numeric2LongAttribute(int scale = 2)`
+- `Numeric2LongAttribute(string name, int scale = 2)`
 
-#### NumericArray
+#### NumericArray2Bytes
 将 `float[]` / `double[]` / `int[]` 及其 `List<T>` 以 byte[]（BLOB 列）保存。
 
-- `NumericArrayAttribute()` / `NumericArrayAttribute(string name)`
+- `NumericArray2BytesAttribute()` / `NumericArray2BytesAttribute(string name)`
 
-#### EnumString
+#### Enum2String
 枚举显示名称（用于枚举类型）。
 
 - 无参
