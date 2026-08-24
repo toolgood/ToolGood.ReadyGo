@@ -125,19 +125,20 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
-        public void 键0_读取时被忽略()
+        public void 键0_正确读取往返()
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
             helper._TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
 
-            // 序列化时首键 0 会写入，但反序列化时首个价格 0 会被丢弃
-            var item = new Tb_DictUintTest { PriceVolume = new Dictionary<uint, uint> { { 0, 5 }, { 10, 3 } } };
+            // 首键 0 也能正确往返（此前存在键 0 被丢弃的 bug）
+            var dict = new Dictionary<uint, uint> { { 0, 5 }, { 10, 3 } };
+            var item = new Tb_DictUintTest { PriceVolume = dict };
             helper.Insert(item);
 
             var loaded = helper.FirstOrDefault<Tb_DictUintTest>(item.Id);
             Assert.NotNull(loaded);
-            Assert.Equal(new Dictionary<uint, uint> { { 10, 3 } }, loaded.PriceVolume);
+            Assert.Equal(dict, loaded.PriceVolume);
         }
     }
 }
