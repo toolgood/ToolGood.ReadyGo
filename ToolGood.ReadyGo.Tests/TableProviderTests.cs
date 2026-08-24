@@ -41,6 +41,28 @@ namespace ToolGood.ReadyGo.Tests
         public decimal NormalMoney { get; set; }
     }
 
+    [Table("Tb_Provider_SerializedString")]
+    [PrimaryKey("Id")]
+    public class Tb_Provider_SerializedString
+    {
+        public int Id { get; set; }
+
+        [StringArray2String]
+        public string[] NoLength { get; set; }
+
+        [StringArray2String]
+        [FieldLength(200)]
+        public string[] WithLength { get; set; }
+
+        [StringArray2String]
+        [Text]
+        public string[] AsText { get; set; }
+
+        [StringArray2String]
+        [LongText]
+        public string[] AsLongText { get; set; }
+    }
+
     /// <summary>
     /// Gadget TableManager Provider 生成 SQL 的正确性验证
     /// </summary>
@@ -145,6 +167,32 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Contains(dateTimeValueColumn, sql);
             // 普通 decimal 字段类型保持不变
             Assert.Contains(normalColumn, sql);
+        }
+
+        public static IEnumerable<object[]> SerializedStringProviderData()
+        {
+            // [StringArray2String] 字符串序列化列：默认 varchar(4000) / 自定义长度 / Text / LongText
+            yield return new object[] { new SqlServerDatabaseProvider(), "[NoLength] nvarchar(4000)", "[WithLength] nvarchar(200)", "[AsText] Text", "[AsLongText] Text" };
+            yield return new object[] { new SqlServer2012DatabaseProvider(), "[NoLength] nvarchar(4000)", "[WithLength] nvarchar(200)", "[AsText] Text", "[AsLongText] Text" };
+            yield return new object[] { new MySqlDatabaseProvider(), "`NoLength` varchar(4000)", "`WithLength` varchar(200)", "`AsText` Text", "`AsLongText` longtext" };
+            yield return new object[] { new MariaDbDatabaseProvider(), "`NoLength` varchar(4000)", "`WithLength` varchar(200)", "`AsText` Text", "`AsLongText` longtext" };
+            yield return new object[] { new SQLiteDatabaseProvider(), "[NoLength] Text", "[WithLength] Text", "[AsText] Text", "[AsLongText] Text" };
+            yield return new object[] { new DuckDbDatabaseProvider(), "\"NoLength\" Text", "\"WithLength\" Text", "\"AsText\" Text", "\"AsLongText\" Text" };
+            yield return new object[] { new OracleDatabaseProvider(), "\"NoLength\" NVARCHAR2(4000)", "\"WithLength\" NVARCHAR2(200)", "\"AsText\" CLOB", "\"AsLongText\" CLOB" };
+            yield return new object[] { new PostgreSQLDatabaseProvider(), "\"NoLength\" varchar(4000)", "\"WithLength\" varchar(200)", "\"AsText\" text", "\"AsLongText\" text" };
+            yield return new object[] { new FirebirdDbDatabaseProvider(), "\"NoLength\" VARCHAR(4000)", "\"WithLength\" VARCHAR(200)", "\"AsText\" BLOB SUB_TYPE TEXT", "\"AsLongText\" BLOB SUB_TYPE TEXT" };
+        }
+
+        [Theory]
+        [MemberData(nameof(SerializedStringProviderData))]
+        public void 建表SQL_字符串序列化字段_字段长度与文本类型(ToolGood.ReadyGo.Gadget.TableManager.DatabaseProvider provider, string noLengthColumn, string withLengthColumn, string asTextColumn, string asLongTextColumn)
+        {
+            var sql = provider.GetTryCreateTable(typeof(Tb_Provider_SerializedString), false);
+
+            Assert.Contains(noLengthColumn, sql);
+            Assert.Contains(withLengthColumn, sql);
+            Assert.Contains(asTextColumn, sql);
+            Assert.Contains(asLongTextColumn, sql);
         }
     }
 }
