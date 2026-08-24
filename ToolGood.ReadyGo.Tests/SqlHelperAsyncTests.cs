@@ -549,5 +549,35 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         #endregion
+
+        #region UseTransaction
+
+        [Fact]
+        public async Task UseTransaction_Async_Commit()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+
+            await using (var tran = await helper.UseTransaction_Async()) {
+                await helper.Execute_Async("INSERT INTO UserInfo (Name, Age, Remark, CreateTime, Money, IsDelete) VALUES ('事务1', 1, NULL, '2026-01-01 00:00:00', 1, 0)");
+                await tran.CompleteAsync();
+            }
+            Assert.True(await helper.Exists_Async<UserInfo>("WHERE Name = '事务1'"));
+        }
+
+        [Fact]
+        public async Task UseTransaction_Async_Rollback()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+
+            await using (var tran = await helper.UseTransaction_Async()) {
+                await helper.Execute_Async("INSERT INTO UserInfo (Name, Age, Remark, CreateTime, Money, IsDelete) VALUES ('事务2', 1, NULL, '2026-01-01 00:00:00', 1, 0)");
+                // 不调用 CompleteAsync，释放时应回滚
+            }
+            Assert.False(await helper.Exists_Async<UserInfo>("WHERE Name = '事务2'"));
+        }
+
+        #endregion
     }
 }

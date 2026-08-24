@@ -12,6 +12,19 @@ namespace ToolGood.ReadyGo
 {
     public partial class SqlHelper
     {
+        #region UseTransaction
+
+        /// <summary>
+        /// 使用异步事务，支持 await using
+        /// </summary>
+        /// <returns>异步事务对象</returns>
+        public async Task<IAsyncTransaction> UseTransaction_Async()
+        {
+            return await AsyncTransaction.Init(GetDatabase(), _isolationLevel ?? IsolationLevel.Unspecified);
+        }
+
+        #endregion UseTransaction
+
         #region Execute ExecuteScalar ExecuteDataTable ExecuteDataSet Exists
 
         /// <summary>

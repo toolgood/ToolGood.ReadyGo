@@ -235,7 +235,7 @@ var err = helper._Sql.LastErrorMessage; // 上次错误信息
 
 `Execute`、`ExecuteScalar`、`ExecuteDataTable`、`ExecuteDataSet`、`Exists`、`Count`、`Select_Count`、`Select`、`SelectPage`、
 `Page`、`SQL_FirstOrDefault`、`SQL_Select`、`SQL_Page`、`SelectOneToMany`、`SelectMultiple`、`FirstOrDefault`、
-`Insert`、`InsertList`、`Update`（含快照/指定列/条件）、`UpdateList`（含快照）、`Delete`、`DeleteById`、`Save`、`SaveList`。
+`Insert`、`InsertList`、`Update`（含快照/指定列/条件）、`UpdateList`（含快照）、`Delete`、`DeleteById`、`Save`、`SaveList`、`UseTransaction`。
 
 ```csharp
 var users = await helper.Select_Async<User>("Where [UserType]=@0", 1);

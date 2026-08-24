@@ -588,7 +588,7 @@ helper.SaveList(new List<User> { newUser, existingUser });
 
 ## 异步 API
 
-所有核心操作均提供 `_Async` 后缀的异步版本：`Execute_Async`、`ExecuteScalar_Async`、`ExecuteDataTable_Async`、`ExecuteDataSet_Async`、`Exists_Async`、`Count_Async`、`Select_Async`、`SelectPage_Async`、`Page_Async`、`SelectOneToMany_Async`、`SelectMultiple_Async`、`FirstOrDefault_Async`、`Insert_Async`、`InsertList_Async`、`Update_Async`（含快照/指定列/条件）、`UpdateList_Async`（含快照）、`Delete_Async`、`DeleteById_Async`、`Save_Async`、`SaveList_Async`。
+所有核心操作均提供 `_Async` 后缀的异步版本：`Execute_Async`、`ExecuteScalar_Async`、`ExecuteDataTable_Async`、`ExecuteDataSet_Async`、`Exists_Async`、`Count_Async`、`Select_Async`、`SelectPage_Async`、`Page_Async`、`SelectOneToMany_Async`、`SelectMultiple_Async`、`FirstOrDefault_Async`、`Insert_Async`、`InsertList_Async`、`Update_Async`（含快照/指定列/条件）、`UpdateList_Async`（含快照）、`Delete_Async`、`DeleteById_Async`、`Save_Async`、`SaveList_Async`、`UseTransaction_Async`。
 
 ```csharp
 var users = await helper.Select_Async<User>("Where [UserType]=@0", 1);
