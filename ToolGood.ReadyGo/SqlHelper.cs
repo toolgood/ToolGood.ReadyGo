@@ -30,7 +30,6 @@ namespace ToolGood.ReadyGo
 
         // 连接时间 事务级别
         internal int _commandTimeout;
-        internal int _oneTimeCommandTimeout;
         internal IsolationLevel? _isolationLevel;
 
         internal SqlRecord _sql = new SqlRecord();
@@ -107,9 +106,6 @@ namespace ToolGood.ReadyGo
             Database db = _database;
 
             db.CommandTimeout = _commandTimeout;
-            db.OneTimeCommandTimeout = _oneTimeCommandTimeout;
-
-            _oneTimeCommandTimeout = 0;
             return db;
         }
 
@@ -806,16 +802,6 @@ namespace ToolGood.ReadyGo
         }
 
         #endregion Object  Insert Update Delete DeleteById Save
-
-        internal string _databaseName;
-        /// <summary>
-        /// 切换数据库
-        /// </summary>
-        /// <param name="databaseName">要切换到的数据库名称</param>
-        public void ChangeDatabase(string databaseName)
-        {
-            _databaseName = databaseName;
-        }
 
         /// <summary>
         /// 获取动态表名，适合绑定数据表列名
