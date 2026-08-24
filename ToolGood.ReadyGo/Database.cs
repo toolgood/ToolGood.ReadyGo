@@ -45,19 +45,6 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        /// 命令执行后
-        /// </summary>
-        /// <param name="cmd">已执行的数据库命令</param>
-        protected override void OnExecutedCommand(DbCommand cmd)
-        {
-            base.OnExecutedCommand(cmd);
-            if (_sqlHelper != null && _sqlHelper._sql != null) {
-                _sqlHelper._sql.LastSQL = cmd.CommandText;
-                _sqlHelper._sql.LastArgs = GetParameterValues(cmd);
-            }
-        }
-
-        /// <summary>
         /// 命令执行出错
         /// </summary>
         /// <param name="exception">执行出错时抛出的异常</param>

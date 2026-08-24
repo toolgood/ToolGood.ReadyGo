@@ -55,6 +55,19 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
+        /// 执行SQL 查询,返回 DataSet
+        /// </summary>
+        /// <param name="sql">SQL 语句</param>
+        /// <param name="args">SQL 参数</param>
+        /// <returns>返回 DataSet</returns>
+        public async Task<DataSet> ExecuteDataSet_Async(string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
+
+            return await GetDatabase().ExecuteDataSet_Async(sql, args);
+        }
+
+        /// <summary>
         /// 执行SQL 查询,判断是否存在，返回bool类型
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
