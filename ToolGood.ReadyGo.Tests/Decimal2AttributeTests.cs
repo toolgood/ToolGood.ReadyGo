@@ -16,6 +16,19 @@ namespace ToolGood.ReadyGo.Tests
         public double Weight { get; set; }
     }
 
+    [Table("Tb_MoneyNullableTest")]
+    [PrimaryKey("Id")]
+    public class Tb_MoneyNullableTest
+    {
+        public int Id { get; set; }
+
+        [Decimal2Int(2)]
+        public decimal? Money { get; set; }
+
+        [Decimal2Long(3)]
+        public double? Weight { get; set; }
+    }
+
     /// <summary>
     /// [Decimal2Int] / [Decimal2Long] 属性：小数转整数存储
     /// </summary>
@@ -63,6 +76,63 @@ namespace ToolGood.ReadyGo.Tests
             Assert.NotNull(loaded);
             Assert.Equal(999.99m, loaded.Money);
             Assert.Equal(1.235, loaded.Weight);
+        }
+
+        [Fact]
+        public void 可空小数_Null值序列化与反序列化()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_MoneyNullableTest));
+
+            var item = new Tb_MoneyNullableTest { Money = null, Weight = null };
+            helper.Insert(item);
+
+            // 数据库中实际存 NULL
+            var raw = helper.ExecuteScalar<object>("SELECT Money FROM Tb_MoneyNullableTest WHERE Id = @0", item.Id);
+            Assert.True(raw == null || raw == DBNull.Value);
+
+            // 反序列化回 decimal? / double? 应为 null
+            var loaded = helper.FirstOrDefault<Tb_MoneyNullableTest>(item.Id);
+            Assert.NotNull(loaded);
+            Assert.Null(loaded.Money);
+            Assert.Null(loaded.Weight);
+        }
+
+        [Fact]
+        public void 可空小数_数据库NULL值读取()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_MoneyNullableTest));
+
+            // 直接 SQL 插入 NULL，模拟历史数据
+            helper.Execute("INSERT INTO Tb_MoneyNullableTest (Id, Money, Weight) VALUES (@0, NULL, NULL)", 1);
+
+            var loaded = helper.FirstOrDefault<Tb_MoneyNullableTest>(1);
+            Assert.NotNull(loaded);
+            Assert.Null(loaded.Money);
+            Assert.Null(loaded.Weight);
+        }
+
+        [Fact]
+        public void 可空小数_有值反序列化()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_MoneyNullableTest));
+
+            var item = new Tb_MoneyNullableTest { Money = 1.23m, Weight = 1.2345 };
+            helper.Insert(item);
+
+            // 库中存整数（×10^scale）
+            Assert.Equal(123.0, helper.ExecuteScalar<double>("SELECT Money FROM Tb_MoneyNullableTest WHERE Id = @0", item.Id));
+            Assert.Equal(1235.0, helper.ExecuteScalar<double>("SELECT Weight FROM Tb_MoneyNullableTest WHERE Id = @0", item.Id));
+
+            var loaded = helper.FirstOrDefault<Tb_MoneyNullableTest>(item.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(1.23m, loaded.Money.Value);
+            Assert.Equal(1.235, loaded.Weight.Value);
         }
     }
 }
