@@ -9,17 +9,17 @@ namespace ToolGood.ReadyGo.Tests
     {
         public int Id { get; set; }
 
-        [DecimalScale(2)]
+        [Decimal2Int(2)]
         public decimal Money { get; set; }
 
-        [DecimalScale(3)]
+        [Decimal2Long(3)]
         public double Weight { get; set; }
     }
 
     /// <summary>
-    /// [DecimalScale] 属性：小数转整数存储
+    /// [Decimal2Int] / [Decimal2Long] 属性：小数转整数存储
     /// </summary>
-    public class DecimalScaleAttributeTests
+    public class Decimal2AttributeTests
     {
         [Fact]
         public void Insert_小数转整数保存_读取还原()

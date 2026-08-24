@@ -220,16 +220,27 @@ public int OrderCount { get; set; }
 
 - `DateAttribute()` / `DateAttribute(string name)`
 
-#### DecimalScale
-小数转整数保存（保存时 ×10^scale，读取时 ÷10^scale）。
+#### Decimal2Int
+小数转 int 保存（保存时 ×10^scale 四舍五入，读取时 ÷10^scale），值超出 int 范围会抛异常。
 
 ```csharp
-[DecimalScale(2)]            // 1.23 存为 123
-[DecimalScale("price", 2)]
+[Decimal2Int(2)]            // 1.23 存为 123
+[Decimal2Int("price", 2)]
 ```
 
-- `DecimalScaleAttribute(int scale = 2)`
-- `DecimalScaleAttribute(string name, int scale = 2)`
+- `Decimal2IntAttribute(int scale = 2)`
+- `Decimal2IntAttribute(string name, int scale = 2)`
+
+#### Decimal2Long
+小数转 long 保存（保存时 ×10^scale 四舍五入，读取时 ÷10^scale），适合大数。
+
+```csharp
+[Decimal2Long(2)]           // 1.23 存为 123
+[Decimal2Long("price", 2)]
+```
+
+- `Decimal2LongAttribute(int scale = 2)`
+- `Decimal2LongAttribute(string name, int scale = 2)`
 
 #### NumericArray
 将 `float[]` / `double[]` / `int[]` 及其 `List<T>` 以 byte[]（BLOB 列）保存。

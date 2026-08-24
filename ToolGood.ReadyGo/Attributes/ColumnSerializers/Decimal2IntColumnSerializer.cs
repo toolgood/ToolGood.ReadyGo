@@ -4,9 +4,9 @@ using System.Globalization;
 namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
 {
     /// <summary>
-    /// 小数转整数列序列化器：保存时数值 × 10^scale 存为整数，读取时 ÷ 10^scale 并四舍五入
+    /// 小数转整数列序列化器：保存时数值 × 10^scale 四舍五入存为 int（超出 int 范围抛异常），读取时 ÷ 10^scale 还原
     /// </summary>
-    public class DecimalScaleColumnSerializer : NPoco.IColumnSerializer
+    public class Decimal2IntColumnSerializer : NPoco.IColumnSerializer
     {
         private readonly int _scale;
         private readonly decimal _multiplier;
@@ -15,7 +15,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// 小数转整数列序列化器
         /// </summary>
         /// <param name="scale">小数点位数</param>
-        public DecimalScaleColumnSerializer(int scale)
+        public Decimal2IntColumnSerializer(int scale)
         {
             if (scale < 0) {
                 throw new ArgumentOutOfRangeException(nameof(scale), "scale 不能为负数");
@@ -25,10 +25,10 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         }
 
         /// <summary>
-        /// 数值 × 10^scale，四舍五入后保存为整数
+        /// 数值 × 10^scale，四舍五入后保存为 int
         /// </summary>
         /// <param name="value">要序列化的小数值</param>
-        /// <returns>四舍五入后的整数字符串</returns>
+        /// <returns>四舍五入后的 int 值</returns>
         public object Serialize(object value)
         {
             if (value == null) {
@@ -36,7 +36,8 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
             }
             var d = Convert.ToDecimal(value, CultureInfo.InvariantCulture);
             var scaled = Math.Round(d * _multiplier, 0, MidpointRounding.AwayFromZero);
-            return scaled.ToString("0", CultureInfo.InvariantCulture);
+            // decimal → int 超出范围时会抛 OverflowException
+            return (int)scaled;
         }
 
         /// <summary>

@@ -23,19 +23,19 @@ namespace ToolGood.ReadyGo.Tests
         public int Id { get; set; }
     }
 
-    [Table("Tb_Provider_DecimalScale")]
+    [Table("Tb_Provider_Decimal2")]
     [PrimaryKey("Id")]
-    public class Tb_Provider_DecimalScale
+    public class Tb_Provider_Decimal2
     {
         public int Id { get; set; }
 
-        [DecimalScale(2)]
+        [Decimal2Int(2)]
         public decimal Money { get; set; }
 
         [Date2Int]
         public DateTime? DateValue { get; set; }
 
-        [DateTime2Int]
+        [DateTime2Long]
         public DateTime? DateTimeValue { get; set; }
 
         public decimal NormalMoney { get; set; }
@@ -119,27 +119,27 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal(1, c.Id); // 自增计数已重置
         }
 
-        public static IEnumerable<object[]> DecimalScaleProviderData()
+        public static IEnumerable<object[]> Decimal2ProviderData()
         {
-            // [DecimalScale] / [Date2Int] / [DateTime2Int] 字段：各数据库方言应保存为整数；普通 decimal 字段不受影响
-            yield return new object[] { new SqlServerDatabaseProvider(), "[Money] bigint", "[DateValue] bigint", "[DateTimeValue] bigint", "[NormalMoney] decimal" };
-            yield return new object[] { new SqlServer2012DatabaseProvider(), "[Money] bigint", "[DateValue] bigint", "[DateTimeValue] bigint", "[NormalMoney] decimal" };
-            yield return new object[] { new MySqlDatabaseProvider(), "`Money` bigint", "`DateValue` bigint", "`DateTimeValue` bigint", "`NormalMoney` decimal" };
-            yield return new object[] { new MariaDbDatabaseProvider(), "`Money` bigint", "`DateValue` bigint", "`DateTimeValue` bigint", "`NormalMoney` decimal" };
+            // [Decimal2Int] / [Decimal2Long] / [Date2Int] / [DateTime2Long] 字段：各数据库方言应保存为对应整数；普通 decimal 字段不受影响
+            yield return new object[] { new SqlServerDatabaseProvider(), "[Money] int", "[DateValue] int", "[DateTimeValue] bigint", "[NormalMoney] decimal" };
+            yield return new object[] { new SqlServer2012DatabaseProvider(), "[Money] int", "[DateValue] int", "[DateTimeValue] bigint", "[NormalMoney] decimal" };
+            yield return new object[] { new MySqlDatabaseProvider(), "`Money` int", "`DateValue` int", "`DateTimeValue` bigint", "`NormalMoney` decimal" };
+            yield return new object[] { new MariaDbDatabaseProvider(), "`Money` int", "`DateValue` int", "`DateTimeValue` bigint", "`NormalMoney` decimal" };
             yield return new object[] { new SQLiteDatabaseProvider(), "[Money] INTEGER", "[DateValue] INTEGER", "[DateTimeValue] INTEGER", "[NormalMoney] REAL" };
-            yield return new object[] { new DuckDbDatabaseProvider(), "\"Money\" BIGINT", "\"DateValue\" BIGINT", "\"DateTimeValue\" BIGINT", "\"NormalMoney\" NUMERIC" };
-            yield return new object[] { new OracleDatabaseProvider(), "\"Money\" NUMBER(19)", "\"DateValue\" NUMBER(19)", "\"DateTimeValue\" NUMBER(19)", "\"NormalMoney\" NUMBER" };
-            yield return new object[] { new PostgreSQLDatabaseProvider(), "\"Money\" bigint", "\"DateValue\" bigint", "\"DateTimeValue\" bigint", "\"NormalMoney\" numeric" };
-            yield return new object[] { new FirebirdDbDatabaseProvider(), "\"Money\" BIGINT", "\"DateValue\" BIGINT", "\"DateTimeValue\" BIGINT", "\"NormalMoney\" DECIMAL" };
+            yield return new object[] { new DuckDbDatabaseProvider(), "\"Money\" INTEGER", "\"DateValue\" INTEGER", "\"DateTimeValue\" BIGINT", "\"NormalMoney\" NUMERIC" };
+            yield return new object[] { new OracleDatabaseProvider(), "\"Money\" NUMBER(10)", "\"DateValue\" NUMBER(10)", "\"DateTimeValue\" NUMBER(19)", "\"NormalMoney\" NUMBER" };
+            yield return new object[] { new PostgreSQLDatabaseProvider(), "\"Money\" integer", "\"DateValue\" integer", "\"DateTimeValue\" bigint", "\"NormalMoney\" numeric" };
+            yield return new object[] { new FirebirdDbDatabaseProvider(), "\"Money\" INTEGER", "\"DateValue\" INTEGER", "\"DateTimeValue\" BIGINT", "\"NormalMoney\" DECIMAL" };
         }
 
         [Theory]
-        [MemberData(nameof(DecimalScaleProviderData))]
+        [MemberData(nameof(Decimal2ProviderData))]
         public void 建表SQL_整数序列化字段保存为整数(ToolGood.ReadyGo.Gadget.TableManager.DatabaseProvider provider, string moneyColumn, string dateValueColumn, string dateTimeValueColumn, string normalColumn)
         {
-            var sql = provider.GetTryCreateTable(typeof(Tb_Provider_DecimalScale), false);
+            var sql = provider.GetTryCreateTable(typeof(Tb_Provider_Decimal2), false);
 
-            // [DecimalScale] / [Date2Int] / [DateTime2Int] 字段保存为整数
+            // [Decimal2Int] / [Decimal2Long] / [Date2Int] / [DateTime2Long] 字段保存为整数
             Assert.Contains(moneyColumn, sql);
             Assert.Contains(dateValueColumn, sql);
             Assert.Contains(dateTimeValueColumn, sql);

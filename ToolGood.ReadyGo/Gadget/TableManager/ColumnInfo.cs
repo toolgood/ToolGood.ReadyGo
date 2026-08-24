@@ -66,9 +66,14 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         public bool IsSerialized;
 
         /// <summary>
-        /// 是否为序列化后保存为整数的列（[DecimalScale] / [Date2Int] / [DateTime2Int]，建表时保存为整数）
+        /// 是否为序列化后保存为 int 的列（[Decimal2Int] / [Date2Int]，建表时保存为 int）
         /// </summary>
         public bool IsSerializedAsInt;
+
+        /// <summary>
+        /// 是否为序列化后保存为 long 的列（[Decimal2Long] / [DateTime2Long]，建表时保存为 long）
+        /// </summary>
+        public bool IsSerializedAsLong;
 
         internal static ColumnInfo FromProperty(PropertyInfo pi)
         {
@@ -85,9 +90,10 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
             ColumnInfo ci = new ColumnInfo {
                 PropertyType = pi.PropertyType,
                 IsSerialized = isSerialized,
-                IsSerializedAsInt = pi.GetCustomAttributes(typeof(DecimalScaleAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(Date2IntAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(DateTime2IntAttribute), true).Length > 0
+                IsSerializedAsInt = pi.GetCustomAttributes(typeof(Decimal2IntAttribute), true).Length > 0
+                    || pi.GetCustomAttributes(typeof(Date2IntAttribute), true).Length > 0,
+                IsSerializedAsLong = pi.GetCustomAttributes(typeof(Decimal2LongAttribute), true).Length > 0
+                    || pi.GetCustomAttributes(typeof(DateTime2LongAttribute), true).Length > 0
             };
 
             a = pi.GetCustomAttributes(typeof(ColumnAttribute), true);

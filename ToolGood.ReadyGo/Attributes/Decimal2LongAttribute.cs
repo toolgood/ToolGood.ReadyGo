@@ -1,0 +1,45 @@
+using System;
+using ToolGood.ReadyGo.Attributes.ColumnSerializers;
+
+namespace ToolGood.ReadyGo.Attributes
+{
+    /// <summary>
+    /// 小数转长整数标签：保存时数值 × 10^scale 四舍五入存为 long，读取时 ÷ 10^scale 并四舍五入还原。
+    /// 例：scale=2 时，1.23 存为 123，读取 123 还原为 1.23。
+    /// 基于 SerializedColumn + IColumnSerializer 实现。
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public class Decimal2LongAttribute : Attributes.SerializedColumnAttribute
+    {
+        /// <summary>
+        /// 小数点位数
+        /// </summary>
+        public int Scale { get; }
+
+        /// <summary>
+        /// 列级序列化器
+        /// </summary>
+        public Decimal2LongColumnSerializer Serializer { get; }
+
+        /// <summary>
+        /// 小数转长整数标签
+        /// </summary>
+        /// <param name="scale">小数点位数，如 2 表示 ×100</param>
+        public Decimal2LongAttribute(int scale = 2)
+        {
+            Scale = scale;
+            Serializer = new Decimal2LongColumnSerializer(scale);
+        }
+
+        /// <summary>
+        /// 小数转长整数标签
+        /// </summary>
+        /// <param name="name">列名</param>
+        /// <param name="scale">小数点位数，如 2 表示 ×100</param>
+        public Decimal2LongAttribute(string name, int scale = 2) : base(name)
+        {
+            Scale = scale;
+            Serializer = new Decimal2LongColumnSerializer(scale);
+        }
+    }
+}

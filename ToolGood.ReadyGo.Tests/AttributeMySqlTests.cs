@@ -85,10 +85,10 @@ namespace ToolGood.ReadyGo.Tests
     }
 
     /// <summary>
-    /// [DecimalScale] 属性：小数转整数存储（基于 MySQL）
+    /// [Decimal2Int] / [Decimal2Long] 属性：小数转整数存储（基于 MySQL）
     /// </summary>
     [Collection("MySql")]
-    public class DecimalScaleMySqlTests
+    public class Decimal2MySqlTests
     {
         private static MySqlTestDb CreateTable()
         {

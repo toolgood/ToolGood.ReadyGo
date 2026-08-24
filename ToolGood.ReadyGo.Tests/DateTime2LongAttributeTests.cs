@@ -5,37 +5,37 @@ using Xunit;
 
 namespace ToolGood.ReadyGo.Tests
 {
-    [Table("Tb_DateTime2IntTest")]
+    [Table("Tb_DateTime2LongTest")]
     [PrimaryKey("Id")]
-    public class Tb_DateTime2IntTest
+    public class Tb_DateTime2LongTest
     {
         public int Id { get; set; }
 
-        [DateTime2Int]
+        [DateTime2Long]
         public DateTime TradeTime { get; set; }
 
-        [DateTime2Int]
+        [DateTime2Long]
         public DateTime? EndTime { get; set; }
     }
 
     /// <summary>
-    /// [DateTime2Int] 属性：时间以 yyyyMMddHHmmss 整数保存
+    /// [DateTime2Long] 属性：时间以 yyyyMMddHHmmss 整数保存
     /// </summary>
-    public class DateTime2IntAttributeTests
+    public class DateTime2LongAttributeTests
     {
         [Fact]
         public void Insert_时间转整数保存_读取还原()
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2IntTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
 
             // 带毫秒，保存时截断到秒
             var tradeTime = new DateTime(2026, 8, 23, 15, 30, 45, 999);
-            var item = new Tb_DateTime2IntTest { TradeTime = tradeTime };
+            var item = new Tb_DateTime2LongTest { TradeTime = tradeTime };
             helper.Insert(item);
 
-            var loaded = helper.FirstOrDefault<Tb_DateTime2IntTest>(item.Id);
+            var loaded = helper.FirstOrDefault<Tb_DateTime2LongTest>(item.Id);
             Assert.NotNull(loaded);
             // 毫秒部分被截断，时分秒保留
             Assert.Equal(new DateTime(2026, 8, 23, 15, 30, 45), loaded.TradeTime);
@@ -46,15 +46,15 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2IntTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
 
-            var item = new Tb_DateTime2IntTest { TradeTime = new DateTime(2026, 1, 1, 0, 0, 0) };
+            var item = new Tb_DateTime2LongTest { TradeTime = new DateTime(2026, 1, 1, 0, 0, 0) };
             helper.Insert(item);
 
             item.TradeTime = new DateTime(2026, 12, 31, 23, 59, 59);
             helper.Update(item);
 
-            var loaded = helper.FirstOrDefault<Tb_DateTime2IntTest>(item.Id);
+            var loaded = helper.FirstOrDefault<Tb_DateTime2LongTest>(item.Id);
             Assert.NotNull(loaded);
             Assert.Equal(new DateTime(2026, 12, 31, 23, 59, 59), loaded.TradeTime);
         }
@@ -64,12 +64,12 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2IntTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
 
-            var item = new Tb_DateTime2IntTest { TradeTime = new DateTime(2026, 8, 23, 15, 30, 45), EndTime = null };
+            var item = new Tb_DateTime2LongTest { TradeTime = new DateTime(2026, 8, 23, 15, 30, 45), EndTime = null };
             helper.Insert(item);
 
-            var loaded = helper.FirstOrDefault<Tb_DateTime2IntTest>(item.Id);
+            var loaded = helper.FirstOrDefault<Tb_DateTime2LongTest>(item.Id);
             Assert.NotNull(loaded);
             Assert.Null(loaded.EndTime);
         }
@@ -79,25 +79,25 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2IntTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
 
-            var item = new Tb_DateTime2IntTest { TradeTime = new DateTime(2026, 8, 23, 15, 30, 45) };
+            var item = new Tb_DateTime2LongTest { TradeTime = new DateTime(2026, 8, 23, 15, 30, 45) };
             helper.Insert(item);
 
             // 数据库中实际存 20260823153045
-            Assert.Equal("20260823153045", helper.ExecuteScalar<string>("SELECT TradeTime FROM Tb_DateTime2IntTest WHERE Id = @0", item.Id));
+            Assert.Equal("20260823153045", helper.ExecuteScalar<string>("SELECT TradeTime FROM Tb_DateTime2LongTest WHERE Id = @0", item.Id));
         }
     }
 
     /// <summary>
-    /// DateTime2IntColumnSerializer：DateTime / DateTimeOffset / DateOnly 支持
+    /// DateTime2LongColumnSerializer：DateTime / DateTimeOffset / DateOnly 支持
     /// </summary>
-    public class DateTime2IntColumnSerializerTests
+    public class DateTime2LongColumnSerializerTests
     {
         [Fact]
         public void Serialize_Deserialize_DateTime()
         {
-            var serializer = new DateTime2IntColumnSerializer();
+            var serializer = new DateTime2LongColumnSerializer();
             var time = new DateTime(2026, 8, 23, 15, 30, 45, 500);
 
             var serialized = serializer.Serialize(time);
@@ -110,7 +110,7 @@ namespace ToolGood.ReadyGo.Tests
         [Fact]
         public void Serialize_Deserialize_DateTimeOffset()
         {
-            var serializer = new DateTime2IntColumnSerializer();
+            var serializer = new DateTime2LongColumnSerializer();
             var time = new DateTimeOffset(2026, 12, 1, 23, 59, 59, TimeSpan.FromHours(8));
 
             var serialized = serializer.Serialize(time);
@@ -123,7 +123,7 @@ namespace ToolGood.ReadyGo.Tests
         [Fact]
         public void Serialize_Deserialize_DateOnly()
         {
-            var serializer = new DateTime2IntColumnSerializer();
+            var serializer = new DateTime2LongColumnSerializer();
             var date = new DateOnly(2026, 3, 9);
 
             var serialized = serializer.Serialize(date);
@@ -137,7 +137,7 @@ namespace ToolGood.ReadyGo.Tests
         [Fact]
         public void Serialize_Deserialize_null()
         {
-            var serializer = new DateTime2IntColumnSerializer();
+            var serializer = new DateTime2LongColumnSerializer();
             Assert.Null(serializer.Serialize(null));
             Assert.Null(serializer.Deserialize(null, typeof(DateTime)));
         }
@@ -145,7 +145,7 @@ namespace ToolGood.ReadyGo.Tests
         [Fact]
         public void Deserialize_字符串输入()
         {
-            var serializer = new DateTime2IntColumnSerializer();
+            var serializer = new DateTime2LongColumnSerializer();
             var restored = (DateTime)serializer.Deserialize("20260823153045", typeof(DateTime));
             Assert.Equal(new DateTime(2026, 8, 23, 15, 30, 45), restored);
         }

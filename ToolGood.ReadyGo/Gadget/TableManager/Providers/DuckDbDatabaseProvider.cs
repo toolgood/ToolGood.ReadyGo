@@ -123,7 +123,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 		{
 			var type = ci.PropertyType;
 			var isRequired = ci.Required;
-			if (ci.IsSerializedAsInt) return CreateField(ti, ci, "BIGINT", ci.FieldLength, isRequired);
+			if (ci.IsSerializedAsInt) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
+			if (ci.IsSerializedAsLong) return CreateField(ti, ci, "BIGINT", ci.FieldLength, isRequired);
 			if(type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
 			if(type == typeof(string)) return CreateField(ti, ci, "Text", "", isRequired);
 			if(type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);

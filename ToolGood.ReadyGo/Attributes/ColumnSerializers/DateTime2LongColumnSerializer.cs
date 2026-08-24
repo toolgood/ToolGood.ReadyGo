@@ -4,9 +4,9 @@ using System.Globalization;
 namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
 {
     /// <summary>
-    /// 时间转整数列序列化器：序列化为 yyyyMMddHHmmss 整数（秒级精度，需 long），反序列化回 DateTime / DateTimeOffset / DateOnly
+    /// 时间转长整数列序列化器：序列化为 yyyyMMddHHmmss 整数（秒级精度，需 long），反序列化回 DateTime / DateTimeOffset / DateOnly
     /// </summary>
-    public class DateTime2IntColumnSerializer : NPoco.IColumnSerializer
+    public class DateTime2LongColumnSerializer : NPoco.IColumnSerializer
     {
         /// <summary>
         /// 序列化为 yyyyMMddHHmmss 整数
@@ -25,7 +25,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 case DateOnly dateOnly:
                     return ToLong(dateOnly.ToDateTime(TimeOnly.MinValue));
                 default:
-                    throw new NotSupportedException($"DateTime2Int 不支持的类型：{value.GetType().Name}");
+                    throw new NotSupportedException($"DateTime2Long 不支持的类型：{value.GetType().Name}");
             }
         }
 
