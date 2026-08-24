@@ -35,6 +35,9 @@ namespace ToolGood.ReadyGo
         public static SqlHelper OpenDatabase(string connectionString, string providerName, SqlType type = SqlType.None)
         {
             if (type == SqlType.None) {
+                if (string.IsNullOrEmpty(providerName)) {
+                    throw new ArgumentException("未指定 SqlType 时，providerName 不能为空。请显式指定 SqlType 或传入有效的 providerName。");
+                }
                 type = DatabaseProvider.GetSqlType(providerName, connectionString);
             }
             // 优先解析 providerName 对应的驱动（如 Microsoft.Data.Sqlite），避免同 SqlType 多驱动时选错工厂
@@ -222,9 +225,11 @@ namespace ToolGood.ReadyGo
             }
 
             // MySqlConnector 等其他 MySQL 兼容驱动（版本号为 2.x/3.x）
+            // 注意：MySqlConnector 解析连接串是严格的，不认识的 AllowPublicKeyRetrieval 关键字会抛异常，
+            // 且其内部默认处理公钥检索，故仅返回 SslMode。
             return version.CompareTo(new Version(2, 1, 9)) >= 0
-                ? "SslMode=Disabled;AllowPublicKeyRetrieval=true;"
-                : "SslMode=None;AllowPublicKeyRetrieval=true;";
+                ? "SslMode=Disabled;"
+                : "SslMode=None;";
         }
 
         /// <summary>
@@ -254,7 +259,7 @@ namespace ToolGood.ReadyGo
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendFormat("Data Source={0};", filePath);
-            sb.AppendFormat("Pooling=False;"); //Microsoft.Data.Sqlite的连接池有问题，防止内存爆涨，默认关闭连接池
+            sb.AppendFormat("Pooling=False;"); // 关闭连接池，避免 System.Data.SQLite 复用连接导致状态残留/内存问题
 
             if (useSynchronous == false) {
                 sb.Append("synchronous=OFF;");
@@ -295,7 +300,8 @@ namespace ToolGood.ReadyGo
 		/// <returns>打开的 SqlHelper 实例</returns>
 		public static SqlHelper OpenSqliteMemory()
 		{
-			return OpenDatabase("Data Source=:memory:", SqlType.SQLite);
+			// :memory: 是每连接独立的内存库；关闭连接池避免复用已释放的库，行为更可预期
+			return OpenDatabase("Data Source=:memory:;Pooling=False;", SqlType.SQLite);
 		}
 
 		/// <summary>
@@ -334,7 +340,8 @@ namespace ToolGood.ReadyGo
         {
             var connstr = $"Provider=Microsoft.Jet.Oledb.4.0;data source={filePath};";
             if (string.IsNullOrEmpty(pwd) == false) {
-                connstr = connstr + "Database Password=" + pwd + ";";
+                // 密码转义后引号包裹，防止含 ; = " 等字符破坏连接字符串
+                connstr = connstr + "Database Password=\"" + EscapeConnectionValue(pwd) + "\";";
             }
             return OpenDatabase(connstr, "System.Data.OleDb", SqlType.MsAccessDb);
         }
@@ -349,7 +356,8 @@ namespace ToolGood.ReadyGo
         {
             var connstr = $"Provider=Microsoft.ACE.OLEDB.12.0;data source={filePath};";
             if (string.IsNullOrEmpty(pwd) == false) {
-                connstr = connstr + "Password=" + pwd + ";";
+                // 密码转义后引号包裹，防止含 ; = " 等字符破坏连接字符串
+                connstr = connstr + "Password=\"" + EscapeConnectionValue(pwd) + "\";";
             }
             return OpenDatabase(connstr, "System.Data.OleDb", SqlType.MsAccessDb);
         }
