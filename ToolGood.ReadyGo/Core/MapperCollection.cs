@@ -98,8 +98,10 @@ namespace ToolGood.ReadyGo.NPoco
             return converter != null ? converter(value) : value;
         }
 
-        private static readonly Cache<object, Func<object, object>> ToDbConverterCache = new();
-        private static readonly Cache<object, Func<object, object>> FromDbConverterCache = new();
+        // 使用 ValueTuple 作为缓存键（值类型），避免每次查找分配匿名类型对象并装箱。
+        private static readonly Cache<(Type, MemberInfo), Func<object, object>> ToDbConverterCache = new();
+        private static readonly Cache<(Type, Type), Func<object, object>> FromDbConverterCache = new();
+        private static readonly Cache<(MemberInfo, Type), Func<object, object>> FromDbMemberConverterCache = new();
 
         /// <summary>
         /// 查找从数据库值到目标类型的转换委托。
@@ -109,7 +111,7 @@ namespace ToolGood.ReadyGo.NPoco
         /// <returns>转换委托，若无匹配则返回 null。</returns>
         public Func<object, object> FindFromDbConverter(Type destType, Type srcType)
         {
-            var key = new { DestType = destType, SrcType = srcType };
+            var key = (destType, srcType);
             return FromDbConverterCache.Get(key, () => Find(x => x.GetFromDbConverter(destType, srcType)));
         }
 
@@ -121,8 +123,8 @@ namespace ToolGood.ReadyGo.NPoco
         /// <returns>转换委托，若无匹配则返回 null。</returns>
         public Func<object, object> FindFromDbConverter(MemberInfo destInfo, Type srcType)
         {
-            var key = new { DestInfo = destInfo, SrcType = srcType };
-            return FromDbConverterCache.Get(key, () => Find(x => x.GetFromDbConverter(destInfo, srcType)));
+            var key = (destInfo, srcType);
+            return FromDbMemberConverterCache.Get(key, () => Find(x => x.GetFromDbConverter(destInfo, srcType)));
         }
 
         /// <summary>
@@ -133,7 +135,7 @@ namespace ToolGood.ReadyGo.NPoco
         /// <returns>转换委托，若无匹配则返回 null。</returns>
         public Func<object, object> FindToDbConverter(Type destType, MemberInfo srcInfo)
         {
-            var key = new { DestType = destType, SrcInfo = srcInfo };
+            var key = (destType, srcInfo);
             return ToDbConverterCache.Get(key, () => Find(x => x.GetToDbConverter(destType, srcInfo)));
         }
     }
