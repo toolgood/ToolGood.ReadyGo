@@ -434,14 +434,15 @@ namespace ToolGood.ReadyGo
             var db = GetDatabase();
             var pd = db.PocoDataFactory.ForType(typeof(T));
             var table = db.DatabaseType.EscapeTableName(pd.TableInfo.TableName);
-            var (whereSql, args) = BuildPrimaryKeyWhereSql<T>(primaryKey);
+            var (whereSql, args) = BuildPrimaryKeyWhereSql<T>(primaryKey, 0);
             return ($"SELECT COUNT(*) FROM {table} WHERE {whereSql}", args);
         }
 
         /// <summary>
         /// 构建"按主键查询"的 WHERE 片段与参数：仅支持单一主键列，复合主键会抛出明确异常。
+        /// index 为参数占位符的起始编号，必须与调用方当前已收集的参数数量一致，避免占位符错位。
         /// </summary>
-        private (string whereSql, object[] args) BuildPrimaryKeyWhereSql<T>(object primaryKey) where T : class
+        private (string whereSql, object[] args) BuildPrimaryKeyWhereSql<T>(object primaryKey, int index) where T : class
         {
             var db = GetDatabase();
             var pd = db.PocoDataFactory.ForType(typeof(T));
@@ -451,7 +452,7 @@ namespace ToolGood.ReadyGo
                 throw new NotSupportedException($"类型 {typeof(T).Name} 的主键不是单一主键列，无法按主键生成查询条件。");
             }
             var pk = db.DatabaseType.EscapeSqlIdentifier(pkColumns[0]);
-            return ($"{pk}=@0", new object[] { primaryKey });
+            return ($"{pk}=@{index}", new object[] { primaryKey });
         }
 
         /// <summary>
@@ -557,7 +558,7 @@ namespace ToolGood.ReadyGo
                 return (IsWhereClause(str) ? str : "WHERE " + str, new object[0]);
             }
             if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
-                var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey);
+                var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey, 0);
                 return ($"WHERE {whereSql}", pkArgs);
             }
 
@@ -593,7 +594,7 @@ namespace ToolGood.ReadyGo
                         hasWhere = true;
                     }
                 } else if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
-                    var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey);
+                    var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey, args.Count);
                     stringBuilder.Append(" WHERE ");
                     stringBuilder.Append(whereSql);
                     args.AddRange(pkArgs);
@@ -618,7 +619,7 @@ namespace ToolGood.ReadyGo
         /// </summary>
         private static HashSet<string> BuildIgnoredFields(PocoData pocoData, IEnumerable<string> ignoreFields)
         {
-            var set = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             if (ignoreFields != null) {
                 foreach (var field in ignoreFields) {
                     if (field != null) { set.Add(field); }
@@ -709,7 +710,7 @@ namespace ToolGood.ReadyGo
             bool hasColumn = false;
 
             var ignored = ignoreFields as ISet<string>
-                ?? ignoreFields?.ToHashSet(StringComparer.CurrentCultureIgnoreCase);
+                ?? ignoreFields?.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
             var type = condition.GetType();
             var accessors = GetPropertyAccessors(type);
@@ -842,7 +843,8 @@ namespace ToolGood.ReadyGo
                     var txt = SqlUtil.ToEscapeParam(value.ToString());
                     return "'" + txt + "'";
                 }
-                return $"'{Convert.ToInt64(value)}'";
+                // 按枚举底层类型转换，避免 ulong 等大值枚举在 Convert.ToInt64 时溢出
+                return "'" + Convert.ChangeType(value, Enum.GetUnderlyingType(fieldType)) + "'";
             }
 
             var typeCode = Type.GetTypeCode(fieldType);

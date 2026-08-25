@@ -498,6 +498,24 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
+        public void Update_ObjectCondition_IntegerPrimaryKey_UpdatesOnlyTargetRow()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            var users = helper.Select<SimpleUser>().OrderBy(u => u.Id).ToList();
+            var id1 = users[0].Id;
+            var id2 = users[1].Id;
+
+            // 整数条件 = 按主键更新，且 set 参数与主键参数的占位符不能错位
+            Assert.Equal(1, helper.Update<SimpleUser>(new { Age = 99 }, id1));
+            Assert.Equal(99, helper.FirstOrDefault<SimpleUser>(id1).Age);
+            Assert.Equal(20, helper.FirstOrDefault<SimpleUser>(id2).Age);
+        }
+
+        [Fact]
         public void ObjectCondition_EmptyCondition_QueryAll()
         {
             using var db = TestDb.Create();
