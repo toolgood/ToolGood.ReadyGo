@@ -47,8 +47,7 @@ namespace ToolGood.ReadyGo
                 case SqlType.DuckDb:
                     return ToolGood.ReadyGo.NPoco.DatabaseType.DuckDb;
                 case SqlType.MsAccessDb:
-                    // Jet/ACE SQL 方言（TOP 分页、? 参数）与现有 DatabaseType 不兼容
-                    throw new DatabaseUnsupportException("Access(MsAccessDb) 暂不支持：Jet/ACE SQL 方言与 NPoco 内核现有 DatabaseType 不兼容，需自定义 Access 的 IDatabaseType 实现后接入。");
+                    return ToolGood.ReadyGo.NPoco.DatabaseType.MsAccessDb;
                 case SqlType.SqlServerCE:
                     throw new DatabaseUnsupportException("SqlServerCE 已停止维护，不再支持。");
                 default:

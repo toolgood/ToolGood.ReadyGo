@@ -115,7 +115,7 @@ namespace ToolGood.ReadyGo.NPoco.DatabaseTypes
         /// <returns>提供程序名称。</returns>
         public override string GetProviderName()
         {
-            return "Npgsql2";
+            return "Npgsql";
         }
     }
 }

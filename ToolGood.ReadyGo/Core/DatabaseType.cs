@@ -54,6 +54,11 @@ namespace ToolGood.ReadyGo.NPoco
         /// </summary>
         public static DatabaseType DuckDb { get { return Singleton<DuckDbDatabaseType>.Instance; } }
 
+        /// <summary>
+        /// 获取 Microsoft Access 数据库类型处理器实例。
+        /// </summary>
+        public static DatabaseType MsAccessDb { get { return Singleton<MsAccessDbDatabaseType>.Instance; } }
+
         readonly Dictionary<Type, DbType> typeMap;
 
         /// <summary>
@@ -334,6 +339,10 @@ namespace ToolGood.ReadyGo.NPoco
                 return DynamicDatabaseType.MakeSqlServerType("SqlServerDatabaseType");
             if (typeName.StartsWith("Fb") || typeName.StartsWith("Firebird"))
                 return Singleton<FirebirdDatabaseType>.Instance;
+            if (typeName.StartsWith("DuckDb", StringComparison.OrdinalIgnoreCase))
+                return Singleton<DuckDbDatabaseType>.Instance;
+            if (typeName.StartsWith("OleDb", StringComparison.OrdinalIgnoreCase))
+                return Singleton<MsAccessDbDatabaseType>.Instance;
 
             if (!string.IsNullOrEmpty(providerName))
             {
@@ -352,6 +361,10 @@ namespace ToolGood.ReadyGo.NPoco
                     return Singleton<SQLiteDatabaseType>.Instance;
                 if (providerName.IndexOf("Firebird", StringComparison.OrdinalIgnoreCase) >= 0)
                     return Singleton<FirebirdDatabaseType>.Instance;
+                if (providerName.IndexOf("DuckDb", StringComparison.OrdinalIgnoreCase) >= 0)
+                    return Singleton<DuckDbDatabaseType>.Instance;
+                if (providerName.IndexOf("OleDb", StringComparison.OrdinalIgnoreCase) >= 0)
+                    return Singleton<MsAccessDbDatabaseType>.Instance;
             }
 
             // Assume SQL Server
