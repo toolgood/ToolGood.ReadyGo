@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Collections.Generic;
 using System.Linq;
@@ -185,6 +185,9 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             if (matrix[matrixLength - 1] == 0)
             {
                 // No common value
+                ArrayPool<int>.Shared.Return(matrixRented);
+                ArrayPool<int>.Shared.Return(matchMatrixRented);
+                ArrayPool<JsonValueWrapper>.Shared.Return(wrapperCacheRented);
                 return default;
             }
 
@@ -213,7 +216,7 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
                         if (valueAbove == valueLeft)
                         {
                             var weightAbove = matchMatrixSpan[(i - 1) * n + j];
-                            var weightLeft = matchMatrixSpan[(i - 1) * n + j];
+                            var weightLeft = matchMatrixSpan[i * n + (j - 1)];
                             if (weightAbove > weightLeft)
                             {
                                 // Move to above, e.g. above was deeply equal

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -38,7 +38,7 @@ namespace ToolGood.ReadyGo.JsonDiffPatch
         Span<byte> IBufferWriter<byte>.GetSpan(int sizeHint)
         {
             EnsureBufferSize(sizeHint);
-            return _buffer!.AsSpan(sizeHint);
+            return _buffer!.AsSpan(_bufferHead);
         }
 
         private void EnsureBufferSize(int sizeHint)

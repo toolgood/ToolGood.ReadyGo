@@ -138,10 +138,10 @@ namespace ToolGood.ReadyGo
                 }
             }
             stringBuilder.Append("->");
-            for (int i = 0; i < removes.Count; i++) {
+            for (int i = 0; i < adds.Count; i++) {
                 if (i > 0) { stringBuilder.Append('|'); }
-                stringBuilder.Append(removes[i]);
-                if (dict.TryGetValue(removes[i], out string n)) {
+                stringBuilder.Append(adds[i]);
+                if (dict.TryGetValue(adds[i], out string n)) {
                     if (string.IsNullOrEmpty(n) == false) {
                         stringBuilder.Append('=');
                         stringBuilder.Append(n);
@@ -260,11 +260,12 @@ namespace ToolGood.ReadyGo
         /// <returns></returns>
         private Dictionary<string, string> GetDescriptions(Type type)
         {
-            var typeHandle = type.TypeHandle;
             Dictionary<string, string> dict = new Dictionary<string, string>();
             var enumList = Enum.GetValues(type);
-            foreach (int item in enumList) {
-                var field = type.GetField(Enum.GetName(type, item));
+            foreach (var item in enumList) {
+                var name = Enum.GetName(type, item);
+                if (name == null) continue;
+                var field = type.GetField(name);
                 if (field == null) continue;
 
                 var attr = field.GetCustomAttributes(typeof(DataNameAttribute), false) as DataNameAttribute[];
