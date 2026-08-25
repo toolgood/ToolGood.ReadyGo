@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using ToolGood.ReadyGo.JsonDiffPatch.Diffs;
 using System.Text.Json.Nodes;
@@ -48,7 +48,7 @@ namespace ToolGood.ReadyGo.JsonDiffPatch
         public Func<string, string, string?>? TextDiffProvider { get; set; }
 
         /// <summary>
-        /// Gets or sets the mode to compare two <see cref="JsonElement"/> instances.
+        /// Gets or sets the mode to compare two <see cref="System.Text.Json.JsonElement"/> instances.
         /// </summary>
         public JsonElementComparison JsonElementComparison
         {

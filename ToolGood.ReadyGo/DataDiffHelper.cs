@@ -179,7 +179,6 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="left">原数据</param>
         /// <param name="right">新数据</param>
-        /// <param name="formatting"></param>
         /// <returns></returns>
         public static string JsonDiff(string left, string right)
         {

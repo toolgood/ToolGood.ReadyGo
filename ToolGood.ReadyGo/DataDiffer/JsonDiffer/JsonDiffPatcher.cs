@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace ToolGood.ReadyGo.JsonDiffPatch
 {
@@ -13,7 +13,7 @@ namespace ToolGood.ReadyGo.JsonDiffPatch
         public static Func<JsonDiffOptions>? DefaultOptions { get; set; }
 
         /// <summary>
-        /// Gets or sets the default comparison mode used by <c>DeepEquals</c> to compare <see cref="JsonElement"/>.
+        /// Gets or sets the default comparison mode used by <c>DeepEquals</c> to compare <see cref="System.Text.Json.JsonElement"/>.
         /// </summary>
         public static JsonElementComparison DefaultComparison { get; set; } = JsonElementComparison.RawText;
     }

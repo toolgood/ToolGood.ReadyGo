@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>A high performance Micro-ORM supporting SQL Server, MySQL, Sqlite, PostgreSQL, Oracle, Firebird. Based on NPoco core with ReadyGo style API.</Description>
@@ -20,6 +20,7 @@
     <Product>ToolGood.ReadyGo</Product>
     <PackageLicenseFile>License.txt</PackageLicenseFile>
     <Nullable>disable</Nullable>
+    <NoWarn>$(NoWarn);CS8632</NoWarn>
     <LangVersion>latest</LangVersion>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>

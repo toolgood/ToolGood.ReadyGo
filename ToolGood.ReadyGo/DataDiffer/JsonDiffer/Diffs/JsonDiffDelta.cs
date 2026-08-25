@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -11,13 +11,37 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
     /// </summary>
     public enum DeltaKind
     {
+        /// <summary>
+        /// The delta is empty or of unknown type.
+        /// </summary>
         None,
+        /// <summary>
+        /// The delta represents a newly added value.
+        /// </summary>
         Added,
+        /// <summary>
+        /// The delta represents a modified value.
+        /// </summary>
         Modified,
+        /// <summary>
+        /// The delta represents a deleted value.
+        /// </summary>
         Deleted,
+        /// <summary>
+        /// The delta represents changes to array items.
+        /// </summary>
         Array,
+        /// <summary>
+        /// The delta represents an array item move.
+        /// </summary>
         ArrayMove,
+        /// <summary>
+        /// The delta represents changes to object properties.
+        /// </summary>
         Object,
+        /// <summary>
+        /// The delta represents a text diff.
+        /// </summary>
         Text
     }
     
@@ -36,12 +60,19 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
 
         private JsonNode? _document;
 
+        /// <summary>
+        /// Initializes a new instance of <see cref="JsonDiffDelta"/> from the specified delta document.
+        /// </summary>
+        /// <param name="document">The delta document.</param>
         public JsonDiffDelta(JsonNode document)
         {
             _document = document;
             Kind = GetDeltaKind(document);
         }
 
+        /// <summary>
+        /// Gets the underlying delta document.
+        /// </summary>
         public JsonNode? Document
         {
             get => _document;
@@ -52,6 +83,9 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             }
         }
 
+        /// <summary>
+        /// Gets the kind of delta represented by <see cref="Document"/>.
+        /// </summary>
         public DeltaKind Kind { get; private set; }
 
         private void CheckForKind(DeltaKind expectedKind)
@@ -63,42 +97,70 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             }
         }
 
+        /// <summary>
+        /// Gets the value that was added. The delta kind must be <see cref="DeltaKind.Added"/>.
+        /// </summary>
+        /// <returns>The added value.</returns>
         public JsonNode? GetAdded()
         {
             CheckForKind(DeltaKind.Added);
             return GetOrClone(Document!.AsArray()[0]);
         }
 
+        /// <summary>
+        /// Gets the value that was deleted. The delta kind must be <see cref="DeltaKind.Deleted"/>.
+        /// </summary>
+        /// <returns>The deleted value.</returns>
         public JsonNode? GetDeleted()
         {
             CheckForKind(DeltaKind.Deleted);
             return GetOrClone(Document!.AsArray()[0]);
         }
 
+        /// <summary>
+        /// Gets the new value of a modified delta. The delta kind must be <see cref="DeltaKind.Modified"/>.
+        /// </summary>
+        /// <returns>The new value.</returns>
         public JsonNode? GetNewValue()
         {
             CheckForKind(DeltaKind.Modified);
             return GetOrClone(Document!.AsArray()[1]);
         }
 
+        /// <summary>
+        /// Gets the old value of a modified delta. The delta kind must be <see cref="DeltaKind.Modified"/>.
+        /// </summary>
+        /// <returns>The old value.</returns>
         public JsonNode? GetOldValue()
         {
             CheckForKind(DeltaKind.Modified);
             return GetOrClone(Document!.AsArray()[0]);
         }
 
+        /// <summary>
+        /// Gets the new index of a moved array item. The delta kind must be <see cref="DeltaKind.ArrayMove"/>.
+        /// </summary>
+        /// <returns>The new index.</returns>
         public int GetNewIndex()
         {
             CheckForKind(DeltaKind.ArrayMove);
             return Document!.AsArray()[1]!.GetValue<int>();
         }
 
+        /// <summary>
+        /// Gets the text diff of a text delta. The delta kind must be <see cref="DeltaKind.Text"/>.
+        /// </summary>
+        /// <returns>The text diff.</returns>
         public string GetTextDiff()
         {
             CheckForKind(DeltaKind.Text);
             return Document!.AsArray()[0]!.GetValue<string>();
         }
         
+        /// <summary>
+        /// Enumerates the array item changes. The delta kind must be <see cref="DeltaKind.Array"/>.
+        /// </summary>
+        /// <returns>The array item changes.</returns>
         public IEnumerable<ArrayChangeEntry> GetArrayChangeEnumerable()
         {
             CheckForKind(DeltaKind.Array);
@@ -113,6 +175,12 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             }
         }
 
+        /// <summary>
+        /// Enumerates the array item changes in patchable order against the specified left array.
+        /// The delta kind must be <see cref="DeltaKind.Array"/>.
+        /// </summary>
+        /// <param name="left">The left array the delta applies to.</param>
+        /// <returns>The array item changes.</returns>
         public IEnumerable<ArrayChangeEntry> GetPatchableArrayChangeEnumerable(JsonArray left)
         {
             return GetPatchableArrayChangeEnumerable(left, false);
@@ -241,6 +309,10 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             }
         }
 
+        /// <summary>
+        /// Sets the added value of an <see cref="DeltaKind.Added"/> delta.
+        /// </summary>
+        /// <param name="newValue">The new value to add.</param>
         public void Added(JsonNode? newValue)
         {
             EnsureDeltaType(nameof(Added), count: 1);
@@ -248,6 +320,11 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             arr[0] = newValue?.DeepClone();
         }
 
+        /// <summary>
+        /// Sets the old and new values of a <see cref="DeltaKind.Modified"/> delta.
+        /// </summary>
+        /// <param name="oldValue">The old value.</param>
+        /// <param name="newValue">The new value.</param>
         public void Modified(JsonNode? oldValue, JsonNode? newValue)
         {
             EnsureDeltaType(nameof(Modified), count: 2);
@@ -256,6 +333,10 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             arr[1] = newValue?.DeepClone();
         }
 
+        /// <summary>
+        /// Sets the deleted value of a <see cref="DeltaKind.Deleted"/> delta.
+        /// </summary>
+        /// <param name="oldValue">The value that was deleted.</param>
         public void Deleted(JsonNode? oldValue)
         {
             EnsureDeltaType(nameof(Deleted), count: 3, opType: OpTypeDeleted);
@@ -264,6 +345,10 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             arr[1] = 0;
         }
 
+        /// <summary>
+        /// Marks the delta as an array item move from a deleted item to the specified new position.
+        /// </summary>
+        /// <param name="newPosition">The new position of the moved item.</param>
         public void ArrayMoveFromDeleted(int newPosition)
         {
             EnsureDeltaType(nameof(ArrayMoveFromDeleted), count: 3, opType: OpTypeDeleted);
@@ -290,6 +375,12 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             newItemDelta.ArrayMoveFromDeleted(newPosition);
         }
 
+        /// <summary>
+        /// Adds an array item change to an <see cref="DeltaKind.Array"/> delta.
+        /// </summary>
+        /// <param name="index">The index of the changed array item.</param>
+        /// <param name="isLeft">Whether the index refers to the left (original) array.</param>
+        /// <param name="innerChange">The inner delta of the array item.</param>
         public void ArrayChange(int index, bool isLeft, JsonDiffDelta innerChange)
         {
             if (innerChange.Document is null)
@@ -312,6 +403,11 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             obj.Add(isLeft ? $"_{index:D}" : $"{index:D}", result);
         }
 
+        /// <summary>
+        /// Adds an object property change to an <see cref="DeltaKind.Object"/> delta.
+        /// </summary>
+        /// <param name="propertyName">The name of the changed property.</param>
+        /// <param name="innerChange">The inner delta of the property.</param>
         public void ObjectChange(string propertyName, JsonDiffDelta innerChange)
         {
             if (innerChange.Document is null)
@@ -334,6 +430,10 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             obj.Add(propertyName, result);
         }
 
+        /// <summary>
+        /// Sets the text diff of a <see cref="DeltaKind.Text"/> delta.
+        /// </summary>
+        /// <param name="diff">The text diff.</param>
         public void Text(string diff)
         {
             EnsureDeltaType(nameof(Text), count: 3, opType: OpTypeTextDiff);
@@ -494,6 +594,9 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
             return string.Equals(TypePropertyName, propertyName);
         }
         
+        /// <summary>
+        /// Represents a single array item change.
+        /// </summary>
         public readonly struct ArrayChangeEntry
         {
             internal ArrayChangeEntry(int index, JsonNode diff)
@@ -508,7 +611,13 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
                 Diff = diff;
             }
             
+            /// <summary>
+            /// Gets the index of the changed array item.
+            /// </summary>
             public int Index { get; }
+            /// <summary>
+            /// Gets the delta of the changed array item.
+            /// </summary>
             public JsonDiffDelta Diff { get; }
         }
     }

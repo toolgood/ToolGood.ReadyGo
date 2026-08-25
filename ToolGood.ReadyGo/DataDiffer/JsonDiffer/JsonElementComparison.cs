@@ -1,17 +1,17 @@
-﻿namespace ToolGood.ReadyGo.JsonDiffPatch
+namespace ToolGood.ReadyGo.JsonDiffPatch
 {
     /// <summary>
-    /// Represents <see cref="JsonElement"/> comparison modes.
+    /// Represents <see cref="System.Text.Json.JsonElement"/> comparison modes.
     /// </summary>
     public enum JsonElementComparison
     {
         /// <summary>
-        /// Only compares raw text of two <see cref="JsonElement"/> instances.
+        /// Only compares raw text of two <see cref="System.Text.Json.JsonElement"/> instances.
         /// </summary>
         RawText,
         
         /// <summary>
-        /// Deserializes both <see cref="JsonElement"/> instances into value object of the most significant type
+        /// Deserializes both <see cref="System.Text.Json.JsonElement"/> instances into value object of the most significant type
         /// and compares the value objects.
         /// </summary>
         Semantic

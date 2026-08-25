@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using System.Text.Json.Nodes;
 
@@ -18,19 +18,36 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs.Formatters
         private const string OperationNameRemove = "remove";
         private const string OperationNameReplace = "replace";
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="JsonPatchDeltaFormatter"/> class.
+        /// </summary>
         public JsonPatchDeltaFormatter()
             : base(true)
         {
             PathBuilder = new();
         }
 
+        /// <summary>
+        /// Gets the <see cref="StringBuilder"/> used to build the Json Pointer path.
+        /// </summary>
         protected StringBuilder PathBuilder { get; }
 
+        /// <summary>
+        /// Creates the default result value as a new <see cref="JsonArray"/>.
+        /// </summary>
+        /// <returns>A new <see cref="JsonArray"/>.</returns>
         protected override JsonNode? CreateDefault()
         {
             return new JsonArray();
         }
 
+        /// <summary>
+        /// Formats a single array item change and appends the corresponding Json Patch operation.
+        /// </summary>
+        /// <param name="arrayChange">The array item change to format.</param>
+        /// <param name="left">The left value of the array item.</param>
+        /// <param name="existingValue">The existing Json Patch operations.</param>
+        /// <returns>The formatted result.</returns>
         protected override JsonNode? FormatArrayElement(in JsonDiffDelta.ArrayChangeEntry arrayChange,
             JsonNode? left, JsonNode? existingValue)
         {
@@ -38,6 +55,14 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs.Formatters
             return base.FormatArrayElement(arrayChange, left, existingValue);
         }
 
+        /// <summary>
+        /// Formats a single object property change and appends the corresponding Json Patch operation.
+        /// </summary>
+        /// <param name="delta">The property delta to format.</param>
+        /// <param name="left">The left value of the property.</param>
+        /// <param name="propertyName">The name of the changed property.</param>
+        /// <param name="existingValue">The existing Json Patch operations.</param>
+        /// <returns>The formatted result.</returns>
         protected override JsonNode? FormatObjectProperty(ref JsonDiffDelta delta, JsonNode? left, 
             string propertyName, JsonNode? existingValue)
         {
@@ -45,6 +70,12 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs.Formatters
             return base.FormatObjectProperty(ref delta, left, propertyName, existingValue);
         }
 
+        /// <summary>
+        /// Formats an <see cref="DeltaKind.Added"/> delta as an <c>add</c> Json Patch operation.
+        /// </summary>
+        /// <param name="delta">The delta to format.</param>
+        /// <param name="existingValue">The existing Json Patch operations.</param>
+        /// <returns>The formatted result.</returns>
         protected override JsonNode? FormatAdded(ref JsonDiffDelta delta, JsonNode? existingValue)
         {
             var op = new JsonObject
@@ -57,6 +88,13 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs.Formatters
             return existingValue;
         }
 
+        /// <summary>
+        /// Formats a <see cref="DeltaKind.Modified"/> delta as a <c>replace</c> Json Patch operation.
+        /// </summary>
+        /// <param name="delta">The delta to format.</param>
+        /// <param name="left">The left value the delta applies to.</param>
+        /// <param name="existingValue">The existing Json Patch operations.</param>
+        /// <returns>The formatted result.</returns>
         protected override JsonNode? FormatModified(ref JsonDiffDelta delta, JsonNode? left, JsonNode? existingValue)
         {
             var op = new JsonObject
@@ -69,6 +107,13 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs.Formatters
             return existingValue;
         }
 
+        /// <summary>
+        /// Formats a <see cref="DeltaKind.Deleted"/> delta as a <c>remove</c> Json Patch operation.
+        /// </summary>
+        /// <param name="delta">The delta to format.</param>
+        /// <param name="left">The left value the delta applies to.</param>
+        /// <param name="existingValue">The existing Json Patch operations.</param>
+        /// <returns>The formatted result.</returns>
         protected override JsonNode? FormatDeleted(ref JsonDiffDelta delta, JsonNode? left, JsonNode? existingValue)
         {
             var op = new JsonObject
@@ -80,12 +125,32 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs.Formatters
             return existingValue;
         }
 
+        /// <summary>
+        /// Formats an <see cref="DeltaKind.ArrayMove"/> delta.
+        /// </summary>
+        /// <param name="delta">The delta to format.</param>
+        /// <param name="left">The left value the delta applies to.</param>
+        /// <param name="existingValue">The existing Json Patch operations.</param>
+        /// <returns>The formatted result.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// Array move operations cannot be represented in Json Patch format.
+        /// </exception>
         protected override JsonNode? FormatArrayMove(ref JsonDiffDelta delta, JsonNode? left, JsonNode? existingValue)
         {
             // This should never happen. Array move operations should have been flattened into deletes and adds.
             throw new InvalidOperationException("Array move cannot be formatted.");
         }
 
+        /// <summary>
+        /// Formats a <see cref="DeltaKind.Text"/> delta.
+        /// </summary>
+        /// <param name="delta">The delta to format.</param>
+        /// <param name="left">The left text value the delta applies to.</param>
+        /// <param name="existingValue">The existing Json Patch operations.</param>
+        /// <returns>The formatted result.</returns>
+        /// <exception cref="NotSupportedException">
+        /// Text diff is not supported by Json Patch format.
+        /// </exception>
         protected override JsonNode? FormatTextDiff(ref JsonDiffDelta delta, JsonValue? left, JsonNode? existingValue)
         {
             throw new NotSupportedException("Text diff is not supported by JsonPath.");
