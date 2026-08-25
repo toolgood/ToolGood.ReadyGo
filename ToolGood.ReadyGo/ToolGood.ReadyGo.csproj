@@ -25,6 +25,7 @@
   </PropertyGroup>
 
 
+
   <ItemGroup>
     <PackageReference Condition="'$(TargetFramework)' == 'net8.0' or '$(TargetFramework)' == 'net9.0'" Include="System.Linq.Async" Version="7.0.1" />
   </ItemGroup>
