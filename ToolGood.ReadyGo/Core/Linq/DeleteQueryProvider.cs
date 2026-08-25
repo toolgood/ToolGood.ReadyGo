@@ -46,7 +46,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>受影响的行数。</returns>
-        public Task<int> ExecuteAsync(CancellationToken cancellationToken = default)
+        public Task<int> Execute_Async(CancellationToken cancellationToken = default)
         {
             return base.Execute(cancellationToken);
         }

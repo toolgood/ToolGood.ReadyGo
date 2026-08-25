@@ -121,6 +121,14 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <returns>分页结果。</returns>
         Task<Page<T>> ToPage(int page, int pageSize, CancellationToken cancellationToken = default);
         /// <summary>
+        /// 异步分页返回结果（ToPage 的别名）。
+        /// </summary>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="pageSize">每页大小。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>分页结果。</returns>
+        Task<Page<T>> SelectPage(int page, int pageSize, CancellationToken cancellationToken = default);
+        /// <summary>
         /// 异步投影返回结果列表。
         /// </summary>
         /// <typeparam name="T2">投影结果类型。</typeparam>
@@ -259,6 +267,13 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <returns>分页结果。</returns>
         Page<T> ToPage(int page, int pageSize);
         /// <summary>
+        /// 分页返回结果（ToPage 的别名）。
+        /// </summary>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="pageSize">每页大小。</param>
+        /// <returns>分页结果。</returns>
+        Page<T> SelectPage(int page, int pageSize);
+        /// <summary>
         /// 投影返回结果列表。
         /// </summary>
         /// <typeparam name="T2">投影结果类型。</typeparam>
@@ -291,97 +306,97 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>结果列表。</returns>
-        Task<List<T>> ToListAsync(CancellationToken cancellationToken = default);
+        Task<List<T>> ToList_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回结果数组。
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>结果数组。</returns>
-        Task<T[]> ToArrayAsync(CancellationToken cancellationToken = default);
+        Task<T[]> ToArray_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 返回异步枚举序列。
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>异步枚举序列。</returns>
-        IAsyncEnumerable<T> ToEnumerableAsync(CancellationToken cancellationToken = default);
+        IAsyncEnumerable<T> ToEnumerable_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回第一个元素或默认值。
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>第一个元素或默认值。</returns>
-        Task<T?> FirstOrDefaultAsync(CancellationToken cancellationToken = default);
+        Task<T?> FirstOrDefault_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回满足条件的第一个元素或默认值。
         /// </summary>
         /// <param name="whereExpression">筛选条件。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>第一个元素或默认值。</returns>
-        Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
+        Task<T?> FirstOrDefault_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回第一个元素。
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>第一个元素。</returns>
-        Task<T> FirstAsync(CancellationToken cancellationToken = default);
+        Task<T> First_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回满足条件的第一个元素。
         /// </summary>
         /// <param name="whereExpression">筛选条件。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>第一个元素。</returns>
-        Task<T> FirstAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
+        Task<T> First_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回唯一元素或默认值。
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>唯一元素或默认值。</returns>
-        Task<T?> SingleOrDefaultAsync(CancellationToken cancellationToken = default);
+        Task<T?> SingleOrDefault_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回满足条件的唯一元素或默认值。
         /// </summary>
         /// <param name="whereExpression">筛选条件。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>唯一元素或默认值。</returns>
-        Task<T?> SingleOrDefaultAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
+        Task<T?> SingleOrDefault_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回唯一元素。
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>唯一元素。</returns>
-        Task<T> SingleAsync(CancellationToken cancellationToken = default);
+        Task<T> Single_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回满足条件的唯一元素。
         /// </summary>
         /// <param name="whereExpression">筛选条件。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>唯一元素。</returns>
-        Task<T> SingleAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
+        Task<T> Single_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回元素数量。
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>元素数量。</returns>
-        Task<int> CountAsync(CancellationToken cancellationToken = default);
+        Task<int> Count_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回满足条件的元素数量。
         /// </summary>
         /// <param name="whereExpression">筛选条件。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>元素数量。</returns>
-        Task<int> CountAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
+        Task<int> Count_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步判断是否存在元素。
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>存在返回 true，否则返回 false。</returns>
-        Task<bool> AnyAsync(CancellationToken cancellationToken = default);
+        Task<bool> Any_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步判断是否存在满足条件的元素。
         /// </summary>
         /// <param name="whereExpression">筛选条件。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>存在返回 true，否则返回 false。</returns>
-        Task<bool> AnyAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
+        Task<bool> Any_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步分页返回结果。
         /// </summary>
@@ -389,7 +404,15 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="pageSize">每页大小。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>分页结果。</returns>
-        Task<Page<T>> ToPageAsync(int page, int pageSize, CancellationToken cancellationToken = default);
+        Task<Page<T>> ToPage_Async(int page, int pageSize, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 异步分页返回结果（ToPage_Async 的别名）。
+        /// </summary>
+        /// <param name="page">页码（从 1 开始）。</param>
+        /// <param name="pageSize">每页大小。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>分页结果。</returns>
+        Task<Page<T>> SelectPage_Async(int page, int pageSize, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步投影返回结果列表。
         /// </summary>
@@ -397,7 +420,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="projectionExpression">投影表达式。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>投影结果列表。</returns>
-        Task<List<T2>> ProjectToAsync<T2>(Expression<Func<T, T2>> projectionExpression, CancellationToken cancellationToken = default);
+        Task<List<T2>> ProjectTo_Async<T2>(Expression<Func<T, T2>> projectionExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步投影分页返回结果。
         /// </summary>
@@ -407,7 +430,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="pageSize">每页大小。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>投影分页结果。</returns>
-        Task<Page<T2>> ToProjectedPageAsync<T2>(Expression<Func<T, T2>> projectionExpression, int page, int pageSize, CancellationToken cancellationToken = default);
+        Task<Page<T2>> ToProjectedPage_Async<T2>(Expression<Func<T, T2>> projectionExpression, int page, int pageSize, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步按投影去重返回结果列表。
         /// </summary>
@@ -415,13 +438,13 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="projectionExpression">投影表达式。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>去重后的投影结果列表。</returns>
-        Task<List<T2>> DistinctAsync<T2>(Expression<Func<T, T2>> projectionExpression, CancellationToken cancellationToken = default);
+        Task<List<T2>> Distinct_Async<T2>(Expression<Func<T, T2>> projectionExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步去重返回结果列表。
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>去重后的结果列表。</returns>
-        Task<List<T>> DistinctAsync(CancellationToken cancellationToken = default);
+        Task<List<T>> Distinct_Async(CancellationToken cancellationToken = default);
     }
 
     /// <summary>
