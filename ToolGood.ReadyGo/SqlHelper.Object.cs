@@ -75,14 +75,8 @@ namespace ToolGood.ReadyGo
         /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(object condition) where T : class
         {
-            if (condition != null && condition.GetType().IsClass == false) {
-                if (IsIntegerType(condition.GetType()) == false) {
-                    throw new ArgumentException($"condition 类型 {condition.GetType()} 不支持作为主键，仅支持整数类型主键。");
-                }
-                return SingleOrDefaultById<T>(condition);
-            }
-            if (condition is string str && IsStringPrimaryKeyValue<T>(str)) {
-                return SingleOrDefaultById<T>(str);
+            if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
+                return SingleOrDefaultById<T>(primaryKey);
             }
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return FirstOrDefault<T>(sql, args);
@@ -217,15 +211,8 @@ namespace ToolGood.ReadyGo
         /// <returns>存在返回 true，否则返回 false</returns>
         public bool Exists<T>(object condition) where T : class
         {
-            if (condition != null && condition.GetType().IsClass == false) {
-                if (IsIntegerType(condition.GetType()) == false) {
-                    throw new ArgumentException($"condition 类型 {condition.GetType()} 不支持作为主键，仅支持整数类型主键。");
-                }
-                var (sql, args) = BuildPrimaryKeyExistsQuery<T>(condition);
-                return GetDatabase().ExecuteScalar<int>(sql, args) > 0;
-            }
-            if (condition is string str && IsStringPrimaryKeyValue<T>(str)) {
-                var (sql, args) = BuildPrimaryKeyExistsQuery<T>(str);
+            if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
+                var (sql, args) = BuildPrimaryKeyExistsQuery<T>(primaryKey);
                 return GetDatabase().ExecuteScalar<int>(sql, args) > 0;
             }
             var (w, wa) = ConditionObjectToWhere<T>(condition);
@@ -292,14 +279,8 @@ namespace ToolGood.ReadyGo
         /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(object condition) where T : class
         {
-            if (condition != null && condition.GetType().IsClass == false) {
-                if (IsIntegerType(condition.GetType()) == false) {
-                    throw new ArgumentException($"condition 类型 {condition.GetType()} 不支持作为主键，仅支持整数类型主键。");
-                }
-                return SingleOrDefaultById_Async<T>(condition);
-            }
-            if (condition is string str && IsStringPrimaryKeyValue<T>(str)) {
-                return SingleOrDefaultById_Async<T>(str);
+            if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
+                return SingleOrDefaultById_Async<T>(primaryKey);
             }
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return FirstOrDefault_Async<T>(sql, args);
@@ -433,15 +414,8 @@ namespace ToolGood.ReadyGo
         /// <returns>存在返回 true，否则返回 false</returns>
         public async Task<bool> Exists_Async<T>(object condition) where T : class
         {
-            if (condition != null && condition.GetType().IsClass == false) {
-                if (IsIntegerType(condition.GetType()) == false) {
-                    throw new ArgumentException($"condition 类型 {condition.GetType()} 不支持作为主键，仅支持整数类型主键。");
-                }
-                var (sql, args) = BuildPrimaryKeyExistsQuery<T>(condition);
-                return await GetDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
-            }
-            if (condition is string str && IsStringPrimaryKeyValue<T>(str)) {
-                var (sql, args) = BuildPrimaryKeyExistsQuery<T>(str);
+            if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
+                var (sql, args) = BuildPrimaryKeyExistsQuery<T>(primaryKey);
                 return await GetDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
             }
             var (w, wa) = ConditionObjectToWhere<T>(condition);
@@ -529,6 +503,28 @@ namespace ToolGood.ReadyGo
             var str = value.Trim();
             if (str.Length == 0) { return false; }
             return IsSqlFragment(str) == false;
+        }
+
+        /// <summary>
+        /// 解析 object 条件：整数或字符串主键时返回 true 并输出主键值；否则返回 false，交由条件对象/SQL 片段路径处理。
+        /// 非整数、非字符串的值类型会抛出明确异常，避免被静默当作主键。
+        /// </summary>
+        private bool TryGetPrimaryKey<T>(object condition, out object primaryKey) where T : class
+        {
+            primaryKey = null;
+            if (condition == null) { return false; }
+            if (condition.GetType().IsClass == false) {
+                if (IsIntegerType(condition.GetType()) == false) {
+                    throw new ArgumentException($"condition 类型 {condition.GetType()} 不支持作为主键，仅支持整数类型主键。");
+                }
+                primaryKey = condition;
+                return true;
+            }
+            if (condition is string str && IsStringPrimaryKeyValue<T>(str)) {
+                primaryKey = str;
+                return true;
+            }
+            return false;
         }
 
         private (string sql, object[] args) ConditionObjectToWhere<T>(object condition) where T : class
