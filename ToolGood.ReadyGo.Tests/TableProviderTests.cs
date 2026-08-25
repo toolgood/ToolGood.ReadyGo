@@ -153,6 +153,7 @@ namespace ToolGood.ReadyGo.Tests
             yield return new object[] { new OracleDatabaseProvider(), "\"Money\" NUMBER(10)", "\"DateValue\" NUMBER(10)", "\"DateTimeValue\" NUMBER(19)", "\"NormalMoney\" NUMBER" };
             yield return new object[] { new PostgreSQLDatabaseProvider(), "\"Money\" integer", "\"DateValue\" integer", "\"DateTimeValue\" bigint", "\"NormalMoney\" numeric" };
             yield return new object[] { new FirebirdDbDatabaseProvider(), "\"Money\" INTEGER", "\"DateValue\" INTEGER", "\"DateTimeValue\" BIGINT", "\"NormalMoney\" DECIMAL" };
+            yield return new object[] { new MsAccessDbDatabaseProvider(), "[Money] INTEGER", "[DateValue] INTEGER", "[DateTimeValue] BIGINT", "[NormalMoney] DECIMAL" };
         }
 
         [Theory]
@@ -181,6 +182,7 @@ namespace ToolGood.ReadyGo.Tests
             yield return new object[] { new OracleDatabaseProvider(), "\"NoLength\" NVARCHAR2(4000)", "\"WithLength\" NVARCHAR2(200)", "\"AsText\" CLOB", "\"AsLongText\" CLOB" };
             yield return new object[] { new PostgreSQLDatabaseProvider(), "\"NoLength\" varchar(4000)", "\"WithLength\" varchar(200)", "\"AsText\" text", "\"AsLongText\" text" };
             yield return new object[] { new FirebirdDbDatabaseProvider(), "\"NoLength\" VARCHAR(4000)", "\"WithLength\" VARCHAR(200)", "\"AsText\" BLOB SUB_TYPE TEXT", "\"AsLongText\" BLOB SUB_TYPE TEXT" };
+            yield return new object[] { new MsAccessDbDatabaseProvider(), "[NoLength] TEXT(255)", "[WithLength] TEXT(200)", "[AsText] MEMO", "[AsLongText] MEMO" };
         }
 
         [Theory]

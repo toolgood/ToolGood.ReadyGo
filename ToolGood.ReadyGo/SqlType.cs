@@ -36,11 +36,6 @@ namespace ToolGood.ReadyGo
 		SqlServer = 10,
 
         /// <summary>
-        /// Sql Server CE 数据库
-        /// </summary>
-        SqlServerCE,
-
-        /// <summary>
         /// Sql Server 2012 数据库
         /// </summary>
         SqlServer2012,

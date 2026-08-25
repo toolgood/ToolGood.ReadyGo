@@ -48,8 +48,6 @@ namespace ToolGood.ReadyGo
                     return ToolGood.ReadyGo.NPoco.DatabaseType.DuckDb;
                 case SqlType.MsAccessDb:
                     return ToolGood.ReadyGo.NPoco.DatabaseType.MsAccessDb;
-                case SqlType.SqlServerCE:
-                    throw new DatabaseUnsupportException("SqlServerCE 已停止维护，不再支持。");
                 default:
                     throw new DatabaseUnsupportException($"未知的数据库类型: {sqlType}。");
             }
@@ -152,8 +150,6 @@ namespace ToolGood.ReadyGo
                         "DuckDB.NET.Data.DuckDBFactory, DuckDB.NET.Data.Full",
                         "DuckDB.NET.Data.DuckDBFactory, DuckDB.NET.Data"
                         };
-                case SqlType.SqlServerCE:
-                    throw new DatabaseUnsupportException("SqlServerCE 已停止维护，不再支持。");
                 default:
                     throw new DatabaseUnsupportException($"未知的数据库类型: {sqlType}。");
             }
@@ -169,9 +165,6 @@ namespace ToolGood.ReadyGo
         {
             if (providerNameOrTypeName.IndexOf("MySql", StringComparison.InvariantCultureIgnoreCase) >= 0) return SqlType.MySql;
             if (providerNameOrTypeName.IndexOf("MariaDb", StringComparison.InvariantCultureIgnoreCase) >= 0) return SqlType.MariaDb;
-            if (providerNameOrTypeName.IndexOf("SqlServerCe", StringComparison.InvariantCultureIgnoreCase) >= 0 ||
-                providerNameOrTypeName.IndexOf("SqlCeConnection", StringComparison.InvariantCultureIgnoreCase) >= 0 ||
-                providerNameOrTypeName.IndexOf("SqlCe", StringComparison.InvariantCultureIgnoreCase) >= 0) return SqlType.SqlServerCE;
             if (providerNameOrTypeName.IndexOf("Npgsql", StringComparison.InvariantCultureIgnoreCase) >= 0
                 || providerNameOrTypeName.IndexOf("pgsql", StringComparison.InvariantCultureIgnoreCase) >= 0) return SqlType.PostgreSQL;
             if (providerNameOrTypeName.IndexOf("Oracle", StringComparison.InvariantCultureIgnoreCase) >= 0) return SqlType.Oracle;
