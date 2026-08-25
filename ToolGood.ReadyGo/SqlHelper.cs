@@ -467,7 +467,9 @@ namespace ToolGood.ReadyGo
             tableSql = RemoveStart(tableSql, "FROM ");
             whereSql = RemoveStart(whereSql, "WHERE ");
 
-            var sql = $"SELECT {columnSql} FROM {tableSql} WHERE {whereSql}";
+            var sql = string.IsNullOrWhiteSpace(whereSql)
+                ? $"SELECT {columnSql} FROM {tableSql}"
+                : $"SELECT {columnSql} FROM {tableSql} WHERE {whereSql}";
 
             return GetDatabase().Query<T>(sql, args).FirstOrDefault()!;
         }

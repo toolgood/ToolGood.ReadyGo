@@ -1,4 +1,5 @@
 using ToolGood.ReadyGo;
+using ToolGood.ReadyGo.Attributes;
 using ToolGood.ReadyGo.NPoco;
 using Xunit;
 
@@ -895,6 +896,44 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal(30, loaded.Age);
         }
 
+        [Fact]
+        public async Task DeleteById_CompositeKey_Works_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Execute("CREATE TABLE IF NOT EXISTS CompositeKeyUser (UserId INTEGER NOT NULL, TypeId INTEGER NOT NULL, Name TEXT NULL, PRIMARY KEY (UserId, TypeId))");
+
+            await helper.Insert_Async(new CompositeKeyUser { UserId = 1, TypeId = 1, Name = "甲" });
+            await helper.Insert_Async(new CompositeKeyUser { UserId = 1, TypeId = 2, Name = "乙" });
+
+            // 复合主键传 Dictionary<string, object>，与同步 DeleteById 行为一致
+            Assert.Equal(1, await helper.DeleteById_Async<CompositeKeyUser>(new Dictionary<string, object> { { "UserId", 1 }, { "TypeId", 2 } }));
+            Assert.Equal(1, await helper.Count_Async<CompositeKeyUser>());
+            Assert.Null(await helper.FirstOrDefault_Async<CompositeKeyUser>("WHERE UserId=1 AND TypeId=2"));
+        }
+
+        [Fact]
+        public async Task SQL_FirstOrDefault_EmptyWhere_Works_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("甲", 20);
+            db.NewUser("乙", 30);
+
+            // whereSql 为空时不再拼出尾随 WHERE 的非法 SQL
+            var first = await helper.SQL_FirstOrDefault_Async<UserInfo>("*", "UserInfo", null);
+            Assert.NotNull(first);
+        }
+
         #endregion
+    }
+
+    [TableName("CompositeKeyUser")]
+    [PrimaryKey("UserId,TypeId", AutoIncrement = false)]
+    public class CompositeKeyUser
+    {
+        public int UserId { get; set; }
+        public int TypeId { get; set; }
+        public string Name { get; set; }
     }
 }

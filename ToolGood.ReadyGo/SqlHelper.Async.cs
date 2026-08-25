@@ -233,7 +233,9 @@ namespace ToolGood.ReadyGo
             tableSql = RemoveStart(tableSql, "FROM ");
             whereSql = RemoveStart(whereSql, "WHERE ");
 
-            var sql = $"SELECT {columnSql} FROM {tableSql} WHERE {whereSql}";
+            var sql = string.IsNullOrWhiteSpace(whereSql)
+                ? $"SELECT {columnSql} FROM {tableSql}"
+                : $"SELECT {columnSql} FROM {tableSql} WHERE {whereSql}";
 
             return await GetDatabase().QueryAsync<T>(sql, args).FirstOrDefaultAsync();
         }
@@ -695,11 +697,10 @@ namespace ToolGood.ReadyGo
         /// <returns>受影响的行数</returns>
         public async Task<int> DeleteById_Async<T>(object primaryKey) where T : class
         {
-            var pd = GetDatabase().PocoDataFactory.ForType(typeof(T));
-            var table = GetDatabase().DatabaseType.EscapeTableName(pd.TableInfo.TableName);
-            var pk = GetDatabase().DatabaseType.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
-
-            return await GetDatabase().ExecuteAsync($"DELETE FROM {table} WHERE {pk}=@0", new object[] { primaryKey });
+            var db = GetDatabase();
+            var pd = db.PocoDataFactory.ForType(typeof(T));
+            // 复用底层复合主键拆分逻辑，与同步 DeleteById 行为一致（复合主键传 Dictionary<string, object>）
+            return await db.DeleteAsync(pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, null, primaryKey);
         }
 
         /// <summary>

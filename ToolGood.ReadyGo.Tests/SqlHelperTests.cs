@@ -1157,6 +1157,19 @@ namespace ToolGood.ReadyGo.Tests
             Assert.NotNull(helper.FirstOrDefault<UserInfo>("Where Name=@0", "NewA"));
         }
 
+        [Fact]
+        public void SQL_FirstOrDefault_EmptyWhere_Works()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("甲", 20);
+            db.NewUser("乙", 30);
+
+            // whereSql 为空时不再拼出尾随 WHERE 的非法 SQL
+            var first = helper.SQL_FirstOrDefault<UserInfo>("*", "UserInfo", null);
+            Assert.NotNull(first);
+        }
+
         #endregion
     }
 
