@@ -323,7 +323,7 @@ namespace ToolGood.ReadyGo.Tests
 
             var result = DataDiffHelper.Diff(left, right);
 
-            Assert.Equal("修改[id]1，状态：Pending=待处理->Done已完成", result);
+            Assert.Equal("修改[id]1，状态：Pending=待处理->Done=已完成", result);
         }
 
         [Fact]
@@ -334,7 +334,7 @@ namespace ToolGood.ReadyGo.Tests
 
             var result = DataDiffHelper.Diff(left, right);
 
-            Assert.Equal("修改[id]1，级别：Low=低->High高", result);
+            Assert.Equal("修改[id]1，级别：Low=低->High=高", result);
         }
 
         [Fact]
@@ -432,28 +432,28 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
-        public void 列表_struct带字典_右侧输出新增项()
+        public void 列表_struct带字典_输出左右列表()
         {
             var dict = new Dictionary<int, string> { { 1, "一" }, { 2, "二" }, { 3, "三" }, { 4, "四" } };
 
             var result = DataDiffHelper.Diff("编号", new List<int> { 1, 2, 3 }, new List<int> { 2, 3, 4 }, dict);
 
-            // 左侧原列表 + 右侧仅新增项（adds = [4]）
-            Assert.Equal("编号：1=一|2=二|3=三->4=四", result);
+            // 左侧原列表 + 右侧新列表
+            Assert.Equal("编号：1=一|2=二|3=三->2=二|3=三|4=四", result);
         }
 
         [Fact]
-        public void 列表_struct带字典_只有新增时右侧不空白()
+        public void 列表_struct带字典_右侧输出完整列表()
         {
             var dict = new Dictionary<int, string> { { 1, "一" }, { 2, "二" } };
 
             var result = DataDiffHelper.Diff("编号", new List<int> { 1 }, new List<int> { 1, 2 }, dict);
 
-            Assert.Equal("编号：1=一->2=二", result);
+            Assert.Equal("编号：1=一->1=一|2=二", result);
         }
 
         [Fact]
-        public void 列表_func转换版本_输出新增项()
+        public void 列表_func转换版本_输出左右列表()
         {
             var dict = new Dictionary<int, string> { { 1, "一" }, { 2, "二" }, { 3, "三" } };
 
@@ -464,7 +464,7 @@ namespace ToolGood.ReadyGo.Tests
                 s => s.Length,
                 dict);
 
-            Assert.Equal("名称长度：1=一|2=二->3=三", result);
+            Assert.Equal("名称长度：1=一|2=二->2=二|3=三", result);
         }
 
         #endregion

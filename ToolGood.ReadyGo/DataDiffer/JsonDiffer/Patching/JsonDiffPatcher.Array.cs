@@ -1,4 +1,4 @@
-﻿using ToolGood.ReadyGo.JsonDiffPatch.Diffs;
+using ToolGood.ReadyGo.JsonDiffPatch.Diffs;
 using System.Text.Json.Nodes;
 using System;
 
@@ -74,7 +74,7 @@ namespace ToolGood.ReadyGo.JsonDiffPatch
 
         private static void CheckForIndex(int index, int upperLimit)
         {
-            if (index > upperLimit)
+            if (index < 0 || index > upperLimit)
             {
                 throw new FormatException(JsonDiffDelta.InvalidPatchDocument);
             }

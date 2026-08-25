@@ -73,6 +73,8 @@ namespace ToolGood.ReadyGo
         /// <returns></returns>
         public static string Diff(string name, List<string> lefts, List<string> rights)
         {
+            lefts = new List<string>(lefts);
+            rights = new List<string>(rights);
             lefts.RemoveAll(x => string.IsNullOrEmpty(x));
             rights.RemoveAll(x => string.IsNullOrEmpty(x));
             var removes = lefts.Except(rights).ToList();
@@ -138,10 +140,10 @@ namespace ToolGood.ReadyGo
                 }
             }
             stringBuilder.Append("->");
-            for (int i = 0; i < adds.Count; i++) {
+            for (int i = 0; i < rights.Count; i++) {
                 if (i > 0) { stringBuilder.Append('|'); }
-                stringBuilder.Append(adds[i]);
-                if (dict.TryGetValue(adds[i], out string n)) {
+                stringBuilder.Append(rights[i]);
+                if (dict.TryGetValue(rights[i], out string n)) {
                     if (string.IsNullOrEmpty(n) == false) {
                         stringBuilder.Append('=');
                         stringBuilder.Append(n);
@@ -186,8 +188,8 @@ namespace ToolGood.ReadyGo
             if (string.IsNullOrWhiteSpace(left)) { return "新增" + right; }
             if (string.IsNullOrWhiteSpace(right)) { return "删除" + left; }
 
-            var j1 = JsonObject.Parse(left);
-            var j2 = JsonObject.Parse(right);
+            var j1 = JsonNode.Parse(left);
+            var j2 = JsonNode.Parse(right);
 
             var diff = j1.Diff(j2);
             //var diff = JsonDifferentiator.Differentiate(j1, j2);
@@ -523,6 +525,7 @@ namespace ToolGood.ReadyGo
                 stringBuilder.Append(rightValue);
                 if (EnumNames.TryGetValue(rightValue.ToString(), out string rv)) {
                     if (string.IsNullOrEmpty(rv) == false) {
+                        stringBuilder.Append('=');
                         stringBuilder.Append(rv);
                     }
                 }
