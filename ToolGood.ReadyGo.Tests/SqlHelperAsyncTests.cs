@@ -1,3 +1,4 @@
+using ToolGood.ReadyGo;
 using ToolGood.ReadyGo.NPoco;
 using Xunit;
 
@@ -576,6 +577,146 @@ namespace ToolGood.ReadyGo.Tests
                 // 不调用 CompleteAsync，释放时应回滚
             }
             Assert.False(await helper.Exists_Async<UserInfo>("WHERE Name = '事务2'"));
+        }
+
+        #endregion
+
+        #region 对象条件修复专项
+
+        [Fact]
+        public async Task ObjectCondition_ColumnMapping_Query_Update_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Execute("CREATE TABLE MappedUser (Id INTEGER PRIMARY KEY AUTOINCREMENT, user_name TEXT, user_age INTEGER);");
+
+            helper.Insert(new MappedUser { UserName = "甲", UserAge = 10 });
+            helper.Insert(new MappedUser { UserName = "乙", UserAge = 20 });
+
+            // 条件对象属性 UserName 应映射为数据库列 user_name
+            var list = await helper.Select_Async<MappedUser>(new { UserName = "甲" });
+            Assert.Single(list);
+            Assert.Equal("甲", list[0].UserName);
+
+            // Update 的 set/where 均使用映射列名
+            Assert.Equal(1, await helper.Update_Async<MappedUser>(new { UserAge = 30 }, new { UserName = "乙" }));
+            Assert.Equal(30, (await helper.FirstOrDefault_Async<MappedUser>(new { UserName = "乙" })).UserAge);
+        }
+
+        [Fact]
+        public async Task Exists_Null_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+
+            // 空表：Exists(null) 为无条件查询
+            Assert.False(await helper.Exists_Async<SimpleUser>(null));
+
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            Assert.True(await helper.Exists_Async<SimpleUser>(null));
+        }
+
+        [Fact]
+        public async Task StringCondition_WithoutWhere_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            // object 条件路径中的 string（无 WHERE 前缀）应自动补全 WHERE
+            object cond = "Name = '甲'";
+            Assert.Single(await helper.Select_Async<SimpleUser>(cond));
+            Assert.Equal(1, await helper.Count_Async<SimpleUser>((object)"Age = 10"));
+            Assert.Equal("乙", (await helper.FirstOrDefault_Async<SimpleUser>((object)"Name = '乙'")).Name);
+            Assert.True(await helper.Exists_Async<SimpleUser>((object)"Age = 20"));
+            Assert.Equal(1, await helper.Delete_Async<SimpleUser>(cond));
+
+            // Update 的 condition 为 string 时同样自动补 WHERE
+            Assert.Equal(1, await helper.Update_Async<SimpleUser>(new { Age = 100 }, "Name = '乙'"));
+            Assert.Equal(1, await helper.Count_Async<SimpleUser>("WHERE Age = 100"));
+        }
+
+        [Fact]
+        public async Task InList_WithNullElement_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = null, Age = 20 });
+
+            // [null, "甲"] → (Name IS NULL OR Name='甲')
+            Assert.Equal(2, (await helper.Select_Async<SimpleUser>(new { Name = new string[] { null, "甲" } })).Count);
+
+            // 空集合 → 1=2 恒假
+            Assert.Empty(await helper.Select_Async<SimpleUser>(new { Name = new string[0] }));
+        }
+
+        [Fact]
+        public async Task Update_SetCollection_Throws_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            // set 属性为集合值无法生成 UPDATE SQL，应抛出明确异常
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.Update_Async<SimpleUser>(
+                new { Ages = new List<int> { 1, 2 } }, new { Id = 1 }));
+        }
+
+        [Fact]
+        public async Task Update_EmptySet_Throws_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            // set 为空对象没有可更新字段，应抛出明确异常
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.Update_Async<SimpleUser>(new { }, new { Id = 1 }));
+        }
+
+        [Fact]
+        public async Task Update_EmptyCondition_UpdatesAll_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            // 空对象条件 = 无条件更新（与 null 一致）
+            Assert.Equal(2, await helper.Update_Async<SimpleUser>(new { Age = 99 }, new { }));
+            Assert.Equal(2, await helper.Count_Async<SimpleUser>("WHERE Age = 99"));
+        }
+
+        [Fact]
+        public async Task EmptyCondition_QueryAll_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            Assert.Equal(2, (await helper.Select_Async<SimpleUser>(new { })).Count);
+            Assert.NotNull(await helper.FirstOrDefault_Async<SimpleUser>(new { }));
+        }
+
+        [Fact]
+        public async Task FirstOrDefault_NullAndNullable_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            // null 字面量：无条件取第一条（重载歧义已消除）
+            Assert.Equal("甲", (await helper.FirstOrDefault_Async<SimpleUser>(null)).Name);
+
+            // (int?)null：无条件取第一条（不再是查主键 0）
+            Assert.Equal("甲", (await helper.FirstOrDefault_Async<SimpleUser>((int?)null)).Name);
+
+            // (int?)有值 / 数值重载：按主键查询
+            Assert.Null(await helper.FirstOrDefault_Async<SimpleUser>((int?)9999));
+            Assert.Null(await helper.FirstOrDefault_Async<SimpleUser>(9999));
         }
 
         #endregion

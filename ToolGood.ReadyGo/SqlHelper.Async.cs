@@ -101,7 +101,7 @@ namespace ToolGood.ReadyGo
         /// <returns>记录数量</returns>
         public async Task<int> Count_Async<T>(string sql = "", params object[] args)
         {
-            sql = sql.Trim();
+            sql = (sql ?? "").Trim();
             if (sql.StartsWith("SELECT ", StringComparison.CurrentCultureIgnoreCase) == false) {
                 var pd = GetDatabase().PocoDataFactory.ForType(typeof(T));
                 var table = GetDatabase().DatabaseType.EscapeTableName(pd.TableInfo.TableName);

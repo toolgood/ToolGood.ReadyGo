@@ -1,4 +1,5 @@
 using System.Data;
+using ToolGood.ReadyGo;
 using ToolGood.ReadyGo.NPoco;
 using Xunit;
 
@@ -363,6 +364,170 @@ namespace ToolGood.ReadyGo.Tests
 
             Assert.Equal(1, helper.Delete<SimpleUser>(new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age }));
             Assert.Equal(0, helper.Count<SimpleUser>());
+        }
+
+        #endregion
+
+        #region 对象条件修复专项
+
+        [Fact]
+        public void ObjectCondition_ColumnMapping_Query_Update()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Execute("CREATE TABLE MappedUser (Id INTEGER PRIMARY KEY AUTOINCREMENT, user_name TEXT, user_age INTEGER);");
+
+            helper.Insert(new MappedUser { UserName = "甲", UserAge = 10 });
+            helper.Insert(new MappedUser { UserName = "乙", UserAge = 20 });
+
+            // 条件对象属性 UserName 应映射为数据库列 user_name
+            var list = helper.Select<MappedUser>(new { UserName = "甲" });
+            Assert.Single(list);
+            Assert.Equal("甲", list[0].UserName);
+
+            // Update 的 set/where 均使用映射列名
+            Assert.Equal(1, helper.Update<MappedUser>(new { UserAge = 30 }, new { UserName = "乙" }));
+            Assert.Equal(30, helper.FirstOrDefault<MappedUser>(new { UserName = "乙" }).UserAge);
+
+            // 值类型主键查询不受影响
+            Assert.Equal("甲", helper.FirstOrDefault<MappedUser>(list[0].Id).UserName);
+        }
+
+        [Fact]
+        public void ObjectCondition_Exists_Null_AndEmpty()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+
+            // 空表：Exists(null) 为无条件查询
+            Assert.False(helper.Exists<SimpleUser>(null));
+
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            Assert.True(helper.Exists<SimpleUser>(null));
+        }
+
+        [Fact]
+        public void ObjectCondition_StringCondition_WithoutWhere_AllApis()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            // object 条件路径中的 string（无 WHERE 前缀）应自动补全 WHERE
+            object cond = "Name = '甲'";
+            Assert.Single(helper.Select<SimpleUser>(cond));
+            Assert.Equal(1, helper.Count<SimpleUser>((object)"Age = 10"));
+            Assert.Equal("乙", helper.FirstOrDefault<SimpleUser>((object)"Name = '乙'").Name);
+            Assert.True(helper.Exists<SimpleUser>((object)"Age = 20"));
+            Assert.Equal(1, helper.Delete<SimpleUser>(cond));
+            Assert.Equal(1, helper.Count<SimpleUser>());
+
+            // Update 的 condition 为 string 时同样自动补 WHERE
+            Assert.Equal(1, helper.Update<SimpleUser>(new { Age = 100 }, "Name = '乙'"));
+            Assert.Equal(1, helper.Count<SimpleUser>("WHERE Age = 100"));
+        }
+
+        [Fact]
+        public void ObjectCondition_InList_WithNullElement()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = null, Age = 20 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 30 });
+
+            // [null, "甲"] → (Name IS NULL OR Name='甲')
+            Assert.Equal(2, helper.Select<SimpleUser>(new { Name = new string[] { null, "甲" } }).Count);
+
+            // 纯 null → Name IS NULL
+            var onlyNull = helper.Select<SimpleUser>(new { Name = new string[] { null } });
+            Assert.Single(onlyNull);
+            Assert.Equal(20, onlyNull[0].Age);
+
+            // 空集合 → 1=2 恒假
+            Assert.Empty(helper.Select<SimpleUser>(new { Name = new string[0] }));
+        }
+
+        [Fact]
+        public void ObjectCondition_Update_SetCollection_Throws()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            // set 属性为集合值无法生成 UPDATE SQL，应抛出明确异常
+            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>(
+                new { Ages = new List<int> { 1, 2 } }, new { Id = 1 }));
+        }
+
+        [Fact]
+        public void ObjectCondition_Update_EmptySet_Throws()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            // set 为空对象没有可更新字段，应抛出明确异常
+            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>(new { }, new { Id = 1 }));
+        }
+
+        [Fact]
+        public void ObjectCondition_Update_EmptyCondition_UpdatesAll()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            // 空对象条件 = 无条件更新（与 null 一致）
+            Assert.Equal(2, helper.Update<SimpleUser>(new { Age = 99 }, new { }));
+            Assert.Equal(2, helper.Count<SimpleUser>("WHERE Age = 99"));
+        }
+
+        [Fact]
+        public void ObjectCondition_EmptyCondition_QueryAll()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            Assert.Equal(2, helper.Select<SimpleUser>(new { }).Count);
+            Assert.NotNull(helper.FirstOrDefault<SimpleUser>(new { }));
+            Assert.Equal(2, helper.Count<SimpleUser>(new { }));
+        }
+
+        [Fact]
+        public void FirstOrDefault_NullAndNullableOverloads()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+
+            // null 字面量：无条件取第一条（重载歧义已消除）
+            Assert.Equal("甲", helper.FirstOrDefault<SimpleUser>(null).Name);
+
+            // (int?)null：无条件取第一条（不再是查主键 0）
+            Assert.Equal("甲", helper.FirstOrDefault<SimpleUser>((int?)null).Name);
+
+            // (int?)有值 / 数值重载：按主键查询
+            Assert.Null(helper.FirstOrDefault<SimpleUser>((int?)9999));
+            Assert.Null(helper.FirstOrDefault<SimpleUser>(9999));
+        }
+
+        [Fact]
+        public void EscapeParam_FallbackType_UsesSameEscapingAsString()
+        {
+            var exposer = new EscapeParamExposer();
+
+            // 未识别类型走兜底分支：转义结果与 string 分支完全一致（同为 ToEscapeParam）
+            var raw = "o'brien\\x";
+            Assert.Equal(exposer.PublicEscapeParam(raw), exposer.PublicEscapeParam(new QuoteStr(raw)));
+
+            // 兜底分支具体输出（修复前为未转义拼接："'o'brien\\x'"）
+            Assert.Equal("'o\\'brien\\\\x'", exposer.PublicEscapeParam(new QuoteStr(raw)));
         }
 
         #endregion
@@ -773,5 +938,32 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// 未识别类型：ToString 返回指定值，用于验证 EscapeParam 兜底分支的转义行为。
+    /// </summary>
+    internal sealed class QuoteStr
+    {
+        private readonly string _value;
+
+        public QuoteStr(string value)
+        {
+            _value = value;
+        }
+
+        public override string ToString() => _value;
+    }
+
+    /// <summary>
+    /// 暴露 SqlHelper 的 protected EscapeParam 方法，用于直接断言转义输出。
+    /// </summary>
+    internal sealed class EscapeParamExposer : SqlHelper
+    {
+        public EscapeParamExposer() : base(":memory:", Microsoft.Data.Sqlite.SqliteFactory.Instance, SqlType.SQLite)
+        {
+        }
+
+        public string PublicEscapeParam(object value) => EscapeParam(value);
     }
 }

@@ -44,4 +44,21 @@ namespace ToolGood.ReadyGo.Tests
         [Column("Age")]
         public int Age { get; set; }
     }
+
+    /// <summary>
+    /// 列名映射测试用：数据库列名与 C# 属性名不同（下划线命名），用于验证对象条件遵循 [Column] 映射。
+    /// </summary>
+    [Table("MappedUser")]
+    [PrimaryKey("Id")]
+    public class MappedUser
+    {
+        [Column("Id")]
+        public int Id { get; set; }
+
+        [Column("user_name")]
+        public string UserName { get; set; }
+
+        [Column("user_age")]
+        public int UserAge { get; set; }
+    }
 }

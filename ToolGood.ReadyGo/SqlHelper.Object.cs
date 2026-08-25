@@ -1,8 +1,11 @@
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo.Internals;
@@ -17,103 +20,63 @@ namespace ToolGood.ReadyGo
         #region FirstOrDefault PK
 
         /// <summary>
-        /// 根据条件查询第一个
+        /// 根据主键查询第一个
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
+        /// <param name="condition">主键</param>
+        /// <returns>匹配主键的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(int condition) where T : class
         {
             return SingleOrDefaultById<T>(condition);
         }
 
         /// <summary>
-        /// 根据条件查询第一个
+        /// 根据主键查询第一个
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
-        public T FirstOrDefault<T>(int? condition) where T : class
-        {
-            return SingleOrDefaultById<T>(condition ?? 0);
-        }
-
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
+        /// <param name="condition">主键</param>
+        /// <returns>匹配主键的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(uint condition) where T : class
         {
             return SingleOrDefaultById<T>(condition);
         }
 
         /// <summary>
-        /// 根据条件查询第一个
+        /// 根据主键查询第一个
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
-        public T FirstOrDefault<T>(uint? condition) where T : class
-        {
-            return SingleOrDefaultById<T>(condition ?? 0);
-        }
-
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
+        /// <param name="condition">主键</param>
+        /// <returns>匹配主键的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(long condition) where T : class
         {
             return SingleOrDefaultById<T>(condition);
         }
 
         /// <summary>
-        /// 根据条件查询第一个
+        /// 根据主键查询第一个
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
-        public T FirstOrDefault<T>(long? condition) where T : class
-        {
-            return SingleOrDefaultById<T>(condition ?? 0);
-        }
-
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
+        /// <param name="condition">主键</param>
+        /// <returns>匹配主键的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(ulong condition) where T : class
         {
             return SingleOrDefaultById<T>(condition);
         }
 
-        /// <summary>
-        /// 根据条件查询第一个
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
-        public T FirstOrDefault<T>(ulong? condition) where T : class
-        {
-            return SingleOrDefaultById<T>(condition ?? 0);
-        }
-
         #endregion FirstOrDefault PK
 
         /// <summary>
-        /// 根据条件查询第一个
+        /// 根据条件查询第一个。
+        /// 传 null 或条件对象（含 string）表示按条件查询（null 为无条件，取第一条）；传值类型主键表示按主键查询。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
+        /// <param name="condition">条件：值类型主键 / 条件对象 / null / SQL 片段</param>
         /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public T FirstOrDefault<T>(object condition) where T : class
         {
+            if (condition != null && condition.GetType().IsClass == false) {
+                return SingleOrDefaultById<T>(condition);
+            }
             return FirstOrDefault<T>(ConditionObjectToWhere<T>(condition));
         }
 
@@ -227,13 +190,8 @@ namespace ToolGood.ReadyGo
             if (condition == null || condition.GetType().IsClass) {
                 return Exists<T>(ConditionObjectToWhere<T>(condition));
             } else {
-                var db = GetDatabase();
-                var pd = db.PocoDataFactory.ForType(typeof(T));
-                var table = db.DatabaseType.EscapeTableName(pd.TableInfo.TableName);
-                var pk = db.DatabaseType.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
-                var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
-
-                return db.ExecuteScalar<int>(sql, new object[] { condition }) > 0;
+                var (sql, args) = BuildPrimaryKeyExistsQuery<T>(condition);
+                return GetDatabase().ExecuteScalar<int>(sql, args) > 0;
             }
         }
 
@@ -242,103 +200,63 @@ namespace ToolGood.ReadyGo
         #region FirstOrDefault_Async PK
 
         /// <summary>
-        /// 根据条件查询第一个，异步操作
+        /// 根据主键查询第一个，异步操作
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
+        /// <param name="condition">主键</param>
+        /// <returns>匹配主键的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(int condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition);
         }
 
         /// <summary>
-        /// 根据条件查询第一个，异步操作
+        /// 根据主键查询第一个，异步操作
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
-        public Task<T> FirstOrDefault_Async<T>(int? condition) where T : class
-        {
-            return SingleOrDefaultById_Async<T>(condition ?? 0);
-        }
-
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
+        /// <param name="condition">主键</param>
+        /// <returns>匹配主键的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(uint condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition);
         }
 
         /// <summary>
-        /// 根据条件查询第一个，异步操作
+        /// 根据主键查询第一个，异步操作
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
-        public Task<T> FirstOrDefault_Async<T>(uint? condition) where T : class
-        {
-            return SingleOrDefaultById_Async<T>(condition ?? 0);
-        }
-
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
+        /// <param name="condition">主键</param>
+        /// <returns>匹配主键的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(long condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition);
         }
 
         /// <summary>
-        /// 根据条件查询第一个，异步操作
+        /// 根据主键查询第一个，异步操作
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
-        public Task<T> FirstOrDefault_Async<T>(long? condition) where T : class
-        {
-            return SingleOrDefaultById_Async<T>(condition ?? 0);
-        }
-
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
+        /// <param name="condition">主键</param>
+        /// <returns>匹配主键的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(ulong condition) where T : class
         {
             return SingleOrDefaultById_Async<T>(condition);
         }
 
-        /// <summary>
-        /// 根据条件查询第一个，异步操作
-        /// </summary>
-        /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
-        /// <returns>匹配条件的实体，无结果时返回 null</returns>
-        public Task<T> FirstOrDefault_Async<T>(ulong? condition) where T : class
-        {
-            return SingleOrDefaultById_Async<T>(condition ?? 0);
-        }
-
         #endregion FirstOrDefault_Async PK
 
         /// <summary>
-        /// 根据条件查询第一个，异步操作
+        /// 根据条件查询第一个，异步操作。
+        /// 传 null 或条件对象（含 string）表示按条件查询（null 为无条件，取第一条）；传值类型主键表示按主键查询。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">条件</param>
+        /// <param name="condition">条件：值类型主键 / 条件对象 / null / SQL 片段</param>
         /// <returns>匹配条件的实体，无结果时返回 null</returns>
         public Task<T> FirstOrDefault_Async<T>(object condition) where T : class
         {
+            if (condition != null && condition.GetType().IsClass == false) {
+                return SingleOrDefaultById_Async<T>(condition);
+            }
             return FirstOrDefault_Async<T>(ConditionObjectToWhere<T>(condition));
         }
 
@@ -452,14 +370,22 @@ namespace ToolGood.ReadyGo
             if (condition == null || condition.GetType().IsClass) {
                 return await Exists_Async<T>(ConditionObjectToWhere<T>(condition));
             } else {
-                var db = GetDatabase();
-                var pd = db.PocoDataFactory.ForType(typeof(T));
-                var table = db.DatabaseType.EscapeTableName(pd.TableInfo.TableName);
-                var pk = db.DatabaseType.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
-                var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
-
-                return await db.ExecuteScalarAsync<int>(sql, new object[] { condition }) > 0;
+                var (sql, args) = BuildPrimaryKeyExistsQuery<T>(condition);
+                return await GetDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
             }
+        }
+
+        /// <summary>
+        /// 构建"按主键判断是否存在"的 SQL 与参数，供同步/异步 Exists 复用。
+        /// </summary>
+        private (string sql, object[] args) BuildPrimaryKeyExistsQuery<T>(object primaryKey) where T : class
+        {
+            var db = GetDatabase();
+            var pd = db.PocoDataFactory.ForType(typeof(T));
+            var table = db.DatabaseType.EscapeTableName(pd.TableInfo.TableName);
+            var pk = db.DatabaseType.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+            var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
+            return (sql, new object[] { primaryKey });
         }
 
         /// <summary>
@@ -483,7 +409,7 @@ namespace ToolGood.ReadyGo
             }
 
             StringBuilder stringBuilder = new StringBuilder();
-            if (ObjectToSql(stringBuilder, condition, " AND ", null, GetPocoData(typeof(T))) == false) {
+            if (ObjectToSql(stringBuilder, condition, ObjectSqlMode.Where, null, GetPocoData(typeof(T))) == false) {
                 return "";
             }
             stringBuilder.Insert(0, "WHERE ");
@@ -497,7 +423,7 @@ namespace ToolGood.ReadyGo
             var pocoData = GetPocoData(typeof(T));
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("SET ");
-            if (ObjectToSql(stringBuilder, set, ",", ignoreFields, pocoData) == false) {
+            if (ObjectToSql(stringBuilder, set, ObjectSqlMode.UpdateSet, ignoreFields, pocoData) == false) {
                 throw new ArgumentException("set 对象没有可更新的字段！");
             }
             if (condition != null) {
@@ -509,7 +435,7 @@ namespace ToolGood.ReadyGo
                     }
                 } else {
                     StringBuilder whereBuilder = new StringBuilder();
-                    if (ObjectToSql(whereBuilder, condition, " AND ", null, pocoData)) {
+                    if (ObjectToSql(whereBuilder, condition, ObjectSqlMode.Where, null, pocoData)) {
                         stringBuilder.Append(" WHERE ");
                         stringBuilder.Append(whereBuilder);
                     }
@@ -519,19 +445,59 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
+        /// 对象转 SQL 的用途：作为 WHERE 条件，或作为 UPDATE 的 set 字段。
+        /// </summary>
+        private enum ObjectSqlMode
+        {
+            Where,
+            UpdateSet
+        }
+
+        /// <summary>
+        /// 缓存的属性访问器：避免每次调用都执行 GetProperties() 全量反射。
+        /// </summary>
+        private sealed class PropertyAccessor
+        {
+            public PropertyInfo Property;
+            public Func<object, object> Getter;
+        }
+
+        private static readonly ConcurrentDictionary<Type, PropertyAccessor[]> _propertyAccessors = new ConcurrentDictionary<Type, PropertyAccessor[]>();
+
+        private static PropertyAccessor[] GetPropertyAccessors(Type type)
+        {
+            return _propertyAccessors.GetOrAdd(type, t => {
+                return t.GetProperties().Select(p => new PropertyAccessor {
+                    Property = p,
+                    Getter = BuildPropertyGetter(p)
+                }).ToArray();
+            });
+        }
+
+        private static Func<object, object> BuildPropertyGetter(PropertyInfo pi)
+        {
+            var instance = Expression.Parameter(typeof(object), "instance");
+            var body = Expression.Convert(
+                Expression.Property(Expression.Convert(instance, pi.DeclaringType), pi),
+                typeof(object));
+            return Expression.Lambda<Func<object, object>>(body, instance).Compile();
+        }
+
+        /// <summary>
         /// 将条件对象/更新对象转换为 SQL 片段。
         /// </summary>
         /// <returns>是否生成了至少一个列条件；为 false 表示对象没有任何可用字段。</returns>
-        private bool ObjectToSql(StringBuilder stringBuilder, object condition, string middelStr, IEnumerable<string> ignoreFields, PocoData pocoData)
+        private bool ObjectToSql(StringBuilder stringBuilder, object condition, ObjectSqlMode mode, IEnumerable<string> ignoreFields, PocoData pocoData)
         {
             if (condition is IEnumerable) { throw new ArgumentException("condition is IEnumerable object!"); }
             var db = GetDatabase();
             bool hasColumn = false;
 
             var type = condition.GetType();
-            var pis = type.GetProperties();
-            for (int i = 0; i < pis.Length; i++) {
-                var pi = pis[i];
+            var accessors = GetPropertyAccessors(type);
+            for (int i = 0; i < accessors.Length; i++) {
+                var accessor = accessors[i];
+                var pi = accessor.Property;
                 if (ignoreFields != null) {
                     if (ignoreFields.Any(q => string.Equals(q, pi.Name, StringComparison.CurrentCultureIgnoreCase))) {
                         continue;
@@ -540,12 +506,12 @@ namespace ToolGood.ReadyGo
                 if (hasColumn == false) {
                     hasColumn = true;
                 } else {
-                    stringBuilder.Append(middelStr);
+                    stringBuilder.Append(mode == ObjectSqlMode.Where ? " AND " : ",");
                 }
 
                 var columnName = GetColumnName(pocoData, pi.Name) ?? pi.Name;
-                var value = pi.GetGetMethod().Invoke(condition, null);
-                if (middelStr == " AND ") {
+                var value = accessor.Getter(condition);
+                if (mode == ObjectSqlMode.Where) {
                     if (value == null) {
                         stringBuilder.Append(db.DatabaseType.EscapeSqlIdentifier(columnName));
                         stringBuilder.Append(" is Null");
