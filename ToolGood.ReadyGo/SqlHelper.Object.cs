@@ -224,16 +224,16 @@ namespace ToolGood.ReadyGo
         /// <returns>存在返回 true，否则返回 false</returns>
         public bool Exists<T>(object condition) where T : class
         {
-            if (condition.GetType().IsClass) {
+            if (condition == null || condition.GetType().IsClass) {
                 return Exists<T>(ConditionObjectToWhere<T>(condition));
             } else {
-                var pd = GetDatabase().PocoDataFactory.ForType(typeof(T));
-                var table = GetDatabase().DatabaseType.EscapeTableName(pd.TableInfo.TableName);
-                var pk = GetDatabase().DatabaseType.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+                var db = GetDatabase();
+                var pd = db.PocoDataFactory.ForType(typeof(T));
+                var table = db.DatabaseType.EscapeTableName(pd.TableInfo.TableName);
+                var pk = db.DatabaseType.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
-                var args = new object[] { condition };
-                return GetDatabase().ExecuteScalar<int>(sql, args) > 0;
+                return db.ExecuteScalar<int>(sql, new object[] { condition }) > 0;
             }
         }
 
@@ -449,16 +449,16 @@ namespace ToolGood.ReadyGo
         /// <returns>存在返回 true，否则返回 false</returns>
         public async Task<bool> Exists_Async<T>(object condition) where T : class
         {
-            if (condition.GetType().IsClass) {
+            if (condition == null || condition.GetType().IsClass) {
                 return await Exists_Async<T>(ConditionObjectToWhere<T>(condition));
             } else {
-                var pd = GetDatabase().PocoDataFactory.ForType(typeof(T));
-                var table = GetDatabase().DatabaseType.EscapeTableName(pd.TableInfo.TableName);
-                var pk = GetDatabase().DatabaseType.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
+                var db = GetDatabase();
+                var pd = db.PocoDataFactory.ForType(typeof(T));
+                var table = db.DatabaseType.EscapeTableName(pd.TableInfo.TableName);
+                var pk = db.DatabaseType.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
                 var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
 
-                var args = new object[] { condition };
-                return await GetDatabase().ExecuteScalarAsync<int>(sql, args) > 0;
+                return await db.ExecuteScalarAsync<int>(sql, new object[] { condition }) > 0;
             }
         }
 
@@ -476,7 +476,10 @@ namespace ToolGood.ReadyGo
         private string ConditionObjectToWhere<T>(object condition) where T : class
         {
             if (condition == null) { return ""; }
-            if (condition.GetType() == typeof(string)) { return (string)condition; }
+            if (condition.GetType() == typeof(string)) {
+                var str = ((string)condition).Trim();
+                return IsWhereClause(str) ? str : "WHERE " + str;
+            }
 
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("WHERE ");
@@ -495,10 +498,7 @@ namespace ToolGood.ReadyGo
             if (condition != null) {
                 if (condition.GetType() == typeof(string)) {
                     var str = ((string)condition).Trim();
-                    if (str.StartsWith("WHERE ", StringComparison.CurrentCultureIgnoreCase) == false) {
-                        stringBuilder.Append(" WHERE");
-                    }
-                    stringBuilder.Append(" ");
+                    stringBuilder.Append(IsWhereClause(str) ? " " : " WHERE ");
                     stringBuilder.Append(str);
                     return stringBuilder.ToString();
                 }
@@ -540,18 +540,38 @@ namespace ToolGood.ReadyGo
                             List<object> objs = new List<object>();
                             foreach (var item in (IEnumerable)value) { objs.Add(item); }
 
-                            if (objs.Count == 0) {
+                            var hasNull = objs.Any(o => o == null);
+                            var values = objs.Where(o => o != null).ToList();
+                            if (hasNull == false && values.Count == 0) {
                                 stringBuilder.Append($"1=2");
-                            } else if (objs.Count == 1) {
+                            } else if (hasNull) {
+                                // null 元素应生成 is Null，且与 in/等值用 OR 连接时需要括号保证优先级
+                                stringBuilder.Append('(');
+                                stringBuilder.Append(db.DatabaseType.EscapeSqlIdentifier(columnName));
+                                stringBuilder.Append(" is Null OR ");
+                                stringBuilder.Append(db.DatabaseType.EscapeSqlIdentifier(columnName));
+                                if (values.Count == 1) {
+                                    stringBuilder.Append('=');
+                                    stringBuilder.Append(EscapeParam(values[0]));
+                                } else {
+                                    stringBuilder.Append(" in (");
+                                    for (int j = 0; j < values.Count; j++) {
+                                        if (j > 0) { stringBuilder.Append(","); }
+                                        stringBuilder.Append(EscapeParam(values[j]));
+                                    }
+                                    stringBuilder.Append($")");
+                                }
+                                stringBuilder.Append(')');
+                            } else if (values.Count == 1) {
                                 stringBuilder.Append(db.DatabaseType.EscapeSqlIdentifier(columnName));
                                 stringBuilder.Append('=');
-                                stringBuilder.Append(EscapeParam(objs[0]));
+                                stringBuilder.Append(EscapeParam(values[0]));
                             } else {
                                 stringBuilder.Append(db.DatabaseType.EscapeSqlIdentifier(columnName));
                                 stringBuilder.Append(" in (");
-                                for (int j = 0; j < objs.Count; j++) {
+                                for (int j = 0; j < values.Count; j++) {
                                     if (j > 0) { stringBuilder.Append(","); }
-                                    stringBuilder.Append(EscapeParam(objs[j]));
+                                    stringBuilder.Append(EscapeParam(values[j]));
                                 }
                                 stringBuilder.Append($")");
                             }
@@ -572,6 +592,14 @@ namespace ToolGood.ReadyGo
         private PocoData GetPocoData(Type type)
         {
             return GetDatabase().PocoDataFactory.ForType(type);
+        }
+
+        /// <summary>
+        /// 判断字符串是否为 WHERE 子句（以 WHERE 开头），用于决定是否自动补全 WHERE 前缀。
+        /// </summary>
+        private static bool IsWhereClause(string str)
+        {
+            return str.TrimStart().StartsWith("WHERE", StringComparison.CurrentCultureIgnoreCase);
         }
 
         /// <summary>
