@@ -478,12 +478,15 @@ namespace ToolGood.ReadyGo
             if (condition == null) { return ""; }
             if (condition.GetType() == typeof(string)) {
                 var str = ((string)condition).Trim();
+                if (str.Length == 0) { return ""; }
                 return IsWhereClause(str) ? str : "WHERE " + str;
             }
 
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append("WHERE ");
-            ObjectToSql(stringBuilder, condition, " AND ", null, GetPocoData(typeof(T)));
+            if (ObjectToSql(stringBuilder, condition, " AND ", null, GetPocoData(typeof(T))) == false) {
+                return "";
+            }
+            stringBuilder.Insert(0, "WHERE ");
             return stringBuilder.ToString();
         }
 
@@ -494,21 +497,32 @@ namespace ToolGood.ReadyGo
             var pocoData = GetPocoData(typeof(T));
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("SET ");
-            ObjectToSql(stringBuilder, set, ",", ignoreFields, pocoData);
+            if (ObjectToSql(stringBuilder, set, ",", ignoreFields, pocoData) == false) {
+                throw new ArgumentException("set 对象没有可更新的字段！");
+            }
             if (condition != null) {
                 if (condition.GetType() == typeof(string)) {
                     var str = ((string)condition).Trim();
-                    stringBuilder.Append(IsWhereClause(str) ? " " : " WHERE ");
-                    stringBuilder.Append(str);
-                    return stringBuilder.ToString();
+                    if (str.Length > 0) {
+                        stringBuilder.Append(IsWhereClause(str) ? " " : " WHERE ");
+                        stringBuilder.Append(str);
+                    }
+                } else {
+                    StringBuilder whereBuilder = new StringBuilder();
+                    if (ObjectToSql(whereBuilder, condition, " AND ", null, pocoData)) {
+                        stringBuilder.Append(" WHERE ");
+                        stringBuilder.Append(whereBuilder);
+                    }
                 }
-                stringBuilder.Append(" WHERE ");
-                ObjectToSql(stringBuilder, condition, " AND ", null, pocoData);
             }
             return stringBuilder.ToString();
         }
 
-        private void ObjectToSql(StringBuilder stringBuilder, object condition, string middelStr, IEnumerable<string> ignoreFields, PocoData pocoData)
+        /// <summary>
+        /// 将条件对象/更新对象转换为 SQL 片段。
+        /// </summary>
+        /// <returns>是否生成了至少一个列条件；为 false 表示对象没有任何可用字段。</returns>
+        private bool ObjectToSql(StringBuilder stringBuilder, object condition, string middelStr, IEnumerable<string> ignoreFields, PocoData pocoData)
         {
             if (condition is IEnumerable) { throw new ArgumentException("condition is IEnumerable object!"); }
             var db = GetDatabase();
@@ -582,11 +596,15 @@ namespace ToolGood.ReadyGo
                         }
                     }
                 } else {
+                    if (value is IEnumerable && !(value is string) && !(value is byte[])) {
+                        throw new ArgumentException($"set 对象属性 '{pi.Name}' 不支持集合值，无法生成 UPDATE SQL。");
+                    }
                     stringBuilder.Append(db.DatabaseType.EscapeSqlIdentifier(columnName));
                     stringBuilder.Append('=');
                     stringBuilder.Append(EscapeParam(value));
                 }
             }
+            return hasColumn;
         }
 
         private PocoData GetPocoData(Type type)
