@@ -568,9 +568,9 @@ namespace ToolGood.ReadyGo.Tests
             // decimal 条件
             Assert.Single(helper.Select<UserInfo>(new { Money = 99.9m }));
 
-            // DateTime 条件：以固定格式字符串插入，再用等值条件查询
+            // DateTime 条件：参数化插入后，再以等值条件查询
             var dt = new DateTime(2020, 1, 2, 3, 4, 5, 600);
-            helper.Execute("INSERT INTO UserInfo (Name, Age, Remark, CreateTime, Money, IsDelete) VALUES ('丙', 40, NULL, @0, 0, 0)", dt.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            helper.Execute("INSERT INTO UserInfo (Name, Age, Remark, CreateTime, Money, IsDelete) VALUES ('丙', 40, NULL, @0, 0, 0)", dt);
             Assert.Single(helper.Select<UserInfo>(new { CreateTime = dt }));
         }
 
@@ -604,6 +604,60 @@ namespace ToolGood.ReadyGo.Tests
             var list = helper.Select<Tb_Enum2IntTest>(new { State = UserState.Vip });
             Assert.Single(list);
             Assert.Equal(UserState.Vip, list[0].State);
+        }
+
+        [Fact]
+        public void StringPrimaryKey_ObjectCondition_FirstOrDefault_Exists()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            // SQLite 仅允许 INTEGER PRIMARY KEY 使用 AUTOINCREMENT，字符串主键需手动建表
+            helper.Execute("CREATE TABLE IF NOT EXISTS StringKeyUser (Code TEXT PRIMARY KEY NOT NULL, Name TEXT NULL, Age INTEGER NOT NULL)");
+
+            helper.Insert(new StringKeyUser { Code = "USR-001", Name = "甲", Age = 20 });
+            helper.Insert(new StringKeyUser { Code = "USR-002", Name = "乙", Age = 30 });
+
+            // 无 SQL 特征的字符串 → 按字符串主键查询
+            var byPk = helper.FirstOrDefault<StringKeyUser>((object)"USR-001");
+            Assert.NotNull(byPk);
+            Assert.Equal("甲", byPk.Name);
+
+            Assert.True(helper.Exists<StringKeyUser>((object)"USR-002"));
+            Assert.False(helper.Exists<StringKeyUser>((object)"USR-999"));
+
+            // 带 SQL 特征的字符串 → 仍按 SQL 片段处理
+            object cond = "Name = '乙'";
+            Assert.Equal("乙", helper.FirstOrDefault<StringKeyUser>(cond).Name);
+        }
+
+        [Fact]
+        public void ObjectCondition_UnsupportedValueType_Throws()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            // 非整数值类型不应被静默当作主键
+            Assert.Throws<ArgumentException>(() => helper.FirstOrDefault<SimpleUser>(20.5));
+            Assert.Throws<ArgumentException>(() => helper.FirstOrDefault<SimpleUser>(true));
+            Assert.Throws<ArgumentException>(() => helper.Exists<SimpleUser>(20.5m));
+        }
+
+        [Fact]
+        public void ObjectCondition_ByteArray_NotExpandedAsList()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_BlobTest));
+
+            var data = new byte[] { 0x01, 0x02, 0x03 };
+            helper.Insert(new Tb_BlobTest { Name = "b1", Data = data });
+            helper.Insert(new Tb_BlobTest { Name = "b2", Data = new byte[] { 0x0A, 0x0B } });
+
+            // byte[] 作为条件值应整体匹配（BLOB），而不是被展开成 in 列表
+            var list = helper.Select<Tb_BlobTest>(new { Data = data });
+            Assert.Single(list);
+            Assert.Equal("b1", list[0].Name);
         }
 
         #endregion

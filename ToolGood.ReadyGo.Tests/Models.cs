@@ -61,4 +61,21 @@ namespace ToolGood.ReadyGo.Tests
         [Column("user_age")]
         public int UserAge { get; set; }
     }
+
+    /// <summary>
+    /// 字符串主键测试用：验证 object 条件重载对字符串主键的识别。
+    /// </summary>
+    [Table("StringKeyUser")]
+    [PrimaryKey("Code", AutoIncrement = false)]
+    public class StringKeyUser
+    {
+        [Column("Code")]
+        public string Code { get; set; }
+
+        [Column("Name")]
+        public string Name { get; set; }
+
+        [Column("Age")]
+        public int Age { get; set; }
+    }
 }

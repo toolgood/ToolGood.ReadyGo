@@ -776,9 +776,9 @@ namespace ToolGood.ReadyGo.Tests
             // decimal 条件
             Assert.Single(await helper.Select_Async<UserInfo>(new { Money = 99.9m }));
 
-            // DateTime 条件：以固定格式字符串插入，再用等值条件查询
+            // DateTime 条件：参数化插入后，再以等值条件查询
             var dt = new DateTime(2020, 1, 2, 3, 4, 5, 600);
-            await helper.Execute_Async("INSERT INTO UserInfo (Name, Age, Remark, CreateTime, Money, IsDelete) VALUES ('丙', 40, NULL, @0, 0, 0)", dt.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            await helper.Execute_Async("INSERT INTO UserInfo (Name, Age, Remark, CreateTime, Money, IsDelete) VALUES ('丙', 40, NULL, @0, 0, 0)", dt);
             Assert.Single(await helper.Select_Async<UserInfo>(new { CreateTime = dt }));
         }
 
@@ -818,6 +818,60 @@ namespace ToolGood.ReadyGo.Tests
 
             // 条件对象为集合类型无法生成 WHERE，应抛出明确异常
             await Assert.ThrowsAsync<ArgumentException>(() => helper.Select_Async<SimpleUser>(new List<SimpleUser>()));
+        }
+
+        [Fact]
+        public async Task StringPrimaryKey_ObjectCondition_FirstOrDefault_Exists_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            // SQLite 仅允许 INTEGER PRIMARY KEY 使用 AUTOINCREMENT，字符串主键需手动建表
+            helper.Execute("CREATE TABLE IF NOT EXISTS StringKeyUser (Code TEXT PRIMARY KEY NOT NULL, Name TEXT NULL, Age INTEGER NOT NULL)");
+
+            helper.Insert(new StringKeyUser { Code = "USR-001", Name = "甲", Age = 20 });
+            helper.Insert(new StringKeyUser { Code = "USR-002", Name = "乙", Age = 30 });
+
+            // 无 SQL 特征的字符串 → 按字符串主键查询
+            var byPk = await helper.FirstOrDefault_Async<StringKeyUser>((object)"USR-001");
+            Assert.NotNull(byPk);
+            Assert.Equal("甲", byPk.Name);
+
+            Assert.True(await helper.Exists_Async<StringKeyUser>((object)"USR-002"));
+            Assert.False(await helper.Exists_Async<StringKeyUser>((object)"USR-999"));
+
+            // 带 SQL 特征的字符串 → 仍按 SQL 片段处理
+            object cond = "Name = '乙'";
+            Assert.Equal("乙", (await helper.FirstOrDefault_Async<StringKeyUser>(cond)).Name);
+        }
+
+        [Fact]
+        public async Task ObjectCondition_UnsupportedValueType_Throws_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            // 非整数值类型不应被静默当作主键
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.FirstOrDefault_Async<SimpleUser>(20.5));
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.FirstOrDefault_Async<SimpleUser>(true));
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.Exists_Async<SimpleUser>(20.5m));
+        }
+
+        [Fact]
+        public async Task ObjectCondition_ByteArray_NotExpandedAsList_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_BlobTest));
+
+            var data = new byte[] { 0x01, 0x02, 0x03 };
+            helper.Insert(new Tb_BlobTest { Name = "b1", Data = data });
+            helper.Insert(new Tb_BlobTest { Name = "b2", Data = new byte[] { 0x0A, 0x0B } });
+
+            // byte[] 作为条件值应整体匹配（BLOB），而不是被展开成 in 列表
+            var list = await helper.Select_Async<Tb_BlobTest>(new { Data = data });
+            Assert.Single(list);
+            Assert.Equal("b1", list[0].Name);
         }
 
         #endregion
