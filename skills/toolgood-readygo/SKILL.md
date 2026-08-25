@@ -405,7 +405,7 @@ var helper = SqlHelperFactory.OpenMysql("server", 3306, "database", "user", "pas
 // Oracle
 var helper = SqlHelperFactory.OpenOracle("server", 1521, "serviceName", "user", "password");
 
-// DuckDB
+// DuckDB（不支持密码，DuckDB 加密需用 ATTACH ... ENCRYPTION_KEY）
 var helper = SqlHelperFactory.OpenDuckDbFile("path/to/file.db");
 
 // Access（32 位 / 64 位）
@@ -747,7 +747,7 @@ SqlHelperFactory 提供以下连接方法：
 | SQLite | OpenSqliteFile | System.Data.SQLite |
 | SQLite | OpenMsSqliteFile | Microsoft.Data.Sqlite |
 | Oracle | OpenOracle | Oracle.ManagedDataAccess |
-| DuckDB | OpenDuckDbFile | DuckDB.NET.Data.Full |
+| DuckDB | OpenDuckDbFile（不支持密码，加密需用 ATTACH ... ENCRYPTION_KEY） | DuckDB.NET.Data.Full |
 | MS Access | OpenAccessFile（32位）/ OpenAccessFile64x（64位） | System.Data.OleDb |
 
 `SqlType` 枚举还包含 SqlServerCE、MsAccessDb 等类型（表操作暂不支持）。

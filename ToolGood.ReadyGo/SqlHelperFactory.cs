@@ -2,6 +2,7 @@ using System;
 using System.Data.Common;
 using System.Reflection;
 using System.Text;
+using ToolGood.ReadyGo.Exceptions;
 
 namespace ToolGood.ReadyGo
 {
@@ -52,8 +53,11 @@ namespace ToolGood.ReadyGo
         /// <param name="factory">适配器工厂</param>
         /// <param name="type">SqlType类型</param>
         /// <returns>打开的 SqlHelper 实例</returns>
-        public static SqlHelper OpenDatabase(string connectionString, DbProviderFactory factory, SqlType type = SqlType.None)
+        public static SqlHelper OpenDatabase(string connectionString, DbProviderFactory factory, SqlType type = SqlType.SqlServer)
         {
+            if (type == SqlType.None) {
+                type = SqlType.SqlServer;
+            }
             return new SqlHelper(connectionString, factory, type);
         }
 
@@ -67,7 +71,8 @@ namespace ToolGood.ReadyGo
         public static SqlHelper OpenSqlServerFile(string filePath, string database, string server = "(LocalDB)\\MSSQLLocalDB")
         {
             // 注意：C# 字符串中 \\ 转义为 \，原默认值 "(LocalDb)\v11.0" 中的 \v 会被解释为垂直制表符
-            var connstr = string.Format(@"Data Source={0};Initial Catalog={2};Integrated Security=SSPI;AttachDBFilename={1}", server, filePath, database);
+            // AttachDBFilename 值用双引号包裹并转义，防止路径含 ; = " 等字符破坏连接字符串
+            var connstr = string.Format(@"Data Source={0};Initial Catalog={2};Integrated Security=SSPI;AttachDBFilename=""{1}""", server, EscapeConnectionValue(filePath), database);
             return OpenDatabase(connstr, "System.Data.SqlClient", SqlType.SqlServer);
         }
 
@@ -258,7 +263,8 @@ namespace ToolGood.ReadyGo
         public static SqlHelper OpenSqliteFile(string filePath, string pwd = null, bool useSynchronous = true, JournalMode journalMode = JournalMode.None)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Data Source={0};", filePath);
+            // 路径值用双引号包裹并转义，防止路径含 ; = " 等字符破坏连接字符串
+            sb.AppendFormat("Data Source=\"{0}\";", EscapeConnectionValue(filePath));
             sb.AppendFormat("Pooling=False;"); // 关闭连接池，避免 System.Data.SQLite 复用连接导致状态残留/内存问题
 
             if (useSynchronous == false) {
@@ -270,9 +276,10 @@ namespace ToolGood.ReadyGo
             var helper = OpenDatabase(sb.ToString(), "System.Data.SQLite", SqlType.SQLite);
 
             // 新版sqlite不支持password参数，解决方案： https://stackoverflow.com/questions/37860933/cannot-provide-password-in-connection-string-for-sqlite
-            // PRAGMA key 不支持参数化，必须对密码做转义，防止密码含单引号/反斜杠导致 SQL 语法错误或注入
+            // PRAGMA key 不支持参数化，必须对密码做转义。SQLite 字符串字面量只支持用两个单引号 '' 表示一个单引号（Pascal 风格），
+            // 反斜杠是普通字符无需转义；不能用 C/MySQL 风格的 \' \\ 转义，否则会语法错误或把密钥改写导致解密失败
             if (string.IsNullOrEmpty(pwd) == false) {
-                helper.Execute($"PRAGMA key = '{SqlUtil.ToEscapeParam(pwd)}';");
+                helper.Execute($"PRAGMA key = '{pwd.Replace("'", "''")}';");
             }
             return helper;
         }
@@ -286,10 +293,13 @@ namespace ToolGood.ReadyGo
         public static SqlHelper OpenMsSqliteFile(string filePath, string pwd = null)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Data Source={0};Pooling=False;", filePath);//Microsoft.Data.Sqlite的连接池有问题，防止内存爆涨，默认关闭连接池
+            // 路径值用双引号包裹并转义，防止路径含 ; = " 等字符破坏连接字符串；
+            // Microsoft.Data.Sqlite的连接池有问题，防止内存爆涨，默认关闭连接池
+            sb.AppendFormat("Data Source=\"{0}\";Pooling=False;", EscapeConnectionValue(filePath));
             if (string.IsNullOrEmpty(pwd) == false) {
+                // 不指定 Mode（默认 ReadWriteCreate），与 OpenSqliteFile 一样在文件不存在时自动创建；
                 // 值用双引号包裹并转义，防止密码含 ; = " 等字符破坏连接字符串
-                sb.Append("Mode=ReadWrite;Password=\"").Append(EscapeConnectionValue(pwd)).Append("\";");
+                sb.Append("Password=\"").Append(EscapeConnectionValue(pwd)).Append("\";");
             }
             return OpenDatabase(sb.ToString(), "Microsoft.Data.Sqlite", SqlType.SQLite);
         }
@@ -305,18 +315,21 @@ namespace ToolGood.ReadyGo
 		}
 
 		/// <summary>
-		/// 打开DuckDB数据库，支持密码
+		/// 打开DuckDB数据库
 		/// </summary>
 		/// <param name="filePath">数据库文件路径</param>
-		/// <param name="pwd">密码</param>
+		/// <param name="pwd">密码（当前不支持：DuckDB.NET 连接字符串不识别 Mode/Password 关键字）</param>
 		/// <returns>打开的 SqlHelper 实例</returns>
 		public static SqlHelper OpenDuckDbFile(string filePath, string pwd = null)
         {
             StringBuilder sb = new StringBuilder();
-            sb.AppendFormat("Data Source={0};", filePath);
+            // 路径值用双引号包裹并转义，防止路径含 ; = " 等字符破坏连接字符串
+            sb.AppendFormat("Data Source=\"{0}\";", EscapeConnectionValue(filePath));
+            // DuckDB.NET 的连接字符串仅接受 Data Source 与 DuckDB 原生配置关键字（如 access_mode、memory_limit），
+            // 传 Mode/Password 会在解析连接字符串时直接抛 InvalidOperationException；
+            // DuckDB 数据库加密需通过 ATTACH ... ENCRYPTION_KEY 实现，无法在连接字符串中传入密码
             if (string.IsNullOrEmpty(pwd) == false) {
-                // 值用双引号包裹并转义，防止密码含 ; = " 等字符破坏连接字符串
-                sb.Append("Mode=ReadWrite;Password=\"").Append(EscapeConnectionValue(pwd)).Append("\";");
+                throw new DatabaseUnsupportException("DuckDB 加密不通过连接字符串的 Password 关键字支持，请改用 ATTACH ... ENCRYPTION_KEY 实现，或使用未加密数据库。");
             }
             return OpenDatabase(sb.ToString(), "DuckDB.NET.Data.Full", SqlType.DuckDb);
         }
@@ -338,7 +351,8 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenAccessFile(string filePath, string pwd = null)
         {
-            var connstr = $"Provider=Microsoft.Jet.Oledb.4.0;data source={filePath};";
+            // 路径值用双引号包裹并转义，防止路径含 ; = " 等字符破坏连接字符串
+            var connstr = $"Provider=Microsoft.Jet.Oledb.4.0;data source=\"{EscapeConnectionValue(filePath)}\";";
             if (string.IsNullOrEmpty(pwd) == false) {
                 // 密码转义后引号包裹，防止含 ; = " 等字符破坏连接字符串
                 connstr = connstr + "Database Password=\"" + EscapeConnectionValue(pwd) + "\";";
@@ -354,7 +368,8 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenAccessFile64x(string filePath, string pwd = null)
         {
-            var connstr = $"Provider=Microsoft.ACE.OLEDB.12.0;data source={filePath};";
+            // 路径值用双引号包裹并转义，防止路径含 ; = " 等字符破坏连接字符串
+            var connstr = $"Provider=Microsoft.ACE.OLEDB.12.0;data source=\"{EscapeConnectionValue(filePath)}\";";
             if (string.IsNullOrEmpty(pwd) == false) {
                 // 密码转义后引号包裹，防止含 ; = " 等字符破坏连接字符串
                 connstr = connstr + "Password=\"" + EscapeConnectionValue(pwd) + "\";";

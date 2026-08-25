@@ -252,9 +252,9 @@ var helper = SqlHelperFactory.OpenMysql(server, database, user, pwd);
 var helper = SqlHelperFactory.OpenOracle(server, port, serviceName, user, pwd);
 var helper = SqlHelperFactory.OpenSqliteFile(filePath);
 var helper = SqlHelperFactory.OpenMsSqliteFile(filePath, pwd);
-var helper = SqlHelperFactory.OpenDuckDbFile(filePath);
-var helper = SqlHelperFactory.OpenAccessFile(filePath);      // 32 位
-var helper = SqlHelperFactory.OpenAccessFile64x(filePath);   // 64 位
+var helper = SqlHelperFactory.OpenDuckDbFile(filePath);       // 不支持密码（DuckDB 加密需用 ATTACH ... ENCRYPTION_KEY）
+var helper = SqlHelperFactory.OpenAccessFile(filePath);       // 32 位
+var helper = SqlHelperFactory.OpenAccessFile64x(filePath);    // 64 位
 ```
 
 > **驱动选择说明**
