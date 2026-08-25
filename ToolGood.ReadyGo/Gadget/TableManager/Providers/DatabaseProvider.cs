@@ -94,27 +94,19 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         public string GetTableName(TableInfo data)
         {
             var ti = data;
-            var databaseName = ti.DatabaseName;
             var schemaName = ti.SchemaName;
             var tableName = ti.TableName;
-            return GetTableName(databaseName, schemaName, tableName);
+            return GetTableName(schemaName, tableName);
         }
 
         /// <summary>
         /// 获取表名
         /// </summary>
-        /// <param name="databaseName">数据库名</param>
         /// <param name="schemaName">模式名</param>
         /// <param name="tableName">表名</param>
         /// <returns>转义后的表名</returns>
-        public virtual string GetTableName(string databaseName, string schemaName, string tableName)
+        public virtual string GetTableName(string schemaName, string tableName)
         {
-            if (string.IsNullOrEmpty(databaseName) == false) {
-                if (string.IsNullOrEmpty(schemaName) == false) {
-                    return $"[{databaseName}].[{schemaName}].[{tableName}]";
-                }
-                return $"[{databaseName}].[dbo].[{tableName}]";
-            }
             if (string.IsNullOrEmpty(schemaName) == false) {
                 return $"[{schemaName}].[{tableName}]";
             }

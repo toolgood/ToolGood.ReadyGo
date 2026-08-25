@@ -230,15 +230,11 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <summary>
         /// 获取表名
         /// </summary>
-        /// <param name="databaseName">数据库名</param>
         /// <param name="schemaName">模式名</param>
         /// <param name="tableName">表名</param>
         /// <returns>转义后的表名</returns>
-        public override string GetTableName(string databaseName, string schemaName, string tableName)
+        public override string GetTableName(string schemaName, string tableName)
         {
-            if (string.IsNullOrEmpty(databaseName) == false) {
-                return $"`{databaseName}`.`{tableName}`";
-            }
             if (string.IsNullOrEmpty(schemaName) == false) {
                 return $"`{schemaName}`.`{tableName}`";
             }
