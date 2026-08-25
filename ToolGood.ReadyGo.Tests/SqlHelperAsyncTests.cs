@@ -719,6 +719,107 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Null(await helper.FirstOrDefault_Async<SimpleUser>(9999));
         }
 
+        [Fact]
+        public async Task FirstOrDefault_LongPk_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("甲", 20);
+
+            Assert.Equal("甲", (await helper.FirstOrDefault_Async<UserInfo>((long)u.Id)).Name);
+            Assert.Null(await helper.FirstOrDefault_Async<UserInfo>((long)9999));
+        }
+
+        [Fact]
+        public async Task Delete_ObjectCondition_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var s = new SimpleUser { Name = "乙", Age = 20 };
+            helper.Insert(s);
+            var loaded = await helper.FirstOrDefault_Async<SimpleUser>(s.Id);
+            var cond = new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age };
+
+            Assert.Equal(1, await helper.Delete_Async<SimpleUser>(cond));
+            Assert.Equal(0, await helper.Count_Async<SimpleUser>());
+        }
+
+        [Fact]
+        public async Task ObjectCondition_InList_MultipleValues_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+            helper.Insert(new SimpleUser { Name = "丙", Age = 30 });
+
+            // 多元素 in 列表（不含 null）
+            var list = await helper.Select_Async<SimpleUser>(new { Age = new int[] { 10, 30 } });
+            Assert.Equal(2, list.Count);
+            Assert.Equal("甲", list[0].Name);
+            Assert.Equal("丙", list[1].Name);
+        }
+
+        [Fact]
+        public async Task ObjectCondition_ScalarTypes_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("甲", 20, 10.5m, false);
+            db.NewUser("乙", 30, 99.9m, true);
+
+            // bool 条件 → 0/1
+            var boolList = await helper.Select_Async<UserInfo>(new { IsDelete = false });
+            Assert.Single(boolList);
+            Assert.Equal("甲", boolList[0].Name);
+
+            // decimal 条件
+            Assert.Single(await helper.Select_Async<UserInfo>(new { Money = 99.9m }));
+
+            // DateTime 条件：以固定格式字符串插入，再用等值条件查询
+            var dt = new DateTime(2020, 1, 2, 3, 4, 5, 600);
+            await helper.Execute_Async("INSERT INTO UserInfo (Name, Age, Remark, CreateTime, Money, IsDelete) VALUES ('丙', 40, NULL, @0, 0, 0)", dt.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            Assert.Single(await helper.Select_Async<UserInfo>(new { CreateTime = dt }));
+        }
+
+        [Fact]
+        public async Task ObjectCondition_EnumValue_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
+
+            helper.Insert(new Tb_Enum2IntTest { State = UserState.None });
+            helper.Insert(new Tb_Enum2IntTest { State = UserState.Vip });
+
+            // 枚举作为条件对象值 → 转成底层整数
+            var list = await helper.Select_Async<Tb_Enum2IntTest>(new { State = UserState.Vip });
+            Assert.Single(list);
+            Assert.Equal(UserState.Vip, list[0].State);
+        }
+
+        [Fact]
+        public async Task ObjectCondition_Update_NullSet_Throws_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            // set 为 null 应抛出明确异常（显式转为 object，避免命中 string 重载）
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.Update_Async<SimpleUser>((object)null, new { Id = 1 }));
+        }
+
+        [Fact]
+        public async Task ObjectCondition_IEnumerableCondition_Throws_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            // 条件对象为集合类型无法生成 WHERE，应抛出明确异常
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.Select_Async<SimpleUser>(new List<SimpleUser>()));
+        }
+
         #endregion
     }
 }

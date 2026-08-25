@@ -530,6 +530,82 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal("'o\\'brien\\\\x'", exposer.PublicEscapeParam(new QuoteStr(raw)));
         }
 
+        [Fact]
+        public void ObjectCondition_IEnumerableCondition_Throws()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            // 条件对象为集合类型无法生成 WHERE，应抛出明确异常
+            Assert.Throws<ArgumentException>(() => helper.Select<SimpleUser>(new List<SimpleUser>()));
+        }
+
+        [Fact]
+        public void ObjectCondition_Update_NullSet_Throws()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+
+            // set 为 null 应抛出明确异常（显式转为 object，避免命中 string 重载）
+            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>((object)null, new { Id = 1 }));
+        }
+
+        [Fact]
+        public void ObjectCondition_ScalarTypes_BoolDecimalDateTime()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            db.NewUser("甲", 20, 10.5m, false);
+            db.NewUser("乙", 30, 99.9m, true);
+
+            // bool 条件 → 0/1
+            var boolList = helper.Select<UserInfo>(new { IsDelete = false });
+            Assert.Single(boolList);
+            Assert.Equal("甲", boolList[0].Name);
+
+            // decimal 条件
+            Assert.Single(helper.Select<UserInfo>(new { Money = 99.9m }));
+
+            // DateTime 条件：以固定格式字符串插入，再用等值条件查询
+            var dt = new DateTime(2020, 1, 2, 3, 4, 5, 600);
+            helper.Execute("INSERT INTO UserInfo (Name, Age, Remark, CreateTime, Money, IsDelete) VALUES ('丙', 40, NULL, @0, 0, 0)", dt.ToString("yyyy-MM-dd HH:mm:ss.fff"));
+            Assert.Single(helper.Select<UserInfo>(new { CreateTime = dt }));
+        }
+
+        [Fact]
+        public void ObjectCondition_InList_MultipleValues()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
+            helper.Insert(new SimpleUser { Name = "丙", Age = 30 });
+
+            // 多元素 in 列表（不含 null）
+            var list = helper.Select<SimpleUser>(new { Age = new int[] { 10, 30 } });
+            Assert.Equal(2, list.Count);
+            Assert.Equal("甲", list[0].Name);
+            Assert.Equal("丙", list[1].Name);
+        }
+
+        [Fact]
+        public void ObjectCondition_EnumValue_EscapeAsInt()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
+
+            helper.Insert(new Tb_Enum2IntTest { State = UserState.None });
+            helper.Insert(new Tb_Enum2IntTest { State = UserState.Vip });
+
+            // 枚举作为条件对象值 → 转成底层整数
+            var list = helper.Select<Tb_Enum2IntTest>(new { State = UserState.Vip });
+            Assert.Single(list);
+            Assert.Equal(UserState.Vip, list[0].State);
+        }
+
         #endregion
 
         #region SQL_* 系列
