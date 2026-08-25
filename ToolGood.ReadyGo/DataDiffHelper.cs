@@ -362,7 +362,7 @@ namespace ToolGood.ReadyGo
         {
             var rightValue = Property.GetValue(right);
             if (null == rightValue) { return; }
-            if ("" == rightValue) { return; }
+            if (string.Equals(rightValue as string, "")) { return; }
 
             if (stringBuilder.Length != 0) { stringBuilder.Append('，'); }
             if (string.IsNullOrEmpty(DisplayName) == false) {
@@ -472,8 +472,8 @@ namespace ToolGood.ReadyGo
 
             if (null == leftValue && null == rightValue) { return; }
             if (null != leftValue && leftValue.Equals(rightValue)) { return; }
-            if ("" == leftValue && null == rightValue) { return; }
-            if (null == leftValue && "" == rightValue) { return; }
+            if (string.Equals(leftValue as string, "") && null == rightValue) { return; }
+            if (null == leftValue && string.Equals(rightValue as string, "")) { return; }
             
             if (stringBuilder.Length != 0) { stringBuilder.Append('，'); }
             if (string.IsNullOrEmpty(DisplayName) == false) {
