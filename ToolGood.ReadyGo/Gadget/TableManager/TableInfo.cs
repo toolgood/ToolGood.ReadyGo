@@ -25,10 +25,6 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         /// 表名
         /// </summary>
         public string TableName;
-        /// <summary>
-        /// 配置名称
-        /// </summary>
-        public string SettingName;
 
         /// <summary>
         /// 主键列名
@@ -70,7 +66,6 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
                 ti.DatabaseName = ta.DatabaseName;
                 ti.SchemaName = ta.SchemaName;
                 ti.TableName = ta.TableName;
-                ti.SettingName = ta.SettingName;
             } else {
                 ti.TableName = t.Name;
             }
