@@ -150,7 +150,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "VARCHAR", ci.FieldLength, isRequired);
 
             if (type == typeof(bool)) return CreateField(ti, ci, "BOOLEAN", ci.FieldLength, isRequired);
-            if (type == typeof(byte)) return CreateField(ti, ci, "SMALLINT", "1", isRequired);
+            if (type == typeof(byte)) return CreateField(ti, ci, "SMALLINT", null, isRequired);
             if (type == typeof(char)) return CreateField(ti, ci, "CHAR", "1", isRequired);
 
             if (type == typeof(UInt16)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);

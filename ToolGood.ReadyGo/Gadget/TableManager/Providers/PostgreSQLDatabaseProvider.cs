@@ -19,7 +19,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         public override string GetTryCreateTable(Type type, bool withIndex = true)
         {
             var ti = TableInfo.FromType(type);
-            var sql = "CREATE SEQUENCE IF NOT EXISTS seq_" + ti.TableName + " START 1;";
+            var sql = ti.AutoIncrement ? "CREATE SEQUENCE IF NOT EXISTS seq_" + ti.TableName + " START 1;" : "";
             sql += "CREATE TABLE IF NOT EXISTS \"" + ti.TableName + "\"(\r\n";
             foreach (var item in ti.Columns) {
                 sql += "    " + CreateColumn(ti, item) + ",\r\n";
@@ -152,7 +152,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "varchar", ci.FieldLength, isRequired);
 
             if (type == typeof(bool)) return CreateField(ti, ci, "boolean", ci.FieldLength, isRequired);
-            if (type == typeof(byte)) return CreateField(ti, ci, "smallint", "1", isRequired);
+            if (type == typeof(byte)) return CreateField(ti, ci, "smallint", null, isRequired);
             if (type == typeof(char)) return CreateField(ti, ci, "char", "1", isRequired);
 
             if (type == typeof(UInt16)) return CreateField(ti, ci, "integer", ci.FieldLength, isRequired);

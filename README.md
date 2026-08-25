@@ -34,7 +34,7 @@ var users = helper.Where<User>().Where(x => x.Age > 18).OrderBy(x => x.Name).ToL
 
 ##### 1.1、简单的数据表操作
 
-目前支持【表操作】的数据库有 SqlServer、SqlServer2012、MySql、MariaDb、SQLite、DuckDb、Oracle、PostgreSQL、FirebirdDb。
+目前支持【表操作】的数据库有 SqlServer、MySql、MariaDb、SQLite、DuckDb、Oracle、PostgreSQL、FirebirdDb。
 
 ```csharp
 using ToolGood.ReadyGo.Attributes;
@@ -247,7 +247,7 @@ await helper.Update_Async(user, snapshot);   // 异步快照局部更新
 ```csharp
 var helper = SqlHelperFactory.OpenDatabase(connectionString, "MySql.Data.MySqlClient", SqlType.MySql);
 var helper = SqlHelperFactory.OpenSqlServer(server, database, user, pwd);
-var helper = SqlHelperFactory.OpenSqlServer2012(server, port, database, user, pwd);
+var helper = SqlHelperFactory.OpenSqlServer(server, port, database, user, pwd);
 var helper = SqlHelperFactory.OpenMysql(server, database, user, pwd);
 var helper = SqlHelperFactory.OpenOracle(server, port, serviceName, user, pwd);
 var helper = SqlHelperFactory.OpenSqliteFile(filePath);

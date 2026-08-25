@@ -37,8 +37,7 @@ namespace ToolGood.ReadyGo
         {
             switch (sqlType) {
                 case SqlType.SQLite: return ToolGood.ReadyGo.NPoco.DatabaseType.SQLite;
-                case SqlType.SqlServer:
-                case SqlType.SqlServer2012: return ToolGood.ReadyGo.NPoco.DatabaseType.SqlServer2012;
+                case SqlType.SqlServer: return ToolGood.ReadyGo.NPoco.DatabaseType.SqlServer2012;
                 case SqlType.MySql:
                 case SqlType.MariaDb: return ToolGood.ReadyGo.NPoco.DatabaseType.MySQL;
                 case SqlType.Oracle: return ToolGood.ReadyGo.NPoco.DatabaseType.Oracle;
@@ -99,7 +98,6 @@ namespace ToolGood.ReadyGo
         {
             switch (sqlType) {
                 case SqlType.SqlServer:
-                case SqlType.SqlServer2012:
                     return new[] {
                         "System.Data.SqlClient.SqlClientFactory, System.Data.SqlClient",
                         "System.Data.SqlClient.SqlClientFactory, System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089",

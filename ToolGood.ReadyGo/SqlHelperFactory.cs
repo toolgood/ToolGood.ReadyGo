@@ -114,43 +114,6 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        /// 开Sql Server2012数据库
-        /// </summary>
-        /// <param name="server">服务器</param>
-        /// <param name="database">活动数据库</param>
-        /// <param name="user">用户</param>
-        /// <param name="pwd">密码</param>
-        /// <param name="trustServerCertificate">是否信任服务器证书</param>
-        /// <returns>打开的 SqlHelper 实例</returns>
-        public static SqlHelper OpenSqlServer2012(string server, string database, string user, string pwd, bool trustServerCertificate = false)
-        {
-            var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd}";
-            if (trustServerCertificate) {
-                connstr += ";TrustServerCertificate=True";
-            }
-            return OpenDatabase(connstr, "System.Data.SqlClient", SqlType.SqlServer2012);
-        }
-
-        /// <summary>
-        /// 打开Sql Server2012数据库
-        /// </summary>
-        /// <param name="server">服务器</param>
-        /// <param name="port">端口号</param>
-        /// <param name="database">活动数据库</param>
-        /// <param name="user">用户</param>
-        /// <param name="pwd">密码</param>
-        /// <param name="trustServerCertificate">是否信任服务器证书</param>
-        /// <returns>打开的 SqlHelper 实例</returns>
-        public static SqlHelper OpenSqlServer2012(string server, int port, string database, string user, string pwd, bool trustServerCertificate = false)
-        {
-            var connstr = $"Server={server},{port};Database={database};Uid={user};Pwd={pwd}";
-            if (trustServerCertificate) {
-                connstr += ";TrustServerCertificate=True";
-            }
-            return OpenDatabase(connstr, "System.Data.SqlClient", SqlType.SqlServer2012);
-        }
-
-        /// <summary>
         /// 打开Mysql数据库,SslMode默认Disabled
         /// </summary>
         /// <param name="server">服务器</param>

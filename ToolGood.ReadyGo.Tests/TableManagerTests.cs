@@ -68,8 +68,8 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Contains("[Id] INTEGER NOT NULL PRIMARY KEY AutoIncrement", sql);
             Assert.Contains("[OrderNo] Text", sql);
             Assert.Contains("DEFAULT(0)", sql);
-            Assert.Contains("CREATE INDEX IF NOT EXISTS i_UserId ON [Tb_Order]", sql);
-            Assert.Contains("CREATE UNIQUE INDEX IF NOT EXISTS u_OrderNo ON [Tb_Order]", sql);
+            Assert.Contains("CREATE INDEX IF NOT EXISTS i_Tb_Order_UserId ON [Tb_Order]", sql);
+            Assert.Contains("CREATE UNIQUE INDEX IF NOT EXISTS u_Tb_Order_OrderNo ON [Tb_Order]", sql);
         }
 
         [Fact]

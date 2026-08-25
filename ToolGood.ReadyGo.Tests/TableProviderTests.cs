@@ -145,7 +145,6 @@ namespace ToolGood.ReadyGo.Tests
         {
             // [Numeric2Int] / [Numeric2Long] / [Date2Int] / [DateTime2Long] 字段：各数据库方言应保存为对应整数；普通 decimal 字段不受影响
             yield return new object[] { new SqlServerDatabaseProvider(), "[Money] int", "[DateValue] int", "[DateTimeValue] bigint", "[NormalMoney] decimal" };
-            yield return new object[] { new SqlServer2012DatabaseProvider(), "[Money] int", "[DateValue] int", "[DateTimeValue] bigint", "[NormalMoney] decimal" };
             yield return new object[] { new MySqlDatabaseProvider(), "`Money` int", "`DateValue` int", "`DateTimeValue` bigint", "`NormalMoney` decimal" };
             yield return new object[] { new MariaDbDatabaseProvider(), "`Money` int", "`DateValue` int", "`DateTimeValue` bigint", "`NormalMoney` decimal" };
             yield return new object[] { new SQLiteDatabaseProvider(), "[Money] INTEGER", "[DateValue] INTEGER", "[DateTimeValue] INTEGER", "[NormalMoney] REAL" };
@@ -174,7 +173,6 @@ namespace ToolGood.ReadyGo.Tests
         {
             // [StringArray2String] 字符串序列化列：默认 varchar(4000) / 自定义长度 / Text / LongText
             yield return new object[] { new SqlServerDatabaseProvider(), "[NoLength] nvarchar(4000)", "[WithLength] nvarchar(200)", "[AsText] Text", "[AsLongText] Text" };
-            yield return new object[] { new SqlServer2012DatabaseProvider(), "[NoLength] nvarchar(4000)", "[WithLength] nvarchar(200)", "[AsText] Text", "[AsLongText] Text" };
             yield return new object[] { new MySqlDatabaseProvider(), "`NoLength` varchar(4000)", "`WithLength` varchar(200)", "`AsText` Text", "`AsLongText` longtext" };
             yield return new object[] { new MariaDbDatabaseProvider(), "`NoLength` varchar(4000)", "`WithLength` varchar(200)", "`AsText` Text", "`AsLongText` longtext" };
             yield return new object[] { new SQLiteDatabaseProvider(), "[NoLength] Text", "[WithLength] Text", "[AsText] Text", "[AsLongText] Text" };

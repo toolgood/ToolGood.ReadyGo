@@ -6,12 +6,6 @@ using ToolGood.ReadyGo.NPoco;
 namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 {
     /// <summary>
-    /// SQL Server 2012 数据库提供程序
-    /// </summary>
-    public class SqlServer2012DatabaseProvider : SqlServerDatabaseProvider
-    { }
-
-    /// <summary>
     /// SQL Server 数据库提供程序
     /// </summary>
     public class SqlServerDatabaseProvider : DatabaseProvider
@@ -167,11 +161,11 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "varchar", ci.FieldLength, isRequired);
 
             if (type == typeof(bool)) return CreateField(ti, ci, "bit", null, isRequired);
-            if (type == typeof(byte)) return CreateField(ti, ci, "tinyint", "1", isRequired);
+            if (type == typeof(byte)) return CreateField(ti, ci, "tinyint", null, isRequired);
             if (type == typeof(char)) return CreateField(ti, ci, "nchar", "1", isRequired);
 
-            if (type == typeof(UInt16)) return CreateField(ti, ci, "smallint", ci.FieldLength, isRequired);
-            if (type == typeof(UInt32)) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
+            if (type == typeof(UInt16)) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
+            if (type == typeof(UInt32)) return CreateField(ti, ci, "bigint", ci.FieldLength, isRequired);
             if (type == typeof(UInt64)) return CreateField(ti, ci, "bigint", ci.FieldLength, isRequired);
             if (type == typeof(Int16)) return CreateField(ti, ci, "smallint", ci.FieldLength, isRequired);
             if (type == typeof(Int32)) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);

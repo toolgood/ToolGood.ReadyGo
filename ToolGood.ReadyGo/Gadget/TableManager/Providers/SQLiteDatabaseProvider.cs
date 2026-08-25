@@ -27,13 +27,13 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             sql += "\r\n);\r\n";
             if (withIndex) {
                 foreach (var item in ti.Indexs) {
-                    var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                    var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
                     sql += "CREATE INDEX IF NOT EXISTS " + txt + " ON [" + ti.TableName + "](" + columns + ");\r\n";
                 }
 
                 foreach (var item in ti.Uniques) {
-                    var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                    var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
                     sql += "CREATE UNIQUE INDEX IF NOT EXISTS " + txt + " ON [" + ti.TableName + "]( " + columns + ");\r\n";
                 }

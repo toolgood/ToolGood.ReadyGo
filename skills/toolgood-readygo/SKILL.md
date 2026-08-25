@@ -12,7 +12,7 @@ ToolGood.ReadyGo 是一个轻量级、高性能的 .NET ORM（对象关系映射
 ### 核心特性
 
 - **轻量快速**：直接执行 SQL，开销最小
-- **多数据库支持**：SqlServer、SqlServer2012、MySql、MariaDb、SQLite、Oracle、PostgreSQL、FirebirdDb、Access、DuckDB
+- **多数据库支持**：SqlServer、MySql、MariaDb、SQLite、Oracle、PostgreSQL、FirebirdDb、Access、DuckDB
 - **LINQ 表达式支持**：使用 Lambda 表达式构建类型安全的动态查询
 - **异步操作**：所有核心操作均提供 `_Async` 后缀的异步版本
 - **动态 SQL 构建**：`Where<T>()` 流式 API 构建复杂查询
@@ -396,7 +396,6 @@ var helper = SqlHelperFactory.OpenMsSqliteFile("path/to/database.db", "pwd");
 // SqlServer
 var helper = SqlHelperFactory.OpenSqlServer("server", "database", "user", "password");
 var helper = SqlHelperFactory.OpenSqlServer("server", 1433, "database", "user", "password");
-var helper = SqlHelperFactory.OpenSqlServer2012("server", "database", "user", "password");
 
 // MySQL
 var helper = SqlHelperFactory.OpenMysql("server", "database", "user", "password");
@@ -741,7 +740,7 @@ SqlHelperFactory 提供以下连接方法：
 
 | 数据库 | 工厂方法 | 提供程序 |
 |--------|----------|----------|
-| SQL Server | OpenSqlServer / OpenSqlServer2012 | System.Data.SqlClient |
+| SQL Server | OpenSqlServer | System.Data.SqlClient |
 | SQL Server | OpenSqlServerFile（LocalDB 文件库，默认实例 `(LocalDB)\MSSQLLocalDB`） | System.Data.SqlClient |
 | MySQL | OpenMysql | MySql.Data 或 MySqlConnector（按已加载驱动自动识别） |
 | SQLite | OpenSqliteFile | System.Data.SQLite |
