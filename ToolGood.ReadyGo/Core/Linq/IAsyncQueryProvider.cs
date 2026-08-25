@@ -23,6 +23,12 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <returns>结果列表。</returns>
         Task<List<T>> ToList(CancellationToken cancellationToken = default);
         /// <summary>
+        /// 异步返回结果列表（ToList 的别名）。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>结果列表。</returns>
+        Task<List<T>> Select(CancellationToken cancellationToken = default);
+        /// <summary>
         /// 异步返回结果数组。
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
@@ -93,12 +99,25 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <returns>元素数量。</returns>
         Task<int> Count(CancellationToken cancellationToken = default);
         /// <summary>
+        /// 异步统计元素数量（Count 的别名）。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>元素数量。</returns>
+        Task<int> SelectCount(CancellationToken cancellationToken = default);
+        /// <summary>
         /// 异步返回满足条件的元素数量。
         /// </summary>
         /// <param name="whereExpression">筛选条件。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>元素数量。</returns>
         Task<int> Count(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 异步统计满足条件的元素数量（Count 的别名）。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>元素数量。</returns>
+        Task<int> SelectCount(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步判断是否存在元素。
         /// </summary>
@@ -127,7 +146,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="pageSize">每页大小。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>分页结果。</returns>
-        Task<Page<T>> SelectPage(int page, int pageSize, CancellationToken cancellationToken = default);
+        Task<Page<T>> Page_Async(int page, int pageSize, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步投影返回结果列表。
         /// </summary>
@@ -218,11 +237,22 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <returns>元素数量。</returns>
         int Count();
         /// <summary>
+        /// 统计元素数量（Count 的别名）。
+        /// </summary>
+        /// <returns>元素数量。</returns>
+        int SelectCount();
+        /// <summary>
         /// 返回满足条件的元素数量。
         /// </summary>
         /// <param name="whereExpression">筛选条件。</param>
         /// <returns>元素数量。</returns>
         int Count(Expression<Func<T, bool>> whereExpression);
+        /// <summary>
+        /// 统计满足条件的元素数量（Count 的别名）。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <returns>元素数量。</returns>
+        int SelectCount(Expression<Func<T, bool>> whereExpression);
         /// <summary>
         /// 判断是否存在元素。
         /// </summary>
@@ -239,6 +269,11 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// </summary>
         /// <returns>结果列表。</returns>
         List<T> ToList();
+        /// <summary>
+        /// 返回结果列表（ToList 的别名）。
+        /// </summary>
+        /// <returns>结果列表。</returns>
+        List<T> Select();
         /// <summary>
         /// 返回结果数组。
         /// </summary>
@@ -272,7 +307,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="page">页码（从 1 开始）。</param>
         /// <param name="pageSize">每页大小。</param>
         /// <returns>分页结果。</returns>
-        Page<T> SelectPage(int page, int pageSize);
+        Page<T> Page(int page, int pageSize);
         /// <summary>
         /// 投影返回结果列表。
         /// </summary>
@@ -307,6 +342,12 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>结果列表。</returns>
         Task<List<T>> ToList_Async(CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 异步返回结果列表（ToList_Async 的别名）。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>结果列表。</returns>
+        Task<List<T>> Select_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回结果数组。
         /// </summary>
@@ -378,12 +419,25 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <returns>元素数量。</returns>
         Task<int> Count_Async(CancellationToken cancellationToken = default);
         /// <summary>
+        /// 异步统计元素数量（Count_Async 的别名）。
+        /// </summary>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>元素数量。</returns>
+        Task<int> SelectCount_Async(CancellationToken cancellationToken = default);
+        /// <summary>
         /// 异步返回满足条件的元素数量。
         /// </summary>
         /// <param name="whereExpression">筛选条件。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>元素数量。</returns>
         Task<int> Count_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
+        /// <summary>
+        /// 异步统计满足条件的元素数量（Count_Async 的别名）。
+        /// </summary>
+        /// <param name="whereExpression">筛选条件。</param>
+        /// <param name="cancellationToken">取消令牌。</param>
+        /// <returns>元素数量。</returns>
+        Task<int> SelectCount_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步判断是否存在元素。
         /// </summary>
@@ -412,7 +466,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="pageSize">每页大小。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>分页结果。</returns>
-        Task<Page<T>> SelectPage_Async(int page, int pageSize, CancellationToken cancellationToken = default);
+        Task<Page<T>> Page_Async(int page, int pageSize, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步投影返回结果列表。
         /// </summary>

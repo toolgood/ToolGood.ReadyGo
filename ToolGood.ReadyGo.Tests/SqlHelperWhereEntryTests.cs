@@ -285,7 +285,7 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            var page = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).SelectPage(2, 2);
+            var page = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).Page(2, 2);
             Assert.Equal(4, page.TotalItems);
             Assert.Equal(2, page.Items.Count);
             Assert.Equal("王五", page.Items[0].Name);
@@ -304,7 +304,7 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            var page = await helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).SelectPage_Async(1, 3);
+            var page = await helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).Page_Async(1, 3);
             Assert.Equal(4, page.TotalItems);
             Assert.Equal(3, page.Items.Count);
             Assert.Equal("张三", page.Items[0].Name);
