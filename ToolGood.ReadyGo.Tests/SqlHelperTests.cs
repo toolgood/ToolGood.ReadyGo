@@ -1,4 +1,5 @@
 using System.Data;
+using System.Reflection;
 using ToolGood.ReadyGo;
 using ToolGood.ReadyGo.NPoco;
 using Xunit;
@@ -10,6 +11,15 @@ namespace ToolGood.ReadyGo.Tests
     /// </summary>
     public class SqlHelperTests
     {
+        /// <summary>
+        /// 含索引器的类型，用于验证条件对象的属性反射会忽略索引器。
+        /// </summary>
+        private class IndexerConditionObj
+        {
+            public int Age { get; set; }
+            public string this[int index] => "ignored";
+        }
+
         #region Insert
 
         [Fact]
@@ -658,6 +668,64 @@ namespace ToolGood.ReadyGo.Tests
             var list = helper.Select<Tb_BlobTest>(new { Data = data });
             Assert.Single(list);
             Assert.Equal("b1", list[0].Name);
+        }
+
+        [Fact]
+        public void Update_Set_AutoIgnoresPrimaryKey()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("甲", 20);
+
+            // 拿完整实体作 set：主键 Id 应被自动排除，只更新其他字段
+            var set = new UserInfo { Id = 999, Name = "甲改", Age = 30, CreateTime = DateTime.Now };
+            Assert.Equal(1, helper.Update<UserInfo>(set, new { Id = u.Id }));
+
+            var loaded = helper.FirstOrDefault<UserInfo>(u.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(u.Id, loaded.Id);
+            Assert.Equal("甲改", loaded.Name);
+            Assert.Equal(30, loaded.Age);
+        }
+
+        [Fact]
+        public void Update_NullSet_HitsStringOverload()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+
+            // null 首参命中 string 重载（更具体），sql 为空 → ArgumentNullException
+            Assert.Throws<ArgumentNullException>(() => helper.Update<SimpleUser>(null, new { Id = 1 }));
+        }
+
+        [Fact]
+        public void ObjectCondition_TypeWithIndexer_Works()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper.Insert(new SimpleUser { Name = "甲", Age = 20 });
+            helper.Insert(new SimpleUser { Name = "乙", Age = 30 });
+
+            // 含索引器的类型作为条件对象：索引器应被忽略，不触发表达式构建异常
+            var list = helper.Select<SimpleUser>(new IndexerConditionObj { Age = 20 });
+            Assert.Single(list);
+            Assert.Equal("甲", list[0].Name);
+        }
+
+        [Fact]
+        public void IsWhereClause_Boundary()
+        {
+            var method = typeof(SqlHelper).GetMethod("IsWhereClause", BindingFlags.NonPublic | BindingFlags.Static);
+            Assert.NotNull(method);
+
+            // 标准 WHERE 前缀 / 恰好 WHERE
+            Assert.True((bool)method.Invoke(null, new object[] { "WHERE Id=1" }));
+            Assert.True((bool)method.Invoke(null, new object[] { "WHERE" }));
+            // 仅以 WHERE 开头但不是子句（修复前会被误判）
+            Assert.False((bool)method.Invoke(null, new object[] { "WHEREVER Id=1" }));
+            Assert.False((bool)method.Invoke(null, new object[] { "WHEREX" }));
+            // 普通条件片段
+            Assert.False((bool)method.Invoke(null, new object[] { "Age > 20" }));
         }
 
         #endregion

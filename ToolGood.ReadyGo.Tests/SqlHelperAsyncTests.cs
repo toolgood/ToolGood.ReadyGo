@@ -874,6 +874,24 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal("b1", list[0].Name);
         }
 
+        [Fact]
+        public async Task Update_Set_AutoIgnoresPrimaryKey_Async()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("甲", 20);
+
+            // 拿完整实体作 set：主键 Id 应被自动排除，只更新其他字段
+            var set = new UserInfo { Id = 999, Name = "甲改", Age = 30, CreateTime = DateTime.Now };
+            Assert.Equal(1, await helper.Update_Async<UserInfo>(set, new { Id = u.Id }));
+
+            var loaded = await helper.FirstOrDefault_Async<UserInfo>(u.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(u.Id, loaded.Id);
+            Assert.Equal("甲改", loaded.Name);
+            Assert.Equal(30, loaded.Age);
+        }
+
         #endregion
     }
 }

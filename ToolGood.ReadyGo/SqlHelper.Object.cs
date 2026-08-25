@@ -158,14 +158,28 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        /// 根据条件更新对象
+        /// 根据条件更新对象。set 对象中的主键列会被自动忽略，避免意外修改主键。
+        /// 注意：第一个参数为 string 时会命中 <see cref="Update{T}(string, object[])"/> SQL 重载。
+        /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="set">要更新的字段与值对象</param>
+        /// <param name="condition">条件</param>
+        /// <returns>受影响的行数</returns>
+        public int Update<T>(object set, object condition) where T : class
+        {
+            var (sql, args) = ConditionObjectToUpdateSetWhere<T>(set, condition, null);
+            return Update<T>(sql, args);
+        }
+
+        /// <summary>
+        /// 根据条件更新对象，可忽略指定字段。set 对象中的主键列会被自动忽略，避免意外修改主键。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="set">要更新的字段与值对象</param>
         /// <param name="condition">条件</param>
         /// <param name="ignoreFields">忽略的字段名集合</param>
         /// <returns>受影响的行数</returns>
-        public int Update<T>(object set, object condition, IEnumerable<string> ignoreFields = null) where T : class
+        public int Update<T>(object set, object condition, IEnumerable<string> ignoreFields) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateSetWhere<T>(set, condition, ignoreFields);
             return Update<T>(sql, args);
@@ -361,14 +375,27 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        /// 根据条件更新对象
+        /// 根据条件更新对象，异步操作。set 对象中的主键列会被自动忽略，避免意外修改主键。
+        /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="set">要更新的字段与值对象</param>
+        /// <param name="condition">条件</param>
+        /// <returns>受影响的行数</returns>
+        public Task<int> Update_Async<T>(object set, object condition) where T : class
+        {
+            var (sql, args) = ConditionObjectToUpdateSetWhere<T>(set, condition, null);
+            return Update_Async<T>(sql, args);
+        }
+
+        /// <summary>
+        /// 根据条件更新对象，可忽略指定字段，异步操作。set 对象中的主键列会被自动忽略，避免意外修改主键。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="set">要更新的字段与值对象</param>
         /// <param name="condition">条件</param>
         /// <param name="ignoreFields">忽略的字段名集合</param>
         /// <returns>受影响的行数</returns>
-        public Task<int> Update_Async<T>(object set, object condition, IEnumerable<string> ignoreFields = null) where T : class
+        public Task<int> Update_Async<T>(object set, object condition, IEnumerable<string> ignoreFields) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateSetWhere<T>(set, condition, ignoreFields);
             return Update_Async<T>(sql, args);
@@ -528,9 +555,10 @@ namespace ToolGood.ReadyGo
 
             var pocoData = GetPocoData(typeof(T));
             var args = new List<object>();
+            var ignored = BuildIgnoredFields(pocoData, ignoreFields);
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("SET ");
-            if (ObjectToSql(stringBuilder, set, ObjectSqlMode.UpdateSet, ignoreFields, pocoData, args) == false) {
+            if (ObjectToSql(stringBuilder, set, ObjectSqlMode.UpdateSet, ignored, pocoData, args) == false) {
                 throw new ArgumentException("set 对象没有可更新的字段！");
             }
             if (condition != null) {
@@ -549,6 +577,29 @@ namespace ToolGood.ReadyGo
                 }
             }
             return (stringBuilder.ToString(), args.ToArray());
+        }
+
+        /// <summary>
+        /// 构建忽略字段集合：在用户显式 ignoreFields 之外，自动排除主键列，避免拿完整实体做 set 时意外修改主键。
+        /// </summary>
+        private static HashSet<string> BuildIgnoredFields(PocoData pocoData, IEnumerable<string> ignoreFields)
+        {
+            var set = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            if (ignoreFields != null) {
+                foreach (var field in ignoreFields) {
+                    if (field != null) { set.Add(field); }
+                }
+            }
+            var primaryKey = pocoData?.TableInfo?.PrimaryKey;
+            if (!string.IsNullOrEmpty(primaryKey)) {
+                foreach (var pkName in primaryKey.Split(',')) {
+                    var column = pkName.Trim();
+                    var member = pocoData.Members.FirstOrDefault(m => m.PocoColumn != null
+                        && string.Equals(m.PocoColumn.ColumnName, column, StringComparison.OrdinalIgnoreCase));
+                    if (member != null) { set.Add(member.Name); }
+                }
+            }
+            return set;
         }
 
         /// <summary>
@@ -574,10 +625,12 @@ namespace ToolGood.ReadyGo
         private static PropertyAccessor[] GetPropertyAccessors(Type type)
         {
             return _propertyAccessors.GetOrAdd(type, t => {
-                return t.GetProperties().Select(p => new PropertyAccessor {
-                    Property = p,
-                    Getter = BuildPropertyGetter(p)
-                }).ToArray();
+                return t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                    .Where(p => p.CanRead && p.GetIndexParameters().Length == 0)
+                    .Select(p => new PropertyAccessor {
+                        Property = p,
+                        Getter = BuildPropertyGetter(p)
+                    }).ToArray();
             });
         }
 
@@ -618,15 +671,16 @@ namespace ToolGood.ReadyGo
             var db = GetDatabase();
             bool hasColumn = false;
 
+            var ignored = ignoreFields as ISet<string>
+                ?? ignoreFields?.ToHashSet(StringComparer.CurrentCultureIgnoreCase);
+
             var type = condition.GetType();
             var accessors = GetPropertyAccessors(type);
             for (int i = 0; i < accessors.Length; i++) {
                 var accessor = accessors[i];
                 var pi = accessor.Property;
-                if (ignoreFields != null) {
-                    if (ignoreFields.Any(q => string.Equals(q, pi.Name, StringComparison.CurrentCultureIgnoreCase))) {
-                        continue;
-                    }
+                if (ignored != null && ignored.Contains(pi.Name)) {
+                    continue;
                 }
                 if (hasColumn == false) {
                     hasColumn = true;
@@ -703,12 +757,20 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        /// 判断字符串是否为 WHERE 子句（以 WHERE 开头），用于决定是否自动补全 WHERE 前缀。
+        /// 判断字符串是否为 WHERE 子句（以 WHERE 开头且其后为空白或行尾），用于决定是否自动补全 WHERE 前缀。
         /// </summary>
         private static bool IsWhereClause(string str)
         {
-            return str.TrimStart().StartsWith("WHERE", StringComparison.CurrentCultureIgnoreCase);
+            var s = str.TrimStart();
+            if (s.StartsWith("WHERE", StringComparison.CurrentCultureIgnoreCase) == false) { return false; }
+            if (s.Length == 5) { return true; }
+            return char.IsWhiteSpace(s[5]);
         }
+
+        /// <summary>
+        /// 每个 PocoData 缓存的"属性名 → 列名"映射。
+        /// </summary>
+        private static readonly ConcurrentDictionary<PocoData, IReadOnlyDictionary<string, string>> _columnNameCache = new ConcurrentDictionary<PocoData, IReadOnlyDictionary<string, string>>();
 
         /// <summary>
         /// 根据属性名解析数据库列名，遵循 PocoData 的列名映射（如 [Column] 特性）；找不到映射时返回 null。
@@ -716,10 +778,16 @@ namespace ToolGood.ReadyGo
         private static string GetColumnName(PocoData pocoData, string propertyName)
         {
             if (pocoData == null) { return null; }
-            var member = pocoData.Members.FirstOrDefault(x => x.PocoColumn != null
-                && x.ReferenceType == ReferenceType.None
-                && string.Equals(x.Name, propertyName, StringComparison.OrdinalIgnoreCase));
-            return member?.PocoColumn.ColumnName;
+            var map = _columnNameCache.GetOrAdd(pocoData, pd => {
+                var dict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                foreach (var member in pd.Members) {
+                    if (member.PocoColumn != null && member.ReferenceType == ReferenceType.None) {
+                        dict[member.Name] = member.PocoColumn.ColumnName;
+                    }
+                }
+                return dict;
+            });
+            return map.TryGetValue(propertyName, out var columnName) ? columnName : null;
         }
 
         /// <summary>
