@@ -483,16 +483,18 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
-        public void ObjectCondition_Update_EmptyCondition_UpdatesAll()
+        public void ObjectCondition_Update_EmptyCondition_Throws()
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
             helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
 
-            // 空对象条件 = 无条件更新（与 null 一致）
-            Assert.Equal(2, helper.Update<SimpleUser>(new { Age = 99 }, new { }));
-            Assert.Equal(2, helper.Count<SimpleUser>("WHERE Age = 99"));
+            // 空对象 / null / 空字符串条件无法生成 WHERE，禁止无条件的 UPDATE，避免意外全表更新
+            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>(new { Age = 99 }, new { }));
+            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>(new { Age = 99 }, null));
+            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>(new { Age = 99 }, "  "));
+            Assert.Equal(2, helper.Count<SimpleUser>());
         }
 
         [Fact]
@@ -635,9 +637,11 @@ namespace ToolGood.ReadyGo.Tests
             Assert.True(helper.Exists<StringKeyUser>((object)"USR-002"));
             Assert.False(helper.Exists<StringKeyUser>((object)"USR-999"));
 
-            // 带 SQL 特征的字符串 → 仍按 SQL 片段处理
-            object cond = "Name = '乙'";
-            Assert.Equal("乙", helper.FirstOrDefault<StringKeyUser>(cond).Name);
+            // 字符串主键值一律参数化查询；含 SQL 特征的字符串不再按 SQL 片段执行（防注入）
+            Assert.Null(helper.FirstOrDefault<StringKeyUser>((object)"Name = '乙'"));
+
+            // 需要 SQL 片段时使用专门的 SQL 重载（SQL 片段需以 WHERE 开头）
+            Assert.Equal("乙", helper.FirstOrDefault<StringKeyUser>("WHERE Name = '乙'").Name);
         }
 
         [Fact]

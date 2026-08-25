@@ -68,7 +68,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个。
         /// 传 null 或条件对象表示按条件查询（null 为无条件，取第一条）；传整数主键表示按主键查询；
-        /// 传字符串时，若实体主键为字符串且字符串不像 SQL 片段则按主键查询，否则作为 SQL 片段。
+        /// 传字符串时，若实体主键为字符串类型则按主键值参数化查询，否则作为 SQL 片段（请自行确保 SQL 安全）。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件：整数主键 / 字符串主键或 SQL 片段 / 条件对象 / null</param>
@@ -153,6 +153,7 @@ namespace ToolGood.ReadyGo
 
         /// <summary>
         /// 根据条件更新对象。set 对象中的主键列会被自动忽略，避免意外修改主键。
+        /// condition 无法解析出 WHERE 条件（null、空字符串、空对象等）时会抛出异常，防止意外全表更新。
         /// 注意：第一个参数为 string 时会命中 <see cref="Update{T}(string, object[])"/> SQL 重载。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
@@ -167,6 +168,7 @@ namespace ToolGood.ReadyGo
 
         /// <summary>
         /// 根据条件更新对象，可忽略指定字段。set 对象中的主键列会被自动忽略，避免意外修改主键。
+        /// condition 无法解析出 WHERE 条件（null、空字符串、空对象等）时会抛出异常，防止意外全表更新。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="set">要更新的字段与值对象</param>
@@ -272,7 +274,7 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件查询第一个，异步操作。
         /// 传 null 或条件对象表示按条件查询（null 为无条件，取第一条）；传整数主键表示按主键查询；
-        /// 传字符串时，若实体主键为字符串且字符串不像 SQL 片段则按主键查询，否则作为 SQL 片段。
+        /// 传字符串时，若实体主键为字符串类型则按主键值参数化查询，否则作为 SQL 片段（请自行确保 SQL 安全）。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件：整数主键 / 字符串主键或 SQL 片段 / 条件对象 / null</param>
@@ -357,6 +359,7 @@ namespace ToolGood.ReadyGo
 
         /// <summary>
         /// 根据条件更新对象，异步操作。set 对象中的主键列会被自动忽略，避免意外修改主键。
+        /// condition 无法解析出 WHERE 条件（null、空字符串、空对象等）时会抛出异常，防止意外全表更新。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="set">要更新的字段与值对象</param>
@@ -370,6 +373,7 @@ namespace ToolGood.ReadyGo
 
         /// <summary>
         /// 根据条件更新对象，可忽略指定字段，异步操作。set 对象中的主键列会被自动忽略，避免意外修改主键。
+        /// condition 无法解析出 WHERE 条件（null、空字符串、空对象等）时会抛出异常，防止意外全表更新。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="set">要更新的字段与值对象</param>
@@ -430,9 +434,24 @@ namespace ToolGood.ReadyGo
             var db = GetDatabase();
             var pd = db.PocoDataFactory.ForType(typeof(T));
             var table = db.DatabaseType.EscapeTableName(pd.TableInfo.TableName);
-            var pk = db.DatabaseType.EscapeSqlIdentifier(pd.TableInfo.PrimaryKey);
-            var sql = $"SELECT COUNT(*) FROM {table} WHERE {pk}=@0";
-            return (sql, new object[] { primaryKey });
+            var (whereSql, args) = BuildPrimaryKeyWhereSql<T>(primaryKey);
+            return ($"SELECT COUNT(*) FROM {table} WHERE {whereSql}", args);
+        }
+
+        /// <summary>
+        /// 构建"按主键查询"的 WHERE 片段与参数：仅支持单一主键列，复合主键会抛出明确异常。
+        /// </summary>
+        private (string whereSql, object[] args) BuildPrimaryKeyWhereSql<T>(object primaryKey) where T : class
+        {
+            var db = GetDatabase();
+            var pd = db.PocoDataFactory.ForType(typeof(T));
+            var pkColumns = (pd.TableInfo.PrimaryKey ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim()).Where(x => x.Length > 0).ToArray();
+            if (pkColumns.Length != 1) {
+                throw new NotSupportedException($"类型 {typeof(T).Name} 的主键不是单一主键列，无法按主键生成查询条件。");
+            }
+            var pk = db.DatabaseType.EscapeSqlIdentifier(pkColumns[0]);
+            return ($"{pk}=@0", new object[] { primaryKey });
         }
 
         /// <summary>
@@ -468,61 +487,63 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        /// 判断字符串是否为 SQL 片段（以 WHERE 开头、包含空白或 SQL 运算符/定界符）。
+        /// 获取实体主键列名数组；无主键或未映射时返回空数组。
         /// </summary>
-        private static bool IsSqlFragment(string value)
+        private string[] GetPrimaryKeyColumns(Type entityType)
         {
-            if (string.IsNullOrEmpty(value)) { return false; }
-            var s = value.TrimStart();
-            if (IsWhereClause(s)) { return true; }
-            if (s.Any(char.IsWhiteSpace)) { return true; }
-            return s.IndexOfAny(_sqlOperatorChars) >= 0;
+            var pkName = GetPocoData(entityType).TableInfo.PrimaryKey;
+            if (string.IsNullOrEmpty(pkName)) { return Array.Empty<string>(); }
+            return pkName.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim()).Where(x => x.Length > 0).ToArray();
         }
 
-        private static readonly char[] _sqlOperatorChars = { '=', '<', '>', '!', '(', ')', ',', ';', '\'', '"', '`' };
-
         /// <summary>
-        /// 获取实体主键列对应的属性类型；复合主键或未映射时返回 null。
+        /// 获取单一主键列对应的属性类型；复合主键或未映射时返回 null。
         /// </summary>
-        private Type GetPrimaryKeyType(Type entityType)
+        private Type GetPrimaryKeyColumnType(Type entityType)
         {
+            var pkColumns = GetPrimaryKeyColumns(entityType);
+            if (pkColumns.Length != 1) { return null; }
             var pd = GetPocoData(entityType);
-            var pkName = pd.TableInfo.PrimaryKey;
-            if (string.IsNullOrEmpty(pkName)) { return null; }
             var member = pd.Members.FirstOrDefault(m => m.PocoColumn != null
-                && string.Equals(m.PocoColumn.ColumnName, pkName, StringComparison.OrdinalIgnoreCase));
+                && string.Equals(m.PocoColumn.ColumnName, pkColumns[0], StringComparison.OrdinalIgnoreCase));
             return member?.PocoColumn?.ColumnType;
         }
 
         /// <summary>
-        /// 判断字符串是否应按"字符串主键值"处理：仅当实体主键为字符串、值非空且不像 SQL 片段时成立。
+        /// 实体是否支持"字符串主键值"：主键为单一列且列类型为 string。
         /// </summary>
-        private bool IsStringPrimaryKeyValue<T>(string value) where T : class
+        private bool IsStringPrimaryKey(Type entityType)
         {
-            if (GetPrimaryKeyType(typeof(T)) != typeof(string)) { return false; }
-            var str = value.Trim();
-            if (str.Length == 0) { return false; }
-            return IsSqlFragment(str) == false;
+            return GetPrimaryKeyColumnType(entityType) == typeof(string);
         }
 
         /// <summary>
         /// 解析 object 条件：整数或字符串主键时返回 true 并输出主键值；否则返回 false，交由条件对象/SQL 片段路径处理。
-        /// 非整数、非字符串的值类型会抛出明确异常，避免被静默当作主键。
+        /// 非整数、非字符串的值类型会抛出明确异常；整数条件要求实体为单一主键列，复合主键同样抛出明确异常，
+        /// 避免被静默当作无条件或生成非法 SQL。
         /// </summary>
         private bool TryGetPrimaryKey<T>(object condition, out object primaryKey) where T : class
         {
             primaryKey = null;
             if (condition == null) { return false; }
-            if (condition.GetType().IsClass == false) {
-                if (IsIntegerType(condition.GetType()) == false) {
-                    throw new ArgumentException($"condition 类型 {condition.GetType()} 不支持作为主键，仅支持整数类型主键。");
+            var type = condition.GetType();
+            if (type.IsClass == false) {
+                if (IsIntegerType(type) == false) {
+                    throw new ArgumentException($"condition 类型 {type} 不支持作为主键，仅支持整数类型主键。");
+                }
+                if (GetPrimaryKeyColumns(typeof(T)).Length != 1) {
+                    throw new ArgumentException($"类型 {typeof(T).Name} 的主键不是单一主键列，无法使用整数条件 {condition} 作为主键条件。");
                 }
                 primaryKey = condition;
                 return true;
             }
-            if (condition is string str && IsStringPrimaryKeyValue<T>(str)) {
-                primaryKey = str;
-                return true;
+            if (condition is string str) {
+                var trimmed = str.Trim();
+                if (trimmed.Length > 0 && IsStringPrimaryKey(typeof(T))) {
+                    primaryKey = str;
+                    return true;
+                }
             }
             return false;
         }
@@ -530,15 +551,20 @@ namespace ToolGood.ReadyGo
         private (string sql, object[] args) ConditionObjectToWhere<T>(object condition) where T : class
         {
             if (condition == null) { return ("", new object[0]); }
-            if (condition.GetType() == typeof(string)) {
+            if (condition is string) {
                 var str = ((string)condition).Trim();
                 if (str.Length == 0) { return ("", new object[0]); }
                 return (IsWhereClause(str) ? str : "WHERE " + str, new object[0]);
+            }
+            if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
+                var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey);
+                return ($"WHERE {whereSql}", pkArgs);
             }
 
             var args = new List<object>();
             StringBuilder stringBuilder = new StringBuilder();
             if (ObjectToSql(stringBuilder, condition, ObjectSqlMode.Where, null, GetPocoData(typeof(T)), args) == false) {
+                // 空对象（无可用属性）视为显式的无条件查询，与 null 一致
                 return ("", new object[0]);
             }
             stringBuilder.Insert(0, "WHERE ");
@@ -557,20 +583,32 @@ namespace ToolGood.ReadyGo
             if (ObjectToSql(stringBuilder, set, ObjectSqlMode.UpdateSet, ignored, pocoData, args) == false) {
                 throw new ArgumentException("set 对象没有可更新的字段！");
             }
+            var hasWhere = false;
             if (condition != null) {
-                if (condition.GetType() == typeof(string)) {
+                if (condition is string) {
                     var str = ((string)condition).Trim();
                     if (str.Length > 0) {
                         stringBuilder.Append(IsWhereClause(str) ? " " : " WHERE ");
                         stringBuilder.Append(str);
+                        hasWhere = true;
                     }
+                } else if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
+                    var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey);
+                    stringBuilder.Append(" WHERE ");
+                    stringBuilder.Append(whereSql);
+                    args.AddRange(pkArgs);
+                    hasWhere = true;
                 } else {
                     StringBuilder whereBuilder = new StringBuilder();
                     if (ObjectToSql(whereBuilder, condition, ObjectSqlMode.Where, null, pocoData, args)) {
                         stringBuilder.Append(" WHERE ");
                         stringBuilder.Append(whereBuilder);
+                        hasWhere = true;
                     }
                 }
+            }
+            if (hasWhere == false) {
+                throw new ArgumentException("更新操作缺少 WHERE 条件，禁止无条件的 UPDATE，避免意外全表更新！");
             }
             return (stringBuilder.ToString(), args.ToArray());
         }
@@ -646,7 +684,10 @@ namespace ToolGood.ReadyGo
         {
             stringBuilder.Append('@').Append(args.Count);
             if (value != null && value.GetType().IsEnum) {
-                value = EnumHelper.UseEnumString(value.GetType()) ? value.ToString() : Convert.ToInt64(value);
+                // 按枚举底层类型转换，避免 ulong 等大值枚举在 Convert.ToInt64 时溢出
+                value = EnumHelper.UseEnumString(value.GetType())
+                    ? value.ToString()
+                    : Convert.ChangeType(value, Enum.GetUnderlyingType(value.GetType()));
             }
             args.Add(value);
         }
@@ -691,7 +732,7 @@ namespace ToolGood.ReadyGo
                     if (value == null) {
                         stringBuilder.Append(escapedColumn);
                         stringBuilder.Append(" is Null");
-                    } else if (value is IEnumerable && !(value is string) && !(value is byte[])) {
+                    } else if (value is IEnumerable && !(value is string) && !(value is byte[]) && !(value is char[]) && !(value is IDictionary)) {
                         List<object> objs = new List<object>();
                         foreach (var item in (IEnumerable)value) { objs.Add(item); }
 
@@ -807,8 +848,20 @@ namespace ToolGood.ReadyGo
             var typeCode = Type.GetTypeCode(fieldType);
             switch (typeCode) {
                 case TypeCode.Boolean: return (bool)value ? "1" : "0";
-                case TypeCode.Single: return ((float)value).ToString(CultureInfo.InvariantCulture);
-                case TypeCode.Double: return ((double)value).ToString(CultureInfo.InvariantCulture);
+                case TypeCode.Single: {
+                    var f = (float)value;
+                    if (float.IsNaN(f) || float.IsInfinity(f)) {
+                        throw new ArgumentException($"float 值 {f} 无法转换为 SQL 字面量。");
+                    }
+                    return f.ToString(CultureInfo.InvariantCulture);
+                }
+                case TypeCode.Double: {
+                    var d = (double)value;
+                    if (double.IsNaN(d) || double.IsInfinity(d)) {
+                        throw new ArgumentException($"double 值 {d} 无法转换为 SQL 字面量。");
+                    }
+                    return d.ToString(CultureInfo.InvariantCulture);
+                }
                 case TypeCode.Decimal: return ((decimal)value).ToString(CultureInfo.InvariantCulture);
                 case TypeCode.Byte:
                 case TypeCode.Int16:
