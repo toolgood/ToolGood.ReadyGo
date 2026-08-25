@@ -14,12 +14,12 @@ namespace ToolGood.ReadyGo.Attributes
         /// <param name="tableName">数据表名</param>
         public TableNameAttribute(string tableName)
         {
-            Value = tableName;
+            TableName = tableName;
         }
 
         /// <summary>
         /// 数据表名
         /// </summary>
-        public string Value { get; private set; }
+        public string TableName { get; private set; }
     }
 }

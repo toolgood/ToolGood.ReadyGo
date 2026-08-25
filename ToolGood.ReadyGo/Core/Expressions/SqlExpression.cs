@@ -1025,7 +1025,7 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                         }
                         if (pp != null)
                         {
-                            if (m.Member.Name == "Value")
+                            if (m.Member.Name == "TableName")
                                 return Visit(m1);
                             return new PartialSqlString(GetDateTimeSql(m.Member.Name, Visit(m1)));
                         }

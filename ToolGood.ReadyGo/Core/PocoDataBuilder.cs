@@ -308,7 +308,7 @@ namespace ToolGood.ReadyGo.NPoco
 
         private static void SetupValueObject(PocoColumn pc, FastCreate fastCreate)
         {
-            var memberName = "Value";
+            var memberName = "TableName";
             var hasIValueObject = pc.MemberInfoData.MemberType.GetTypeWithGenericTypeDefinitionOf(typeof(IValueObject<>));
             MemberInfo property = string.IsNullOrEmpty(pc.ValueObjectColumnName)
                 ? pc.MemberInfoData.MemberType.GetProperties().FirstOrDefault(x => x.Name.IndexOf(memberName, StringComparison.OrdinalIgnoreCase) >= 0)

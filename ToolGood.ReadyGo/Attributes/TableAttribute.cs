@@ -9,11 +9,6 @@ namespace ToolGood.ReadyGo.Attributes
     public class TableAttribute : TableNameAttribute
     {
         /// <summary>
-        /// 数据表名
-        /// </summary>
-        public string TableName;
-
-        /// <summary>
         /// Schema名
         /// </summary>
         public string SchemaName;
@@ -24,7 +19,6 @@ namespace ToolGood.ReadyGo.Attributes
         /// <param name="tableName">数据表名</param>
         public TableAttribute(string tableName) : base(tableName)
         {
-            TableName = tableName.Trim();
         }
 
         /// <summary>
@@ -35,7 +29,6 @@ namespace ToolGood.ReadyGo.Attributes
         public TableAttribute(string tableName, string schemaName) : base(tableName)
         {
             SchemaName = schemaName.Trim();
-            TableName = tableName.Trim();
         }
     }
 }

@@ -21,7 +21,7 @@ namespace ToolGood.ReadyGo.NPoco
 
             // Get the table name
             var a = t.GetTypeInfo().GetCustomAttributes(typeof(TableNameAttribute), true).ToArray();
-            tableInfo.TableName = a.Length == 0 ? t.Name : (a[0] as TableNameAttribute).Value;
+            tableInfo.TableName = a.Length == 0 ? t.Name : (a[0] as TableNameAttribute).TableName;
 
             // Get the primary key
             a = t.GetTypeInfo().GetCustomAttributes(typeof(PrimaryKeyAttribute), true).ToArray();

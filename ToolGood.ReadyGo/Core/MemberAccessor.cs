@@ -88,7 +88,7 @@ namespace ToolGood.ReadyGo.NPoco
         /// Sets the property for the specified target.
         /// </summary>
         /// <param name="target">Target object.</param>
-        /// <param name="value">Value to set.</param>
+        /// <param name="value">TableName to set.</param>
         public void Set(object target, object value)
         {
             SetDelegate?.Invoke(target, value);
