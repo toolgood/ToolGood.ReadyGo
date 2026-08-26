@@ -4,11 +4,16 @@ using System.Collections.Generic;
 namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
 {
     /// <summary>
-    /// 数值数组列序列化器：将 float[] / double[] / int[] 及其 List&lt;T&gt; 序列化为 byte[] 保存，反序列化还原。
-    /// 存储格式：前 4 字节保存元素个数，其后为元素数据；字节数按元素类型固定：float 4 字节、double 8 字节、int 4 字节。
+    /// 数值数组列序列化器：将 float[] / double[] / int[] / decimal[] 及其 List&lt;T&gt; 序列化为 byte[] 保存，反序列化还原。
+    /// 存储格式：前 4 字节保存元素个数，其后为元素数据；字节数按元素类型固定：float 4 字节、double 8 字节、int 4 字节、decimal 16 字节。
     /// </summary>
     public class NumericArray2BytesColumnSerializer : NPoco.IColumnSerializer
     {
+        /// <summary>
+        /// decimal 占用的字节数（decimal.GetBits 返回 4 个 int，共 16 字节）
+        /// </summary>
+        private const int DecimalSize = 16;
+
         /// <summary>
         /// 序列化为 byte[]
         /// </summary>
@@ -25,14 +30,18 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                     return ToBytes(a, sizeof(double), BitConverter.GetBytes);
                 case int[] a:
                     return ToBytes(a, sizeof(int), BitConverter.GetBytes);
+                case decimal[] a:
+                    return ToBytes(a, DecimalSize, DecimalToBytes);
                 case List<float> l:
                     return ToBytes(l.ToArray(), sizeof(float), BitConverter.GetBytes);
                 case List<double> l:
                     return ToBytes(l.ToArray(), sizeof(double), BitConverter.GetBytes);
                 case List<int> l:
                     return ToBytes(l.ToArray(), sizeof(int), BitConverter.GetBytes);
+                case List<decimal> l:
+                    return ToBytes(l.ToArray(), DecimalSize, DecimalToBytes);
                 default:
-                    throw new NotSupportedException($"NumericArray2BytesColumnSerializer 不支持类型 {value.GetType().Name}，仅支持 float[] / double[] / int[] 及其 List<T>。");
+                    throw new NotSupportedException($"NumericArray2BytesColumnSerializer 不支持类型 {value.GetType().Name}，仅支持 float[] / double[] / int[] / decimal[] 及其 List<T>。");
             }
         }
 
@@ -76,7 +85,13 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
             if (t == typeof(int[])) {
                 return FromBytes(bytes, sizeof(int), BitConverter.ToInt32);
             }
-            throw new NotSupportedException($"NumericArray2BytesColumnSerializer 不支持目标类型 {targetType.Name}，仅支持 float[] / double[] / int[] 及其 List<T>。");
+            if (t == typeof(List<decimal>)) {
+                return new List<decimal>(FromBytes(bytes, DecimalSize, BytesToDecimal));
+            }
+            if (t == typeof(decimal[])) {
+                return FromBytes(bytes, DecimalSize, BytesToDecimal);
+            }
+            throw new NotSupportedException($"NumericArray2BytesColumnSerializer 不支持目标类型 {targetType.Name}，仅支持 float[] / double[] / int[] / decimal[] 及其 List<T>。");
         }
 
         private static byte[] ToBytes<T>(T[] values, int size, Func<T, byte[]> getBytes)
@@ -105,6 +120,31 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 values[i] = getValue(bytes, 4 + i * size);
             }
             return values;
+        }
+
+        /// <summary>
+        /// decimal 转 byte[]：使用 decimal.GetBits（4 个 int，共 16 字节），保证无损往返
+        /// </summary>
+        private static byte[] DecimalToBytes(decimal value)
+        {
+            var bits = decimal.GetBits(value);
+            var bytes = new byte[DecimalSize];
+            for (int i = 0; i < bits.Length; i++) {
+                BitConverter.GetBytes(bits[i]).CopyTo(bytes, i * 4);
+            }
+            return bytes;
+        }
+
+        /// <summary>
+        /// byte[] 还原 decimal：与 DecimalToBytes 对称
+        /// </summary>
+        private static decimal BytesToDecimal(byte[] bytes, int offset)
+        {
+            var bits = new int[4];
+            for (int i = 0; i < bits.Length; i++) {
+                bits[i] = BitConverter.ToInt32(bytes, offset + i * 4);
+            }
+            return new decimal(bits);
         }
     }
 }

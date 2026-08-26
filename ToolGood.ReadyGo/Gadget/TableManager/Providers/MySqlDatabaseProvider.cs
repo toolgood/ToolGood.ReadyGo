@@ -152,11 +152,11 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(Byte[]) || type == typeof(SByte[])
                || type == typeof(UInt16[]) || type == typeof(UInt32[]) || type == typeof(UInt64[])
                || type == typeof(Int16[]) || type == typeof(Int32[]) || type == typeof(Int64[])
-               || type == typeof(Single[]) || type == typeof(Double[])
+               || type == typeof(Single[]) || type == typeof(Double[]) || type == typeof(Decimal[])
                || type == typeof(List<Byte>) || type == typeof(List<SByte>)
                || type == typeof(List<UInt16>) || type == typeof(List<UInt32>) || type == typeof(List<UInt64>)
                || type == typeof(List<Int16>) || type == typeof(List<Int32>) || type == typeof(List<Int64>)
-               || type == typeof(List<Single>) || type == typeof(List<Double>)
+               || type == typeof(List<Single>) || type == typeof(List<Double>) || type == typeof(List<Decimal>)
                || type == typeof(List<bool>) || type == typeof(bool[])
 
                 ) {

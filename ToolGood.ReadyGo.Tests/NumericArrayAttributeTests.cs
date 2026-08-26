@@ -170,4 +170,93 @@ namespace ToolGood.ReadyGo.Tests
             return floats;
         }
     }
+
+    /// <summary>
+    /// 不加 [NumericArray2Bytes] 特性时，float[] / double[] / int[] / decimal[] 及 List&lt;T&gt; 默认按 byte[]（BLOB）保存
+    /// </summary>
+    [Table("Tb_NumericArrayDefaultTest")]
+    [PrimaryKey("Id")]
+    public class Tb_NumericArrayDefaultTest
+    {
+        public int Id { get; set; }
+
+        public float[] Floats { get; set; }
+
+        public double[] Doubles { get; set; }
+
+        public int[] Ints { get; set; }
+
+        public decimal[] Decimals { get; set; }
+
+        public List<float> FloatList { get; set; }
+
+        public List<int> IntList { get; set; }
+
+        public List<decimal> DecimalList { get; set; }
+    }
+
+    public class NumericArrayDefaultTests
+    {
+        [Fact]
+        public void 默认_数值数组以byte保存_读回一致()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayDefaultTest));
+
+            var item = new Tb_NumericArrayDefaultTest {
+                Floats = new[] { 1.5f, -2.25f, 3.125f },
+                Doubles = new[] { 1.5, -2.25, 3.141592653589793 },
+                Ints = new[] { -1, 0, 100 },
+                Decimals = new[] { 1.5m, -2.25m, 3.141592653589793238462643383m },
+                FloatList = new List<float> { 0.1f, 10f, 100.5f },
+                IntList = new List<int> { 1, 2, 3, 4 },
+                DecimalList = new List<decimal> { 0.1m, 10m, 100.5m }
+            };
+            helper.Insert(item);
+
+            var loaded = helper.FirstOrDefault<Tb_NumericArrayDefaultTest>(item.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(item.Floats, loaded.Floats);
+            Assert.Equal(item.Doubles, loaded.Doubles);
+            Assert.Equal(item.Ints, loaded.Ints);
+            Assert.Equal(item.Decimals, loaded.Decimals);
+            Assert.Equal(item.FloatList, loaded.FloatList);
+            Assert.Equal(item.IntList, loaded.IntList);
+            Assert.Equal(item.DecimalList, loaded.DecimalList);
+
+            // 数据库中以 byte[] 存储：前 4 字节元素个数 + 每元素固定字节数
+            var floatBytes = helper.ExecuteScalar<byte[]>("SELECT Floats FROM Tb_NumericArrayDefaultTest WHERE Id = @0", item.Id);
+            var intBytes = helper.ExecuteScalar<byte[]>("SELECT IntList FROM Tb_NumericArrayDefaultTest WHERE Id = @0", item.Id);
+            var decimalBytes = helper.ExecuteScalar<byte[]>("SELECT Decimals FROM Tb_NumericArrayDefaultTest WHERE Id = @0", item.Id);
+            Assert.Equal(4 + item.Floats.Length * 4, floatBytes.Length);
+            Assert.Equal(4 + item.IntList.Count * 4, intBytes.Length);
+            // decimal 每元素 16 字节（decimal.GetBits 4 个 int）
+            Assert.Equal(4 + item.Decimals.Length * 16, decimalBytes.Length);
+            // decimal 字节内容可精确还原
+            Assert.Equal(item.Decimals.Length, BitConverter.ToInt32(decimalBytes, 0));
+            for (int i = 0; i < item.Decimals.Length; i++) {
+                var bits = decimal.GetBits(item.Decimals[i]);
+                for (int j = 0; j < 4; j++) {
+                    Assert.Equal(BitConverter.GetBytes(bits[j]), decimalBytes.Skip(4 + i * 16 + j * 4).Take(4));
+                }
+            }
+        }
+
+        [Fact]
+        public void 默认_null_可读回()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayDefaultTest));
+
+            var item = new Tb_NumericArrayDefaultTest { Floats = null, IntList = null };
+            helper.Insert(item);
+
+            var loaded = helper.FirstOrDefault<Tb_NumericArrayDefaultTest>(item.Id);
+            Assert.NotNull(loaded);
+            Assert.Null(loaded.Floats);
+            Assert.Null(loaded.IntList);
+        }
+    }
 }

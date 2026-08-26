@@ -135,6 +135,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(Int64[])) return CreateField(ti, ci, "bigint[]", ci.FieldLength, false);
             if (type == typeof(Single[])) return CreateField(ti, ci, "real[]", ci.FieldLength, false);
             if (type == typeof(double[])) return CreateField(ti, ci, "double precision[]", ci.FieldLength, false);
+            if (type == typeof(Decimal[])) return CreateField(ti, ci, "numeric[]", ci.FieldLength, false);
             if (type == typeof(bool[])) return CreateField(ti, ci, "boolean[]", ci.FieldLength, false);
 
             if (type == typeof(List<Byte>)) return CreateField(ti, ci, "bytea", ci.FieldLength, false);
@@ -147,6 +148,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(List<Int64>)) return CreateField(ti, ci, "bigint[]", ci.FieldLength, false);
             if (type == typeof(List<Single>)) return CreateField(ti, ci, "real[]", ci.FieldLength, false);
             if (type == typeof(List<double>)) return CreateField(ti, ci, "double precision[]", ci.FieldLength, false);
+            if (type == typeof(List<Decimal>)) return CreateField(ti, ci, "numeric[]", ci.FieldLength, false);
             if (type == typeof(List<bool>)) return CreateField(ti, ci, "boolean[]", ci.FieldLength, false);
 
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "varchar", ci.FieldLength, isRequired);

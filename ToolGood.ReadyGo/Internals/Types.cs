@@ -30,6 +30,7 @@ namespace ToolGood.ReadyGo.Internals
                 if (type == typeof(Int64[])) return true;
                 if (type == typeof(Single[])) return true;
                 if (type == typeof(Double[])) return true;
+                if (type == typeof(Decimal[])) return true;
                 if (type == typeof(bool[])) return true;
 
                 if (type == typeof(List<byte>)) return true;
@@ -42,6 +43,7 @@ namespace ToolGood.ReadyGo.Internals
                 if (type == typeof(List<Int64>)) return true;
                 if (type == typeof(List<Single>)) return true;
                 if (type == typeof(List<Double>)) return true;
+                if (type == typeof(List<Decimal>)) return true;
                 if (type == typeof(List<bool>)) return true;
 
                 if (type.FullName == "Microsoft.SqlServer.Types.SqlGeography") return true;

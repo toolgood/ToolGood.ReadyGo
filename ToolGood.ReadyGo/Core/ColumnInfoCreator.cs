@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -62,6 +63,11 @@ namespace ToolGood.ReadyGo.NPoco
             {
                 ci.SerializedColumn = true;
             }
+            else if (IsNumericArrayType(mi.GetMemberInfoType()))
+            {
+                // float[] / double[] / int[] / decimal[] 及其 List<T> 默认以 byte[]（BLOB）保存
+                ci.SerializedColumn = true;
+            }
             else if (reference.Any())
             {
                 ci.ReferenceType = reference.First().ReferenceType;
@@ -115,6 +121,11 @@ namespace ToolGood.ReadyGo.NPoco
                 ci.SerializedColumn = true;
                 ci.ColumnSerializer = customColumnSerializer;
             }
+            else if (ci.SerializedColumn && ci.ColumnSerializer == null && IsNumericArrayType(mi.GetMemberInfoType()))
+            {
+                // 未显式指定序列化器的数值数组类型，默认按 NumericArray2Bytes（byte[]）保存
+                ci.ColumnSerializer = NumericArray2BytesAttribute.Serializer;
+            }
 
             if (columnTypeAttrs.Any())
             {
@@ -122,6 +133,17 @@ namespace ToolGood.ReadyGo.NPoco
             }
 
             return ci;
+        }
+
+        /// <summary>
+        /// 判断类型是否为默认按 byte[]（BLOB 列）保存的数值数组类型。
+        /// </summary>
+        /// <param name="type">成员类型。</param>
+        /// <returns>若为 float[] / double[] / int[] / decimal[] 及其 List&lt;T&gt; 则返回 true。</returns>
+        private static bool IsNumericArrayType(Type type)
+        {
+            return type == typeof(float[]) || type == typeof(double[]) || type == typeof(int[]) || type == typeof(decimal[])
+                || type == typeof(List<float>) || type == typeof(List<double>) || type == typeof(List<int>) || type == typeof(List<decimal>);
         }
     }
 }
