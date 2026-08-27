@@ -551,14 +551,14 @@ namespace ToolGood.ReadyGo
         private (string sql, object[] args) ConditionObjectToWhere<T>(object condition) where T : class
         {
             if (condition == null) { return ("", new object[0]); }
+            if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
+                var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey, 0);
+                return ($"WHERE {whereSql}", pkArgs);
+            }
             if (condition is string) {
                 var str = ((string)condition).Trim();
                 if (str.Length == 0) { return ("", new object[0]); }
                 return (IsWhereClause(str) ? str : "WHERE " + str, new object[0]);
-            }
-            if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
-                var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey, 0);
-                return ($"WHERE {whereSql}", pkArgs);
             }
 
             var args = new List<object>();
@@ -604,19 +604,19 @@ namespace ToolGood.ReadyGo
             }
             var hasWhere = false;
             if (condition != null) {
-                if (condition is string) {
+                if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
+                    var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey, args.Count);
+                    stringBuilder.Append(" WHERE ");
+                    stringBuilder.Append(whereSql);
+                    args.AddRange(pkArgs);
+                    hasWhere = true;
+                } else if (condition is string) {
                     var str = ((string)condition).Trim();
                     if (str.Length > 0) {
                         stringBuilder.Append(IsWhereClause(str) ? " " : " WHERE ");
                         stringBuilder.Append(str);
                         hasWhere = true;
                     }
-                } else if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
-                    var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey, args.Count);
-                    stringBuilder.Append(" WHERE ");
-                    stringBuilder.Append(whereSql);
-                    args.AddRange(pkArgs);
-                    hasWhere = true;
                 } else {
                     StringBuilder whereBuilder = new StringBuilder();
                     if (ObjectToSql(whereBuilder, condition, ObjectSqlMode.Where, null, pocoData, args)) {
@@ -769,13 +769,17 @@ namespace ToolGood.ReadyGo
                 if (ignored != null && ignored.Contains(pi.Name)) {
                     continue;
                 }
+                var columnName = GetColumnName(pocoData, pi.Name);
+                if (columnName == null) {
+                    // 跳过非标量映射属性（导航属性、[Ignore]、未映射属性），避免生成非法 SQL
+                    continue;
+                }
                 if (hasColumn == false) {
                     hasColumn = true;
                 } else {
                     stringBuilder.Append(mode == ObjectSqlMode.Where ? " AND " : ",");
                 }
 
-                var columnName = GetColumnName(pocoData, pi.Name) ?? pi.Name;
                 var escapedColumn = db.DatabaseType.EscapeSqlIdentifier(columnName);
                 var value = accessor.Getter(condition);
                 if (mode == ObjectSqlMode.Where) {
@@ -792,22 +796,28 @@ namespace ToolGood.ReadyGo
                             stringBuilder.Append("1=2");
                         } else if (hasNull) {
                             // null 元素应生成 is Null，且与 in/等值用 OR 连接时需要括号保证优先级
-                            stringBuilder.Append('(');
-                            stringBuilder.Append(escapedColumn);
-                            stringBuilder.Append(" is Null OR ");
-                            stringBuilder.Append(escapedColumn);
-                            if (values.Count == 1) {
-                                stringBuilder.Append('=');
-                                AppendParam(stringBuilder, values[0], args);
+                            if (values.Count == 0) {
+                                // 全部为 null，直接生成 is Null，避免出现非法的 "in ()"
+                                stringBuilder.Append(escapedColumn);
+                                stringBuilder.Append(" is Null");
                             } else {
-                                stringBuilder.Append(" in (");
-                                for (int j = 0; j < values.Count; j++) {
-                                    if (j > 0) { stringBuilder.Append(","); }
-                                    AppendParam(stringBuilder, values[j], args);
+                                stringBuilder.Append('(');
+                                stringBuilder.Append(escapedColumn);
+                                stringBuilder.Append(" is Null OR ");
+                                stringBuilder.Append(escapedColumn);
+                                if (values.Count == 1) {
+                                    stringBuilder.Append('=');
+                                    AppendParam(stringBuilder, values[0], args);
+                                } else {
+                                    stringBuilder.Append(" in (");
+                                    for (int j = 0; j < values.Count; j++) {
+                                        if (j > 0) { stringBuilder.Append(","); }
+                                        AppendParam(stringBuilder, values[j], args);
+                                    }
+                                    stringBuilder.Append(')');
                                 }
                                 stringBuilder.Append(')');
                             }
-                            stringBuilder.Append(')');
                         } else if (values.Count == 1) {
                             stringBuilder.Append(escapedColumn);
                             stringBuilder.Append('=');

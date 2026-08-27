@@ -27,6 +27,7 @@ namespace ToolGood.ReadyGo
         internal readonly string _connectionString;
         internal readonly DbProviderFactory _factory;
         internal Database _database;
+        private readonly object _databaseLock = new object();
 
         // 连接时间 事务级别
         internal int _commandTimeout;
@@ -87,10 +88,9 @@ namespace ToolGood.ReadyGo
             if (_database != null) {
                 _database.Dispose();
                 _database = null;
-
-                _sqlConfig = null;
-                _sql = null;
             }
+            _sqlConfig = null;
+            _sql = null;
         }
 
         #endregion 构造方法 释放方法
@@ -100,8 +100,12 @@ namespace ToolGood.ReadyGo
         internal Database GetDatabase()
         {
             if (_database == null) {
-                _database = new Database(_connectionString, DatabaseProvider.GetDatabaseType(_sqlType), _factory, _isolationLevel);
-                _database._sqlHelper = this;
+                lock (_databaseLock) {
+                    if (_database == null) {
+                        _database = new Database(_connectionString, DatabaseProvider.GetDatabaseType(_sqlType), _factory, _isolationLevel);
+                        _database._sqlHelper = this;
+                    }
+                }
             }
             Database db = _database;
 
