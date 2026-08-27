@@ -21,7 +21,7 @@ namespace ToolGood.ReadyGo
         public static SqlHelper OpenDatabase(string connectionString, SqlType type = SqlType.SqlServer)
         {
             if (type == SqlType.None) {
-                type = SqlType.SqlServer;
+                throw new ArgumentException("SqlType 不能为 None，请显式指定数据库类型。");
             }
             var factory = DatabaseProvider.GetProviderFactory(type);
             return new SqlHelper(connectionString, factory, type);
@@ -57,7 +57,7 @@ namespace ToolGood.ReadyGo
         public static SqlHelper OpenDatabase(string connectionString, DbProviderFactory factory, SqlType type = SqlType.SqlServer)
         {
             if (type == SqlType.None) {
-                type = SqlType.SqlServer;
+                throw new ArgumentException("SqlType 不能为 None，请显式指定数据库类型。");
             }
             return new SqlHelper(connectionString, factory, type);
         }
@@ -73,7 +73,7 @@ namespace ToolGood.ReadyGo
         {
             // 注意：C# 字符串中 \\ 转义为 \，原默认值 "(LocalDb)\v11.0" 中的 \v 会被解释为垂直制表符
             // AttachDBFilename 值用双引号包裹并转义，防止路径含 ; = " 等字符破坏连接字符串
-            var connstr = string.Format(@"Data Source={0};Initial Catalog={2};Integrated Security=SSPI;AttachDBFilename=""{1}""", server, EscapeConnectionValue(filePath), database);
+            var connstr = $"Data Source={QuoteConnectionValue(server)};Initial Catalog={QuoteConnectionValue(database)};Integrated Security=SSPI;AttachDBFilename={QuoteConnectionValue(filePath)}";
             return OpenDatabase(connstr, "System.Data.SqlClient", SqlType.SqlServer);
         }
 
@@ -88,7 +88,7 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenSqlServer(string server, string database, string user, string pwd, bool trustServerCertificate = false)
         {
-            var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd}";
+            var connstr = $"Server={QuoteConnectionValue(server)};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)}";
             if (trustServerCertificate) {
                 connstr += ";TrustServerCertificate=True";
             }
@@ -107,7 +107,7 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenSqlServer(string server, int port, string database, string user, string pwd, bool trustServerCertificate = false)
         {
-            var connstr = $"Server={server},{port};Database={database};Uid={user};Pwd={pwd}";
+            var connstr = $"Server={QuoteConnectionValue($"{server},{port}")};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)}";
             if (trustServerCertificate) {
                 connstr += ";TrustServerCertificate=True";
             }
@@ -128,8 +128,8 @@ namespace ToolGood.ReadyGo
             var isMySqlData = IsMySqlDataDriver(factory);
             // MySql.Data 使用 charset/AllowUserVariables 关键字，MySqlConnector 使用 CharSet（默认允许用户变量）
             var connstr = isMySqlData
-                ? $"Server={server};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;AllowUserVariables=true;"
-                : $"Server={server};Database={database};Uid={user};Pwd={pwd};CharSet=utf8mb4;";
+                ? $"Server={QuoteConnectionValue(server)};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)};charset=utf8mb4;AllowUserVariables=true;"
+                : $"Server={QuoteConnectionValue(server)};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)};CharSet=utf8mb4;";
             var options = GetMySqlConnectionOptions(factory.GetType().Assembly.GetName());
             if (options != null) {
                 connstr += options;
@@ -152,8 +152,8 @@ namespace ToolGood.ReadyGo
             var isMySqlData = IsMySqlDataDriver(factory);
             // MySql.Data 使用 charset/AllowUserVariables 关键字，MySqlConnector 使用 CharSet（默认允许用户变量）
             var connstr = isMySqlData
-                ? $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;AllowUserVariables=true;"
-                : $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};CharSet=utf8mb4;";
+                ? $"Server={QuoteConnectionValue(server)};Port={port};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)};charset=utf8mb4;AllowUserVariables=true;"
+                : $"Server={QuoteConnectionValue(server)};Port={port};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)};CharSet=utf8mb4;";
             var options = GetMySqlConnectionOptions(factory.GetType().Assembly.GetName());
             if (options != null) {
                 connstr += options;
@@ -212,7 +212,7 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenOracle(string server, int port, string serviceName, string user, string pwd)
         {
-            var conn = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={server})(PORT={port}))(CONNECT_DATA=(SERVICE_NAME={serviceName})));User Id={user};Password={pwd}";
+            var conn = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={QuoteConnectionValue(server)})(PORT={port}))(CONNECT_DATA=(SERVICE_NAME={QuoteConnectionValue(serviceName)})));User Id={QuoteConnectionValue(user)};Password={QuoteConnectionValue(pwd)}";
             return SqlHelperFactory.OpenDatabase(conn, SqlType.Oracle);
         }
 
@@ -221,7 +221,7 @@ namespace ToolGood.ReadyGo
         /// </summary>
         /// <param name="filePath">文件目录</param>
         /// <param name="pwd">密码, 新版本dll不支持密码</param>
-        /// <param name="useSynchronous">使用同步，为False则更快</param>
+        /// <param name="useSynchronous">是否启用同步：true 使用 synchronous=FULL（默认，更安全），false 使用 synchronous=OFF（更快但异常时可能损坏数据库）</param>
         /// <param name="journalMode">Journal模式</param>
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenSqliteFile(string filePath, string pwd = null, bool useSynchronous = true, JournalMode journalMode = JournalMode.None)
@@ -231,9 +231,7 @@ namespace ToolGood.ReadyGo
             sb.AppendFormat("Data Source=\"{0}\";", EscapeConnectionValue(filePath));
             sb.AppendFormat("Pooling=False;"); // 关闭连接池，避免 System.Data.SQLite 复用连接导致状态残留/内存问题
 
-            if (useSynchronous == false) {
-                sb.Append("synchronous=OFF;");
-            }
+            sb.Append(useSynchronous ? "synchronous=FULL;" : "synchronous=OFF;");
             if (journalMode != JournalMode.None) {
                 sb.AppendFormat("Journal Mode={0};", journalMode.ToString());
             }
@@ -305,6 +303,15 @@ namespace ToolGood.ReadyGo
         private static string EscapeConnectionValue(string value)
         {
             return value.Replace("\"", "\"\"");
+        }
+
+        /// <summary>
+        /// 连接字符串值转义并用双引号包裹：用于拼接 server/database/user/pwd 等动态值，
+        /// 防止值中含 ; = " 空格 等字符破坏连接字符串
+        /// </summary>
+        private static string QuoteConnectionValue(string value)
+        {
+            return "\"" + EscapeConnectionValue(value ?? string.Empty) + "\"";
         }
 
         /// <summary>

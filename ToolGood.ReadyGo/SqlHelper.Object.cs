@@ -929,7 +929,7 @@ namespace ToolGood.ReadyGo
             var fieldType = value.GetType();
             if (fieldType.IsEnum) {
                 if (EnumHelper.UseEnumString(fieldType)) {
-                    var txt = SqlUtil.ToEscapeParam(value.ToString());
+                    var txt = ToEscapeParam(value.ToString());
                     return "'" + txt + "'";
                 }
                 // 按枚举底层类型转换，避免 ulong 等大值枚举在 Convert.ToInt64 时溢出
@@ -965,7 +965,7 @@ namespace ToolGood.ReadyGo
                 default: break;
             }
             if (value is string || value is char) {
-                var txt = SqlUtil.ToEscapeParam(value.ToString());
+                var txt = ToEscapeParam(value.ToString());
                 return "'" + txt + "'";
             }
             if (fieldType == typeof(DateTime)) return "'" + ((DateTime)value).ToString("yyyy-MM-dd HH:mm:ss.fff") + "'";
@@ -974,8 +974,24 @@ namespace ToolGood.ReadyGo
                 var txt = BitConverter.ToString((byte[])value).Replace("-", "");
                 return "X'" + txt + "'";
             }
-            var text = SqlUtil.ToEscapeParam(value.ToString());
+            var text = ToEscapeParam(value.ToString());
             return "'" + text + "'";
+        }
+        /// <summary>
+        /// 转义 SQL 字符串中的特殊字符
+        /// </summary>
+        /// <param name="stringValue">原始字符串</param>
+        /// <returns>转义后的字符串</returns>
+        private string ToEscapeParam(string stringValue)
+        {
+            if(string.IsNullOrEmpty(stringValue)) {
+                return "";
+            }
+
+            return stringValue.Replace(@"\", @"\\").Replace("'", "\\'")
+                                  .Replace("\0", "\\0").Replace("\a", "\\a").Replace("\b", "\\b")
+                                  .Replace("\f", "\\f").Replace("\n", "\\n").Replace("\r", "\\r")
+                                  .Replace("\t", "\\t").Replace("\v", "\\v");
         }
     }
 }
