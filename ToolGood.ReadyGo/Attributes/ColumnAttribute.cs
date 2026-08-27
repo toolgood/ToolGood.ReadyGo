@@ -20,9 +20,9 @@ namespace ToolGood.ReadyGo.Attributes
         public string Name { get; set; }
 
         /// <summary>
-        /// 是否将时间强制转换为 UTC 时间（默认 true，与框架全局默认 ForceToUTCDefault 一致）
+        /// 是否将时间强制转换为 UTC 时间（默认 false，与框架全局默认 ForceToUTCDefault 一致）
         /// </summary>
-        public bool ForceToUtc { get; set; } = true;
+        public bool ForceToUtc { get; set; } = false;
 
         /// <summary>
         /// 是否精确匹配列名

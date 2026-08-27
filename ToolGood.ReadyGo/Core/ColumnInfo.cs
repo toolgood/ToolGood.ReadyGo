@@ -52,9 +52,9 @@ namespace ToolGood.ReadyGo.NPoco
         public VersionColumnType VersionColumnType { get; set; }
 
         /// <summary>
-        /// 获取或设置一个值，指示是否将 DateTime 值强制转换为 UTC。
+        /// 获取或设置一个值，指示是否将 DateTime 值强制转换为 UTC（默认 false）。
         /// </summary>
-        public bool ForceToUtc { get; set; } = true;
+        public bool ForceToUtc { get; set; } = false;
 
         /// <summary>
         /// 获取或设置该列的序列化器。

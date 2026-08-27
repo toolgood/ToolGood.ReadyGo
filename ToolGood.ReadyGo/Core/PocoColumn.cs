@@ -11,9 +11,9 @@ namespace ToolGood.ReadyGo.NPoco
     public class PocoColumn
     {
         /// <summary>
-        /// 默认情况下是否将日期时间值强制转换为 UTC 时间。
+        /// 默认情况下是否将日期时间值强制转换为 UTC 时间（默认 false）。
         /// </summary>
-        public static bool ForceToUTCDefault { get; set; } = true;
+        public static bool ForceToUTCDefault { get; set; } = false;
 
         /// <summary>
         /// 初始化 PocoColumn 类的新实例。
