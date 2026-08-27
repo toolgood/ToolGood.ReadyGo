@@ -186,6 +186,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(Single)) return CreateField(ti, ci, "real", ci.FieldLength, isRequired);
             if (type == typeof(double)) return CreateField(ti, ci, "float", ci.FieldLength, isRequired);
             if (type == typeof(decimal)) return CreateField(ti, ci, "decimal", ci.FieldLength, isRequired);
+            if (type == typeof(DateOnly)) return CreateField(ti, ci, "date", ci.FieldLength, isRequired);
             if (type == typeof(DateTime)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
             if (type == typeof(DateTimeOffset)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
             if (type == typeof(TimeSpan)) return CreateField(ti, ci, "time", ci.FieldLength, isRequired);
@@ -205,6 +206,10 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (string.IsNullOrEmpty(length) == false) {
                 sb.AppendFormat("({0})", length);
             }
+            // SQL Server 的 IDENTITY 属性必须位于 NULL/NOT NULL 与列约束（PRIMARY KEY）之前
+            if (ti.PrimaryKey == ci.ColumnName && ti.AutoIncrement) {
+                sb.Append(" identity(1,1)");
+            }
             if (isRequired) {
                 sb.Append(" NOT");
             }
@@ -214,9 +219,6 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             }
             if (ti.PrimaryKey == ci.ColumnName) {
                 sb.Append(" PRIMARY KEY");
-                if (ti.AutoIncrement) {
-                    sb.Append(" identity(1,1) ");
-                }
             }
             return sb.ToString();
         }

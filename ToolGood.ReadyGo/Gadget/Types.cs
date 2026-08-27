@@ -61,6 +61,7 @@ namespace ToolGood.ReadyGo.Gadget
                 if (type == typeof(AnsiString)) return true;
                 if (type == typeof(TimeSpan)) return true;
                 if (type == typeof(DateTimeOffset)) return true;
+                if (type == typeof(DateOnly)) return true;
 
                 var tc = Type.GetTypeCode(type);
                 switch (tc) {

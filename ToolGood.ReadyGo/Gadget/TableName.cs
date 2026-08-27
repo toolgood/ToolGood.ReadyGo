@@ -35,28 +35,27 @@ namespace ToolGood.ReadyGo.Gadget
         /// <returns>是否成功获取到对应列</returns>
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            var fieldName = binder.Name;
+            var column = GetEscapedColumnName(binder.Name);
+            if (column == null) {
+                result = null;
+                return false;
+            }
+            result = string.IsNullOrEmpty(_asName) ? column : _asName + "." + column;
+            return true;
+        }
+
+        protected string GetEscapedColumnName(string fieldName)
+        {
             if (_pocoData.Columns.ContainsKey(fieldName)) {
-                if (string.IsNullOrEmpty(_asName)) {
-                    result = _databaseType.EscapeSqlIdentifier(_pocoData.Columns[fieldName].ColumnName);
-                } else {
-                    result = _asName + "." + _databaseType.EscapeSqlIdentifier(_pocoData.Columns[fieldName].ColumnName);
-                }
-                return true;
+                return _databaseType.EscapeSqlIdentifier(_pocoData.Columns[fieldName].ColumnName);
             }
             var lowerFieldName = fieldName.Replace("_", "");
             foreach (var item in _pocoData.Columns) {
                 if (item.Value.MemberInfoKey.Replace("_", "").Equals(lowerFieldName, StringComparison.OrdinalIgnoreCase)) {
-                    if (string.IsNullOrEmpty(_asName)) {
-                        result = _databaseType.EscapeSqlIdentifier(item.Value.ColumnName);
-                    } else {
-                        result = _asName + "." + _databaseType.EscapeSqlIdentifier(item.Value.ColumnName);
-                    }
-                    return true;
+                    return _databaseType.EscapeSqlIdentifier(item.Value.ColumnName);
                 }
             }
-            result = null;
-            return false;
+            return null;
         }
 
         /// <summary>
@@ -97,10 +96,11 @@ namespace ToolGood.ReadyGo.Gadget
         public string F<T1>(Expression<Func<T, T1>> field)
         {
             var fieldName = GetFieldName(field.Body);
-            if (string.IsNullOrEmpty(_asName)) {
-                return fieldName;
+            var column = GetEscapedColumnName(fieldName);
+            if (column == null) {
+                throw new NotSupportedException($"属性 '{fieldName}' 未映射为数据库列。");
             }
-            return _asName + "." + fieldName;
+            return string.IsNullOrEmpty(_asName) ? column : _asName + "." + column;
         }
 
         private static string GetFieldName(Expression body)

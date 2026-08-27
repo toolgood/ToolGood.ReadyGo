@@ -172,7 +172,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
                         return CreateField(ti, ci, "longBlob", "", false);
                     }
                 } else {
-                    return CreateField(ti, ci, "tinyblob", "", false);
+                    // 未指定长度时使用最大容量，避免大数据被静默截断
+                    return CreateField(ti, ci, "longblob", "", false);
                 }
             }
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "varchar", ci.FieldLength, isRequired);
@@ -190,6 +191,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(Single)) return CreateField(ti, ci, "FLOAT", ci.FieldLength, isRequired);
             if (type == typeof(double)) return CreateField(ti, ci, "DOUBLE", ci.FieldLength, isRequired);
             if (type == typeof(decimal)) return CreateField(ti, ci, "decimal", ci.FieldLength, isRequired);
+            if (type == typeof(DateOnly)) return CreateField(ti, ci, "date", ci.FieldLength, isRequired);
             if (type == typeof(DateTime)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
             if (type == typeof(TimeSpan)) return CreateField(ti, ci, "time", ci.FieldLength, isRequired);
             if (type == typeof(DateTimeOffset)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
