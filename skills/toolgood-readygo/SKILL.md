@@ -461,7 +461,7 @@ var snapshots = users.Select(x => helper.StartSnapshot(x)).ToList();
 helper.UpdateList(users, snapshots);
 
 // 使用对象条件更新
-helper.UpdateBy<User>(new { NickName = "新昵称" }, new { Id = 1 });
+helper.Update<User>(new { NickName = "新昵称" }, new { Id = 1 });
 ```
 
 ### 删除
@@ -477,7 +477,7 @@ helper.DeleteById<User>(1);
 helper.Delete<User>("WHERE Age < @0", 18);
 
 // 使用对象条件删除
-helper.DeleteBy<User>(new { Id = 1 });
+helper.Delete<User>(new { Id = 1 });
 ```
 
 ### 保存
@@ -540,12 +540,12 @@ helper.Update<User>("Set [Name]=@0 WHERE [Id]=@1", "Test", 1);
 以对象为条件，属性为默认值时忽略该条件：
 
 ```csharp
-var user = helper.FirstOrDefaultBy<User>(new { Id = 1 });
-var users = helper.SelectBy<User>(new { UserType = 1, State = true });
-helper.UpdateBy<User>(new { NickName = "新昵称" }, new { Id = 1 });   // set 对象, 条件对象
-helper.DeleteBy<User>(new { Id = 1 });
-var count = helper.CountBy<User>(new { UserType = 1 });
-var exists = helper.ExistsBy<User>(new { UserName = "Ted" });
+var user = helper.FirstOrDefault<User>(new { Id = 1 });
+var users = helper.Select<User>(new { UserType = 1, State = true });
+helper.Update<User>(new { NickName = "新昵称" }, new { Id = 1 });   // set 对象, 条件对象
+helper.Delete<User>(new { Id = 1 });
+var count = helper.Count<User>(new { UserType = 1 });
+var exists = helper.Exists<User>(new { UserName = "Ted" });
 ```
 
 同时提供按主键查询的重载（`FirstOrDefault<T>(int / long / uint / ulong)` 等）：
@@ -783,8 +783,8 @@ foreach (var user in users) helper.Insert(user);
 
 ```csharp
 using (var tran = helper.UseTransaction()) {
-    helper.DeleteBy<Order>(new { UserId = userId });
-    helper.DeleteBy<User>(userId);
+    helper.Delete<Order>(new { UserId = userId });
+    helper.Delete<User>(userId);
     tran.Complete();
 }
 ```
@@ -830,7 +830,7 @@ public class UserRepository
     public UserRepository(SqlHelper db) { _db = db; }
 
     public User GetById(int id) => _db.FirstOrDefault<User>(id);
-    public List<User> GetActiveUsers() => _db.SelectBy<User>(new { Status = "Active" });
+    public List<User> GetActiveUsers() => _db.Select<User>(new { Status = "Active" });
     public void Save(User user) => _db.Save(user);
     public void Delete(int id) => _db.DeleteById<User>(id);
 }

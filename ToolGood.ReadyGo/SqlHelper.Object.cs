@@ -73,7 +73,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件：整数主键 / 字符串主键或 SQL 片段 / 条件对象 / null</param>
         /// <returns>匹配条件的实体，无结果时返回 null</returns>
-        public T FirstOrDefaultBy<T>(object condition) where T : class
+        public T FirstOrDefault<T>(object condition) where T : class
         {
             if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
                 return SingleOrDefaultById<T>(primaryKey);
@@ -90,7 +90,7 @@ namespace ToolGood.ReadyGo
         /// <param name="offset">位移</param>
         /// <param name="condition">条件</param>
         /// <returns>查询结果集合</returns>
-        public List<T> SelectBy<T>(int limit, int offset, object condition) where T : class
+        public List<T> Select<T>(int limit, int offset, object condition) where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return Select<T>(limit, offset, sql, args);
@@ -103,7 +103,7 @@ namespace ToolGood.ReadyGo
         /// <param name="limit">个数</param>
         /// <param name="condition">条件</param>
         /// <returns>查询结果集合</returns>
-        public List<T> SelectBy<T>(int limit, object condition) where T : class
+        public List<T> Select<T>(int limit, object condition) where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return Select<T>(limit, sql, args);
@@ -115,7 +115,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
         /// <returns>查询结果集合</returns>
-        public List<T> SelectBy<T>(object condition) where T : class
+        public List<T> Select<T>(object condition) where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return Select<T>(sql, args);
@@ -129,7 +129,7 @@ namespace ToolGood.ReadyGo
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns>查询结果集合</returns>
-        public List<T> SelectPageBy<T>(int page, int itemsPerPage, object condition)
+        public List<T> SelectPage<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
@@ -144,7 +144,7 @@ namespace ToolGood.ReadyGo
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns>分页结果</returns>
-        public Page<T> PageBy<T>(int page, int itemsPerPage, object condition)
+        public Page<T> Page<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
@@ -159,7 +159,7 @@ namespace ToolGood.ReadyGo
         /// <param name="set">要更新的字段与值对象</param>
         /// <param name="condition">条件</param>
         /// <returns>受影响的行数</returns>
-        public int UpdateBy<T>(object set, object condition) where T : class
+        public int Update<T>(object set, object condition) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateSetWhere<T>(set, condition, null);
             return Update<T>(sql, args);
@@ -174,7 +174,7 @@ namespace ToolGood.ReadyGo
         /// <param name="condition">条件</param>
         /// <param name="columns">仅更新这些字段名</param>
         /// <returns>受影响的行数</returns>
-        public int UpdateBy<T>(object set, object condition, IEnumerable<string> columns) where T : class
+        public int Update<T>(object set, object condition, IEnumerable<string> columns) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateColumnsWhere<T>(set, condition, columns);
             return Update<T>(sql, args);
@@ -186,7 +186,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
         /// <returns>受影响的行数</returns>
-        public int DeleteBy<T>(object condition) where T : class
+        public int Delete<T>(object condition) where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return Delete<T>(sql, args);
@@ -198,7 +198,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
         /// <returns>记录数量</returns>
-        public int CountBy<T>(object condition) where T : class
+        public int Count<T>(object condition) where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return Count<T>(sql, args);
@@ -210,7 +210,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
         /// <returns>存在返回 true，否则返回 false</returns>
-        public bool ExistsBy<T>(object condition) where T : class
+        public bool Exists<T>(object condition) where T : class
         {
             if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
                 var (sql, args) = BuildPrimaryKeyExistsQuery<T>(primaryKey);
