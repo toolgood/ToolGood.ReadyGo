@@ -7,7 +7,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 日期标签：只保存日期，不保存时间。
     /// 基于 SerializedColumn + IColumnSerializer 实现，数据库中仅存 "yyyy-MM-dd"。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class Date2StringAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>

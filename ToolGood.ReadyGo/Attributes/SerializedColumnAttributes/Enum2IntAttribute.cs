@@ -7,7 +7,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 枚举转整数标签：enum 以底层整数值保存（需整数列）。
     /// 例：UserState.Vip → 2。基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class Enum2IntAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>

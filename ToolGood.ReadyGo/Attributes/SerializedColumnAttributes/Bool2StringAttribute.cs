@@ -7,7 +7,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 布尔转字符串标签：bool 以 "true"/"false" 文本保存（需文本列）。
     /// 基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class Bool2StringAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>

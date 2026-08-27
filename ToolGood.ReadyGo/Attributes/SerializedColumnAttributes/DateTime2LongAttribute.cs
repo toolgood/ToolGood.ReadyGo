@@ -8,7 +8,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 算法：年月日时分秒按位拼接，如 2026-08-23 15:30:45 → 20260823153045。
     /// 基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class DateTime2LongAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>

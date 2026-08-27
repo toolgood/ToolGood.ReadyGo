@@ -8,7 +8,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 算法：date.Year × 10000 + date.Month × 100 + date.Day，如 2026-08-23 → 20260823。
     /// 基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class Date2IntAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>

@@ -1,3 +1,4 @@
+using System;
 using ToolGood.ReadyGo.Attributes.ColumnSerializers;
 
 namespace ToolGood.ReadyGo.Attributes
@@ -6,7 +7,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 数值数组标签：将 float[] / double[] / int[] / decimal[] 及其 List&lt;T&gt; 以 byte[]（BLOB 列）保存。
     /// 基于 SerializedColumn + IColumnSerializer 实现，数据库中仅存二进制数据。
     /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [System.AttributeUsage(System.AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class NumericArray2BytesAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>

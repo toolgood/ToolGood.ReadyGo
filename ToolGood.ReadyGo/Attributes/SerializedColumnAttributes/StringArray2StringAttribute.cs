@@ -8,7 +8,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 默认逗号分隔，支持自定义分隔符与转义（\ 与分隔符前加 \）。
     /// 基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class StringArray2StringAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>

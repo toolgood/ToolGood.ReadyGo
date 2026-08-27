@@ -9,7 +9,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 值超出 int 范围（×10^scale 后超过 ±21.4 亿）会抛异常，大数请用 [Numeric2Long]。
     /// 基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class Numeric2IntAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>

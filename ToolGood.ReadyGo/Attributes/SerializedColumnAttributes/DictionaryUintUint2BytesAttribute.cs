@@ -1,3 +1,4 @@
+using System;
 using ToolGood.ReadyGo.Attributes.ColumnSerializers;
 
 namespace ToolGood.ReadyGo.Attributes
@@ -6,7 +7,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// uint→uint 字典标签：将 Dictionary&lt;uint, uint&gt; 以 byte[]（BLOB 列）保存。
     /// 价格按键升序、差值压缩存储，基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
-    [System.AttributeUsage(System.AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [System.AttributeUsage(System.AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class DictionaryUintUint2BytesAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>

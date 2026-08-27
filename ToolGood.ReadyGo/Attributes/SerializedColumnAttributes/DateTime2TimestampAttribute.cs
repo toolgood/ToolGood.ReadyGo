@@ -24,7 +24,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 例：2026-08-23 15:30:45 UTC → 1787xxx 秒 / 1787xxxxxx 毫秒。
     /// 基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class DateTime2TimestampAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>

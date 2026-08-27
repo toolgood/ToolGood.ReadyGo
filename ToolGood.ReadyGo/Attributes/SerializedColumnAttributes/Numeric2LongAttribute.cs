@@ -8,7 +8,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// 例：scale=2 时，1.23 存为 123，读取 123 还原为 1.23。
     /// 基于 SerializedColumn + IColumnSerializer 实现。
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class Numeric2LongAttribute : Attributes.SerializedColumnAttribute
     {
         /// <summary>
