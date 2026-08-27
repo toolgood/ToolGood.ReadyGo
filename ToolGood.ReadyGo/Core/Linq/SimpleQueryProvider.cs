@@ -111,7 +111,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <returns>当前查询器。</returns>
         public IAsyncQueryProviderWithIncludes<T> Include<T2>(JoinType joinType = JoinType.Left, string joinTableHint = "") where T2 : class
         {
-            var oneToOneMembers = _database.PocoDataFactory.ForType(typeof(T))
+            var oneToOneMembers = _pocoData
                 .Members.Where(x => (x.ReferenceType == ReferenceType.OneToOne || x.ReferenceType == ReferenceType.Foreign)
                                     && x.MemberInfoData.MemberType == typeof(T2));
 
@@ -659,6 +659,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <returns>当前查询器。</returns>
         public IAsyncQueryProvider<T> From(QueryBuilder<T> builder)
         {
+            if (builder == null) throw new ArgumentNullException(nameof(builder));
             if (!builder.Data.Skip.HasValue && builder.Data.Rows.HasValue)
             {
                 Limit(builder.Data.Rows.Value);
@@ -1353,7 +1354,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereExists(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException(nameof(sql));
-            WhereSql(BuildExistsSql(sql), args);
+            WhereSql(SqlConditionHelper.BuildExistsSql(sql), args);
             return this;
         }
 
@@ -1366,7 +1367,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereNotExists(string sql, params object[] args)
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException(nameof(sql));
-            WhereSql("NOT " + BuildExistsSql(sql), args);
+            WhereSql("NOT " + SqlConditionHelper.BuildExistsSql(sql), args);
             return this;
         }
 
@@ -1404,7 +1405,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereIn<TValue>(string column, IEnumerable<TValue> values)
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
-            ApplyWhereIn(column, values);
+            SqlConditionHelper.ApplyWhereIn(AddWhereSql, column, values, _database.DatabaseType);
             return this;
         }
 
@@ -1418,7 +1419,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereIn<TValue>(Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
-            ApplyWhereIn(GetFieldName(field), values);
+            SqlConditionHelper.ApplyWhereIn(AddWhereSql, SqlConditionHelper.GetFieldName(field), values, _database.DatabaseType);
             return this;
         }
 
@@ -1472,7 +1473,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereLike<TValue>(Expression<Func<T, TValue>> field, string pattern)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
-            return WhereLike(GetFieldName(field), pattern);
+            return WhereLike(SqlConditionHelper.GetFieldName(field), pattern);
         }
 
         /// <summary>
@@ -1510,7 +1511,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereNotIn<TValue>(string column, IEnumerable<TValue> values)
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
-            ApplyWhereNotIn(column, values);
+            SqlConditionHelper.ApplyWhereNotIn(AddWhereSql, column, values, _database.DatabaseType);
             return this;
         }
 
@@ -1524,7 +1525,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereNotIn<TValue>(Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
-            ApplyWhereNotIn(GetFieldName(field), values);
+            SqlConditionHelper.ApplyWhereNotIn(AddWhereSql, SqlConditionHelper.GetFieldName(field), values, _database.DatabaseType);
             return this;
         }
 
@@ -1578,7 +1579,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereLikeStart<TValue>(Expression<Func<T, TValue>> field, string pattern)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
-            return WhereLikeStart(GetFieldName(field), pattern);
+            return WhereLikeStart(SqlConditionHelper.GetFieldName(field), pattern);
         }
 
         /// <summary>
@@ -1630,7 +1631,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereLikeEnd<TValue>(Expression<Func<T, TValue>> field, string pattern)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
-            return WhereLikeEnd(GetFieldName(field), pattern);
+            return WhereLikeEnd(SqlConditionHelper.GetFieldName(field), pattern);
         }
 
         /// <summary>
@@ -1682,7 +1683,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereNotLike<TValue>(Expression<Func<T, TValue>> field, string pattern)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
-            return WhereNotLike(GetFieldName(field), pattern);
+            return WhereNotLike(SqlConditionHelper.GetFieldName(field), pattern);
         }
 
         /// <summary>
@@ -1734,7 +1735,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereNotLikeStart<TValue>(Expression<Func<T, TValue>> field, string pattern)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
-            return WhereNotLikeStart(GetFieldName(field), pattern);
+            return WhereNotLikeStart(SqlConditionHelper.GetFieldName(field), pattern);
         }
 
         /// <summary>
@@ -1786,7 +1787,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IQueryProvider<T> WhereNotLikeEnd<TValue>(Expression<Func<T, TValue>> field, string pattern)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
-            return WhereNotLikeEnd(GetFieldName(field), pattern);
+            return WhereNotLikeEnd(SqlConditionHelper.GetFieldName(field), pattern);
         }
 
         /// <summary>
@@ -1814,72 +1815,9 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return condition ? WhereNotLikeEnd(field, pattern) : this;
         }
 
-        private static string BuildExistsSql(string sql)
+        private void AddWhereSql(string sql, object[] args)
         {
-            sql = sql.TrimStart();
-            if (sql.StartsWith("EXISTS", StringComparison.OrdinalIgnoreCase))
-                return sql;
-            if (sql.StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
-                return $"EXISTS({sql})";
-            return $"EXISTS(SELECT * {sql})";
-        }
-
-        private void ApplyWhereIn<TValue>(string column, IEnumerable<TValue> values)
-        {
-            if (values == null) throw new ArgumentNullException(nameof(values));
-            var list = values as IReadOnlyList<TValue> ?? values.ToList();
-            if (list.Count == 0) {
-                WhereSql("1 = 2");
-                return;
-            }
-            var escapedColumn = SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType);
-            if (list.Count == 1) {
-                WhereSql($"{escapedColumn} = @0", list[0]);
-                return;
-            }
-
-            var sb = new StringBuilder();
-            sb.Append(escapedColumn).Append(" IN (");
-            for (int i = 0; i < list.Count; i++) {
-                if (i > 0) sb.Append(", ");
-                sb.Append("@").Append(i);
-            }
-            sb.Append(")");
-            WhereSql(sb.ToString(), list.Cast<object>().ToArray());
-        }
-
-        private void ApplyWhereNotIn<TValue>(string column, IEnumerable<TValue> values)
-        {
-            if (values == null) throw new ArgumentNullException(nameof(values));
-            var list = values as IReadOnlyList<TValue> ?? values.ToList();
-            if (list.Count == 0) {
-                WhereSql("1 = 1");
-                return;
-            }
-            var escapedColumn = SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType);
-            if (list.Count == 1) {
-                WhereSql($"{escapedColumn} <> @0", list[0]);
-                return;
-            }
-
-            var sb = new StringBuilder();
-            sb.Append(escapedColumn).Append(" NOT IN (");
-            for (int i = 0; i < list.Count; i++) {
-                if (i > 0) sb.Append(", ");
-                sb.Append("@").Append(i);
-            }
-            sb.Append(")");
-            WhereSql(sb.ToString(), list.Cast<object>().ToArray());
-        }
-
-        private static string GetFieldName(LambdaExpression expression)
-        {
-            var body = expression.Body;
-            if (body is UnaryExpression unary && unary.NodeType == ExpressionType.Convert)
-                body = unary.Operand;
-            if (body is MemberExpression member)
-                return member.Member.Name;
-            throw new ArgumentException($"无法从表达式获取列名：{expression}");
+            WhereSql(sql, args);
         }
 
         #endregion 动态条件便捷方法

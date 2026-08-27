@@ -37,6 +37,6 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <summary>
         /// 实体的 Poco 元数据。
         /// </summary>
-        public PocoData PocoData =>_database.PocoDataFactory.ForType(typeof(T));
+        public PocoData PocoData => _pocoData;
     }
 }
