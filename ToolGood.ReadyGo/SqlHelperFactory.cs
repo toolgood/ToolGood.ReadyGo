@@ -280,19 +280,12 @@ namespace ToolGood.ReadyGo
 		/// 打开DuckDB数据库
 		/// </summary>
 		/// <param name="filePath">数据库文件路径</param>
-		/// <param name="pwd">密码（当前不支持：DuckDB.NET 连接字符串不识别 Mode/Password 关键字）</param>
 		/// <returns>打开的 SqlHelper 实例</returns>
-		public static SqlHelper OpenDuckDbFile(string filePath, string pwd = null)
+		public static SqlHelper OpenDuckDbFile(string filePath)
         {
             StringBuilder sb = new StringBuilder();
             // 路径值用双引号包裹并转义，防止路径含 ; = " 等字符破坏连接字符串
             sb.AppendFormat("Data Source=\"{0}\";", EscapeConnectionValue(filePath));
-            // DuckDB.NET 的连接字符串仅接受 Data Source 与 DuckDB 原生配置关键字（如 access_mode、memory_limit），
-            // 传 Mode/Password 会在解析连接字符串时直接抛 InvalidOperationException；
-            // DuckDB 数据库加密需通过 ATTACH ... ENCRYPTION_KEY 实现，无法在连接字符串中传入密码
-            if (string.IsNullOrEmpty(pwd) == false) {
-                throw new DatabaseUnsupportException("DuckDB 加密不通过连接字符串的 Password 关键字支持，请改用 ATTACH ... ENCRYPTION_KEY 实现，或使用未加密数据库。");
-            }
             return OpenDatabase(sb.ToString(), "DuckDB.NET.Data.Full", SqlType.DuckDb);
         }
 
