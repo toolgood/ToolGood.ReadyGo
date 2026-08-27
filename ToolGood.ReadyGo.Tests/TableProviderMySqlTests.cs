@@ -40,7 +40,7 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal("TRUNCATE TABLE `Tb_Provider_Test`;",
                 new MySqlDatabaseProvider().GetTruncateTable(typeof(Tb_Provider_AutoInc)));
 
-            Assert.Equal("TRUNCATE TABLE Tb_Any;",
+            Assert.Equal("TRUNCATE TABLE `Tb_Any`;",
                 new MySqlDatabaseProvider().GetTruncateTable("Tb_Any"));
         }
 
@@ -50,7 +50,7 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal("DROP TABLE IF EXISTS `Tb_Provider_Test`;",
                 new MySqlDatabaseProvider().GetDropTable(typeof(Tb_Provider_AutoInc)));
 
-            Assert.Equal("DROP TABLE IF EXISTS Tb_Any;",
+            Assert.Equal("DROP TABLE IF EXISTS `Tb_Any`;",
                 new MySqlDatabaseProvider().GetDropTable("Tb_Any"));
         }
     }
