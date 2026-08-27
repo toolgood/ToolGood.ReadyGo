@@ -865,6 +865,102 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="pattern">匹配内容。</param>
         /// <returns>当前查询器。</returns>
         IQueryProvider<T> IfTrueWhereLikeEnd<TValue>(bool condition, Expression<Func<T, TValue>> field, string pattern);
+        /// <summary>
+        /// Where {column} Not Like '%pattern%'。
+        /// </summary>
+        /// <param name="column">列名（可带别名，如 "t0.Name"）。</param>
+        /// <param name="pattern">匹配内容（自动加前后 %）。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> WhereNotLike(string column, string pattern);
+        /// <summary>
+        /// Where {field} Not Like '%pattern%'。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="field">列表达式，如 x =&gt; x.Name。</param>
+        /// <param name="pattern">匹配内容（自动加前后 %）。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> WhereNotLike<TValue>(Expression<Func<T, TValue>> field, string pattern);
+        /// <summary>
+        /// 条件成立时添加 Where Not Like（字符串列名版本）。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> IfTrueWhereNotLike(bool condition, string column, string pattern);
+        /// <summary>
+        /// 条件成立时添加 Where Not Like（表达式版本）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> IfTrueWhereNotLike<TValue>(bool condition, Expression<Func<T, TValue>> field, string pattern);
+        /// <summary>
+        /// Where {column} Not Like 'pattern%'（前缀匹配）。
+        /// </summary>
+        /// <param name="column">列名（可带别名，如 "t0.Name"）。</param>
+        /// <param name="pattern">匹配内容（自动加后缀 %）。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> WhereNotLikeStart(string column, string pattern);
+        /// <summary>
+        /// Where {field} Not Like 'pattern%'（前缀匹配）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="field">列表达式，如 x =&gt; x.Name。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> WhereNotLikeStart<TValue>(Expression<Func<T, TValue>> field, string pattern);
+        /// <summary>
+        /// 条件成立时添加 Where Not Like Start（字符串列名版本）。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> IfTrueWhereNotLikeStart(bool condition, string column, string pattern);
+        /// <summary>
+        /// 条件成立时添加 Where Not Like Start（表达式版本）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> IfTrueWhereNotLikeStart<TValue>(bool condition, Expression<Func<T, TValue>> field, string pattern);
+        /// <summary>
+        /// Where {column} Not Like '%pattern'（后缀匹配）。
+        /// </summary>
+        /// <param name="column">列名（可带别名，如 "t0.Name"）。</param>
+        /// <param name="pattern">匹配内容（自动加前缀 %）。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> WhereNotLikeEnd(string column, string pattern);
+        /// <summary>
+        /// Where {field} Not Like '%pattern'（后缀匹配）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="field">列表达式，如 x =&gt; x.Name。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> WhereNotLikeEnd<TValue>(Expression<Func<T, TValue>> field, string pattern);
+        /// <summary>
+        /// 条件成立时添加 Where Not Like End（字符串列名版本）。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> IfTrueWhereNotLikeEnd(bool condition, string column, string pattern);
+        /// <summary>
+        /// 条件成立时添加 Where Not Like End（表达式版本）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        IQueryProvider<T> IfTrueWhereNotLikeEnd<TValue>(bool condition, Expression<Func<T, TValue>> field, string pattern);
     }
 
     /// <summary>

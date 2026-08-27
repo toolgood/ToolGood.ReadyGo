@@ -97,6 +97,29 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
+        public void WhereNotLike_系列()
+        {
+            using var db = CreateWithUsers();
+            var helper = db.Helper;
+
+            // WhereNotLike = NOT LIKE '%args%'，WhereNotLikeStart = NOT LIKE 'args%'（非前缀），WhereNotLikeEnd = NOT LIKE '%args'（非后缀）
+            Assert.Equal(2, helper.Where<Tb_WhereTest>().WhereNotLike(q => q.Name, "张").ToList().Count);
+            Assert.Equal(2, helper.Where<Tb_WhereTest>().WhereNotLikeStart(q => q.Name, "张").ToList().Count);
+            Assert.Equal(3, helper.Where<Tb_WhereTest>().WhereNotLikeEnd(q => q.Name, "伟").ToList().Count);
+
+            // 字符串列名版本
+            Assert.Equal(3, helper.Where<Tb_WhereTest>().WhereNotLike("Name", "张三").ToList().Count);
+            Assert.Equal(2, helper.Where<Tb_WhereTest>().WhereNotLikeStart("Name", "张").ToList().Count);
+            Assert.Equal(3, helper.Where<Tb_WhereTest>().WhereNotLikeEnd("Name", "五").ToList().Count);
+
+            // IfTrue 生效 / 跳过
+            Assert.Equal(2, helper.Where<Tb_WhereTest>().IfTrueWhereNotLike(true, q => q.Name, "张").ToList().Count);
+            Assert.Equal(4, helper.Where<Tb_WhereTest>().IfTrueWhereNotLike(false, q => q.Name, "张").ToList().Count);
+            Assert.Equal(2, helper.Where<Tb_WhereTest>().IfTrueWhereNotLikeStart(true, "Name", "张").ToList().Count);
+            Assert.Equal(4, helper.Where<Tb_WhereTest>().IfTrueWhereNotLikeEnd(false, "Name", "伟").ToList().Count);
+        }
+
+        [Fact]
         public void If_判断_跳过()
         {
             using var db = CreateWithUsers();

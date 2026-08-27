@@ -157,6 +157,46 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
+        public void Delete_WhereNotLike_And_IfTrueWhereNotLike()
+        {
+            // WhereNotLike: NOT LIKE '%甲%'，删除非"甲" → 乙、丙
+            var like = _db.DeleteMany<SimpleUser>().WhereNotLike(x => x.Name, "甲").Execute();
+            Assert.Equal(2, like);
+            Assert.Equal(1, Count());
+
+            // 表内仅剩"甲"，NOT LIKE '%甲%' 不匹配 → 0
+            var apply = _db.DeleteMany<SimpleUser>().IfTrueWhereNotLike(true, "Name", "甲").Execute();
+            Assert.Equal(0, apply);
+            Assert.Equal(1, Count());
+
+            // IfTrue=false 跳过条件，删除剩余全部
+            var skip = _db.DeleteMany<SimpleUser>().IfTrueWhereNotLike(false, x => x.Name, "甲").Execute();
+            Assert.Equal(1, skip);
+            Assert.Equal(0, Count());
+        }
+
+        [Fact]
+        public void Delete_WhereNotLikeStart_And_WhereNotLikeEnd()
+        {
+            // WhereNotLikeStart: NOT LIKE '乙%'，删除非"乙"开头 → 甲、丙
+            var start = _db.DeleteMany<SimpleUser>().WhereNotLikeStart(x => x.Name, "乙").Execute();
+            Assert.Equal(2, start);
+            Assert.Equal(1, Count());
+
+            // 仅剩"乙"，NOT LIKE '%乙'（非后缀）不匹配 → 0
+            var end = _db.DeleteMany<SimpleUser>().WhereNotLikeEnd("Name", "乙").Execute();
+            Assert.Equal(0, end);
+            Assert.Equal(1, Count());
+
+            // 空 pattern / false 跳过条件 → 全删
+            var skipStart = _db.DeleteMany<SimpleUser>().IfTrueWhereNotLikeStart(false, x => x.Name, "甲").Execute();
+            Assert.Equal(1, skipStart);
+            var skipEnd = _db.DeleteMany<SimpleUser>().IfTrueWhereNotLikeEnd(false, "Name", "甲").Execute();
+            Assert.Equal(0, skipEnd);
+            Assert.Equal(0, Count());
+        }
+
+        [Fact]
         public void Delete_WhereExists_And_WhereNotExists()
         {
             var exists = _db.DeleteMany<SimpleUser>().WhereExists("SELECT 1 FROM SimpleUser WHERE Age > 25").Execute();
@@ -284,6 +324,48 @@ namespace ToolGood.ReadyGo.Tests
 
             Assert.Equal(24, _db.Query<SimpleUser>().Select().First(u => u.Name == "乙").Age);
             Assert.Equal(34, _db.Query<SimpleUser>().Select().First(u => u.Name == "丙").Age);
+        }
+
+        [Fact]
+        public void Update_WhereNotLike_And_IfTrueWhereNotLike()
+        {
+            // WhereNotLike: NOT LIKE '%甲%'，排除"甲" → 更新乙、丙
+            var target = new SimpleUser { Id = 1, Name = "甲", Age = 14 };
+            var n1 = _db.UpdateMany<SimpleUser>().WhereNotLike(x => x.Name, "甲").Execute(target);
+            Assert.Equal(2, n1);
+            Assert.Equal(10, _db.Query<SimpleUser>().Select().First(u => u.Name == "甲").Age);
+
+            // IfTrue=false 跳过条件 → 更新 Id=1 → 甲
+            var target2 = new SimpleUser { Id = 1, Name = "甲", Age = 15 };
+            var n2 = _db.UpdateMany<SimpleUser>().IfTrueWhereNotLike(false, x => x.Name, "丙").Execute(target2);
+            Assert.Equal(1, n2);
+
+            // IfTrue=true 生效，NOT LIKE '%丙%' → 甲、乙，更新 Id=2 → 乙
+            var target3 = new SimpleUser { Id = 2, Name = "乙", Age = 25 };
+            var n3 = _db.UpdateMany<SimpleUser>().IfTrueWhereNotLike(true, "Name", "丙").Execute(target3);
+            Assert.Equal(1, n3);
+
+            Assert.Equal(15, _db.Query<SimpleUser>().Select().First(u => u.Name == "甲").Age);
+            Assert.Equal(25, _db.Query<SimpleUser>().Select().First(u => u.Name == "乙").Age);
+            Assert.Equal(14, _db.Query<SimpleUser>().Select().First(u => u.Name == "丙").Age);
+        }
+
+        [Fact]
+        public void Update_WhereNotLikeStart_And_WhereNotLikeEnd()
+        {
+            // WhereNotLikeStart: NOT LIKE '甲%'，排除"甲" → 更新乙、丙
+            var target = new SimpleUser { Id = 1, Name = "甲", Age = 11 };
+            var n1 = _db.UpdateMany<SimpleUser>().WhereNotLikeStart(x => x.Name, "甲").Execute(target);
+            Assert.Equal(2, n1);
+
+            // WhereNotLikeEnd: NOT LIKE '%丙'，排除"丙" → 更新甲、乙
+            var target2 = new SimpleUser { Id = 1, Name = "甲", Age = 12 };
+            var n2 = _db.UpdateMany<SimpleUser>().WhereNotLikeEnd(x => x.Name, "丙").Execute(target2);
+            Assert.Equal(2, n2);
+
+            Assert.Equal(12, _db.Query<SimpleUser>().Select().First(u => u.Name == "甲").Age);
+            Assert.Equal(12, _db.Query<SimpleUser>().Select().First(u => u.Name == "乙").Age);
+            Assert.Equal(30, _db.Query<SimpleUser>().Select().First(u => u.Name == "丙").Age);
         }
 
         [Fact]
