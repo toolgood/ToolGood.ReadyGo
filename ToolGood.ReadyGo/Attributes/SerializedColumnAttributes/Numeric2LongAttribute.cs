@@ -19,7 +19,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public Numeric2LongColumnSerializer Serializer { get; }
+        public override Numeric2LongColumnSerializer Serializer { get; }
 
         /// <summary>
         /// 小数转长整数标签

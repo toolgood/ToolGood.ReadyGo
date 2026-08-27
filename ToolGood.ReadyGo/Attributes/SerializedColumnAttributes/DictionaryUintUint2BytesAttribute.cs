@@ -12,7 +12,9 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public static DictionaryUintUint2BytesColumnSerializer Serializer { get; } = new DictionaryUintUint2BytesColumnSerializer();
+        public override DictionaryUintUint2BytesColumnSerializer Serializer => DefaultSerializer;
+
+        private static readonly DictionaryUintUint2BytesColumnSerializer DefaultSerializer = new DictionaryUintUint2BytesColumnSerializer();
 
         /// <summary>
         /// uint→uint 字典标签

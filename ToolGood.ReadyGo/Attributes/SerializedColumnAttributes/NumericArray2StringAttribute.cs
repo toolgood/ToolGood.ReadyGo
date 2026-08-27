@@ -14,7 +14,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public NumericArray2StringColumnSerializer Serializer { get; }
+        public override NumericArray2StringColumnSerializer Serializer { get; }
 
         /// <summary>
         /// 数值数组转字符串标签

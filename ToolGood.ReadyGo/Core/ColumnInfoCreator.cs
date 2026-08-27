@@ -27,9 +27,9 @@ namespace ToolGood.ReadyGo.NPoco
             var serializedColumnAttributes = attrs.OfType<SerializedColumnAttribute>().ToArray();
             var reference = attrs.OfType<ReferenceAttribute>().ToArray();
             var aliasColumn = attrs.OfType<AliasAttribute>().FirstOrDefault();
-            // 探测带 Serializer 属性的 SerializedColumn 子类（如 [Date] / [Numeric2Int]）
+            // 探测带序列化器的 SerializedColumn 子类（如 [Date2Int] / [Numeric2Int]）
             var customColumnSerializer = serializedColumnAttributes
-                .Select(a => a.GetType().GetProperty("Serializer")?.GetValue(a) as IColumnSerializer)
+                .Select(a => a.Serializer)
                 .FirstOrDefault(s => s != null);
 
             // Check if declaring poco has [ExplicitColumns] attribute
@@ -124,7 +124,7 @@ namespace ToolGood.ReadyGo.NPoco
             else if (ci.SerializedColumn && ci.ColumnSerializer == null && IsNumericArrayType(mi.GetMemberInfoType()))
             {
                 // 未显式指定序列化器的数值数组类型，默认按 NumericArray2Bytes（byte[]）保存
-                ci.ColumnSerializer = NumericArray2BytesAttribute.Serializer;
+                ci.ColumnSerializer = new NumericArray2BytesAttribute().Serializer;
             }
 
             if (columnTypeAttrs.Any())

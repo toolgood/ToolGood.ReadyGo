@@ -13,7 +13,9 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public static Date2StringColumnSerializer Serializer { get; } = new Date2StringColumnSerializer();
+        public override Date2StringColumnSerializer Serializer => DefaultSerializer;
+
+        private static readonly Date2StringColumnSerializer DefaultSerializer = new Date2StringColumnSerializer();
 
         /// <summary>
         /// 日期标签

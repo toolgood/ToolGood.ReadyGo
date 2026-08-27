@@ -14,7 +14,9 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public static DateTime2LongColumnSerializer Serializer { get; } = new DateTime2LongColumnSerializer();
+        public override DateTime2LongColumnSerializer Serializer => DefaultSerializer;
+
+        private static readonly DateTime2LongColumnSerializer DefaultSerializer = new DateTime2LongColumnSerializer();
 
         /// <summary>
         /// 时间转长整数标签

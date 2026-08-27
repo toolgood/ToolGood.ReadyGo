@@ -13,7 +13,9 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public static Enum2LongColumnSerializer Serializer { get; } = new Enum2LongColumnSerializer();
+        public override Enum2LongColumnSerializer Serializer => DefaultSerializer;
+
+        private static readonly Enum2LongColumnSerializer DefaultSerializer = new Enum2LongColumnSerializer();
 
         /// <summary>
         /// 枚举转长整数标签

@@ -84,7 +84,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
             if (pi.CanRead == false || pi.CanWrite == false) return null;
             var isSerialized = pi.GetCustomAttributes(typeof(SerializedColumnAttribute), true)
                 .OfType<SerializedColumnAttribute>()
-                .Any(a => a.GetType().GetProperty("Serializer") != null);
+                .Any(a => a.Serializer != null);
             if (isSerialized == false && Types.IsAllowType(pi.PropertyType) == false) return null;
             var a = pi.GetCustomAttributes(typeof(IgnoreAttribute), true);
             if (a.Length > 0) return null;

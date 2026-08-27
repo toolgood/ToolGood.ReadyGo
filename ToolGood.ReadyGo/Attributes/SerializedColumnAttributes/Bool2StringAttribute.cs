@@ -13,7 +13,9 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public static Bool2StringColumnSerializer Serializer { get; } = new Bool2StringColumnSerializer();
+        public override Bool2StringColumnSerializer Serializer => DefaultSerializer;
+
+        private static readonly Bool2StringColumnSerializer DefaultSerializer = new Bool2StringColumnSerializer();
 
         /// <summary>
         /// 布尔转字符串标签

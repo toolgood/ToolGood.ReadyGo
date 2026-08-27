@@ -20,7 +20,7 @@ namespace ToolGood.ReadyGo.Attributes
         public string Name { get; set; }
 
         /// <summary>
-        /// 是否将时间强制转换为 UTC 时间
+        /// 是否将时间强制转换为 UTC 时间（默认 true，与框架全局默认 ForceToUTCDefault 一致）
         /// </summary>
         public bool ForceToUtc { get; set; } = true;
 
@@ -38,7 +38,6 @@ namespace ToolGood.ReadyGo.Attributes
         /// </summary>
         public ColumnAttribute()
         {
-            ForceToUtc = false;
         }
 
         /// <summary>
@@ -49,7 +48,6 @@ namespace ToolGood.ReadyGo.Attributes
         public ColumnAttribute(string name, string comment = null)
         {
             Name = name.Trim();
-            ForceToUtc = false;
             if(comment != null) {
                 this.Comment = comment.Trim();
             }

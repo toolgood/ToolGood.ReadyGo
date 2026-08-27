@@ -9,17 +9,20 @@ namespace ToolGood.ReadyGo.Attributes
     public class PrimaryKeyAttribute : Attribute
     {
         /// <summary>
-        /// 主键标签（默认启用自增）
+        /// 主键标签（单列默认自增，多列默认不自增）
         /// </summary>
         /// <param name="primaryKey">主键列名（多列用逗号分隔）</param>
         public PrimaryKeyAttribute(string primaryKey)
         {
+            if (primaryKey == null) {
+                throw new ArgumentNullException(nameof(primaryKey));
+            }
             Value = primaryKey;
-            _autoIncrement = true;
+            _autoIncrement = !primaryKey.Contains(",");
         }
 
         /// <summary>
-        /// 主键标签（默认启用自增）
+        /// 主键标签（多列默认不自增）
         /// </summary>
         /// <param name="primaryKey">主键列名数组</param>
         public PrimaryKeyAttribute(string[] primaryKey) : this(string.Join(",", primaryKey))

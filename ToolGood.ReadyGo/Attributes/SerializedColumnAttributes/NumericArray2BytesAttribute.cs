@@ -12,7 +12,9 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public static NumericArray2BytesColumnSerializer Serializer { get; } = new NumericArray2BytesColumnSerializer();
+        public override NumericArray2BytesColumnSerializer Serializer => DefaultSerializer;
+
+        private static readonly NumericArray2BytesColumnSerializer DefaultSerializer = new NumericArray2BytesColumnSerializer();
 
         /// <summary>
         /// 数值数组标签

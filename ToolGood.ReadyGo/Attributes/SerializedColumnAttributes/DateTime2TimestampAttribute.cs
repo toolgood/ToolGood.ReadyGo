@@ -35,7 +35,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public DateTime2TimestampColumnSerializer Serializer { get; }
+        public override DateTime2TimestampColumnSerializer Serializer { get; }
 
         /// <summary>
         /// 时间戳标签
