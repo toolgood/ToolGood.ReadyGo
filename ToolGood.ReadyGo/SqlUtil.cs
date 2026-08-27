@@ -54,7 +54,7 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        /// 拼接前缀模糊匹配（%值）的 LIKE 条件字符串
+        /// 拼接前缀模糊匹配（值%）的 LIKE 条件字符串
         /// </summary>
         /// <param name="columnName">列名</param>
         /// <param name="param">匹配值</param>
@@ -63,11 +63,11 @@ namespace ToolGood.ReadyGo
         public static string WhereLikeStart(string columnName, string param, bool and = false)
         {
             if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
-            return $"{(and ? " AND" : "")} {columnName} LIKE '%{ToEscapeLikeParam(param)}'";
+            return $"{(and ? " AND" : "")} {columnName} LIKE '{ToEscapeLikeParam(param)}%'";
         }
 
         /// <summary>
-        /// 拼接后缀模糊匹配（值%）的 LIKE 条件字符串
+        /// 拼接后缀模糊匹配（%值）的 LIKE 条件字符串
         /// </summary>
         /// <param name="columnName">列名</param>
         /// <param name="param">匹配值</param>
@@ -76,7 +76,7 @@ namespace ToolGood.ReadyGo
         public static string WhereLikeEnd(string columnName, string param, bool and = false)
         {
             if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
-            return $"{(and ? " AND" : "")} {columnName} LIKE '{ToEscapeLikeParam(param)}%'";
+            return $"{(and ? " AND" : "")} {columnName} LIKE '%{ToEscapeLikeParam(param)}'";
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        /// 拼接前缀模糊匹配（%值）的 NOT LIKE 条件字符串
+        /// 拼接前缀模糊匹配（值%）的 NOT LIKE 条件字符串
         /// </summary>
         /// <param name="columnName">列名</param>
         /// <param name="param">匹配值</param>
@@ -102,11 +102,11 @@ namespace ToolGood.ReadyGo
         public static string WhereNotLikeStart(string columnName, string param, bool and = false)
         {
             if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
-            return $"{(and ? " AND" : "")} {columnName} NOT LIKE '%{ToEscapeLikeParam(param)}'";
+            return $"{(and ? " AND" : "")} {columnName} NOT LIKE '{ToEscapeLikeParam(param)}%'";
         }
 
         /// <summary>
-        /// 拼接后缀模糊匹配（值%）的 NOT LIKE 条件字符串
+        /// 拼接后缀模糊匹配（%值）的 NOT LIKE 条件字符串
         /// </summary>
         /// <param name="columnName">列名</param>
         /// <param name="param">匹配值</param>
@@ -115,7 +115,7 @@ namespace ToolGood.ReadyGo
         public static string WhereNotLikeEnd(string columnName, string param, bool and = false)
         {
             if (string.IsNullOrEmpty(columnName)) { throw new Exception("columnName is null or empty"); }
-            return $"{(and ? " AND" : "")} {columnName} NOT LIKE '{ToEscapeLikeParam(param)}%'";
+            return $"{(and ? " AND" : "")} {columnName} NOT LIKE '%{ToEscapeLikeParam(param)}'";
         }
 
         /// <summary>

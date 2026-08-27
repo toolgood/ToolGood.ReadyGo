@@ -169,14 +169,14 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <returns>当前更新查询器。</returns>
         IUpdateQueryProvider<T> IfTrueWhereNotIn<TValue>(bool condition, Expression<Func<T, TValue>> field, IEnumerable<TValue> values);
         /// <summary>
-        /// Where {column} Like '%pattern'（右匹配）。
+        /// Where {column} Like 'pattern%'（前缀匹配）。
         /// </summary>
         /// <param name="column">列名（可带别名，如 "t0.Name"）。</param>
-        /// <param name="pattern">匹配内容（自动加前缀 %）。</param>
+        /// <param name="pattern">匹配内容（自动加后缀 %）。</param>
         /// <returns>当前更新查询器。</returns>
         IUpdateQueryProvider<T> WhereLikeStart(string column, string pattern);
         /// <summary>
-        /// Where {field} Like '%pattern'（右匹配）。
+        /// Where {field} Like 'pattern%'（前缀匹配）。
         /// </summary>
         /// <typeparam name="TValue">值类型。</typeparam>
         /// <param name="field">列表达式。</param>
@@ -201,14 +201,14 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <returns>当前更新查询器。</returns>
         IUpdateQueryProvider<T> IfTrueWhereLikeStart<TValue>(bool condition, Expression<Func<T, TValue>> field, string pattern);
         /// <summary>
-        /// Where {column} Like 'pattern%'（左匹配）。
+        /// Where {column} Like '%pattern'（后缀匹配）。
         /// </summary>
         /// <param name="column">列名（可带别名，如 "t0.Name"）。</param>
-        /// <param name="pattern">匹配内容（自动加后缀 %）。</param>
+        /// <param name="pattern">匹配内容（自动加前缀 %）。</param>
         /// <returns>当前更新查询器。</returns>
         IUpdateQueryProvider<T> WhereLikeEnd(string column, string pattern);
         /// <summary>
-        /// Where {field} Like 'pattern%'（左匹配）。
+        /// Where {field} Like '%pattern'（后缀匹配）。
         /// </summary>
         /// <typeparam name="TValue">值类型。</typeparam>
         /// <param name="field">列表达式。</param>

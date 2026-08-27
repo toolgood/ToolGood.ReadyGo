@@ -140,10 +140,10 @@ namespace ToolGood.ReadyGo.Tests
         [Fact]
         public void Delete_WhereLikeStart_And_WhereLikeEnd()
         {
-            // WhereLikeStart: LIKE '%乙'，以"乙"结尾 → 乙
+            // WhereLikeStart: LIKE '乙%'，以"乙"开头 → 乙
             var start = _db.DeleteMany<SimpleUser>().WhereLikeStart(x => x.Name, "乙").Execute();
             Assert.Equal(1, start);
-            // WhereLikeEnd: LIKE '丙%'，以"丙"开头 → 丙
+            // WhereLikeEnd: LIKE '%丙'，以"丙"结尾 → 丙
             var end = _db.DeleteMany<SimpleUser>().WhereLikeEnd(x => x.Name, "丙").Execute();
             Assert.Equal(1, end);
             Assert.Equal(1, Count());

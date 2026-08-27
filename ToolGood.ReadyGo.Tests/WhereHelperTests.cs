@@ -90,7 +90,7 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            // WhereLike = '%args%'，WhereLikeStart = '%args'（右匹配），WhereLikeEnd = 'args%'（左匹配）
+            // WhereLike = '%args%'，WhereLikeStart = 'args%'（前缀匹配），WhereLikeEnd = '%args'（后缀匹配）
             Assert.Equal(2, helper.Where<Tb_WhereTest>().WhereLike(q => q.Name, "张").ToList().Count);
             Assert.Single(helper.Where<Tb_WhereTest>().WhereLikeStart(q => q.Name, "张三").ToList());
             Assert.Single(helper.Where<Tb_WhereTest>().WhereLikeEnd(q => q.Name, "王五").ToList());

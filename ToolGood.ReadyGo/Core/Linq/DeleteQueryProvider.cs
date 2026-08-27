@@ -191,7 +191,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
 
         /// <summary>
-        /// Where {column} Like '%pattern'（右匹配）。
+        /// Where {column} Like 'pattern%'（前缀匹配）。
         /// </summary>
         public new IDeleteQueryProvider<T> WhereLikeStart(string column, string pattern)
         {
@@ -199,7 +199,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
 
         /// <summary>
-        /// Where {field} Like '%pattern'（右匹配）。
+        /// Where {field} Like 'pattern%'（前缀匹配）。
         /// </summary>
         public new IDeleteQueryProvider<T> WhereLikeStart<TValue>(Expression<Func<T, TValue>> field, string pattern)
         {
@@ -223,7 +223,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
 
         /// <summary>
-        /// Where {column} Like 'pattern%'（左匹配）。
+        /// Where {column} Like '%pattern'（后缀匹配）。
         /// </summary>
         public new IDeleteQueryProvider<T> WhereLikeEnd(string column, string pattern)
         {
@@ -231,7 +231,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
 
         /// <summary>
-        /// Where {field} Like 'pattern%'（左匹配）。
+        /// Where {field} Like '%pattern'（后缀匹配）。
         /// </summary>
         public new IDeleteQueryProvider<T> WhereLikeEnd<TValue>(Expression<Func<T, TValue>> field, string pattern)
         {
@@ -520,21 +520,21 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
 
         /// <summary>
-        /// Where {column} Like '%pattern'（右匹配）。
+        /// Where {column} Like 'pattern%'（前缀匹配）。
         /// </summary>
         /// <param name="column">列名（可带别名，如 "t0.Name"）。</param>
-        /// <param name="pattern">匹配内容（自动加前缀 %）。</param>
+        /// <param name="pattern">匹配内容（自动加后缀 %）。</param>
         /// <returns>当前删除查询器。</returns>
         public IAsyncDeleteQueryProvider<T> WhereLikeStart(string column, string pattern)
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} LIKE @0", $"%{pattern}");
+            WhereSql($"{column} LIKE @0", $"{pattern}%");
             return this;
         }
 
         /// <summary>
-        /// Where {field} Like '%pattern'（右匹配）。
+        /// Where {field} Like 'pattern%'（前缀匹配）。
         /// </summary>
         /// <typeparam name="TValue">值类型。</typeparam>
         /// <param name="field">列表达式。</param>
@@ -572,21 +572,21 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
 
         /// <summary>
-        /// Where {column} Like 'pattern%'（左匹配）。
+        /// Where {column} Like '%pattern'（后缀匹配）。
         /// </summary>
         /// <param name="column">列名（可带别名，如 "t0.Name"）。</param>
-        /// <param name="pattern">匹配内容（自动加后缀 %）。</param>
+        /// <param name="pattern">匹配内容（自动加前缀 %）。</param>
         /// <returns>当前删除查询器。</returns>
         public IAsyncDeleteQueryProvider<T> WhereLikeEnd(string column, string pattern)
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} LIKE @0", $"{pattern}%");
+            WhereSql($"{column} LIKE @0", $"%{pattern}");
             return this;
         }
 
         /// <summary>
-        /// Where {field} Like 'pattern%'（左匹配）。
+        /// Where {field} Like '%pattern'（后缀匹配）。
         /// </summary>
         /// <typeparam name="TValue">值类型。</typeparam>
         /// <param name="field">列表达式。</param>
