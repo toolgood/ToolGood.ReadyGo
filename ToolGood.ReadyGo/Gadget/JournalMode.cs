@@ -1,4 +1,4 @@
-namespace ToolGood.ReadyGo
+namespace ToolGood.ReadyGo.Gadget
 {
     /// <summary>
     /// Sqlite

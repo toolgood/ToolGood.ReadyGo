@@ -5,8 +5,8 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Linq.Expressions;
+using ToolGood.ReadyGo.Gadget;
 using ToolGood.ReadyGo.Gadget.Internals;
-using ToolGood.ReadyGo.Internals;
 using ToolGood.ReadyGo.NPoco;
 
 namespace ToolGood.ReadyGo

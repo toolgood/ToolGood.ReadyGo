@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ToolGood.ReadyGo.NPoco;
 
-namespace ToolGood.ReadyGo.Internals
+namespace ToolGood.ReadyGo.Gadget
 {
     internal class Types
     {

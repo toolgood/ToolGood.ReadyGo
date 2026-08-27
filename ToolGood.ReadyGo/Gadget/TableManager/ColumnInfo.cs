@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using ToolGood.ReadyGo.Attributes;
-using ToolGood.ReadyGo.Internals;
 using AnsiString = ToolGood.ReadyGo.NPoco.AnsiString;
 
 namespace ToolGood.ReadyGo.Gadget.TableManager

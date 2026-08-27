@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using ToolGood.ReadyGo.Internals;
+using ToolGood.ReadyGo.Gadget;
 using ToolGood.ReadyGo.NPoco;
 
 namespace ToolGood.ReadyGo

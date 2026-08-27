@@ -3,7 +3,7 @@ using System.Dynamic;
 using System.Linq.Expressions;
 using ToolGood.ReadyGo.NPoco;
 
-namespace ToolGood.ReadyGo.Internals
+namespace ToolGood.ReadyGo.Gadget
 {
     /// <summary>
     /// 表名动态类

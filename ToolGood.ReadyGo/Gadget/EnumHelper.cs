@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using ToolGood.ReadyGo.Attributes;
 using ToolGood.ReadyGo.NPoco;
 
-namespace ToolGood.ReadyGo.Internals
+namespace ToolGood.ReadyGo.Gadget
 {
     internal static class EnumHelper
     {
