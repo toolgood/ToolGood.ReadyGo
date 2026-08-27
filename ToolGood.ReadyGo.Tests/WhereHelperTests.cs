@@ -225,5 +225,141 @@ namespace ToolGood.ReadyGo.Tests
                 .ToList();
             Assert.Equal(3, list2.Count);
         }
+
+        [Fact]
+        public void Exists_无参数与条件()
+        {
+            using var db = CreateWithUsers();
+            var helper = db.Helper;
+
+            Assert.True(helper.Where<Tb_WhereTest>().Exists());
+            Assert.True(helper.Where<Tb_WhereTest>(q => q.Age > 30).Exists());
+            Assert.False(helper.Where<Tb_WhereTest>(q => q.Age > 100).Exists());
+
+            // Exists 是 Any 的别名，结果应一致
+            Assert.Equal(helper.Where<Tb_WhereTest>().Any(), helper.Where<Tb_WhereTest>().Exists());
+        }
+
+        [Fact]
+        public async Task Exists_Async()
+        {
+            using var db = CreateWithUsers();
+            var helper = db.Helper;
+
+            Assert.True(await helper.Where<Tb_WhereTest>().Exists_Async());
+            Assert.True(await helper.Where<Tb_WhereTest>(q => q.Age > 30).Exists_Async());
+            Assert.False(await helper.Where<Tb_WhereTest>(q => q.Age > 100).Exists_Async());
+        }
+
+        [Fact]
+        public void SelectPage_分页返回当前页列表()
+        {
+            using var db = CreateWithUsers();
+            var helper = db.Helper;
+
+            var page1 = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).SelectPage(1, 2);
+            Assert.Equal(2, page1.Count);
+            Assert.Equal("张三", page1[0].Name);
+
+            var page2 = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).SelectPage(2, 2);
+            Assert.Equal(2, page2.Count);
+            Assert.Equal("王五", page2[0].Name);
+        }
+
+        [Fact]
+        public async Task SelectPage_Async()
+        {
+            using var db = CreateWithUsers();
+            var helper = db.Helper;
+
+            var page1 = await helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).SelectPage_Async(1, 2);
+            Assert.Equal(2, page1.Count);
+            Assert.Equal("张三", page1[0].Name);
+
+            var page2 = await helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).SelectPage_Async(2, 2);
+            Assert.Equal(2, page2.Count);
+            Assert.Equal("王五", page2[0].Name);
+        }
+
+        [Fact]
+        public void ToPage_参数校验_页码与每页大小()
+        {
+            using var db = CreateWithUsers();
+            var helper = db.Helper;
+
+            // page <= 0 修正为 1，pageSize <= 0 修正为 10
+            var p1 = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).ToPage(0, 2);
+            Assert.Equal(1, p1.CurrentPage);
+            Assert.Equal(2, p1.Items.Count);
+            Assert.Equal("张三", p1.Items[0].Name);
+
+            var p2 = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).ToPage(-1, 0);
+            Assert.Equal(1, p2.CurrentPage);
+            Assert.Equal(10, p2.PageSize);
+            Assert.Equal(4, p2.Items.Count);
+        }
+
+        [Fact]
+        public async Task ToPage_Async_参数校验()
+        {
+            using var db = CreateWithUsers();
+            var helper = db.Helper;
+
+            var p1 = await helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).ToPage_Async(0, 2);
+            Assert.Equal(1, p1.CurrentPage);
+            Assert.Equal(2, p1.Items.Count);
+            Assert.Equal("张三", p1.Items[0].Name);
+
+            var p2 = await helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).ToPage_Async(1, 0);
+            Assert.Equal(10, p2.PageSize);
+            Assert.Equal(4, p2.Items.Count);
+        }
+
+        [Fact]
+        public void SelectPage_参数校验()
+        {
+            using var db = CreateWithUsers();
+            var helper = db.Helper;
+
+            // 修正为第一页且 pageSize=10，返回全部数据
+            var list = helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).SelectPage(0, 0);
+            Assert.Equal(4, list.Count);
+            Assert.Equal("张三", list[0].Name);
+        }
+
+        [Fact]
+        public async Task Async_后缀方法_回归测试()
+        {
+            using var db = CreateWithUsers();
+            var helper = db.Helper;
+
+            // AsyncQueryProvider 的 _Async 后缀方法经同步链式（IQueryProvider）调用验证
+            var all = await helper.Where<Tb_WhereTest>().ToList_Async();
+            Assert.Equal(4, all.Count);
+
+            Assert.Equal(4, await helper.Where<Tb_WhereTest>().Count_Async());
+            Assert.Equal(2, await helper.Where<Tb_WhereTest>(q => q.Age > 30).Count_Async());
+            Assert.Equal(4, await helper.Where<Tb_WhereTest>().SelectCount_Async());
+
+            Assert.True(await helper.Where<Tb_WhereTest>().Any_Async());
+            Assert.False(await helper.Where<Tb_WhereTest>(q => q.Age > 100).Any_Async());
+
+            var one = await helper.Where<Tb_WhereTest>(q => q.Name == "张三").FirstOrDefault_Async();
+            Assert.Equal(20, one.Age);
+
+            var first = await helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).First_Async();
+            Assert.Equal("张三", first.Name);
+
+            var page = await helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).ToPage_Async(1, 2);
+            Assert.Equal(4, page.TotalItems);
+            Assert.Equal(2, page.Items.Count);
+            Assert.Equal("张三", page.Items[0].Name);
+
+            var page2 = await helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).Page_Async(2, 2);
+            Assert.Equal("王五", page2.Items[0].Name);
+
+            var projected = await helper.Where<Tb_WhereTest>().OrderBy(q => q.Age).ProjectTo_Async(q => new { q.Name, q.Age });
+            Assert.Equal(4, projected.Count);
+        }
     }
 }
