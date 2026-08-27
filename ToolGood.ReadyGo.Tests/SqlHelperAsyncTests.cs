@@ -807,8 +807,9 @@ namespace ToolGood.ReadyGo.Tests
             var helper = db.Helper;
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
 
-            // set 为 null 应抛出明确异常（UpdateBy 家族没有 string 重载，null 直接命中条件重载）
-            await Assert.ThrowsAsync<ArgumentException>(() => helper.Update_Async<SimpleUser>(null, new { Id = 1 }));
+            // set 为 null 应抛出明确异常（Update_Async 家族存在 string 重载，null 字面量会命中 string 重载，
+            // 需显式转为 object 以确保命中条件对象重载，从而触发 set 为 null 的校验）
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.Update_Async<SimpleUser>((object)null, new { Id = 1 }));
         }
 
         [Fact]
