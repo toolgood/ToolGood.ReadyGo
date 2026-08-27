@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -25,8 +26,11 @@ namespace ToolGood.ReadyGo.Gadget.Internals
         /// <param name="pd">POCO 元数据</param>
         public static void SetDefaultValue<T>(T obj, bool setString, bool setDateTime, bool setGuid, PocoData pd)
         {
-            // 缓存 key 需包含 PocoData 维度：同一类型映射到不同表（不同 PocoData）时，列集合不同
-            var key = typeof(T).FullName + "|" + (pd?.TableInfo?.TableName ?? string.Empty);
+            if (pd == null) throw new ArgumentNullException(nameof(pd));
+            // 缓存 key 需包含 PocoData 维度：同一类型映射到不同表（不同 PocoData）时，列集合不同；
+            // AssemblyQualifiedName 用于区分跨程序集的同名类型，避免缓存串用
+            var key = typeof(T).AssemblyQualifiedName + "|" + pd.TableInfo.TableName + "|"
+                + string.Join(",", pd.Columns.Keys.OrderBy(k => k, StringComparer.Ordinal));
             var action = _setDefault.Get(key, () => CreateDefaultFunction<T>(pd));
             var a = (action as Action<T, bool, bool, bool>);
             a(obj, setString, setDateTime, setGuid);

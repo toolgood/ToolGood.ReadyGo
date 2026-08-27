@@ -23,6 +23,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             // SQL Server 不支持 CREATE TABLE/INDEX IF NOT EXISTS，
             // 通过 IF NOT EXISTS(sys.tables) 包裹整段 DDL 保证幂等，重复调用不会因“对象已存在”报错。
             var ti = TableInfo.FromType(type);
+            EnsureColumns(ti);
             var table = GetTableName(ti);
             var schema = string.IsNullOrEmpty(ti.SchemaName) ? "dbo" : ti.SchemaName.Replace("'", "''");
             var tableName = ti.TableName.Replace("'", "''");
@@ -139,9 +140,9 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         {
             var type = ci.PropertyType;
             var isRequired = ci.Required;
-            if (ci.IsSerializedAsInt) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
-            if (ci.IsSerializedAsLong) return CreateField(ti, ci, "bigint", ci.FieldLength, isRequired);
-            if (ci.IsSerializedAsString) return CreateField(ti, ci, ci.IsText ? "Text" : "nvarchar", ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), false);
+            if (ci.SerializedAs == ColumnInfo.SerializedKind.Int) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
+            if (ci.SerializedAs == ColumnInfo.SerializedKind.Long) return CreateField(ti, ci, "bigint", ci.FieldLength, isRequired);
+            if (ci.SerializedAs == ColumnInfo.SerializedKind.String) return CreateField(ti, ci, ci.IsText ? "Text" : "nvarchar", ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), false);
             if (type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
             if (type == typeof(string)) return CreateField(ti, ci, ci.IsText ? "Text" : "nvarchar", ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), isRequired);
             if (type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);

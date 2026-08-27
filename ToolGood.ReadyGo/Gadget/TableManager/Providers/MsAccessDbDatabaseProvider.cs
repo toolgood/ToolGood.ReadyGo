@@ -19,6 +19,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         public override string GetTryCreateTable(Type type, bool withIndex = true)
         {
             var ti = TableInfo.FromType(type);
+            EnsureColumns(ti);
             var sql = "CREATE TABLE " + GetTableName(ti) + "(\r\n";
             foreach (var item in ti.Columns) {
                 sql += "    " + CreateColumn(ti, item) + ",\r\n";
@@ -145,9 +146,9 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         {
             var type = ci.PropertyType;
             var isRequired = ci.Required;
-            if (ci.IsSerializedAsInt) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
-            if (ci.IsSerializedAsLong) return CreateField(ti, ci, "BIGINT", ci.FieldLength, isRequired);
-            if (ci.IsSerializedAsString) return CreateField(ti, ci, GetText(ci), GetTextLength(ci), false);
+            if (ci.SerializedAs == ColumnInfo.SerializedKind.Int) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
+            if (ci.SerializedAs == ColumnInfo.SerializedKind.Long) return CreateField(ti, ci, "BIGINT", ci.FieldLength, isRequired);
+            if (ci.SerializedAs == ColumnInfo.SerializedKind.String) return CreateField(ti, ci, GetText(ci), GetTextLength(ci), false);
             if (type.IsEnum) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
             if (type == typeof(string)) return CreateField(ti, ci, GetText(ci), GetTextLength(ci), isRequired);
             if (type == typeof(Byte[]) || type == typeof(SByte[])

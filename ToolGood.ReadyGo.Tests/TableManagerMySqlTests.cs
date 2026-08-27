@@ -3,7 +3,7 @@ using Xunit;
 namespace ToolGood.ReadyGo.Tests
 {
     /// <summary>
-    /// TableManager（SqlHelper._TableHelper）单元测试（基于 MySQL）
+    /// TableManager（SqlHelper.TableHelper）单元测试（基于 MySQL）
     /// </summary>
     [Collection("MySql")]
     public class TableManagerMySqlTests
@@ -11,8 +11,8 @@ namespace ToolGood.ReadyGo.Tests
         private static MySqlTestDb CreateTable()
         {
             var db = MySqlTestDb.Create();
-            db.Helper._TableHelper.DropTable(typeof(Tb_Order));
-            db.Helper._TableHelper.TryCreateTable(typeof(Tb_Order));
+            db.Helper.TableHelper.DropTable(typeof(Tb_Order));
+            db.Helper.TableHelper.TryCreateTable(typeof(Tb_Order));
             return db;
         }
 
@@ -22,7 +22,7 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateTable();
             var helper = db.Helper;
 
-            var sql = helper._TableHelper.GetTryCreateTable(typeof(Tb_Order));
+            var sql = helper.TableHelper.GetTryCreateTable(typeof(Tb_Order));
 
             Assert.Contains("CREATE TABLE IF NOT EXISTS `Tb_Order`", sql);
             Assert.Contains("PRIMARY KEY", sql);
@@ -55,8 +55,8 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateTable();
             var helper = db.Helper;
 
-            helper._TableHelper.TryCreateTable(typeof(Tb_Order));
-            helper._TableHelper.TryCreateTable(typeof(Tb_Order));
+            helper.TableHelper.TryCreateTable(typeof(Tb_Order));
+            helper.TableHelper.TryCreateTable(typeof(Tb_Order));
         }
 
         [Fact]
@@ -65,9 +65,9 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateTable();
             var helper = db.Helper;
 
-            Assert.Contains("DROP TABLE IF EXISTS `Tb_Order`", helper._TableHelper.GetDropTable(typeof(Tb_Order)));
+            Assert.Contains("DROP TABLE IF EXISTS `Tb_Order`", helper.TableHelper.GetDropTable(typeof(Tb_Order)));
 
-            helper._TableHelper.DropTable(typeof(Tb_Order));
+            helper.TableHelper.DropTable(typeof(Tb_Order));
 
             var exists = helper.ExecuteScalar<int>(
                 "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = 'Tb_Order'");
@@ -84,9 +84,9 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new Tb_Order { UserId = 2, OrderNo = "A002", Money = 2m, CreateTime = DateTime.Now });
             Assert.Equal(2, helper.Count<Tb_Order>());
 
-            Assert.Contains("TRUNCATE TABLE `Tb_Order`", helper._TableHelper.GetTruncateTable(typeof(Tb_Order)));
+            Assert.Contains("TRUNCATE TABLE `Tb_Order`", helper.TableHelper.GetTruncateTable(typeof(Tb_Order)));
 
-            helper._TableHelper.TruncateTable(typeof(Tb_Order));
+            helper.TableHelper.TruncateTable(typeof(Tb_Order));
             Assert.Equal(0, helper.Count<Tb_Order>());
         }
 
@@ -96,13 +96,13 @@ namespace ToolGood.ReadyGo.Tests
             using var db = CreateTable();
             var helper = db.Helper;
 
-            helper._TableHelper.DropTable(typeof(Tb_Order));
-            helper._TableHelper.TryCreateTable(typeof(Tb_Order), false);
-            var sql = helper._TableHelper.GetCreateTableIndex(typeof(Tb_Order));
+            helper.TableHelper.DropTable(typeof(Tb_Order));
+            helper.TableHelper.TryCreateTable(typeof(Tb_Order), false);
+            var sql = helper.TableHelper.GetCreateTableIndex(typeof(Tb_Order));
             Assert.Contains("i_UserId", sql);
             Assert.Contains("u_OrderNo", sql);
 
-            helper._TableHelper.CreateTableIndex(typeof(Tb_Order));
+            helper.TableHelper.CreateTableIndex(typeof(Tb_Order));
         }
     }
 }

@@ -789,7 +789,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
 
             helper.Insert(new Tb_Enum2IntTest { State = UserState.None });
             helper.Insert(new Tb_Enum2IntTest { State = UserState.Vip });
@@ -867,7 +867,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_BlobTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_BlobTest));
 
             var data = new byte[] { 0x01, 0x02, 0x03 };
             helper.Insert(new Tb_BlobTest { Name = "b1", Data = data });

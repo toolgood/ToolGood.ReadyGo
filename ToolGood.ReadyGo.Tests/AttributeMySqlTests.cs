@@ -11,8 +11,8 @@ namespace ToolGood.ReadyGo.Tests
         private static MySqlTestDb CreateTable()
         {
             var db = MySqlTestDb.Create();
-            db.Helper._TableHelper.DropTable(typeof(Tb_BlobTest));
-            db.Helper._TableHelper.TryCreateTable(typeof(Tb_BlobTest));
+            db.Helper.TableHelper.DropTable(typeof(Tb_BlobTest));
+            db.Helper.TableHelper.TryCreateTable(typeof(Tb_BlobTest));
             return db;
         }
 
@@ -93,8 +93,8 @@ namespace ToolGood.ReadyGo.Tests
         private static MySqlTestDb CreateTable()
         {
             var db = MySqlTestDb.Create();
-            db.Helper._TableHelper.DropTable(typeof(Tb_MoneyTest));
-            db.Helper._TableHelper.TryCreateTable(typeof(Tb_MoneyTest));
+            db.Helper.TableHelper.DropTable(typeof(Tb_MoneyTest));
+            db.Helper.TableHelper.TryCreateTable(typeof(Tb_MoneyTest));
             return db;
         }
 
@@ -142,8 +142,8 @@ namespace ToolGood.ReadyGo.Tests
         private static MySqlTestDb CreateTable()
         {
             var db = MySqlTestDb.Create();
-            db.Helper._TableHelper.DropTable(typeof(Tb_NumericArrayTest));
-            db.Helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+            db.Helper.TableHelper.DropTable(typeof(Tb_NumericArrayTest));
+            db.Helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
             return db;
         }
 

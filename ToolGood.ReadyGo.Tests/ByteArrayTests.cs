@@ -24,7 +24,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_BlobTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_BlobTest));
 
             var data = new byte[] { 0x00, 0x01, 0x02, 0xFF, 0x10, 0x7F, 0x80 };
             var item = new Tb_BlobTest { Name = "blob1", Data = data };
@@ -41,7 +41,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_BlobTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_BlobTest));
 
             var data = new byte[1024 * 100]; // 100KB
             new Random(42).NextBytes(data);
@@ -58,7 +58,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_BlobTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_BlobTest));
 
             var empty = new Tb_BlobTest { Name = "empty", Data = Array.Empty<byte>() };
             helper.Insert(empty);
@@ -78,7 +78,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_BlobTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_BlobTest));
 
             var item = new Tb_BlobTest { Name = "old", Data = new byte[] { 1, 2, 3 } };
             helper.Insert(item);
@@ -96,7 +96,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_BlobTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_BlobTest));
 
             var data = new byte[] { 0x11, 0x22, 0x33, 0x44 };
             var item = new Tb_BlobTest { Name = "async-blob", Data = data };

@@ -30,7 +30,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_StringListTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_StringListTest));
 
             var item = new Tb_StringListTest { Tags = null, Flags = null, Codes = null };
             helper.Insert(item);
@@ -51,7 +51,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_StringListTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_StringListTest));
 
             // 直接 SQL 插入 NULL，模拟历史数据
             helper.Execute("INSERT INTO Tb_StringListTest (Id, Tags, Flags, Codes) VALUES (@0, NULL, NULL, NULL)", 1);
@@ -68,7 +68,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_StringListTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_StringListTest));
 
             var item = new Tb_StringListTest {
                 Tags = new List<string> { "a", "b", "c" },
@@ -94,7 +94,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_StringListTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_StringListTest));
 
             var item = new Tb_StringListTest {
                 Tags = new List<string> { "a,b", @"c\d", "x" },
@@ -117,7 +117,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_StringListTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_StringListTest));
 
             var item = new Tb_StringListTest { Tags = new List<string>() };
             helper.Insert(item);

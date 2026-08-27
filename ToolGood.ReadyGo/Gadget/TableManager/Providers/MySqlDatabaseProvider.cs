@@ -26,6 +26,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         public override string GetTryCreateTable(Type type, bool withIndex = true)
         {
             var ti = TableInfo.FromType(type);
+            EnsureColumns(ti);
             var sql = "CREATE TABLE IF NOT EXISTS " + GetTableName(ti) + "(\r\n";
             foreach (var item in ti.Columns) {
                 sql += "    " + CreateColumn(ti, item) + ",\r\n";
@@ -144,9 +145,9 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         {
             var type = ci.PropertyType;
             var isRequired = ci.Required;
-            if (ci.IsSerializedAsInt) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
-            if (ci.IsSerializedAsLong) return CreateField(ti, ci, "bigint", ci.FieldLength, isRequired);
-            if (ci.IsSerializedAsString) return CreateField(ti, ci, GetText(ci), ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), false);
+            if (ci.SerializedAs == ColumnInfo.SerializedKind.Int) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
+            if (ci.SerializedAs == ColumnInfo.SerializedKind.Long) return CreateField(ti, ci, "bigint", ci.FieldLength, isRequired);
+            if (ci.SerializedAs == ColumnInfo.SerializedKind.String) return CreateField(ti, ci, GetText(ci), ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), false);
             if (type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
             if (type == typeof(string)) return CreateField(ti, ci, GetText(ci), ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), isRequired);
             if (type == typeof(Byte[]) || type == typeof(SByte[])

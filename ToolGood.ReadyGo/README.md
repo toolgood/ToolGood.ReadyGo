@@ -66,7 +66,7 @@ var helper = SqlHelperFactory.OpenAccessFile(filePath);        // 32 位
 ## 数据表操作
 
 ```csharp
-var table = helper._TableHelper;
+var table = helper.TableHelper;
 table.TryCreateTable(typeof(User));    // 表不存在则创建
 table.CreateTable(typeof(User));       // 创建表
 table.CreateTableIndex(typeof(User));  // 创建索引

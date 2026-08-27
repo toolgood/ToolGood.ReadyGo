@@ -33,7 +33,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
 
             var item = new Tb_Enum2IntTest { State = UserState.None, Extra = null };
             helper.Insert(item);
@@ -52,7 +52,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
 
             // 直接 SQL 插入 NULL，模拟历史数据
             helper.Execute("INSERT INTO Tb_Enum2IntTest (Id, State, Extra) VALUES (@0, 2, NULL)", 1);
@@ -68,7 +68,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
 
             var item = new Tb_Enum2IntTest { State = UserState.Vip, Extra = UserState.Normal };
             helper.Insert(item);

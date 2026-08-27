@@ -35,7 +35,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
 
             var item = new Tb_NumericArrayTest {
                 Floats = new[] { 1.5f, -2.25f, 3.125f },
@@ -59,7 +59,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
 
             var item = new Tb_NumericArrayTest {
                 Floats = new[] { 1f, 2f },
@@ -82,7 +82,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
 
             var item = new Tb_NumericArrayTest { Floats = null, ValueList = null };
             helper.Insert(item);
@@ -98,7 +98,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
 
             var arr = new float[] { 1.5f, -2.25f, 3.125f, 100f, 0.001f };   // 5 个元素
             var list = new List<float> { 0.5f, 1f };                        // 2 个元素
@@ -129,7 +129,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
 
             var doubles = new double[] { 1.5, -2.25, 3.141592653589793 };  // 3 个元素
             var ints = new List<int> { -1, 0, 1, 100 };                    // 4 个元素
@@ -202,7 +202,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayDefaultTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayDefaultTest));
 
             var item = new Tb_NumericArrayDefaultTest {
                 Floats = new[] { 1.5f, -2.25f, 3.125f },
@@ -248,7 +248,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayDefaultTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayDefaultTest));
 
             var item = new Tb_NumericArrayDefaultTest { Floats = null, IntList = null };
             helper.Insert(item);

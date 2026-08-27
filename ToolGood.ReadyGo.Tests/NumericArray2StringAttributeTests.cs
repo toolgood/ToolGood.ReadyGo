@@ -33,7 +33,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
 
             var item = new Tb_NumericArray2StringTest { Scores = null, Ratios = null, Prices = null, BigIds = null };
             helper.Insert(item);
@@ -55,7 +55,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
 
             // 直接 SQL 插入 NULL，模拟历史数据
             helper.Execute("INSERT INTO Tb_NumericArray2StringTest (Id, Scores, Ratios, Prices, BigIds) VALUES (@0, NULL, NULL, NULL, NULL)", 1);
@@ -73,7 +73,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
 
             var item = new Tb_NumericArray2StringTest {
                 Scores = new List<int> { 90, 85, 95 },
@@ -102,7 +102,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
 
             // 超过 double 精确表示范围的 long，文本存储保证不丢失精度
             var big = new[] { 9007199254740993L, long.MinValue, long.MaxValue };
@@ -119,7 +119,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
 
             var item = new Tb_NumericArray2StringTest { Scores = new List<int>() };
             helper.Insert(item);
@@ -137,7 +137,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArray2StringTest));
 
             var item = new Tb_NumericArray2StringTest {
                 Scores = new List<int> { 1, 2 },

@@ -35,7 +35,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_DateTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_DateTest));
 
             var birthDay = new DateTime(2026, 8, 22, 23, 59, 59, 999);
             var createTime = new DateTime(2026, 1, 1, 10, 30, 45, 123);
@@ -60,7 +60,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_DateTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_DateTest));
 
             // 模拟历史数据：数据库中存在 "yyyy-MM-dd HH:mm:ss" 格式的日期
             helper.Execute("INSERT INTO Tb_DateTest (Id, BirthDay, CreateTime) VALUES (@0, '1991-04-03 00:00:00', '2020-01-01 10:00:00')", 1);
@@ -75,7 +75,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_DateTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_DateTest));
 
             var item = new Tb_DateTest { BirthDay = new DateTime(2026, 1, 1, 8, 0, 0), CreateTime = DateTime.Now };
             helper.Insert(item);
@@ -93,7 +93,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_DateNullableTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_DateNullableTest));
 
             var item = new Tb_DateNullableTest { NullableDay = null };
             helper.Insert(item);
@@ -113,7 +113,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_DateNullableTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_DateNullableTest));
 
             // 直接 SQL 插入 NULL，模拟历史数据
             helper.Execute("INSERT INTO Tb_DateNullableTest (Id, NullableDay) VALUES (@0, NULL)", 1);
@@ -128,7 +128,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper._TableHelper.TryCreateTable(typeof(Tb_DateNullableTest));
+            helper.TableHelper.TryCreateTable(typeof(Tb_DateNullableTest));
 
             var item = new Tb_DateNullableTest { NullableDay = new DateTime(1991, 4, 3, 23, 59, 59) };
             helper.Insert(item);

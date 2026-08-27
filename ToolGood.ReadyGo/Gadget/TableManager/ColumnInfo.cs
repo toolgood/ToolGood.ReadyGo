@@ -60,33 +60,55 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         public bool IsLongText { get; internal set; }
 
         /// <summary>
-        /// 是否为序列化列（带 Serializer 的 SerializedColumnAttribute 子类，如 [DictionaryUintUint]）
+        /// 序列化列存储形态
         /// </summary>
-        public bool IsSerialized { get; internal set; }
+        public enum SerializedKind
+        {
+            /// <summary>
+            /// 非序列化列
+            /// </summary>
+            None,
+
+            /// <summary>
+            /// 序列化后保存为 int（[Numeric2Int] / [Date2Int] / [Enum2Int] / [Bool2Int]）
+            /// </summary>
+            Int,
+
+            /// <summary>
+            /// 序列化后保存为 long（[Numeric2Long] / [DateTime2Long] / [Enum2Long] / [DateTime2Timestamp]）
+            /// </summary>
+            Long,
+
+            /// <summary>
+            /// 序列化后保存为字符串（[Bool2String] / [Date2String] / [DateTime2String] / [NumericArray2String] / [StringArray2String]）
+            /// </summary>
+            String,
+
+            /// <summary>
+            /// 序列化后保存为二进制（BLOB/bytea 等），包括裸 [SerializedColumn] 与自定义带 Serializer 的序列化列
+            /// </summary>
+            Bytes,
+        }
 
         /// <summary>
-        /// 是否为序列化后保存为 int 的列（[Numeric2Int] / [Date2Int] / [Enum2Int] / [Bool2Int]，建表时保存为 int）
+        /// 是否为序列化列（声明了 SerializedColumnAttribute 或其子类；未指定 Serializer 时使用全局默认序列化器）
         /// </summary>
-        public bool IsSerializedAsInt { get; internal set; }
+        public bool IsSerialized => SerializedAs != SerializedKind.None;
 
         /// <summary>
-        /// 是否为序列化后保存为 long 的列（[Numeric2Long] / [DateTime2Long] / [Enum2Long] / [DateTime2Timestamp]，建表时保存为 long）
+        /// 序列化列的存储形态
         /// </summary>
-        public bool IsSerializedAsLong { get; internal set; }
-
-
-
-        /// <summary>
-        /// 是否为序列化后保存为 string 的列（[Bool2String] / [Date2String] / [DateTime2String] / [NumericArray2String] / [StringArray2String]，建表时保存为文本）
-        /// </summary>
-        public bool IsSerializedAsString { get; internal set; }
+        public SerializedKind SerializedAs { get; internal set; }
 
         internal static ColumnInfo FromProperty(PropertyInfo pi)
         {
             if (pi.CanRead == false || pi.CanWrite == false) return null;
-            var isSerialized = pi.GetCustomAttributes(typeof(SerializedColumnAttribute), true)
+            var serializedColumnAttributes = pi.GetCustomAttributes(typeof(SerializedColumnAttribute), true)
                 .OfType<SerializedColumnAttribute>()
-                .Any(a => a.Serializer != null);
+                .ToArray();
+            // 与 Core/ColumnInfoCreator 语义保持一致：声明了 SerializedColumnAttribute（含基类裸用）即视为序列化列，
+            // 未指定 Serializer 时使用全局默认序列化器（FastJsonColumnSerializer），不能仅凭 Serializer == null 静默丢弃该列
+            var isSerialized = serializedColumnAttributes.Length > 0;
             if (isSerialized == false && Types.IsAllowType(pi.PropertyType) == false) return null;
             var a = pi.GetCustomAttributes(typeof(IgnoreAttribute), true);
             if (a.Length > 0) return null;
@@ -95,20 +117,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
 
             ColumnInfo ci = new ColumnInfo {
                 PropertyType = pi.PropertyType,
-                IsSerialized = isSerialized,
-                IsSerializedAsInt = pi.GetCustomAttributes(typeof(Numeric2IntAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(Date2IntAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(Enum2IntAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(Bool2IntAttribute), true).Length > 0,
-                IsSerializedAsLong = pi.GetCustomAttributes(typeof(Numeric2LongAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(DateTime2LongAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(Enum2LongAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(DateTime2TimestampAttribute), true).Length > 0,
-                IsSerializedAsString = pi.GetCustomAttributes(typeof(Bool2StringAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(Date2StringAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(DateTime2StringAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(NumericArray2StringAttribute), true).Length > 0
-                    || pi.GetCustomAttributes(typeof(StringArray2StringAttribute), true).Length > 0
+                SerializedAs = GetSerializedKind(pi, serializedColumnAttributes),
             };
 
             a = pi.GetCustomAttributes(typeof(ColumnAttribute), true);
@@ -138,6 +147,27 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
             }
             ci.PropertyType = Types.GetBaseType(ci.PropertyType);
             return ci;
+        }
+
+        /// <summary>
+        /// 根据声明序列化特性，确定序列化列的存储形态
+        /// </summary>
+        private static SerializedKind GetSerializedKind(PropertyInfo pi, SerializedColumnAttribute[] serializedColumnAttributes)
+        {
+            if (serializedColumnAttributes.Length == 0) return SerializedKind.None;
+            if (HasAny(pi, typeof(Numeric2IntAttribute), typeof(Date2IntAttribute), typeof(Enum2IntAttribute), typeof(Bool2IntAttribute))) return SerializedKind.Int;
+            if (HasAny(pi, typeof(Numeric2LongAttribute), typeof(DateTime2LongAttribute), typeof(Enum2LongAttribute), typeof(DateTime2TimestampAttribute))) return SerializedKind.Long;
+            if (HasAny(pi, typeof(Bool2StringAttribute), typeof(Date2StringAttribute), typeof(DateTime2StringAttribute), typeof(NumericArray2StringAttribute), typeof(StringArray2StringAttribute))) return SerializedKind.String;
+            // 裸 [SerializedColumn] 或自定义带 Serializer 的序列化列，默认按二进制存储
+            return SerializedKind.Bytes;
+        }
+
+        private static bool HasAny(PropertyInfo pi, params Type[] attributeTypes)
+        {
+            foreach (var attributeType in attributeTypes) {
+                if (pi.GetCustomAttributes(attributeType, true).Length > 0) return true;
+            }
+            return false;
         }
     }
 }

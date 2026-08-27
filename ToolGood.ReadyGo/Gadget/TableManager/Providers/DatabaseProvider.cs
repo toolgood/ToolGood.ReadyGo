@@ -121,6 +121,17 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
             return name?.Replace("]", "]]") ?? string.Empty;
         }
 
+        /// <summary>
+        /// 确保表结构存在可映射列，避免生成无效的建表 SQL
+        /// </summary>
+        /// <param name="ti">表结构信息</param>
+        protected static void EnsureColumns(TableInfo ti)
+        {
+            if (ti.Columns == null || ti.Columns.Count == 0) {
+                throw new InvalidOperationException($"类型 {ti.TableName} 没有可映射的列，无法生成建表 SQL。");
+            }
+        }
+
         internal static DatabaseProvider Resolve(SqlType type)
         {
             switch (type) {
