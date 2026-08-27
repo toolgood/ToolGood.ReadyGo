@@ -828,7 +828,7 @@ namespace ToolGood.ReadyGo.Tests
             var item = new Tb_NumericArrayTest { Floats = new[] { 1f, 2f } };
             helper.Insert(item);
 
-            Assert.Equal(1, await helper.UpdateBy_Async<Tb_NumericArrayTest>(
+            Assert.Equal(1, await helper.Update_Async<Tb_NumericArrayTest>(
                 new { Floats = new[] { 9.5f, 8.25f } },
                 new { Id = item.Id }));
 
@@ -880,14 +880,14 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
-        public async Task ObjectCondition_UpdateBy_Async_Works()
+        public async Task ObjectCondition_Update_Async_Works()
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
             var s = new SimpleUser { Name = "甲", Age = 20 };
             helper.Insert(s);
 
-            Assert.Equal(1, await helper.UpdateBy_Async<SimpleUser>(
+            Assert.Equal(1, await helper.Update_Async<SimpleUser>(
                 new { Name = "甲改", Age = 99 },
                 new { Id = s.Id },
                 new[] { "Age" }));

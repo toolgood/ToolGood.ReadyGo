@@ -278,7 +278,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件：整数主键 / 字符串主键或 SQL 片段 / 条件对象 / null</param>
         /// <returns>匹配条件的实体，无结果时返回 null</returns>
-        public Task<T> FirstOrDefaultBy_Async<T>(object condition) where T : class
+        public Task<T> FirstOrDefault_Async<T>(object condition) where T : class
         {
             if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
                 return SingleOrDefaultById_Async<T>(primaryKey);
@@ -295,7 +295,7 @@ namespace ToolGood.ReadyGo
         /// <param name="offset">位移</param>
         /// <param name="condition">条件</param>
         /// <returns>查询结果集合</returns>
-        public Task<List<T>> SelectBy_Async<T>(int limit, int offset, object condition) where T : class
+        public Task<List<T>> Select_Async<T>(int limit, int offset, object condition) where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return Select_Async<T>(limit, offset, sql, args);
@@ -308,7 +308,7 @@ namespace ToolGood.ReadyGo
         /// <param name="limit">个数</param>
         /// <param name="condition">条件</param>
         /// <returns>查询结果集合</returns>
-        public Task<List<T>> SelectBy_Async<T>(int limit, object condition) where T : class
+        public Task<List<T>> Select_Async<T>(int limit, object condition) where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return Select_Async<T>(limit, sql, args);
@@ -320,7 +320,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
         /// <returns>查询结果集合</returns>
-        public Task<List<T>> SelectBy_Async<T>(object condition) where T : class
+        public Task<List<T>> Select_Async<T>(object condition) where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return Select_Async<T>(sql, args);
@@ -334,7 +334,7 @@ namespace ToolGood.ReadyGo
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns>查询结果集合</returns>
-        public Task<List<T>> SelectPageBy_Async<T>(int page, int itemsPerPage, object condition)
+        public Task<List<T>> SelectPage_Async<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
@@ -349,7 +349,7 @@ namespace ToolGood.ReadyGo
         /// <param name="itemsPerPage">每页个数</param>
         /// <param name="condition">条件</param>
         /// <returns>分页结果</returns>
-        public Task<Page<T>> PageBy_Async<T>(int page, int itemsPerPage, object condition)
+        public Task<Page<T>> Page_Async<T>(int page, int itemsPerPage, object condition)
             where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
@@ -364,7 +364,7 @@ namespace ToolGood.ReadyGo
         /// <param name="set">要更新的字段与值对象</param>
         /// <param name="condition">条件</param>
         /// <returns>受影响的行数</returns>
-        public Task<int> UpdateBy_Async<T>(object set, object condition) where T : class
+        public Task<int> Update_Async<T>(object set, object condition) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateSetWhere<T>(set, condition, null);
             return Update_Async<T>(sql, args);
@@ -379,7 +379,7 @@ namespace ToolGood.ReadyGo
         /// <param name="condition">条件</param>
         /// <param name="columns">仅更新这些字段名</param>
         /// <returns>受影响的行数</returns>
-        public Task<int> UpdateBy_Async<T>(object set, object condition, IEnumerable<string> columns) where T : class
+        public Task<int> Update_Async<T>(object set, object condition, IEnumerable<string> columns) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateColumnsWhere<T>(set, condition, columns);
             return Update_Async<T>(sql, args);
@@ -391,7 +391,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
         /// <returns>受影响的行数</returns>
-        public Task<int> DeleteBy_Async<T>(object condition) where T : class
+        public Task<int> Delete_Async<T>(object condition) where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return Delete_Async<T>(sql, args);
@@ -403,7 +403,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
         /// <returns>记录数量</returns>
-        public Task<int> CountBy_Async<T>(object condition) where T : class
+        public Task<int> Count_Async<T>(object condition) where T : class
         {
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return Count_Async<T>(sql, args);
@@ -415,7 +415,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
         /// <returns>存在返回 true，否则返回 false</returns>
-        public async Task<bool> ExistsBy_Async<T>(object condition) where T : class
+        public async Task<bool> Exists_Async<T>(object condition) where T : class
         {
             if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
                 var (sql, args) = BuildPrimaryKeyExistsQuery<T>(primaryKey);
