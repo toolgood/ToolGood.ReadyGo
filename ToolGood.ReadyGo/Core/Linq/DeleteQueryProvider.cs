@@ -465,7 +465,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IAsyncDeleteQueryProvider<T> WhereIn<TValue>(string column, IEnumerable<TValue> values)
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
-            SqlConditionHelper.ApplyWhereIn(WhereSql, column, values);
+            SqlConditionHelper.ApplyWhereIn(WhereSql, column, values, _database.DatabaseType);
             return this;
         }
 
@@ -479,7 +479,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IAsyncDeleteQueryProvider<T> WhereIn<TValue>(Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
-            SqlConditionHelper.ApplyWhereIn(WhereSql, SqlConditionHelper.GetFieldName(field), values);
+            SqlConditionHelper.ApplyWhereIn(WhereSql, SqlConditionHelper.GetFieldName(field), values, _database.DatabaseType);
             return this;
         }
 
@@ -519,7 +519,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} LIKE @0", $"%{pattern}%");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"%{SqlConditionHelper.EscapeLikePattern(pattern)}%");
             return this;
         }
 
@@ -571,7 +571,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IAsyncDeleteQueryProvider<T> WhereNotIn<TValue>(string column, IEnumerable<TValue> values)
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
-            SqlConditionHelper.ApplyWhereNotIn(WhereSql, column, values);
+            SqlConditionHelper.ApplyWhereNotIn(WhereSql, column, values, _database.DatabaseType);
             return this;
         }
 
@@ -585,7 +585,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         public IAsyncDeleteQueryProvider<T> WhereNotIn<TValue>(Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
         {
             if (field == null) throw new ArgumentNullException(nameof(field));
-            SqlConditionHelper.ApplyWhereNotIn(WhereSql, SqlConditionHelper.GetFieldName(field), values);
+            SqlConditionHelper.ApplyWhereNotIn(WhereSql, SqlConditionHelper.GetFieldName(field), values, _database.DatabaseType);
             return this;
         }
 
@@ -625,7 +625,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} LIKE @0", $"{pattern}%");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"{SqlConditionHelper.EscapeLikePattern(pattern)}%");
             return this;
         }
 
@@ -677,7 +677,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} LIKE @0", $"%{pattern}");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"%{SqlConditionHelper.EscapeLikePattern(pattern)}");
             return this;
         }
 
@@ -729,7 +729,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} NOT LIKE @0", $"%{pattern}%");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} NOT LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"%{SqlConditionHelper.EscapeLikePattern(pattern)}%");
             return this;
         }
 
@@ -781,7 +781,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} NOT LIKE @0", $"{pattern}%");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} NOT LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"{SqlConditionHelper.EscapeLikePattern(pattern)}%");
             return this;
         }
 
@@ -833,7 +833,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} NOT LIKE @0", $"%{pattern}");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} NOT LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"%{SqlConditionHelper.EscapeLikePattern(pattern)}");
             return this;
         }
 

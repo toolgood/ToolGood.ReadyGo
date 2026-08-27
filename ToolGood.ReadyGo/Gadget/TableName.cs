@@ -44,6 +44,11 @@ namespace ToolGood.ReadyGo.Gadget
             return true;
         }
 
+        /// <summary>
+        /// 根据字段名获取转义后的 SQL 标识符；支持忽略下划线的模糊匹配。
+        /// </summary>
+        /// <param name="fieldName">字段名。</param>
+        /// <returns>转义后的列名，未匹配到时返回 null。</returns>
         protected string GetEscapedColumnName(string fieldName)
         {
             if (_pocoData.Columns.ContainsKey(fieldName)) {

@@ -23,6 +23,11 @@ namespace ToolGood.ReadyGo.NPoco
         /// <returns>分页查询语句。</returns>
         string BuildPageQuery(long skip, long take, SQLParts parts, ref object[] args);
         /// <summary>
+        /// 获取 LIKE ... ESCAPE 子句中反斜杠的 SQL 字面量写法。
+        /// 部分数据库（如 MySQL）的字符串字面量内反斜杠是转义字符，需写为双反斜杠。
+        /// </summary>
+        string LikeEscapeLiteral { get; }
+        /// <summary>
         /// 转义 SQL 标识符。
         /// </summary>
         /// <param name="str">待转义的标识符。</param>

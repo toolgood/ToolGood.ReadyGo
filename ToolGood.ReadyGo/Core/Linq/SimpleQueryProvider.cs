@@ -417,6 +417,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             if (page <= 0) page = 1;
             if (pageSize <= 0) pageSize = 10;
             int offset = (page - 1) * pageSize;
+            ThrowIfOneToMany();
 
             // Setup the paged result
             var result = new Page<T>();
@@ -486,6 +487,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             if (page <= 0) page = 1;
             if (pageSize <= 0) pageSize = 10;
             int offset = (page - 1) * pageSize;
+            ThrowIfOneToMany();
 
             // Setup the paged result
             var result = new Page<T2>();
@@ -595,7 +597,10 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return this;
         }
 
-        private void ThrowIfOneToMany()
+        /// <summary>
+        /// 若当前为 One to many 查询则抛出异常（分页不受支持）。
+        /// </summary>
+        protected void ThrowIfOneToMany()
         {
             if (_listExpression != null)
             {
@@ -945,6 +950,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             if (page <= 0) page = 1;
             if (pageSize <= 0) pageSize = 10;
             int offset = (page - 1) * pageSize;
+            ThrowIfOneToMany();
 
             // Setup the paged result
             var result = new Page<T>();
@@ -1009,6 +1015,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             if (page <= 0) page = 1;
             if (pageSize <= 0) pageSize = 10;
             int offset = (page - 1) * pageSize;
+            ThrowIfOneToMany();
 
             // Setup the paged result
             var result = new Page<T2>();
@@ -1451,7 +1458,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} LIKE @0", $"%{pattern}%");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"%{SqlConditionHelper.EscapeLikePattern(pattern)}%");
             return this;
         }
 
@@ -1557,7 +1564,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} LIKE @0", $"{pattern}%");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"{SqlConditionHelper.EscapeLikePattern(pattern)}%");
             return this;
         }
 
@@ -1609,7 +1616,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} LIKE @0", $"%{pattern}");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"%{SqlConditionHelper.EscapeLikePattern(pattern)}");
             return this;
         }
 
@@ -1661,7 +1668,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} NOT LIKE @0", $"%{pattern}%");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} NOT LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"%{SqlConditionHelper.EscapeLikePattern(pattern)}%");
             return this;
         }
 
@@ -1713,7 +1720,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} NOT LIKE @0", $"{pattern}%");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} NOT LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"{SqlConditionHelper.EscapeLikePattern(pattern)}%");
             return this;
         }
 
@@ -1765,7 +1772,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
             if (string.IsNullOrEmpty(pattern)) return this;
-            WhereSql($"{column} NOT LIKE @0", $"%{pattern}");
+            WhereSql($"{SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType)} NOT LIKE @0 ESCAPE {_database.DatabaseType.LikeEscapeLiteral}", $"%{SqlConditionHelper.EscapeLikePattern(pattern)}");
             return this;
         }
 
@@ -1825,13 +1832,14 @@ namespace ToolGood.ReadyGo.NPoco.Linq
                 WhereSql("1 = 2");
                 return;
             }
+            var escapedColumn = SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType);
             if (list.Count == 1) {
-                WhereSql($"{column} = @0", list[0]);
+                WhereSql($"{escapedColumn} = @0", list[0]);
                 return;
             }
 
             var sb = new StringBuilder();
-            sb.Append(column).Append(" IN (");
+            sb.Append(escapedColumn).Append(" IN (");
             for (int i = 0; i < list.Count; i++) {
                 if (i > 0) sb.Append(", ");
                 sb.Append("@").Append(i);
@@ -1848,13 +1856,14 @@ namespace ToolGood.ReadyGo.NPoco.Linq
                 WhereSql("1 = 1");
                 return;
             }
+            var escapedColumn = SqlConditionHelper.EscapeColumnName(column, _database.DatabaseType);
             if (list.Count == 1) {
-                WhereSql($"{column} <> @0", list[0]);
+                WhereSql($"{escapedColumn} <> @0", list[0]);
                 return;
             }
 
             var sb = new StringBuilder();
-            sb.Append(column).Append(" NOT IN (");
+            sb.Append(escapedColumn).Append(" NOT IN (");
             for (int i = 0; i < list.Count; i++) {
                 if (i > 0) sb.Append(", ");
                 sb.Append("@").Append(i);

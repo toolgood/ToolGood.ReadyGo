@@ -33,6 +33,11 @@ namespace ToolGood.ReadyGo.NPoco.DatabaseTypes
         }
 
         /// <summary>
+        /// MySQL 字符串字面量中反斜杠为转义字符，需双写反斜杠表示一个反斜杠。
+        /// </summary>
+        public override string LikeEscapeLiteral { get { return "'\\\\'"; } }
+
+        /// <summary>
         /// 使用反引号包裹 SQL 标识符。
         /// </summary>
         /// <param name="str">标识符。</param>

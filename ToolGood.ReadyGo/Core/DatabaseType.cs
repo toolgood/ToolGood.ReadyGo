@@ -218,10 +218,15 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         /// <summary>
-        /// Escape and arbitary SQL identifier into a format suitable for the associated database provider
+        /// 获取 LIKE ... ESCAPE 子句中反斜杠的 SQL 字面量写法，默认单反斜杠。
         /// </summary>
-        /// <param name="str">The SQL identifier to be escaped</param>
-        /// <returns>The escaped identifier</returns>
+        public virtual string LikeEscapeLiteral { get { return "'\\'"; } }
+
+        /// <summary>
+        /// 转义 SQL 标识符。
+        /// </summary>
+        /// <param name="str">SQL 标识符。</param>
+        /// <returns>转义后的标识符。</returns>
         public virtual string EscapeSqlIdentifier(string str)
         {
             return string.Format("[{0}]", str);

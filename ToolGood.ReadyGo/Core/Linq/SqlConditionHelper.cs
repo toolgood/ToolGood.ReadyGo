@@ -31,7 +31,8 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="whereSql">原生 SQL 条件回调。</param>
         /// <param name="column">列名。</param>
         /// <param name="values">值集合。</param>
-        internal static void ApplyWhereIn<TValue>(Action<string, object[]> whereSql, string column, IEnumerable<TValue> values)
+        /// <param name="databaseType">数据库类型，用于转义列名。</param>
+        internal static void ApplyWhereIn<TValue>(Action<string, object[]> whereSql, string column, IEnumerable<TValue> values, IDatabaseType databaseType)
         {
             if (values == null) throw new ArgumentNullException(nameof(values));
             var list = values as IReadOnlyList<TValue> ?? values.ToList();
@@ -39,13 +40,14 @@ namespace ToolGood.ReadyGo.NPoco.Linq
                 whereSql("1 = 2", Array.Empty<object>());
                 return;
             }
+            var escapedColumn = EscapeColumnName(column, databaseType);
             if (list.Count == 1) {
-                whereSql($"{column} = @0", new object[] { list[0] });
+                whereSql($"{escapedColumn} = @0", new object[] { list[0] });
                 return;
             }
 
             var sb = new StringBuilder();
-            sb.Append(column).Append(" IN (");
+            sb.Append(escapedColumn).Append(" IN (");
             for (int i = 0; i < list.Count; i++) {
                 if (i > 0) sb.Append(", ");
                 sb.Append("@").Append(i);
@@ -61,7 +63,8 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="whereSql">原生 SQL 条件回调。</param>
         /// <param name="column">列名。</param>
         /// <param name="values">值集合。</param>
-        internal static void ApplyWhereNotIn<TValue>(Action<string, object[]> whereSql, string column, IEnumerable<TValue> values)
+        /// <param name="databaseType">数据库类型，用于转义列名。</param>
+        internal static void ApplyWhereNotIn<TValue>(Action<string, object[]> whereSql, string column, IEnumerable<TValue> values, IDatabaseType databaseType)
         {
             if (values == null) throw new ArgumentNullException(nameof(values));
             var list = values as IReadOnlyList<TValue> ?? values.ToList();
@@ -69,13 +72,14 @@ namespace ToolGood.ReadyGo.NPoco.Linq
                 whereSql("1 = 1", Array.Empty<object>());
                 return;
             }
+            var escapedColumn = EscapeColumnName(column, databaseType);
             if (list.Count == 1) {
-                whereSql($"{column} <> @0", new object[] { list[0] });
+                whereSql($"{escapedColumn} <> @0", new object[] { list[0] });
                 return;
             }
 
             var sb = new StringBuilder();
-            sb.Append(column).Append(" NOT IN (");
+            sb.Append(escapedColumn).Append(" NOT IN (");
             for (int i = 0; i < list.Count; i++) {
                 if (i > 0) sb.Append(", ");
                 sb.Append("@").Append(i);
@@ -95,6 +99,49 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             if (body is MemberExpression member)
                 return member.Member.Name;
             throw new ArgumentException($"无法从表达式获取列名：{expression}");
+        }
+
+        /// <summary>
+        /// 转义列名，按 "." 拆分并转义每个标识符，防止 SQL 注入。
+        /// </summary>
+        internal static string EscapeColumnName(string column, IDatabaseType databaseType)
+        {
+            if (string.IsNullOrEmpty(column)) return column;
+
+            var sb = new StringBuilder();
+            int start = 0;
+            for (int i = 0; i <= column.Length; i++) {
+                if (i == column.Length || column[i] == '.') {
+                    sb.Append(EscapeIdentifier(column.Substring(start, i - start), databaseType));
+                    if (i < column.Length) sb.Append('.');
+                    start = i + 1;
+                }
+            }
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// 转义 LIKE 模式中的通配符（%、_、\），配合 ESCAPE '\' 使用。
+        /// </summary>
+        internal static string EscapeLikePattern(string pattern)
+        {
+            if (string.IsNullOrEmpty(pattern)) return pattern;
+            return pattern.Replace(@"\", @"\\").Replace("%", @"\%").Replace("_", @"\_");
+        }
+
+        private static string EscapeIdentifier(string identifier, IDatabaseType databaseType)
+        {
+            if (string.IsNullOrEmpty(identifier)) return identifier;
+            if (identifier.Length >= 2) {
+                char first = identifier[0];
+                char last = identifier[identifier.Length - 1];
+                if ((first == '[' && last == ']') ||
+                    (first == '`' && last == '`') ||
+                    (first == '"' && last == '"')) {
+                    return identifier;
+                }
+            }
+            return databaseType.EscapeSqlIdentifier(identifier);
         }
     }
 }
