@@ -176,6 +176,8 @@ namespace ToolGood.ReadyGo.NPoco.Linq
                 switch (member.ReferenceType)
                 {
                     case ReferenceType.Foreign:
+                    case ReferenceType.OneToOne:
+                    case ReferenceType.Many:
                         break;
                     case ReferenceType.None:
                     {
@@ -186,6 +188,8 @@ namespace ToolGood.ReadyGo.NPoco.Linq
                         }
                         break;
                     }
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(member.ReferenceType), member.ReferenceType, "未知的引用类型。");
                 }
             }
         }
@@ -231,10 +235,12 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             {
                 var pocoMember = members
                     .Where(x => x.ReferenceType != ReferenceType.None)
-                    .Single(x => x.MemberInfoData.MemberInfo.Name == memberInfo.Name);
+                    .SingleOrDefault(x => x.MemberInfoData.MemberInfo.Name == memberInfo.Name)
+                    ?? throw new ArgumentException($"类型 {_pocoData.Type.Name} 中不存在引用成员 \"{memberInfo.Name}\"。", nameof(expression));
 
                 var pocoColumn1 = pocoMember.PocoColumn;
-                var pocoMember2 = pocoMember.PocoMemberChildren.Single(x => x.Name == pocoMember.ReferenceMemberName);
+                var pocoMember2 = pocoMember.PocoMemberChildren.SingleOrDefault(x => x.Name == pocoMember.ReferenceMemberName)
+                    ?? throw new ArgumentException($"引用成员 \"{pocoMember.Name}\" 中不存在外键成员 \"{pocoMember.ReferenceMemberName}\"。", nameof(expression));
                 var pocoColumn2 = pocoMember2.PocoColumn;
 
                 pocoColumn2.TableInfo.AutoAlias = tableAlias ?? pocoColumn2.TableInfo.AutoAlias;

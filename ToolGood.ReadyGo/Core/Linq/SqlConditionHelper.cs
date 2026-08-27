@@ -89,16 +89,22 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
 
         /// <summary>
-        /// 从字段表达式获取列名。
+        /// 从字段表达式获取列名，支持嵌套成员访问（如 x => x.User.Name 返回 "User.Name"）。
         /// </summary>
         internal static string GetFieldName(LambdaExpression expression)
         {
             var body = expression.Body;
             if (body is UnaryExpression unary && unary.NodeType == ExpressionType.Convert)
                 body = unary.Operand;
-            if (body is MemberExpression member)
-                return member.Member.Name;
-            throw new ArgumentException($"无法从表达式获取列名：{expression}");
+
+            var names = new Stack<string>();
+            while (body is MemberExpression member) {
+                names.Push(member.Member.Name);
+                body = member.Expression;
+            }
+            if (names.Count == 0)
+                throw new ArgumentException($"无法从表达式获取列名：{expression}");
+            return string.Join(".", names);
         }
 
         /// <summary>
