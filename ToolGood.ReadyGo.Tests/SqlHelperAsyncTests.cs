@@ -257,7 +257,7 @@ namespace ToolGood.ReadyGo.Tests
             var loaded = await helper.FirstOrDefault_Async<SimpleUser>(s.Id);
             var cond = new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age };
 
-            Assert.Equal(1, await helper.Update_Async<SimpleUser>(new SimpleUser { Age = 100 }, cond, new[] { "Id", "Name" }));
+            Assert.Equal(1, await helper.UpdateBy_Async<SimpleUser>(new SimpleUser { Age = 100 }, cond, new[] { "Id", "Name" }));
             Assert.Equal(100, (await helper.FirstOrDefault_Async<SimpleUser>(s.Id)).Age);
         }
 
@@ -600,7 +600,7 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal("甲", list[0].UserName);
 
             // Update 的 set/where 均使用映射列名
-            Assert.Equal(1, await helper.Update_Async<MappedUser>(new { UserAge = 30 }, new { UserName = "乙" }));
+            Assert.Equal(1, await helper.UpdateBy_Async<MappedUser>(new { UserAge = 30 }, new { UserName = "乙" }));
             Assert.Equal(30, (await helper.FirstOrDefault_Async<MappedUser>(new { UserName = "乙" })).UserAge);
         }
 
@@ -634,7 +634,7 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal(1, await helper.Delete_Async<SimpleUser>(cond));
 
             // Update 的 condition 为 string 时同样自动补 WHERE
-            Assert.Equal(1, await helper.Update_Async<SimpleUser>(new { Age = 100 }, "Name = '乙'"));
+            Assert.Equal(1, await helper.UpdateBy_Async<SimpleUser>(new { Age = 100 }, "Name = '乙'"));
             Assert.Equal(1, await helper.Count_Async<SimpleUser>("WHERE Age = 100"));
         }
 
@@ -661,7 +661,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
 
             // set 属性为集合值无法生成 UPDATE SQL，应抛出明确异常
-            await Assert.ThrowsAsync<ArgumentException>(() => helper.Update_Async<SimpleUser>(
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.UpdateBy_Async<SimpleUser>(
                 new { Ages = new List<int> { 1, 2 } }, new { Id = 1 }));
         }
 
@@ -673,7 +673,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
 
             // set 为空对象没有可更新字段，应抛出明确异常
-            await Assert.ThrowsAsync<ArgumentException>(() => helper.Update_Async<SimpleUser>(new { }, new { Id = 1 }));
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.UpdateBy_Async<SimpleUser>(new { }, new { Id = 1 }));
         }
 
         [Fact]
@@ -685,8 +685,8 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
 
             // 空对象 / null 条件无法生成 WHERE，禁止无条件的 UPDATE，避免意外全表更新
-            await Assert.ThrowsAsync<ArgumentException>(() => helper.Update_Async<SimpleUser>(new { Age = 99 }, new { }));
-            await Assert.ThrowsAsync<ArgumentException>(() => helper.Update_Async<SimpleUser>(new { Age = 99 }, null));
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.UpdateBy_Async<SimpleUser>(new { Age = 99 }, new { }));
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.UpdateBy_Async<SimpleUser>(new { Age = 99 }, null));
             Assert.Equal(2, await helper.Count_Async<SimpleUser>());
         }
 
@@ -807,8 +807,8 @@ namespace ToolGood.ReadyGo.Tests
             var helper = db.Helper;
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
 
-            // set 为 null 应抛出明确异常（显式转为 object，避免命中 string 重载）
-            await Assert.ThrowsAsync<ArgumentException>(() => helper.Update_Async<SimpleUser>((object)null, new { Id = 1 }));
+            // set 为 null 应抛出明确异常（UpdateBy 家族没有 string 重载，null 直接命中条件重载）
+            await Assert.ThrowsAsync<ArgumentException>(() => helper.UpdateBy_Async<SimpleUser>(null, new { Id = 1 }));
         }
 
         [Fact]
@@ -887,7 +887,7 @@ namespace ToolGood.ReadyGo.Tests
 
             // 拿完整实体作 set：主键 Id 应被自动排除，只更新其他字段
             var set = new UserInfo { Id = 999, Name = "甲改", Age = 30, CreateTime = DateTime.Now };
-            Assert.Equal(1, await helper.Update_Async<UserInfo>(set, new { Id = u.Id }));
+            Assert.Equal(1, await helper.UpdateBy_Async<UserInfo>(set, new { Id = u.Id }));
 
             var loaded = await helper.FirstOrDefault_Async<UserInfo>(u.Id);
             Assert.NotNull(loaded);

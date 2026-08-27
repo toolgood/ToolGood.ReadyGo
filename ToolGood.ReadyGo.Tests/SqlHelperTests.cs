@@ -358,7 +358,7 @@ namespace ToolGood.ReadyGo.Tests
             var loaded = helper.FirstOrDefault<SimpleUser>(s.Id);
             var cond = new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age };
 
-            Assert.Equal(1, helper.Update<SimpleUser>(new SimpleUser { Age = 99 }, cond, new[] { "Id", "Name" }));
+            Assert.Equal(1, helper.UpdateBy<SimpleUser>(new SimpleUser { Age = 99 }, cond, new[] { "Id", "Name" }));
             Assert.Equal(99, helper.FirstOrDefault<SimpleUser>(s.Id).Age);
         }
 
@@ -396,7 +396,7 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal("甲", list[0].UserName);
 
             // Update 的 set/where 均使用映射列名
-            Assert.Equal(1, helper.Update<MappedUser>(new { UserAge = 30 }, new { UserName = "乙" }));
+            Assert.Equal(1, helper.UpdateBy<MappedUser>(new { UserAge = 30 }, new { UserName = "乙" }));
             Assert.Equal(30, helper.FirstOrDefault<MappedUser>(new { UserName = "乙" }).UserAge);
 
             // 值类型主键查询不受影响
@@ -434,7 +434,7 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal(1, helper.Count<SimpleUser>());
 
             // Update 的 condition 为 string 时同样自动补 WHERE
-            Assert.Equal(1, helper.Update<SimpleUser>(new { Age = 100 }, "Name = '乙'"));
+            Assert.Equal(1, helper.UpdateBy<SimpleUser>(new { Age = 100 }, "Name = '乙'"));
             Assert.Equal(1, helper.Count<SimpleUser>("WHERE Age = 100"));
         }
 
@@ -467,7 +467,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
 
             // set 属性为集合值无法生成 UPDATE SQL，应抛出明确异常
-            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>(
+            Assert.Throws<ArgumentException>(() => helper.UpdateBy<SimpleUser>(
                 new { Ages = new List<int> { 1, 2 } }, new { Id = 1 }));
         }
 
@@ -479,7 +479,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
 
             // set 为空对象没有可更新字段，应抛出明确异常
-            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>(new { }, new { Id = 1 }));
+            Assert.Throws<ArgumentException>(() => helper.UpdateBy<SimpleUser>(new { }, new { Id = 1 }));
         }
 
         [Fact]
@@ -491,9 +491,9 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
 
             // 空对象 / null / 空字符串条件无法生成 WHERE，禁止无条件的 UPDATE，避免意外全表更新
-            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>(new { Age = 99 }, new { }));
-            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>(new { Age = 99 }, null));
-            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>(new { Age = 99 }, "  "));
+            Assert.Throws<ArgumentException>(() => helper.UpdateBy<SimpleUser>(new { Age = 99 }, new { }));
+            Assert.Throws<ArgumentException>(() => helper.UpdateBy<SimpleUser>(new { Age = 99 }, null));
+            Assert.Throws<ArgumentException>(() => helper.UpdateBy<SimpleUser>(new { Age = 99 }, "  "));
             Assert.Equal(2, helper.Count<SimpleUser>());
         }
 
@@ -510,7 +510,7 @@ namespace ToolGood.ReadyGo.Tests
             var id2 = users[1].Id;
 
             // 整数条件 = 按主键更新，且 set 参数与主键参数的占位符不能错位
-            Assert.Equal(1, helper.Update<SimpleUser>(new { Age = 99 }, id1));
+            Assert.Equal(1, helper.UpdateBy<SimpleUser>(new { Age = 99 }, id1));
             Assert.Equal(99, helper.FirstOrDefault<SimpleUser>(id1).Age);
             Assert.Equal(20, helper.FirstOrDefault<SimpleUser>(id2).Age);
         }
@@ -578,8 +578,8 @@ namespace ToolGood.ReadyGo.Tests
             var helper = db.Helper;
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
 
-            // set 为 null 应抛出明确异常（显式转为 object，避免命中 string 重载）
-            Assert.Throws<ArgumentException>(() => helper.Update<SimpleUser>((object)null, new { Id = 1 }));
+            // set 为 null 应抛出明确异常（UpdateBy 家族没有 string 重载，null 直接命中条件重载）
+            Assert.Throws<ArgumentException>(() => helper.UpdateBy<SimpleUser>(null, new { Id = 1 }));
         }
 
         [Fact]
@@ -701,7 +701,7 @@ namespace ToolGood.ReadyGo.Tests
 
             // 拿完整实体作 set：主键 Id 应被自动排除，只更新其他字段
             var set = new UserInfo { Id = 999, Name = "甲改", Age = 30, CreateTime = DateTime.Now };
-            Assert.Equal(1, helper.Update<UserInfo>(set, new { Id = u.Id }));
+            Assert.Equal(1, helper.UpdateBy<UserInfo>(set, new { Id = u.Id }));
 
             var loaded = helper.FirstOrDefault<UserInfo>(u.Id);
             Assert.NotNull(loaded);
@@ -711,12 +711,12 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
-        public void Update_NullSet_HitsStringOverload()
+        public void Update_Null_HitsStringOverload()
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
 
-            // null 首参命中 string 重载（更具体），sql 为空 → ArgumentNullException
+            // 条件式更新已改名 UpdateBy；Update 家族中 null 首参唯一命中 string SQL 重载，sql 为空 → ArgumentNullException
             Assert.Throws<ArgumentNullException>(() => helper.Update<SimpleUser>(null, new { Id = 1 }));
         }
 
@@ -765,7 +765,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(item);
 
             // set 中的 float[] 应经列序列化器转为 byte[] 后更新，而不是抛出"不支持集合值"异常
-            Assert.Equal(1, helper.Update<Tb_NumericArrayTest>(
+            Assert.Equal(1, helper.UpdateBy<Tb_NumericArrayTest>(
                 new { Floats = new[] { 9.5f, -3.125f, 0.001f } },
                 new { Id = item.Id }));
 
@@ -789,7 +789,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(item);
 
             // 未加 [NumericArray2Bytes] 特性时 float[] 默认也按 byte[]（BLOB）保存，对象式 set 应同样支持
-            Assert.Equal(1, helper.Update<Tb_NumericArrayDefaultTest>(
+            Assert.Equal(1, helper.UpdateBy<Tb_NumericArrayDefaultTest>(
                 new { Floats = new[] { 4f, 5f, 6f } },
                 new { Id = item.Id }));
 
@@ -808,7 +808,7 @@ namespace ToolGood.ReadyGo.Tests
             var item = new Tb_NumericArrayTest { ValueList = new List<float> { 1f } };
             helper.Insert(item);
 
-            Assert.Equal(1, helper.Update<Tb_NumericArrayTest>(
+            Assert.Equal(1, helper.UpdateBy<Tb_NumericArrayTest>(
                 new { ValueList = new List<float> { 7f, 6f, 5f } },
                 new { Id = item.Id }));
 
@@ -827,7 +827,7 @@ namespace ToolGood.ReadyGo.Tests
             var item = new Tb_NumericArrayTest { Floats = new[] { 1f, 2f } };
             helper.Insert(item);
 
-            Assert.Equal(1, await helper.Update_Async<Tb_NumericArrayTest>(
+            Assert.Equal(1, await helper.UpdateBy_Async<Tb_NumericArrayTest>(
                 new { Floats = new[] { 9.5f, 8.25f } },
                 new { Id = item.Id }));
 
@@ -866,7 +866,7 @@ namespace ToolGood.ReadyGo.Tests
             var u = db.NewUser("甲", 20, 10.5m, false);
 
             // 仅更新 Age，其余字段保持原值
-            Assert.Equal(1, helper.UpdateColumns<UserInfo>(
+            Assert.Equal(1, helper.UpdateByColumns<UserInfo>(
                 new { Name = "甲改", Age = 99, Money = 999m },
                 new { Id = u.Id },
                 new[] { "Age" }));
@@ -886,7 +886,7 @@ namespace ToolGood.ReadyGo.Tests
             var s = new SimpleUser { Name = "甲", Age = 20 };
             helper.Insert(s);
 
-            Assert.Equal(1, await helper.UpdateColumns_Async<SimpleUser>(
+            Assert.Equal(1, await helper.UpdateByColumns_Async<SimpleUser>(
                 new { Name = "甲改", Age = 99 },
                 new { Id = s.Id },
                 new[] { "Age" }));
@@ -908,7 +908,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(item);
 
             // 仅更新 Floats，ValueList 保持原值
-            Assert.Equal(1, helper.UpdateColumns<Tb_NumericArrayTest>(
+            Assert.Equal(1, helper.UpdateByColumns<Tb_NumericArrayTest>(
                 new { Floats = new[] { 9.5f, 8.25f }, ValueList = new List<float> { 7f } },
                 new { Id = item.Id },
                 new[] { "Floats" }));
@@ -928,7 +928,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(s);
 
             // 忽略字段：Name 被忽略 → 保持原值，其余字段照常更新
-            Assert.Equal(1, helper.Update<SimpleUser>(
+            Assert.Equal(1, helper.UpdateBy<SimpleUser>(
                 new SimpleUser { Name = "甲改", Age = 99 },
                 new { Id = s.Id },
                 new[] { "Name" }));
@@ -947,7 +947,7 @@ namespace ToolGood.ReadyGo.Tests
             var u = db.NewUser("甲", 20);
 
             // 未指定任何更新字段 → 无可用字段，应抛出明确异常
-            Assert.Throws<ArgumentException>(() => helper.UpdateColumns<UserInfo>(
+            Assert.Throws<ArgumentException>(() => helper.UpdateByColumns<UserInfo>(
                 new { Name = "甲改" }, new { Id = u.Id }, new string[0]));
         }
 

@@ -461,7 +461,7 @@ var snapshots = users.Select(x => helper.StartSnapshot(x)).ToList();
 helper.UpdateList(users, snapshots);
 
 // 使用对象条件更新
-helper.Update<User>(new { NickName = "新昵称" }, new { Id = 1 });
+helper.UpdateBy<User>(new { NickName = "新昵称" }, new { Id = 1 });
 ```
 
 ### 删除
@@ -542,7 +542,7 @@ helper.Update<User>("Set [Name]=@0 WHERE [Id]=@1", "Test", 1);
 ```csharp
 var user = helper.FirstOrDefault<User>(new { Id = 1 });
 var users = helper.Select<User>(new { UserType = 1, State = true });
-helper.Update<User>(new { NickName = "新昵称" }, new { Id = 1 });   // set 对象, 条件对象
+helper.UpdateBy<User>(new { NickName = "新昵称" }, new { Id = 1 });   // set 对象, 条件对象
 helper.Delete<User>(new { Id = 1 });
 var count = helper.Count<User>(new { UserType = 1 });
 var exists = helper.Exists<User>(new { UserName = "Ted" });

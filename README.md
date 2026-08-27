@@ -212,7 +212,7 @@ public User FindUser(int userId, string userName, string nickName)
 ```csharp
 var user = helper.FirstOrDefault<User>(new { Id = 1 });
 var users = helper.Select<User>(new { UserType = 1, State = true });
-helper.Update<User>(new { NickName = "新昵称" }, new { Id = 1 });   // set 对象, 条件对象
+helper.UpdateBy<User>(new { NickName = "新昵称" }, new { Id = 1 });   // set 对象, 条件对象
 helper.Delete<User>(new { Id = 1 });
 var count = helper.Count<User>(new { UserType = 1 });
 var exists = helper.Exists<User>(new { UserName = "Ted" });

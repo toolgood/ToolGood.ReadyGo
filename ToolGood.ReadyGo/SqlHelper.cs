@@ -849,7 +849,7 @@ namespace ToolGood.ReadyGo
         /// <param name="sql">SQL 语句</param>
         /// <param name="args">SQL 参数</param>
         /// <returns>受影响的行数</returns>
-        public int Update<T>(string sql, params object[] args)
+        public int Update<T>(string sql, params object[] args) where T : class
         {
             if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException("sql is empty.");
 

@@ -154,13 +154,12 @@ namespace ToolGood.ReadyGo
         /// <summary>
         /// 根据条件更新对象。set 对象中的主键列会被自动忽略，避免意外修改主键。
         /// condition 无法解析出 WHERE 条件（null、空字符串、空对象等）时会抛出异常，防止意外全表更新。
-        /// 注意：第一个参数为 string 时会命中 <see cref="Update{T}(string, object[])"/> SQL 重载。
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="set">要更新的字段与值对象</param>
         /// <param name="condition">条件</param>
         /// <returns>受影响的行数</returns>
-        public int Update<T>(object set, object condition) where T : class
+        public int UpdateBy<T>(object set, object condition) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateSetWhere<T>(set, condition, null);
             return Update<T>(sql, args);
@@ -175,7 +174,7 @@ namespace ToolGood.ReadyGo
         /// <param name="condition">条件</param>
         /// <param name="ignoreFields">忽略的字段名集合</param>
         /// <returns>受影响的行数</returns>
-        public int Update<T>(object set, object condition, IEnumerable<string> ignoreFields) where T : class
+        public int UpdateBy<T>(object set, object condition, IEnumerable<string> ignoreFields) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateSetWhere<T>(set, condition, ignoreFields);
             return Update<T>(sql, args);
@@ -190,7 +189,7 @@ namespace ToolGood.ReadyGo
         /// <param name="condition">条件</param>
         /// <param name="columns">仅更新这些字段名</param>
         /// <returns>受影响的行数</returns>
-        public int UpdateColumns<T>(object set, object condition, IEnumerable<string> columns) where T : class
+        public int UpdateByColumns<T>(object set, object condition, IEnumerable<string> columns) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateColumnsWhere<T>(set, condition, columns);
             return Update<T>(sql, args);
@@ -380,7 +379,7 @@ namespace ToolGood.ReadyGo
         /// <param name="set">要更新的字段与值对象</param>
         /// <param name="condition">条件</param>
         /// <returns>受影响的行数</returns>
-        public Task<int> Update_Async<T>(object set, object condition) where T : class
+        public Task<int> UpdateBy_Async<T>(object set, object condition) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateSetWhere<T>(set, condition, null);
             return Update_Async<T>(sql, args);
@@ -395,7 +394,7 @@ namespace ToolGood.ReadyGo
         /// <param name="condition">条件</param>
         /// <param name="ignoreFields">忽略的字段名集合</param>
         /// <returns>受影响的行数</returns>
-        public Task<int> Update_Async<T>(object set, object condition, IEnumerable<string> ignoreFields) where T : class
+        public Task<int> UpdateBy_Async<T>(object set, object condition, IEnumerable<string> ignoreFields) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateSetWhere<T>(set, condition, ignoreFields);
             return Update_Async<T>(sql, args);
@@ -410,7 +409,7 @@ namespace ToolGood.ReadyGo
         /// <param name="condition">条件</param>
         /// <param name="columns">仅更新这些字段名</param>
         /// <returns>受影响的行数</returns>
-        public Task<int> UpdateColumns_Async<T>(object set, object condition, IEnumerable<string> columns) where T : class
+        public Task<int> UpdateByColumns_Async<T>(object set, object condition, IEnumerable<string> columns) where T : class
         {
             var (sql, args) = ConditionObjectToUpdateColumnsWhere<T>(set, condition, columns);
             return Update_Async<T>(sql, args);
