@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ToolGood.ReadyGo;
@@ -1267,5 +1268,455 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         {
             return (IQueryProvider<T>)base.From(builder);
         }
+
+        #region 动态条件便捷方法
+
+        /// <summary>
+        /// 条件成立时添加 Where 条件。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="predicate">筛选条件表达式。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhere(bool condition, Expression<Func<T, bool>> predicate)
+        {
+            if (condition && predicate != null)
+                Where(predicate);
+            return this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Order By。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueOrderBy(bool condition, Expression<Func<T, object>> column)
+        {
+            if (condition && column != null)
+                OrderBy(column);
+            return this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Order By Descending。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">排序字段表达式。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueOrderByDescending(bool condition, Expression<Func<T, object>> column)
+        {
+            if (condition && column != null)
+                OrderByDescending(column);
+            return this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Limit（行数需大于 0）。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="rows">返回行数。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueLimit(bool condition, int rows)
+        {
+            if (condition && rows > 0)
+                Limit(rows);
+            return this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Limit（跳过 skip 行，取 rows 行）。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="skip">跳过的行数。</param>
+        /// <param name="rows">返回行数。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueLimit(bool condition, int skip, int rows)
+        {
+            if (condition && rows > 0)
+                Limit(skip, rows);
+            return this;
+        }
+
+        /// <summary>
+        /// Where Exists（自动添加 "EXISTS(" 与 "SELECT * " 前缀）。
+        /// </summary>
+        /// <param name="sql">子查询 SQL 或表名/过滤条件。</param>
+        /// <param name="args">SQL 参数。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereExists(string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException(nameof(sql));
+            WhereSql(BuildExistsSql(sql), args);
+            return this;
+        }
+
+        /// <summary>
+        /// Where Not Exists（自动添加 "NOT EXISTS(" 前缀）。
+        /// </summary>
+        /// <param name="sql">子查询 SQL 或表名/过滤条件。</param>
+        /// <param name="args">SQL 参数。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereNotExists(string sql, params object[] args)
+        {
+            if (string.IsNullOrEmpty(sql)) throw new ArgumentNullException(nameof(sql));
+            WhereSql("NOT " + BuildExistsSql(sql), args);
+            return this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Exists。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="sql">子查询 SQL 或表名/过滤条件。</param>
+        /// <param name="args">SQL 参数。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereExists(bool condition, string sql, params object[] args)
+        {
+            return condition ? WhereExists(sql, args) : this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Not Exists。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="sql">子查询 SQL 或表名/过滤条件。</param>
+        /// <param name="args">SQL 参数。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereNotExists(bool condition, string sql, params object[] args)
+        {
+            return condition ? WhereNotExists(sql, args) : this;
+        }
+
+        /// <summary>
+        /// Where {column} In (values)。空集合生成 1=2，单值生成等值判断。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="column">列名（可带别名，如 "t0.Age"）。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereIn<TValue>(string column, IEnumerable<TValue> values)
+        {
+            if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
+            ApplyWhereIn(column, values);
+            return this;
+        }
+
+        /// <summary>
+        /// Where {field} In (values)。空集合生成 1=2，单值生成等值判断。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="field">列表达式，如 x =&gt; x.Age。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereIn<TValue>(Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
+        {
+            if (field == null) throw new ArgumentNullException(nameof(field));
+            ApplyWhereIn(GetFieldName(field), values);
+            return this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where In（字符串列名版本）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereIn<TValue>(bool condition, string column, IEnumerable<TValue> values)
+        {
+            return condition ? WhereIn(column, values) : this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where In（表达式版本）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereIn<TValue>(bool condition, Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
+        {
+            return condition ? WhereIn(field, values) : this;
+        }
+
+        /// <summary>
+        /// Where {column} Like '%pattern%'。
+        /// </summary>
+        /// <param name="column">列名（可带别名，如 "t0.Name"）。</param>
+        /// <param name="pattern">匹配内容（自动加前后 %）。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereLike(string column, string pattern)
+        {
+            if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
+            if (string.IsNullOrEmpty(pattern)) return this;
+            WhereSql($"{column} LIKE @0", $"%{pattern}%");
+            return this;
+        }
+
+        /// <summary>
+        /// Where {field} Like '%pattern%'。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="field">列表达式，如 x =&gt; x.Name。</param>
+        /// <param name="pattern">匹配内容（自动加前后 %）。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereLike<TValue>(Expression<Func<T, TValue>> field, string pattern)
+        {
+            if (field == null) throw new ArgumentNullException(nameof(field));
+            return WhereLike(GetFieldName(field), pattern);
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Like（字符串列名版本）。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereLike(bool condition, string column, string pattern)
+        {
+            return condition ? WhereLike(column, pattern) : this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Like（表达式版本）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereLike<TValue>(bool condition, Expression<Func<T, TValue>> field, string pattern)
+        {
+            return condition ? WhereLike(field, pattern) : this;
+        }
+
+        /// <summary>
+        /// Where {column} Not In (values)。空集合生成 1=1，单值生成不等于判断。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="column">列名（可带别名，如 "t0.Age"）。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereNotIn<TValue>(string column, IEnumerable<TValue> values)
+        {
+            if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
+            ApplyWhereNotIn(column, values);
+            return this;
+        }
+
+        /// <summary>
+        /// Where {field} Not In (values)。空集合生成 1=1，单值生成不等于判断。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="field">列表达式，如 x =&gt; x.Age。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereNotIn<TValue>(Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
+        {
+            if (field == null) throw new ArgumentNullException(nameof(field));
+            ApplyWhereNotIn(GetFieldName(field), values);
+            return this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Not In（字符串列名版本）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereNotIn<TValue>(bool condition, string column, IEnumerable<TValue> values)
+        {
+            return condition ? WhereNotIn(column, values) : this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Not In（表达式版本）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="values">值集合。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereNotIn<TValue>(bool condition, Expression<Func<T, TValue>> field, IEnumerable<TValue> values)
+        {
+            return condition ? WhereNotIn(field, values) : this;
+        }
+
+        /// <summary>
+        /// Where {column} Like '%pattern'（右匹配）。
+        /// </summary>
+        /// <param name="column">列名（可带别名，如 "t0.Name"）。</param>
+        /// <param name="pattern">匹配内容（自动加前缀 %）。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereLikeStart(string column, string pattern)
+        {
+            if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
+            if (string.IsNullOrEmpty(pattern)) return this;
+            WhereSql($"{column} LIKE @0", $"%{pattern}");
+            return this;
+        }
+
+        /// <summary>
+        /// Where {field} Like '%pattern'（右匹配）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereLikeStart<TValue>(Expression<Func<T, TValue>> field, string pattern)
+        {
+            if (field == null) throw new ArgumentNullException(nameof(field));
+            return WhereLikeStart(GetFieldName(field), pattern);
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Like Start（字符串列名版本）。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereLikeStart(bool condition, string column, string pattern)
+        {
+            return condition ? WhereLikeStart(column, pattern) : this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Like Start（表达式版本）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereLikeStart<TValue>(bool condition, Expression<Func<T, TValue>> field, string pattern)
+        {
+            return condition ? WhereLikeStart(field, pattern) : this;
+        }
+
+        /// <summary>
+        /// Where {column} Like 'pattern%'（左匹配）。
+        /// </summary>
+        /// <param name="column">列名（可带别名，如 "t0.Name"）。</param>
+        /// <param name="pattern">匹配内容（自动加后缀 %）。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereLikeEnd(string column, string pattern)
+        {
+            if (string.IsNullOrEmpty(column)) throw new ArgumentNullException(nameof(column));
+            if (string.IsNullOrEmpty(pattern)) return this;
+            WhereSql($"{column} LIKE @0", $"{pattern}%");
+            return this;
+        }
+
+        /// <summary>
+        /// Where {field} Like 'pattern%'（左匹配）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> WhereLikeEnd<TValue>(Expression<Func<T, TValue>> field, string pattern)
+        {
+            if (field == null) throw new ArgumentNullException(nameof(field));
+            return WhereLikeEnd(GetFieldName(field), pattern);
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Like End（字符串列名版本）。
+        /// </summary>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="column">列名。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereLikeEnd(bool condition, string column, string pattern)
+        {
+            return condition ? WhereLikeEnd(column, pattern) : this;
+        }
+
+        /// <summary>
+        /// 条件成立时添加 Where Like End（表达式版本）。
+        /// </summary>
+        /// <typeparam name="TValue">值类型。</typeparam>
+        /// <param name="condition">条件开关，为 true 时生效。</param>
+        /// <param name="field">列表达式。</param>
+        /// <param name="pattern">匹配内容。</param>
+        /// <returns>当前查询器。</returns>
+        public IQueryProvider<T> IfTrueWhereLikeEnd<TValue>(bool condition, Expression<Func<T, TValue>> field, string pattern)
+        {
+            return condition ? WhereLikeEnd(field, pattern) : this;
+        }
+
+        private static string BuildExistsSql(string sql)
+        {
+            sql = sql.TrimStart();
+            if (sql.StartsWith("EXISTS", StringComparison.OrdinalIgnoreCase))
+                return sql;
+            if (sql.StartsWith("SELECT", StringComparison.OrdinalIgnoreCase))
+                return $"EXISTS({sql})";
+            return $"EXISTS(SELECT * {sql})";
+        }
+
+        private void ApplyWhereIn<TValue>(string column, IEnumerable<TValue> values)
+        {
+            if (values == null) throw new ArgumentNullException(nameof(values));
+            var list = values as IReadOnlyList<TValue> ?? values.ToList();
+            if (list.Count == 0) {
+                WhereSql("1 = 2");
+                return;
+            }
+            if (list.Count == 1) {
+                WhereSql($"{column} = @0", list[0]);
+                return;
+            }
+
+            var sb = new StringBuilder();
+            sb.Append(column).Append(" IN (");
+            for (int i = 0; i < list.Count; i++) {
+                if (i > 0) sb.Append(", ");
+                sb.Append("@").Append(i);
+            }
+            sb.Append(")");
+            WhereSql(sb.ToString(), list.Cast<object>().ToArray());
+        }
+
+        private void ApplyWhereNotIn<TValue>(string column, IEnumerable<TValue> values)
+        {
+            if (values == null) throw new ArgumentNullException(nameof(values));
+            var list = values as IReadOnlyList<TValue> ?? values.ToList();
+            if (list.Count == 0) {
+                WhereSql("1 = 1");
+                return;
+            }
+            if (list.Count == 1) {
+                WhereSql($"{column} <> @0", list[0]);
+                return;
+            }
+
+            var sb = new StringBuilder();
+            sb.Append(column).Append(" NOT IN (");
+            for (int i = 0; i < list.Count; i++) {
+                if (i > 0) sb.Append(", ");
+                sb.Append("@").Append(i);
+            }
+            sb.Append(")");
+            WhereSql(sb.ToString(), list.Cast<object>().ToArray());
+        }
+
+        private static string GetFieldName(LambdaExpression expression)
+        {
+            var body = expression.Body;
+            if (body is UnaryExpression unary && unary.NodeType == ExpressionType.Convert)
+                body = unary.Operand;
+            if (body is MemberExpression member)
+                return member.Member.Name;
+            throw new ArgumentException($"无法从表达式获取列名：{expression}");
+        }
+
+        #endregion 动态条件便捷方法
     }
 }

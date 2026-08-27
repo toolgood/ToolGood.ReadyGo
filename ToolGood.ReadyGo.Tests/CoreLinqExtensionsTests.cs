@@ -8,7 +8,7 @@ using NPocoDatabase = ToolGood.ReadyGo.NPoco.Database;
 namespace ToolGood.ReadyGo.Tests
 {
     /// <summary>
-    /// Core/Linq QueryProviderDynamicExtensions 扩展方法测试（SQLite）
+    /// Core/Linq IQueryProvider<T> 动态条件方法测试（SQLite）
     /// </summary>
     public class CoreLinqExtensionsTests : IDisposable
     {
