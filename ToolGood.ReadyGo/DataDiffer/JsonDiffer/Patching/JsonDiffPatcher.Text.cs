@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using ToolGood.ReadyGo.JsonDiffPatch.Diffs;
 using System.Text.Json.Nodes;
-using DiffMatchPatch;
 using System;
+using ToolGood.ReadyGo.JsonDiffPatch.DiffMatchPatch;
 
 namespace ToolGood.ReadyGo.JsonDiffPatch
 {

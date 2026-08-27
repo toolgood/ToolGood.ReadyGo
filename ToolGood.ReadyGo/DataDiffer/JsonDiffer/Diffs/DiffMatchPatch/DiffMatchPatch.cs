@@ -31,7 +31,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace DiffMatchPatch
+namespace ToolGood.ReadyGo.JsonDiffPatch.DiffMatchPatch
 {
     internal static class CompatibilityExtensions
     {
