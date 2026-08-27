@@ -78,4 +78,18 @@ namespace ToolGood.ReadyGo.Tests
         [Column("Age")]
         public int Age { get; set; }
     }
+
+    /// <summary>
+    /// float 列条件测试用：验证 where 中 float[] 作为条件集合（生成 IN 子句）。
+    /// </summary>
+    [Table("Tb_FloatCondTest")]
+    [PrimaryKey("Id")]
+    public class Tb_FloatCondTest
+    {
+        [Column("Id")]
+        public int Id { get; set; }
+
+        [Column("Score")]
+        public float Score { get; set; }
+    }
 }

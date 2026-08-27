@@ -779,7 +779,14 @@ namespace ToolGood.ReadyGo
                     }
                 } else {
                     if (value is IEnumerable && !(value is string) && !(value is byte[])) {
-                        throw new ArgumentException($"set 对象属性 '{pi.Name}' 不支持集合值，无法生成 UPDATE SQL。");
+                        // 集合值先尝试按列序列化器转换（如 float[] 默认按 byte[] 保存、数值/字符串数组按文本保存），转换失败再报错
+                        var pocoColumn = GetPocoColumn(pocoData, pi.Name);
+                        if (pocoColumn != null && pocoColumn.SerializedColumn) {
+                            value = (pocoColumn.ColumnSerializer ?? db.Mappers.ColumnSerializer).Serialize(value);
+                        }
+                        if (value is IEnumerable && !(value is string) && !(value is byte[])) {
+                            throw new ArgumentException($"set 对象属性 '{pi.Name}' 不支持集合值，无法生成 UPDATE SQL。");
+                        }
                     }
                     stringBuilder.Append(escapedColumn);
                     stringBuilder.Append('=');
@@ -826,6 +833,29 @@ namespace ToolGood.ReadyGo
                 return dict;
             });
             return map.TryGetValue(propertyName, out var columnName) ? columnName : null;
+        }
+
+        /// <summary>
+        /// 每个 PocoData 缓存的"属性名 → PocoColumn"映射，用于获取列的序列化器等映射信息。
+        /// </summary>
+        private static readonly ConcurrentDictionary<PocoData, IReadOnlyDictionary<string, PocoColumn>> _pocoColumnCache = new ConcurrentDictionary<PocoData, IReadOnlyDictionary<string, PocoColumn>>();
+
+        /// <summary>
+        /// 根据属性名解析对应的 PocoColumn（含列序列化器信息）；找不到映射时返回 null。
+        /// </summary>
+        private static PocoColumn GetPocoColumn(PocoData pocoData, string propertyName)
+        {
+            if (pocoData == null) { return null; }
+            var map = _pocoColumnCache.GetOrAdd(pocoData, pd => {
+                var dict = new Dictionary<string, PocoColumn>(StringComparer.OrdinalIgnoreCase);
+                foreach (var member in pd.Members) {
+                    if (member.PocoColumn != null && member.ReferenceType == ReferenceType.None) {
+                        dict[member.Name] = member.PocoColumn;
+                    }
+                }
+                return dict;
+            });
+            return map.TryGetValue(propertyName, out var pocoColumn) ? pocoColumn : null;
         }
 
         /// <summary>

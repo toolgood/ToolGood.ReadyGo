@@ -752,6 +752,110 @@ namespace ToolGood.ReadyGo.Tests
 
         #endregion
 
+        #region 对象条件 float[] 更新
+
+        [Fact]
+        public void ObjectCondition_Update_SetFloatArray_Works()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+
+            var item = new Tb_NumericArrayTest { Floats = new[] { 1f, 2f } };
+            helper.Insert(item);
+
+            // set 中的 float[] 应经列序列化器转为 byte[] 后更新，而不是抛出"不支持集合值"异常
+            Assert.Equal(1, helper.Update<Tb_NumericArrayTest>(
+                new { Floats = new[] { 9.5f, -3.125f, 0.001f } },
+                new { Id = item.Id }));
+
+            var loaded = helper.FirstOrDefault<Tb_NumericArrayTest>(item.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(new[] { 9.5f, -3.125f, 0.001f }, loaded.Floats);
+
+            // 数据库中实际以 byte[] 存储：前 4 字节元素个数 + 每元素 4 字节
+            var raw = helper.ExecuteScalar<byte[]>("SELECT Floats FROM Tb_NumericArrayTest WHERE Id = @0", item.Id);
+            Assert.Equal(4 + 3 * 4, raw.Length);
+        }
+
+        [Fact]
+        public void ObjectCondition_Update_SetFloatArray_DefaultType_Works()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayDefaultTest));
+
+            var item = new Tb_NumericArrayDefaultTest { Floats = new[] { 1f, 2f } };
+            helper.Insert(item);
+
+            // 未加 [NumericArray2Bytes] 特性时 float[] 默认也按 byte[]（BLOB）保存，对象式 set 应同样支持
+            Assert.Equal(1, helper.Update<Tb_NumericArrayDefaultTest>(
+                new { Floats = new[] { 4f, 5f, 6f } },
+                new { Id = item.Id }));
+
+            var loaded = helper.FirstOrDefault<Tb_NumericArrayDefaultTest>(item.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(new[] { 4f, 5f, 6f }, loaded.Floats);
+        }
+
+        [Fact]
+        public void ObjectCondition_Update_SetFloatList_Works()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+
+            var item = new Tb_NumericArrayTest { ValueList = new List<float> { 1f } };
+            helper.Insert(item);
+
+            Assert.Equal(1, helper.Update<Tb_NumericArrayTest>(
+                new { ValueList = new List<float> { 7f, 6f, 5f } },
+                new { Id = item.Id }));
+
+            var loaded = helper.FirstOrDefault<Tb_NumericArrayTest>(item.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(new List<float> { 7f, 6f, 5f }, loaded.ValueList);
+        }
+
+        [Fact]
+        public async Task ObjectCondition_Update_Async_SetFloatArray_Works()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+
+            var item = new Tb_NumericArrayTest { Floats = new[] { 1f, 2f } };
+            helper.Insert(item);
+
+            Assert.Equal(1, await helper.Update_Async<Tb_NumericArrayTest>(
+                new { Floats = new[] { 9.5f, 8.25f } },
+                new { Id = item.Id }));
+
+            var loaded = helper.FirstOrDefault<Tb_NumericArrayTest>(item.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(new[] { 9.5f, 8.25f }, loaded.Floats);
+        }
+
+        [Fact]
+        public void ObjectCondition_Where_FloatArray_UsesIn()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_FloatCondTest));
+
+            helper.Insert(new Tb_FloatCondTest { Score = 1.5f });
+            helper.Insert(new Tb_FloatCondTest { Score = 2.5f });
+            helper.Insert(new Tb_FloatCondTest { Score = 9.9f });
+
+            // where 中 float[] 作为条件集合 → WHERE Score IN (@0, @1)
+            var list = helper.Select<Tb_FloatCondTest>(new { Score = new float[] { 1.5f, 2.5f } });
+            Assert.Equal(2, list.Count);
+            Assert.Contains(list, x => x.Score == 1.5f);
+            Assert.Contains(list, x => x.Score == 2.5f);
+        }
+
+        #endregion
+
         #region SQL_* 系列
 
         [Fact]
