@@ -5,6 +5,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// <summary>
     /// 复合映射标签：用于将嵌套对象的属性展平映射到同一张表的列。
     /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class)]
     public class ComplexMappingAttribute : Attribute
     {
         /// <summary>

@@ -5,7 +5,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// <summary>
     /// 默认值特征
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class DefaultValueAttribute : Attribute
     {
         /// <summary>

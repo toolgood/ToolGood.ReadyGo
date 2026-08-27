@@ -5,6 +5,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// <summary>
     /// 非空标签
     /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class RequiredAttribute : Attribute
     {
         /// <summary>

@@ -5,6 +5,7 @@ namespace ToolGood.ReadyGo.Attributes
     /// <summary>
     /// 别名标签：用于为属性或字段指定查询时的别名。
     /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
     public class AliasAttribute : Attribute
     {
         /// <summary>

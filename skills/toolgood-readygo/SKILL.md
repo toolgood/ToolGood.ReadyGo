@@ -376,12 +376,6 @@ TEXT 类型列。
 
 - `DefaultValueAttribute(string defaultstring)`
 
-### 预定义长度便捷特性
-
-以下特性继承 `FieldLengthAttribute`，无需参数，直接指定长度：
-
-`PhoneLength`(20)、`UserNameLength`(20)、`PasswrodLength`(32)、`CommentLength`(500)、`GuidLength`(40)、`UrlLength`(200)、`TitleNameLength`(100)、`ShortNameLength`(50)、`IpLength`(46)、`UserAgentLength`(250)、`EmailLength`(50)、`TagsLength`(500)、`MacAddressLength`(18)、`ErrorMessageLength`(200)、`ParentIdsLength`(250)。
-
 ## 数据库连接
 
 ### 基本连接

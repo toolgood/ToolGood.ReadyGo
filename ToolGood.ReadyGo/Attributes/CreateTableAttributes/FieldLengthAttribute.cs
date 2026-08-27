@@ -3,16 +3,44 @@ using System;
 namespace ToolGood.ReadyGo.Attributes
 {
     /// <summary>
+    /// 文本列类型
+    /// </summary>
+    public enum FieldTextType
+    {
+        /// <summary>
+        /// 非文本（普通长度列）
+        /// </summary>
+        None = 0,
+
+        /// <summary>
+        /// 文本
+        /// </summary>
+        Text = 1,
+
+        /// <summary>
+        /// 中等文本
+        /// </summary>
+        MediumText = 2,
+
+        /// <summary>
+        /// 长文本
+        /// </summary>
+        LongText = 3,
+    }
+
+    /// <summary>
     /// 列长度
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class FieldLengthAttribute : Attribute
     {
         /// <summary>
-        /// 列长度
+        /// 文本列长度（供 Text/MediumText/LongText 使用）
         /// </summary>
         protected FieldLengthAttribute()
-        { IsText = true; }
+        {
+            TextType = FieldTextType.Text;
+        }
 
         /// <summary>
         /// 最大长度
@@ -20,8 +48,10 @@ namespace ToolGood.ReadyGo.Attributes
         /// <param name="length">长度</param>
         public FieldLengthAttribute(int length)
         {
-            IsText = false;
-            FieldLength = length.ToString();
+            if (length <= 0) {
+                throw new ArgumentOutOfRangeException(nameof(length), "length 必须大于 0");
+            }
+            Length = length;
         }
 
         /// <summary>
@@ -31,35 +61,58 @@ namespace ToolGood.ReadyGo.Attributes
         /// <param name="pointLength">小数位数</param>
         public FieldLengthAttribute(int length, int pointLength)
         {
-            IsText = false;
-            FieldLength = length.ToString() + "," + pointLength.ToString();
+            if (length <= 0) {
+                throw new ArgumentOutOfRangeException(nameof(length), "length 必须大于 0");
+            }
+            if (pointLength < 0) {
+                throw new ArgumentOutOfRangeException(nameof(pointLength), "pointLength 不能为负数");
+            }
+            Length = length;
+            PointLength = pointLength;
         }
 
         /// <summary>
-        /// 是否TEXT
+        /// 列长度（未设置时为 0）
         /// </summary>
-        public bool IsText;
+        public int Length { get; }
 
         /// <summary>
-        /// 是否MediumText
+        /// 小数位数（仅 decimal 适用，未设置时为 null）
         /// </summary>
-        public bool IsMediumText;
+        public int? PointLength { get; }
 
         /// <summary>
-        /// 是否LongText
+        /// 文本列类型
         /// </summary>
-        public bool IsLongText;
+        public FieldTextType TextType { get; protected set; }
+
+        /// <summary>
+        /// 是否为文本列
+        /// </summary>
+        public bool IsText => TextType != FieldTextType.None;
+
+        /// <summary>
+        /// 是否为中等文本列
+        /// </summary>
+        public bool IsMediumText => TextType == FieldTextType.MediumText || TextType == FieldTextType.LongText;
+
+        /// <summary>
+        /// 是否为长文本列
+        /// </summary>
+        public bool IsLongText => TextType == FieldTextType.LongText;
 
         /// <summary>
         /// 字段长度定义（长度，或 长度,小数位数）
         /// </summary>
-        public string FieldLength;
+        public string FieldLength => Length == 0
+            ? null
+            : PointLength.HasValue ? $"{Length},{PointLength}" : Length.ToString();
     }
 
     /// <summary>
     /// 文本
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class TextAttribute : FieldLengthAttribute
     {
         /// <summary>
@@ -67,235 +120,37 @@ namespace ToolGood.ReadyGo.Attributes
         /// </summary>
         public TextAttribute() : base()
         {
-            IsText = true;
+            TextType = FieldTextType.Text;
         }
     }
 
     /// <summary>
-    /// 文本
+    /// 中等文本
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class MediumTextAttribute : FieldLengthAttribute
     {
         /// <summary>
-        /// 文本类型
+        /// 中等文本类型
         /// </summary>
         public MediumTextAttribute() : base()
         {
-            IsText = true;
-            IsMediumText = true;
+            TextType = FieldTextType.MediumText;
         }
     }
 
     /// <summary>
-    /// 文本
+    /// 长文本
     /// </summary>
-    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class LongTextAttribute : FieldLengthAttribute
     {
         /// <summary>
-        /// 文本类型
+        /// 长文本类型
         /// </summary>
         public LongTextAttribute() : base()
         {
-            IsText = true;
-            IsMediumText = true;
-            IsLongText = true;
-        }
-    }
-
-    /// <summary>
-    /// 手机长度 20位
-    /// </summary>
-    public class PhoneLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// 文本类型
-        /// </summary>
-        public PhoneLengthAttribute() : base(20)
-        {
-        }
-    }
-
-    /// <summary>
-    /// 用户名长度 20位
-    /// </summary>
-    public class UserNameLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// 用户名长度 20位
-        /// </summary>
-        public UserNameLengthAttribute() : base(20)
-        {
-        }
-    }
-
-    /// <summary>
-    /// 密码长度 32位
-    /// </summary>
-    public class PasswrodLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// 密码长度 32位
-        /// </summary>
-        public PasswrodLengthAttribute() : base(32)
-        {
-        }
-    }
-
-    /// <summary>
-    /// 注释长度 500位
-    /// </summary>
-    public class CommentLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// 注释长度 500位
-        /// </summary>
-        public CommentLengthAttribute() : base(500)
-        {
-        }
-    }
-
-    /// <summary>
-    /// GUID长度 40位
-    /// </summary>
-    public class GuidLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// GUID长度 40位
-        /// </summary>
-        public GuidLengthAttribute() : base(40)
-        {
-        }
-    }
-
-    /// <summary>
-    /// Url长度 200位
-    /// </summary>
-    public class UrlLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// Url长度 200位
-        /// </summary>
-        public UrlLengthAttribute() : base(200)
-        {
-        }
-    }
-
-    /// <summary>
-    /// 标题长度 100位
-    /// </summary>
-    public class TitleNameLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// 标题长度 100位
-        /// </summary>
-        public TitleNameLengthAttribute() : base(100)
-        {
-        }
-    }
-
-    /// <summary>
-    /// 短名称 50位
-    /// </summary>
-    public class ShortNameLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// 短名称 50位
-        /// </summary>
-        public ShortNameLengthAttribute() : base(50)
-        {
-        }
-    }
-
-    /// <summary>
-    /// Ip地址长度 46位
-    /// </summary>
-    public class IpLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// Ip地址长度 46位
-        /// </summary>
-        public IpLengthAttribute() : base(46)
-        {
-        }
-    }
-
-    /// <summary>
-    /// UserAgent长度 250位
-    /// </summary>
-    public class UserAgentLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// UserAgent长度 250位
-        /// </summary>
-        public UserAgentLengthAttribute() : base(250)
-        {
-        }
-    }
-
-    /// <summary>
-    /// Email地址长度 50位
-    /// </summary>
-    public class EmailLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// Email地址长度 50位
-        /// </summary>
-        public EmailLengthAttribute() : base(50)
-        {
-        }
-    }
-
-    /// <summary>
-    /// 标签 长度 500位
-    /// </summary>
-    public class TagsLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// 标签 长度 500位
-        /// </summary>
-        public TagsLengthAttribute() : base(500)
-        {
-        }
-    }
-
-    /// <summary>
-    /// MAC 地址 18位
-    /// </summary>
-    public class MacAddressLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// MAC 地址 18位
-        /// </summary>
-        public MacAddressLengthAttribute() : base(18)
-        {
-        }
-    }
-
-    /// <summary>
-    /// 错误信息长度 200位
-    /// </summary>
-    public class ErrorMessageLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// 错误信息长度 200位
-        /// </summary>
-        public ErrorMessageLengthAttribute() : base(200)
-        {
-        }
-    }
-
-    /// <summary>
-    /// ParentIds 长度 250位
-    /// </summary>
-    public class ParentIdsLengthAttribute : FieldLengthAttribute
-    {
-        /// <summary>
-        /// ParentIds 长度 250位
-        /// </summary>
-        public ParentIdsLengthAttribute() : base(250)
-        {
+            TextType = FieldTextType.LongText;
         }
     }
 }

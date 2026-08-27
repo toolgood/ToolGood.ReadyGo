@@ -72,7 +72,7 @@ namespace ToolGood.ReadyGo.NPoco
             {
                 ci.ReferenceType = reference.First().ReferenceType;
                 ci.ReferenceMemberName = reference.First().ReferenceMemberName ?? "Id";
-                ci.ColumnName = reference.First().ColumnName ?? mi.Name + "Id";
+                ci.ColumnName = reference.First().ColumnName ?? GetReferenceColumnName(mi.Name);
                 return ci;
             }
             else if (mi.GetMemberInfoType().IsOfGenericType(typeof(IList<>)) && !mi.GetMemberInfoType().IsArray)
@@ -133,6 +133,16 @@ namespace ToolGood.ReadyGo.NPoco
             }
 
             return ci;
+        }
+
+        /// <summary>
+        /// 生成默认引用外键列名：成员名已以 "Id" 结尾时直接使用，否则追加 "Id"。
+        /// </summary>
+        /// <param name="memberName">成员名。</param>
+        /// <returns>默认外键列名。</returns>
+        private static string GetReferenceColumnName(string memberName)
+        {
+            return memberName.EndsWith("Id", StringComparison.Ordinal) ? memberName : memberName + "Id";
         }
 
         /// <summary>
