@@ -332,17 +332,17 @@ namespace ToolGood.ReadyGo.Tests
             var s1 = helper.FirstOrDefault<SimpleUser>("WHERE Name = '甲'");
             var cond = new SimpleUser { Id = s1.Id, Name = s1.Name, Age = s1.Age };
 
-            var users = helper.Select<SimpleUser>(cond);
+            var users = helper.SelectBy<SimpleUser>(cond);
             Assert.Single(users);
             Assert.Equal("甲", users[0].Name);
 
-            var f = helper.FirstOrDefault<SimpleUser>(cond);
+            var f = helper.FirstOrDefaultBy<SimpleUser>(cond);
             Assert.NotNull(f);
             Assert.Equal(10, f.Age);
 
-            Assert.Equal(1, helper.Count<SimpleUser>(cond));
+            Assert.Equal(1, helper.CountBy<SimpleUser>(cond));
 
-            var page = helper.Page<SimpleUser>(1, 3, cond);
+            var page = helper.PageBy<SimpleUser>(1, 3, cond);
             Assert.Equal(1, page.TotalItems);
             Assert.Single(page.Items);
         }
@@ -358,7 +358,7 @@ namespace ToolGood.ReadyGo.Tests
             var loaded = helper.FirstOrDefault<SimpleUser>(s.Id);
             var cond = new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age };
 
-            Assert.Equal(1, helper.UpdateBy<SimpleUser>(new SimpleUser { Age = 99 }, cond, new[] { "Id", "Name" }));
+            Assert.Equal(1, helper.UpdateBy<SimpleUser>(new { Age = 99 }, cond));
             Assert.Equal(99, helper.FirstOrDefault<SimpleUser>(s.Id).Age);
         }
 
@@ -372,7 +372,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(s);
             var loaded = helper.FirstOrDefault<SimpleUser>(s.Id);
 
-            Assert.Equal(1, helper.Delete<SimpleUser>(new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age }));
+            Assert.Equal(1, helper.DeleteBy<SimpleUser>(new { Id = loaded.Id }));
             Assert.Equal(0, helper.Count<SimpleUser>());
         }
 
@@ -391,13 +391,13 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new MappedUser { UserName = "乙", UserAge = 20 });
 
             // 条件对象属性 UserName 应映射为数据库列 user_name
-            var list = helper.Select<MappedUser>(new { UserName = "甲" });
+            var list = helper.SelectBy<MappedUser>(new { UserName = "甲" });
             Assert.Single(list);
             Assert.Equal("甲", list[0].UserName);
 
             // Update 的 set/where 均使用映射列名
             Assert.Equal(1, helper.UpdateBy<MappedUser>(new { UserAge = 30 }, new { UserName = "乙" }));
-            Assert.Equal(30, helper.FirstOrDefault<MappedUser>(new { UserName = "乙" }).UserAge);
+            Assert.Equal(30, helper.FirstOrDefaultBy<MappedUser>(new { UserName = "乙" }).UserAge);
 
             // 值类型主键查询不受影响
             Assert.Equal("甲", helper.FirstOrDefault<MappedUser>(list[0].Id).UserName);
@@ -426,11 +426,11 @@ namespace ToolGood.ReadyGo.Tests
 
             // object 条件路径中的 string（无 WHERE 前缀）应自动补全 WHERE
             object cond = "Name = '甲'";
-            Assert.Single(helper.Select<SimpleUser>(cond));
-            Assert.Equal(1, helper.Count<SimpleUser>((object)"Age = 10"));
-            Assert.Equal("乙", helper.FirstOrDefault<SimpleUser>((object)"Name = '乙'").Name);
-            Assert.True(helper.Exists<SimpleUser>((object)"Age = 20"));
-            Assert.Equal(1, helper.Delete<SimpleUser>(cond));
+            Assert.Single(helper.SelectBy<SimpleUser>(cond));
+            Assert.Equal(1, helper.CountBy<SimpleUser>((object)"Age = 10"));
+            Assert.Equal("乙", helper.FirstOrDefaultBy<SimpleUser>((object)"Name = '乙'").Name);
+            Assert.True(helper.ExistsBy<SimpleUser>((object)"Age = 20"));
+            Assert.Equal(1, helper.DeleteBy<SimpleUser>(cond));
             Assert.Equal(1, helper.Count<SimpleUser>());
 
             // Update 的 condition 为 string 时同样自动补 WHERE
@@ -448,15 +448,15 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "乙", Age = 30 });
 
             // [null, "甲"] → (Name IS NULL OR Name='甲')
-            Assert.Equal(2, helper.Select<SimpleUser>(new { Name = new string[] { null, "甲" } }).Count);
+            Assert.Equal(2, helper.SelectBy<SimpleUser>(new { Name = new string[] { null, "甲" } }).Count);
 
             // 纯 null → Name IS NULL
-            var onlyNull = helper.Select<SimpleUser>(new { Name = new string[] { null } });
+            var onlyNull = helper.SelectBy<SimpleUser>(new { Name = new string[] { null } });
             Assert.Single(onlyNull);
             Assert.Equal(20, onlyNull[0].Age);
 
             // 空集合 → 1=2 恒假
-            Assert.Empty(helper.Select<SimpleUser>(new { Name = new string[0] }));
+            Assert.Empty(helper.SelectBy<SimpleUser>(new { Name = new string[0] }));
         }
 
         [Fact]
@@ -523,9 +523,9 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
             helper.Insert(new SimpleUser { Name = "乙", Age = 20 });
 
-            Assert.Equal(2, helper.Select<SimpleUser>(new { }).Count);
-            Assert.NotNull(helper.FirstOrDefault<SimpleUser>(new { }));
-            Assert.Equal(2, helper.Count<SimpleUser>(new { }));
+            Assert.Equal(2, helper.SelectBy<SimpleUser>(new { }).Count);
+            Assert.NotNull(helper.FirstOrDefaultBy<SimpleUser>(new { }));
+            Assert.Equal(2, helper.CountBy<SimpleUser>(new { }));
         }
 
         [Fact]
@@ -540,10 +540,10 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Equal("甲", helper.FirstOrDefault<SimpleUser>(null).Name);
 
             // (int?)null：无条件取第一条（不再是查主键 0）
-            Assert.Equal("甲", helper.FirstOrDefault<SimpleUser>((int?)null).Name);
+            Assert.Equal("甲", helper.FirstOrDefaultBy<SimpleUser>((int?)null).Name);
 
             // (int?)有值 / 数值重载：按主键查询
-            Assert.Null(helper.FirstOrDefault<SimpleUser>((int?)9999));
+            Assert.Null(helper.FirstOrDefaultBy<SimpleUser>((int?)9999));
             Assert.Null(helper.FirstOrDefault<SimpleUser>(9999));
         }
 
@@ -568,7 +568,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
 
             // 条件对象为集合类型无法生成 WHERE，应抛出明确异常
-            Assert.Throws<ArgumentException>(() => helper.Select<SimpleUser>(new List<SimpleUser>()));
+            Assert.Throws<ArgumentException>(() => helper.SelectBy<SimpleUser>(new List<SimpleUser>()));
         }
 
         [Fact]
@@ -591,17 +591,17 @@ namespace ToolGood.ReadyGo.Tests
             db.NewUser("乙", 30, 99.9m, true);
 
             // bool 条件 → 0/1
-            var boolList = helper.Select<UserInfo>(new { IsDelete = false });
+            var boolList = helper.SelectBy<UserInfo>(new { IsDelete = false });
             Assert.Single(boolList);
             Assert.Equal("甲", boolList[0].Name);
 
             // decimal 条件
-            Assert.Single(helper.Select<UserInfo>(new { Money = 99.9m }));
+            Assert.Single(helper.SelectBy<UserInfo>(new { Money = 99.9m }));
 
             // DateTime 条件：参数化插入后，再以等值条件查询
             var dt = new DateTime(2020, 1, 2, 3, 4, 5, 600);
             helper.Execute("INSERT INTO UserInfo (Name, Age, Remark, CreateTime, Money, IsDelete) VALUES ('丙', 40, NULL, @0, 0, 0)", dt);
-            Assert.Single(helper.Select<UserInfo>(new { CreateTime = dt }));
+            Assert.Single(helper.SelectBy<UserInfo>(new { CreateTime = dt }));
         }
 
         [Fact]
@@ -614,7 +614,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "丙", Age = 30 });
 
             // 多元素 in 列表（不含 null）
-            var list = helper.Select<SimpleUser>(new { Age = new int[] { 10, 30 } });
+            var list = helper.SelectBy<SimpleUser>(new { Age = new int[] { 10, 30 } });
             Assert.Equal(2, list.Count);
             Assert.Equal("甲", list[0].Name);
             Assert.Equal("丙", list[1].Name);
@@ -631,7 +631,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new Tb_Enum2IntTest { State = UserState.Vip });
 
             // 枚举作为条件对象值 → 转成底层整数
-            var list = helper.Select<Tb_Enum2IntTest>(new { State = UserState.Vip });
+            var list = helper.SelectBy<Tb_Enum2IntTest>(new { State = UserState.Vip });
             Assert.Single(list);
             Assert.Equal(UserState.Vip, list[0].State);
         }
@@ -648,15 +648,15 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new StringKeyUser { Code = "USR-002", Name = "乙", Age = 30 });
 
             // 无 SQL 特征的字符串 → 按字符串主键查询
-            var byPk = helper.FirstOrDefault<StringKeyUser>((object)"USR-001");
+            var byPk = helper.FirstOrDefaultBy<StringKeyUser>((object)"USR-001");
             Assert.NotNull(byPk);
             Assert.Equal("甲", byPk.Name);
 
-            Assert.True(helper.Exists<StringKeyUser>((object)"USR-002"));
-            Assert.False(helper.Exists<StringKeyUser>((object)"USR-999"));
+            Assert.True(helper.ExistsBy<StringKeyUser>((object)"USR-002"));
+            Assert.False(helper.ExistsBy<StringKeyUser>((object)"USR-999"));
 
             // 字符串主键值一律参数化查询；含 SQL 特征的字符串不再按 SQL 片段执行（防注入）
-            Assert.Null(helper.FirstOrDefault<StringKeyUser>((object)"Name = '乙'"));
+            Assert.Null(helper.FirstOrDefaultBy<StringKeyUser>((object)"Name = '乙'"));
 
             // 需要 SQL 片段时使用专门的 SQL 重载（SQL 片段需以 WHERE 开头）
             Assert.Equal("乙", helper.FirstOrDefault<StringKeyUser>("WHERE Name = '乙'").Name);
@@ -670,9 +670,9 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "甲", Age = 10 });
 
             // 非整数值类型不应被静默当作主键
-            Assert.Throws<ArgumentException>(() => helper.FirstOrDefault<SimpleUser>(20.5));
-            Assert.Throws<ArgumentException>(() => helper.FirstOrDefault<SimpleUser>(true));
-            Assert.Throws<ArgumentException>(() => helper.Exists<SimpleUser>(20.5m));
+            Assert.Throws<ArgumentException>(() => helper.FirstOrDefaultBy<SimpleUser>(20.5));
+            Assert.Throws<ArgumentException>(() => helper.FirstOrDefaultBy<SimpleUser>(true));
+            Assert.Throws<ArgumentException>(() => helper.ExistsBy<SimpleUser>(20.5m));
         }
 
         [Fact]
@@ -687,7 +687,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new Tb_BlobTest { Name = "b2", Data = new byte[] { 0x0A, 0x0B } });
 
             // byte[] 作为条件值应整体匹配（BLOB），而不是被展开成 in 列表
-            var list = helper.Select<Tb_BlobTest>(new { Data = data });
+            var list = helper.SelectBy<Tb_BlobTest>(new { Data = data });
             Assert.Single(list);
             Assert.Equal("b1", list[0].Name);
         }
@@ -729,7 +729,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new SimpleUser { Name = "乙", Age = 30 });
 
             // 含索引器的类型作为条件对象：索引器应被忽略，不触发表达式构建异常
-            var list = helper.Select<SimpleUser>(new IndexerConditionObj { Age = 20 });
+            var list = helper.SelectBy<SimpleUser>(new IndexerConditionObj { Age = 20 });
             Assert.Single(list);
             Assert.Equal("甲", list[0].Name);
         }
@@ -848,7 +848,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(new Tb_FloatCondTest { Score = 9.9f });
 
             // where 中 float[] 作为条件集合 → WHERE Score IN (@0, @1)
-            var list = helper.Select<Tb_FloatCondTest>(new { Score = new float[] { 1.5f, 2.5f } });
+            var list = helper.SelectBy<Tb_FloatCondTest>(new { Score = new float[] { 1.5f, 2.5f } });
             Assert.Equal(2, list.Count);
             Assert.Contains(list, x => x.Score == 1.5f);
             Assert.Contains(list, x => x.Score == 2.5f);
@@ -859,14 +859,14 @@ namespace ToolGood.ReadyGo.Tests
         #region 对象条件 按字段更新与忽略字段
 
         [Fact]
-        public void ObjectCondition_UpdateColumns_OnlyUpdatesSpecifiedFields()
+        public void ObjectCondition_UpdateBy_OnlyUpdatesSpecifiedFields()
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
             var u = db.NewUser("甲", 20, 10.5m, false);
 
             // 仅更新 Age，其余字段保持原值
-            Assert.Equal(1, helper.UpdateByColumns<UserInfo>(
+            Assert.Equal(1, helper.UpdateBy<UserInfo>(
                 new { Name = "甲改", Age = 99, Money = 999m },
                 new { Id = u.Id },
                 new[] { "Age" }));
@@ -879,14 +879,14 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
-        public async Task ObjectCondition_UpdateColumns_Async_Works()
+        public async Task ObjectCondition_UpdateBy_Async_Works()
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
             var s = new SimpleUser { Name = "甲", Age = 20 };
             helper.Insert(s);
 
-            Assert.Equal(1, await helper.UpdateByColumns_Async<SimpleUser>(
+            Assert.Equal(1, await helper.UpdateBy_Async<SimpleUser>(
                 new { Name = "甲改", Age = 99 },
                 new { Id = s.Id },
                 new[] { "Age" }));
@@ -898,7 +898,7 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
-        public void ObjectCondition_UpdateColumns_FloatArray_Works()
+        public void ObjectCondition_UpdateBy_FloatArray_Works()
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
@@ -908,7 +908,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(item);
 
             // 仅更新 Floats，ValueList 保持原值
-            Assert.Equal(1, helper.UpdateByColumns<Tb_NumericArrayTest>(
+            Assert.Equal(1, helper.UpdateBy<Tb_NumericArrayTest>(
                 new { Floats = new[] { 9.5f, 8.25f }, ValueList = new List<float> { 7f } },
                 new { Id = item.Id },
                 new[] { "Floats" }));
@@ -927,11 +927,10 @@ namespace ToolGood.ReadyGo.Tests
             var s = new SimpleUser { Name = "甲", Age = 20 };
             helper.Insert(s);
 
-            // 忽略字段：Name 被忽略 → 保持原值，其余字段照常更新
+            // set 用匿名对象仅包含要更新的字段：Name 保持不变，其余字段照常更新
             Assert.Equal(1, helper.UpdateBy<SimpleUser>(
-                new SimpleUser { Name = "甲改", Age = 99 },
-                new { Id = s.Id },
-                new[] { "Name" }));
+                new { Age = 99 },
+                new { Id = s.Id }));
 
             var loaded = helper.FirstOrDefault<SimpleUser>(s.Id);
             Assert.NotNull(loaded);
@@ -940,14 +939,14 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
-        public void ObjectCondition_UpdateColumns_EmptyColumns_Throws()
+        public void ObjectCondition_UpdateBy_EmptyColumns_Throws()
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
             var u = db.NewUser("甲", 20);
 
             // 未指定任何更新字段 → 无可用字段，应抛出明确异常
-            Assert.Throws<ArgumentException>(() => helper.UpdateByColumns<UserInfo>(
+            Assert.Throws<ArgumentException>(() => helper.UpdateBy<UserInfo>(
                 new { Name = "甲改" }, new { Id = u.Id }, new string[0]));
         }
 
@@ -1162,12 +1161,12 @@ namespace ToolGood.ReadyGo.Tests
 
             // 对象条件（class）
             var cond = new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age };
-            Assert.True(helper.Exists<SimpleUser>(cond));
-            Assert.False(helper.Exists<SimpleUser>(new SimpleUser { Id = 999, Name = "不存在", Age = 0 }));
+            Assert.True(helper.ExistsBy<SimpleUser>(cond));
+            Assert.False(helper.ExistsBy<SimpleUser>(new SimpleUser { Id = 999, Name = "不存在", Age = 0 }));
 
             // 主键值（标量）
-            Assert.True(helper.Exists<SimpleUser>(loaded.Id));
-            Assert.False(helper.Exists<SimpleUser>(999));
+            Assert.True(helper.ExistsBy<SimpleUser>(loaded.Id));
+            Assert.False(helper.ExistsBy<SimpleUser>(999));
         }
 
         [Fact]
@@ -1193,9 +1192,9 @@ namespace ToolGood.ReadyGo.Tests
             var loaded = helper.FirstOrDefault<SimpleUser>(s.Id);
             var cond = new SimpleUser { Id = loaded.Id, Name = loaded.Name, Age = loaded.Age };
 
-            Assert.Single(helper.Select<SimpleUser>(5, cond));
-            Assert.Single(helper.Select<SimpleUser>(5, 0, cond));
-            Assert.Single(helper.SelectPage<SimpleUser>(1, 3, cond));
+            Assert.Single(helper.SelectBy<SimpleUser>(5, cond));
+            Assert.Single(helper.SelectBy<SimpleUser>(5, 0, cond));
+            Assert.Single(helper.SelectPageBy<SimpleUser>(1, 3, cond));
         }
 
         [Fact]

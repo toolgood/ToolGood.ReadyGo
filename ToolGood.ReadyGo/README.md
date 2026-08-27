@@ -161,12 +161,12 @@ helper.DeleteMany<User>().Where(x => x.Age < 18).Execute();
 以对象为条件，属性为默认值时忽略该条件：
 
 ```csharp
-var user = helper.FirstOrDefault<User>(new { Id = 1 });
-var users = helper.Select<User>(new { UserType = 1, State = true });
-helper.UpdateBy<User>(new { NickName = "新昵称" }, new { Id = 1 });  // set 对象, 条件对象
-helper.Delete<User>(new { Id = 1 });
-var count = helper.Count<User>(new { UserType = 1 });
-var exists = helper.Exists<User>(new { UserName = "Ted" });
+var user = helper.FirstOrDefaultBy<User>(new { Id = 1 });
+var users = helper.SelectBy<User>(new { UserType = 1, State = true });
+helper.UpdateBy<User>(new { NickName = "新昵称" }, new { Id = 1 });   // set 对象, 条件对象
+helper.DeleteBy<User>(new { Id = 1 });
+var count = helper.CountBy<User>(new { UserType = 1 });
+var exists = helper.ExistsBy<User>(new { UserName = "Ted" });
 ```
 
 ## 原生 SQL 与简化 SQL

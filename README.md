@@ -210,12 +210,12 @@ public User FindUser(int userId, string userName, string nickName)
 以对象为条件，属性为默认值时忽略该条件：
 
 ```csharp
-var user = helper.FirstOrDefault<User>(new { Id = 1 });
-var users = helper.Select<User>(new { UserType = 1, State = true });
+var user = helper.FirstOrDefaultBy<User>(new { Id = 1 });
+var users = helper.SelectBy<User>(new { UserType = 1, State = true });
 helper.UpdateBy<User>(new { NickName = "新昵称" }, new { Id = 1 });   // set 对象, 条件对象
-helper.Delete<User>(new { Id = 1 });
-var count = helper.Count<User>(new { UserType = 1 });
-var exists = helper.Exists<User>(new { UserName = "Ted" });
+helper.DeleteBy<User>(new { Id = 1 });
+var count = helper.CountBy<User>(new { UserType = 1 });
+var exists = helper.ExistsBy<User>(new { UserName = "Ted" });
 ```
 
 #### 6、SQL执行监控
@@ -236,6 +236,8 @@ var err = helper._Sql.LastErrorMessage; // 上次错误信息
 `Execute`、`ExecuteScalar`、`ExecuteDataTable`、`ExecuteDataSet`、`Exists`、`Count`、`Select_Count`、`Select`、`SelectPage`、
 `Page`、`SQL_FirstOrDefault`、`SQL_Select`、`SQL_Page`、`SelectOneToMany`、`SelectMultiple`、`FirstOrDefault`、
 `Insert`、`InsertList`、`Update`（含快照/指定列/条件）、`UpdateList`（含快照）、`Delete`、`DeleteById`、`Save`、`SaveList`、`UseTransaction`。
+
+对象条件版本使用 `By` 后缀：`FirstOrDefaultBy`、`SelectBy`、`SelectPageBy`、`PageBy`、`CountBy`、`ExistsBy`、`UpdateBy`、`DeleteBy`（均含 `_Async` 版本）。
 
 ```csharp
 var users = await helper.Select_Async<User>("Where [UserType]=@0", 1);

@@ -477,7 +477,7 @@ helper.DeleteById<User>(1);
 helper.Delete<User>("WHERE Age < @0", 18);
 
 // 使用对象条件删除
-helper.Delete<User>(new { Id = 1 });
+helper.DeleteBy<User>(new { Id = 1 });
 ```
 
 ### 保存
@@ -540,12 +540,12 @@ helper.Update<User>("Set [Name]=@0 WHERE [Id]=@1", "Test", 1);
 以对象为条件，属性为默认值时忽略该条件：
 
 ```csharp
-var user = helper.FirstOrDefault<User>(new { Id = 1 });
-var users = helper.Select<User>(new { UserType = 1, State = true });
+var user = helper.FirstOrDefaultBy<User>(new { Id = 1 });
+var users = helper.SelectBy<User>(new { UserType = 1, State = true });
 helper.UpdateBy<User>(new { NickName = "新昵称" }, new { Id = 1 });   // set 对象, 条件对象
-helper.Delete<User>(new { Id = 1 });
-var count = helper.Count<User>(new { UserType = 1 });
-var exists = helper.Exists<User>(new { UserName = "Ted" });
+helper.DeleteBy<User>(new { Id = 1 });
+var count = helper.CountBy<User>(new { UserType = 1 });
+var exists = helper.ExistsBy<User>(new { UserName = "Ted" });
 ```
 
 同时提供按主键查询的重载（`FirstOrDefault<T>(int / long / uint / ulong)` 等）：
@@ -640,6 +640,8 @@ helper.SaveList(new List<User> { newUser, existingUser });
 ## 异步 API
 
 所有核心操作均提供 `_Async` 后缀的异步版本：`Execute_Async`、`ExecuteScalar_Async`、`ExecuteDataTable_Async`、`ExecuteDataSet_Async`、`Exists_Async`、`Count_Async`、`Select_Async`、`SelectPage_Async`、`Page_Async`、`SelectOneToMany_Async`、`SelectMultiple_Async`、`FirstOrDefault_Async`、`Insert_Async`、`InsertList_Async`、`Update_Async`（含快照/指定列/条件）、`UpdateList_Async`（含快照）、`Delete_Async`、`DeleteById_Async`、`Save_Async`、`SaveList_Async`、`UseTransaction_Async`。
+
+对象条件版本使用 `By` 后缀：`FirstOrDefaultBy`、`SelectBy`、`SelectPageBy`、`PageBy`、`CountBy`、`ExistsBy`、`UpdateBy`、`DeleteBy`（均含 `_Async` 版本）。
 
 ```csharp
 var users = await helper.Select_Async<User>("Where [UserType]=@0", 1);
@@ -781,8 +783,8 @@ foreach (var user in users) helper.Insert(user);
 
 ```csharp
 using (var tran = helper.UseTransaction()) {
-    helper.Delete<Order>(new { UserId = userId });
-    helper.Delete<User>(userId);
+    helper.DeleteBy<Order>(new { UserId = userId });
+    helper.DeleteBy<User>(userId);
     tran.Complete();
 }
 ```
@@ -828,7 +830,7 @@ public class UserRepository
     public UserRepository(SqlHelper db) { _db = db; }
 
     public User GetById(int id) => _db.FirstOrDefault<User>(id);
-    public List<User> GetActiveUsers() => _db.Select<User>(new { Status = "Active" });
+    public List<User> GetActiveUsers() => _db.SelectBy<User>(new { Status = "Active" });
     public void Save(User user) => _db.Save(user);
     public void Delete(int id) => _db.DeleteById<User>(id);
 }
