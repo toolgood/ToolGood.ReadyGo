@@ -16,7 +16,8 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// </summary>
         /// <param name="value">数据库中读取的 byte[]</param>
         /// <param name="targetType">目标类型</param>
-        /// <returns>还原的字典；若值为 null 或非 byte[] 则返回 null</returns>
+        /// <returns>还原的字典；若值为 null 则返回 null</returns>
+        /// <exception cref="ArgumentException">值为非 byte[] 类型时抛出</exception>
         public object Deserialize(object value, Type targetType)
         {
             if (value == null) {
@@ -42,14 +43,15 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                     return result;
                 }
             }
-            return null;
+            throw new ArgumentException($"Deserialize 仅支持 byte[]，实际类型为 {value.GetType().FullName}。", nameof(value));
         }
 
         /// <summary>
         /// 序列化：将 Dictionary&lt;uint, uint&gt; 压缩编码为 byte[]
         /// </summary>
         /// <param name="value">待序列化的字典</param>
-        /// <returns>压缩后的 byte[]；若值为 null 或非字典则返回 null</returns>
+        /// <returns>压缩后的 byte[]；若值为 null 则返回 null</returns>
+        /// <exception cref="ArgumentException">值为非 Dictionary&lt;uint, uint&gt; 类型时抛出</exception>
         public object Serialize(object value)
         {
             if (value == null) {
@@ -77,7 +79,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                     return ms.ToArray();
                 }
             }
-            return null;
+            throw new ArgumentException($"Serialize 仅支持 Dictionary<uint, uint>，实际类型为 {value.GetType().FullName}。", nameof(value));
         }
 
         private static byte[] Uint2Bytes(uint value)

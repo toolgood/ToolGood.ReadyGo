@@ -28,10 +28,6 @@ namespace ToolGood.ReadyGo.Attributes
         public PrimaryKeyAttribute(string[] primaryKey) : this(string.Join(",", primaryKey))
         {
         }
-        /// <summary>
-        ///     The column name.
-        /// </summary>
-        public string PrimaryKey => Value;
 
         /// <summary>
         /// 主键列名字符串（多列用逗号分隔）

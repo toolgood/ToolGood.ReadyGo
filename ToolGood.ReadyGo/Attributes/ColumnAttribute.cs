@@ -31,7 +31,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 备注
         /// </summary>
-        public string Comment;
+        public string Comment { get; set; }
 
         /// <summary>
         /// 列标签
