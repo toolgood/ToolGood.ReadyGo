@@ -19,7 +19,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         public override string GetTryCreateTable(Type type, bool withIndex = true)
         {
             var ti = TableInfo.FromType(type);
-            var sql = "CREATE TABLE IF NOT EXISTS [" + ti.TableName + "](\r\n";
+            var table = GetTableName(ti);
+            var sql = "CREATE TABLE IF NOT EXISTS " + table + "(\r\n";
             foreach (var item in ti.Columns) {
                 sql += "    " + CreateColumn(ti, item) + ",\r\n";
             }
@@ -29,13 +30,13 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
                 foreach (var item in ti.Indexs) {
                     var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
-                    sql += "CREATE INDEX IF NOT EXISTS " + txt + " ON [" + ti.TableName + "](" + columns + ");\r\n";
+                    sql += "CREATE INDEX IF NOT EXISTS " + txt + " ON " + table + "(" + columns + ");\r\n";
                 }
 
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
-                    sql += "CREATE UNIQUE INDEX IF NOT EXISTS " + txt + " ON [" + ti.TableName + "]( " + columns + ");\r\n";
+                    sql += "CREATE UNIQUE INDEX IF NOT EXISTS " + txt + " ON " + table + "( " + columns + ");\r\n";
                 }
             }
             sql = sql.Substring(0, sql.Length - 2);
@@ -69,9 +70,9 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         {
             var sb = new StringBuilder();
             foreach (var col in columnList) {
-                sb.Append($"[{col}],");
+                sb.Append($"[{EscapeBrackets(col)}],");
             }
-            return sb.ToString().Replace("[[", "[").Replace("]]", "]").Trim(',');
+            return sb.ToString().Trim(',');
         }
 
         /// <summary>
@@ -82,7 +83,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         public override string GetDropTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            return "DROP TABLE IF EXISTS [" + ti.TableName + "];";
+            return "DROP TABLE IF EXISTS " + GetTableName(ti) + ";";
         }
 
         /// <summary>
@@ -92,7 +93,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>删除表 SQL</returns>
         public override string GetDropTable(string tableName)
         {
-            return "DROP TABLE IF EXISTS [" + tableName + "];";
+            return "DROP TABLE IF EXISTS " + GetTableName(null, tableName) + ";";
         }
 
         /// <summary>
@@ -118,11 +119,11 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 
         private string GetTruncateTable(string tableName, bool withSequenceReset)
         {
-            var sql = $"DELETE FROM [{tableName}];";
+            var sql = $"DELETE FROM {GetTableName(null, tableName)};";
             // 仅当目标表为自增表时重置自增计数（此时 sqlite_sequence 表必然已存在），
             // 避免在从未使用 AUTOINCREMENT 的数据库中因 sqlite_sequence 不存在而报错
             if (withSequenceReset) {
-                sql += $"\r\nDELETE FROM sqlite_sequence WHERE name='{tableName}';";
+                sql += $"\r\nDELETE FROM sqlite_sequence WHERE name='{tableName.Replace("'", "''")}';";
             }
             return sql;
         }
@@ -191,7 +192,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         private string CreateField(TableInfo ti, ColumnInfo ci, string fieldType, string length, bool isRequired)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("[" + ci.ColumnName + "]");
+            sb.Append("[" + EscapeBrackets(ci.ColumnName) + "]");
             sb.AppendFormat(" {0}", fieldType);
             if (string.IsNullOrEmpty(length) == false) {
                 sb.AppendFormat("({0})", length);

@@ -67,7 +67,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         {
             var sb = new StringBuilder();
             foreach (var col in columnList) {
-                sb.Append($"\"{col}\",");
+                sb.Append($"\"{col.Replace("\"", "\"\"")}\",");
             }
             return sb.ToString().Trim(',');
         }
@@ -90,7 +90,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>删除表 SQL</returns>
         public override string GetDropTable(string tableName)
         {
-            return "DROP TABLE \"" + tableName + "\";";
+            return "DROP TABLE " + GetTableName(null, tableName) + ";";
         }
 
         /// <summary>
@@ -111,7 +111,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>清空表 SQL</returns>
         public override string GetTruncateTable(string tableName)
         {
-            return "DELETE FROM \"" + tableName + "\";";
+            return "DELETE FROM " + GetTableName(null, tableName) + ";";
         }
 
         private string CreateColumn(TableInfo ti, ColumnInfo ci)
@@ -178,7 +178,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         private string CreateField(TableInfo ti, ColumnInfo ci, string fieldType, string length, bool isRequired)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append($"\"{ci.ColumnName}\"");
+            sb.Append($"\"{ci.ColumnName.Replace("\"", "\"\"")}\"");
             sb.AppendFormat(" {0}", fieldType);
             if (string.IsNullOrEmpty(length) == false) {
                 sb.AppendFormat("({0})", length);
@@ -209,7 +209,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>转义后的表名</returns>
         public override string GetTableName(string schemaName, string tableName)
         {
-            return $"\"{tableName}\"";
+            return $"\"{tableName.Replace("\"", "\"\"")}\"";
         }
     }
 }

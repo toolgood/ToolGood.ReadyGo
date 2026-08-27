@@ -108,9 +108,17 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         public virtual string GetTableName(string schemaName, string tableName)
         {
             if (string.IsNullOrEmpty(schemaName) == false) {
-                return $"[{schemaName}].[{tableName}]";
+                return $"[{EscapeBrackets(schemaName)}].[{EscapeBrackets(tableName)}]";
             }
-            return $"[{tableName}]";
+            return $"[{EscapeBrackets(tableName)}]";
+        }
+
+        /// <summary>
+        /// 对方括号引用风格的标识符做内部转义（"]]" 表示字面 "]"）
+        /// </summary>
+        protected static string EscapeBrackets(string name)
+        {
+            return name?.Replace("]", "]]") ?? string.Empty;
         }
 
         internal static DatabaseProvider Resolve(SqlType type)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ToolGood.ReadyGo.Attributes;
+using ToolGood.ReadyGo.NPoco;
 
 namespace ToolGood.ReadyGo.Gadget.TableManager
 {
@@ -48,12 +49,19 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         /// </summary>
         public List<ColumnInfo> Columns = new List<ColumnInfo>();
 
+        private static readonly Cache<Type, TableInfo> _tableInfoCache = Cache<Type, TableInfo>.CreateStaticCache();
+
         /// <summary>
-        /// 从类型解析出表结构信息
+        /// 从类型解析出表结构信息（结果会被缓存，返回实例仅应被只读使用）
         /// </summary>
         /// <param name="t">要解析的类型</param>
         /// <returns>解析出的表结构信息</returns>
         public static TableInfo FromType(Type t)
+        {
+            return _tableInfoCache.Get(t, () => BuildTableInfo(t));
+        }
+
+        private static TableInfo BuildTableInfo(Type t)
         {
             TableInfo ti = new TableInfo();
             var a = t.GetCustomAttributes(typeof(TableAttribute), true);
@@ -94,7 +102,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
 
                 if (prop != null) {
                     ti.PrimaryKey = prop.Name;
-                    ti.AutoIncrement = prop.PropertyType.IsValueType;
+                    // 仅整数类型才能推断为自增主键，Guid/DateTime/decimal 等值类型不能自增
+                    ti.AutoIncrement = IsIntegerType(prop.PropertyType);
                 }
             }
 
@@ -109,6 +118,17 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
             }
 
             return ti;
+        }
+
+        /// <summary>
+        /// 判断类型是否为可自增的整数类型（支持 Nullable 包装）
+        /// </summary>
+        private static bool IsIntegerType(Type type)
+        {
+            type = Nullable.GetUnderlyingType(type) ?? type;
+            return type == typeof(short) || type == typeof(ushort)
+                || type == typeof(int) || type == typeof(uint)
+                || type == typeof(long) || type == typeof(ulong);
         }
     }
 }

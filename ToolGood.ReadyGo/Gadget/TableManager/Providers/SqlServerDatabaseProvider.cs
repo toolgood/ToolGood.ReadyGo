@@ -20,29 +20,39 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>建表 SQL</returns>
         public override string GetTryCreateTable(Type type, bool withIndex = true)
         {
+            // SQL Server 不支持 CREATE TABLE/INDEX IF NOT EXISTS，
+            // 通过 IF NOT EXISTS(sys.tables) 包裹整段 DDL 保证幂等，重复调用不会因“对象已存在”报错。
             var ti = TableInfo.FromType(type);
-            var sql = "CREATE TABLE " + GetTableName(ti) + "(\r\n";
+            var table = GetTableName(ti);
+            var schema = string.IsNullOrEmpty(ti.SchemaName) ? "dbo" : ti.SchemaName.Replace("'", "''");
+            var tableName = ti.TableName.Replace("'", "''");
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = N'{tableName}' AND schema_id = SCHEMA_ID(N'{schema}'))");
+            sb.AppendLine("BEGIN");
+            sb.Append("    CREATE TABLE " + table + "(\r\n");
             foreach (var item in ti.Columns) {
-                sql += "    " + CreateColumn(ti, item) + ",\r\n";
+                sb.Append("        " + CreateColumn(ti, item) + ",\r\n");
             }
             if (withIndex) {
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
-                    sql += "    CONSTRAINT " + txt + " UNIQUE (" + columns + "),\r\n";
+                    sb.Append("        CONSTRAINT " + txt + " UNIQUE (" + columns + "),\r\n");
                 }
             }
-
-            sql = sql.Substring(0, sql.Length - 3);
-            sql += "\r\n);\r\n";
+            sb.Length -= 3; // 去掉末尾的 ",\r\n"
+            sb.Append("\r\n    );");
             if (withIndex) {
                 foreach (var item in ti.Indexs) {
                     var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
-                    sql += "CREATE INDEX " + txt + " ON " + GetTableName(ti) + "(" + columns + ");\r\n";
+                    sb.Append("\r\n    CREATE INDEX " + txt + " ON " + table + "(" + columns + ");");
                 }
             }
-            return sql;
+            sb.AppendLine();
+            sb.Append("END");
+            return sb.ToString();
         }
 
         /// <summary>
@@ -72,9 +82,9 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         {
             var sb = new StringBuilder();
             foreach (var col in columnList) {
-                sb.Append($"[{col}],");
+                sb.Append($"[{EscapeBrackets(col)}],");
             }
-            return sb.ToString().Replace("[[", "[").Replace("]]", "]").Trim(',');
+            return sb.ToString().Trim(',');
         }
 
         /// <summary>
@@ -95,7 +105,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>删除表 SQL</returns>
         public override string GetDropTable(string tableName)
         {
-            return "DROP TABLE IF EXISTS " + tableName + ";";
+            return "DROP TABLE IF EXISTS " + GetTableName(null, tableName) + ";";
         }
 
         /// <summary>
@@ -116,7 +126,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>清空表 SQL</returns>
         public override string GetTruncateTable(string tableName)
         {
-            return "TRUNCATE TABLE " + tableName + ";";
+            return "TRUNCATE TABLE " + GetTableName(null, tableName) + ";";
         }
 
         /// <summary>
@@ -188,7 +198,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         private string CreateField(TableInfo ti, ColumnInfo ci, string fieldType, string length, bool isRequired)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("[" + ci.ColumnName + "]");
+            sb.Append("[" + EscapeBrackets(ci.ColumnName) + "]");
 
             sb.AppendFormat(" {0}", fieldType);
             if (string.IsNullOrEmpty(length) == false) {

@@ -21,8 +21,9 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 		public override string GetTryCreateTable(Type type, bool withIndex = true)
 		{
 			var ti = TableInfo.FromType(type);
+			var table = GetTableName(ti);
 			var sql = ti.AutoIncrement ? "CREATE SEQUENCE IF NOT EXISTS seq_" + ti.TableName + " START 1;" : "";
-			sql += "CREATE TABLE IF NOT EXISTS \"" + ti.TableName + "\"(\r\n";
+			sql += "CREATE TABLE IF NOT EXISTS " + table + "(\r\n";
 			foreach(var item in ti.Columns) {
 				sql += "    " + CreateColumn(ti, item) + ",\r\n";
 			}
@@ -32,13 +33,13 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 				foreach(var item in ti.Indexs) {
 					var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
 					var columns = BuildColumns(item);
-					sql += "CREATE INDEX IF NOT EXISTS " + txt + " ON \"" + ti.TableName + "\"(" + columns + ");\r\n";
+					sql += "CREATE INDEX IF NOT EXISTS " + txt + " ON " + table + "(" + columns + ");\r\n";
 				}
 
 				foreach(var item in ti.Uniques) {
 					var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
 					var columns = BuildColumns(item);
-					sql += "CREATE UNIQUE INDEX IF NOT EXISTS " + txt + " ON \"" + ti.TableName + "\"( " + columns + ");\r\n";
+					sql += "CREATE UNIQUE INDEX IF NOT EXISTS " + txt + " ON " + table + "( " + columns + ");\r\n";
 				}
 			}
 			sql = sql.Substring(0, sql.Length - 2);
@@ -72,7 +73,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 		{
 			var sb = new StringBuilder();
 			foreach(var col in columnList) {
-				sb.Append($"\"{col}\",");
+				sb.Append($"\"{col.Replace("\"", "\"\"")}\",");
 			}
 			return sb.ToString().Trim(',');
 		}
@@ -95,7 +96,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 		/// <returns>删除表 SQL</returns>
 		public override string GetDropTable(string tableName)
 		{
-			return "DROP TABLE IF EXISTS \"" + tableName + "\";\r\nDROP SEQUENCE IF EXISTS seq_" + tableName + ";";
+			return "DROP TABLE IF EXISTS " + GetTableName(null, tableName) + ";\r\nDROP SEQUENCE IF EXISTS seq_" + tableName + ";";
 		}
 
 		/// <summary>
@@ -116,7 +117,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 		/// <returns>清空表 SQL</returns>
 		public override string GetTruncateTable(string tableName)
 		{
-			return $"DELETE FROM \"{tableName}\";";
+			return $"DELETE FROM {GetTableName(null, tableName)};";
 		}
 
 		private string CreateColumn(TableInfo ti, ColumnInfo ci)
@@ -184,7 +185,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 		private string CreateField(TableInfo ti, ColumnInfo ci, string fieldType, string length, bool isRequired)
 		{
 			StringBuilder sb = new StringBuilder();
-			sb.Append($"\"{ci.ColumnName}\"");
+			sb.Append($"\"{ci.ColumnName.Replace("\"", "\"\"")}\"");
 			sb.AppendFormat(" {0}", fieldType);
 			if(string.IsNullOrEmpty(length) == false) {
 				sb.AppendFormat("({0})", length);

@@ -68,7 +68,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         {
             var sb = new StringBuilder();
             foreach (var col in columnList) {
-                sb.Append($"[{col}],");
+                sb.Append($"[{EscapeBrackets(col)}],");
             }
             return sb.ToString().Trim(',');
         }
@@ -91,7 +91,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>删除表 SQL</returns>
         public override string GetDropTable(string tableName)
         {
-            return "DROP TABLE [" + tableName + "];";
+            return "DROP TABLE " + GetTableName(null, tableName) + ";";
         }
 
         /// <summary>
@@ -117,10 +117,10 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 
         private string GetTruncateTable(string tableName, string primaryKey, bool withAutoIncrementReset)
         {
-            var sql = $"DELETE FROM [{tableName}];";
+            var sql = $"DELETE FROM {GetTableName(null, tableName)};";
             // Access 不支持 TRUNCATE，只能 DELETE；自增表再通过 ALTER COLUMN COUNTER 重置自增计数
             if (withAutoIncrementReset && string.IsNullOrEmpty(primaryKey) == false) {
-                sql += $"\r\nALTER TABLE [{tableName}] ALTER COLUMN [{primaryKey}] COUNTER(1,1);";
+                sql += $"\r\nALTER TABLE {GetTableName(null, tableName)} ALTER COLUMN [{EscapeBrackets(primaryKey)}] COUNTER(1,1);";
             }
             return sql;
         }
@@ -193,7 +193,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         private string CreateField(TableInfo ti, ColumnInfo ci, string fieldType, string length, bool isRequired)
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append("[" + ci.ColumnName + "]");
+            sb.Append("[" + EscapeBrackets(ci.ColumnName) + "]");
             sb.AppendFormat(" {0}", fieldType);
             if (string.IsNullOrEmpty(length) == false) {
                 sb.AppendFormat("({0})", length);
@@ -225,7 +225,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         public override string GetTableName(string schemaName, string tableName)
         {
             // Access 为文件型数据库，无数据库/模式前缀
-            return "[" + tableName + "]";
+            return "[" + EscapeBrackets(tableName) + "]";
         }
     }
 }
