@@ -20,6 +20,9 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
             if (scale < 0) {
                 throw new ArgumentOutOfRangeException(nameof(scale), "scale 不能为负数");
             }
+            if (scale > 10) {
+                throw new ArgumentOutOfRangeException(nameof(scale), "scale 不能超过 10");
+            }
             _scale = scale;
             _multiplier = (decimal)Math.Pow(10, scale);
         }

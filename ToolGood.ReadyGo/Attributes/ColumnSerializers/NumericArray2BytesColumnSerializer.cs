@@ -56,13 +56,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
             if (value == null || value is DBNull) {
                 return null;
             }
-            byte[] bytes;
-            if (value is byte[] b) {
-                bytes = b;
-            } else if (value is string s) {
-                // 兼容字符串形式（如 base64）
-                bytes = Convert.FromBase64String(s);
-            } else {
+            if (!(value is byte[] bytes)) {
                 throw new NotSupportedException($"NumericArray2BytesColumnSerializer 无法从 {value.GetType().Name} 反序列化，仅支持 byte[]。");
             }
 

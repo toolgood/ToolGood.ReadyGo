@@ -12,7 +12,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// 列标签
         /// </summary>
         /// <param name="name">列名</param>
-        public ColumnAttribute(string name) { Name = name; }
+        public ColumnAttribute(string name) { Name = name.Trim(); }
 
         /// <summary>
         /// 列名
