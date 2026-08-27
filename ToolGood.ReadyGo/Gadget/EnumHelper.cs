@@ -26,7 +26,13 @@ namespace ToolGood.ReadyGo.Gadget
                 }
                 return newmap;
             });
-            return map[value];
+            if (string.IsNullOrEmpty(value)) {
+                throw new ArgumentException($"枚举类型 {enumType.Name} 的值不能为空。");
+            }
+            if (map.TryGetValue(value, out var result)) {
+                return result;
+            }
+            throw new ArgumentException($"'{value}' 不是枚举类型 {enumType.Name} 的有效值，有效值：{string.Join(", ", map.Keys)}。");
         }
 
         public static bool UseEnumString(Type enumType)

@@ -17,37 +17,37 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         /// <summary>
         /// 模式名（Schema）
         /// </summary>
-        public string SchemaName;
+        public string SchemaName { get; internal set; }
         /// <summary>
         /// 表名
         /// </summary>
-        public string TableName;
+        public string TableName { get; internal set; }
 
         /// <summary>
         /// 主键列名
         /// </summary>
-        public string PrimaryKey;
+        public string PrimaryKey { get; internal set; }
         /// <summary>
         /// 主键是否自增
         /// </summary>
-        public bool AutoIncrement;
+        public bool AutoIncrement { get; internal set; }
         /// <summary>
         /// 序列名称
         /// </summary>
-        public string SequenceName;
+        public string SequenceName { get; internal set; }
 
         /// <summary>
         /// 索引列集合
         /// </summary>
-        public List<List<string>> Indexs = new List<List<string>>();
+        public List<List<string>> Indexs { get; internal set; } = new List<List<string>>();
         /// <summary>
         /// 唯一约束列集合
         /// </summary>
-        public List<List<string>> Uniques = new List<List<string>>();
+        public List<List<string>> Uniques { get; internal set; } = new List<List<string>>();
         /// <summary>
         /// 列信息集合
         /// </summary>
-        public List<ColumnInfo> Columns = new List<ColumnInfo>();
+        public List<ColumnInfo> Columns { get; internal set; } = new List<ColumnInfo>();
 
         private static readonly Cache<Type, TableInfo> _tableInfoCache = Cache<Type, TableInfo>.CreateStaticCache();
 

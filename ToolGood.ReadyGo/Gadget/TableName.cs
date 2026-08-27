@@ -105,11 +105,21 @@ namespace ToolGood.ReadyGo.Gadget
 
         private static string GetFieldName(Expression body)
         {
+            var member = GetMemberExpression(body);
+            // x => x.A.B 这类嵌套成员访问无法映射为当前表的列名，直接报错而不是返回错误列名
+            if (member.Expression is MemberExpression) {
+                throw new NotSupportedException("不支持嵌套成员访问（如 x => x.A.B），仅支持单层属性访问（如 x => x.Name）。");
+            }
+            return member.Member.Name;
+        }
+
+        private static MemberExpression GetMemberExpression(Expression body)
+        {
             if (body is MemberExpression memberExpression) {
-                return memberExpression.Member.Name;
+                return memberExpression;
             }
             if (body is UnaryExpression unaryExpression && unaryExpression.Operand is MemberExpression memberExpression2) {
-                return memberExpression2.Member.Name;
+                return memberExpression2;
             }
             throw new NotSupportedException("仅支持 x => x.字段 形式的表达式。");
         }

@@ -187,7 +187,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 
             if (ci.IsSerialized) return CreateField(ti, ci, "LONGBINARY", ci.FieldLength, false);
 
-            throw new Exception($"Access does not support column type: {ci.PropertyType.Name}");
+            throw new NotSupportedException($"Access does not support column type: {ci.PropertyType.Name}");
         }
 
         private string CreateField(TableInfo ti, ColumnInfo ci, string fieldType, string length, bool isRequired)

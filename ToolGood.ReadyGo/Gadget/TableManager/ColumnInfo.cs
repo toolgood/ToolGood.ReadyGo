@@ -17,67 +17,69 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         /// <summary>
         /// 列名
         /// </summary>
-        public string ColumnName;
+        public string ColumnName { get; internal set; }
 
         /// <summary>
         /// 列注释
         /// </summary>
-        public string Comment;
+        public string Comment { get; internal set; }
 
         /// <summary>
         /// 默认值
         /// </summary>
-        public string DefaultValue;
+        public string DefaultValue { get; internal set; }
 
         /// <summary>
         /// 是否必填
         /// </summary>
-        public bool Required;
+        public bool Required { get; internal set; }
 
         /// <summary>
         /// 属性类型
         /// </summary>
-        public Type PropertyType;
+        public Type PropertyType { get; internal set; }
 
         /// <summary>
         /// 字段长度
         /// </summary>
-        public string FieldLength;
+        public string FieldLength { get; internal set; }
 
         /// <summary>
         /// 是否为文本类型
         /// </summary>
-        public bool IsText;
+        public bool IsText { get; internal set; }
 
         /// <summary>
         /// 是否为中等文本类型
         /// </summary>
-        public bool IsMediumText;
+        public bool IsMediumText { get; internal set; }
 
         /// <summary>
         /// 是否为长文本类型
         /// </summary>
-        public bool IsLongText;
+        public bool IsLongText { get; internal set; }
 
         /// <summary>
         /// 是否为序列化列（带 Serializer 的 SerializedColumnAttribute 子类，如 [DictionaryUintUint]）
         /// </summary>
-        public bool IsSerialized;
+        public bool IsSerialized { get; internal set; }
 
         /// <summary>
         /// 是否为序列化后保存为 int 的列（[Numeric2Int] / [Date2Int] / [Enum2Int] / [Bool2Int]，建表时保存为 int）
         /// </summary>
-        public bool IsSerializedAsInt;
+        public bool IsSerializedAsInt { get; internal set; }
 
         /// <summary>
         /// 是否为序列化后保存为 long 的列（[Numeric2Long] / [DateTime2Long] / [Enum2Long] / [DateTime2Timestamp]，建表时保存为 long）
         /// </summary>
-        public bool IsSerializedAsLong;
+        public bool IsSerializedAsLong { get; internal set; }
+
+
 
         /// <summary>
         /// 是否为序列化后保存为 string 的列（[Bool2String] / [Date2String] / [DateTime2String] / [NumericArray2String] / [StringArray2String]，建表时保存为文本）
         /// </summary>
-        public bool IsSerializedAsString;
+        public bool IsSerializedAsString { get; internal set; }
 
         internal static ColumnInfo FromProperty(PropertyInfo pi)
         {

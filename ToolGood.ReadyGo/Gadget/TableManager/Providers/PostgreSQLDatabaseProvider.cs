@@ -175,7 +175,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 
             if (ci.IsSerialized) return CreateField(ti, ci, "bytea", ci.FieldLength, false);
 
-            throw new Exception($"PostgreSQL does not support column type: {ci.PropertyType.Name}");
+            throw new NotSupportedException($"PostgreSQL does not support column type: {ci.PropertyType.Name}");
         }
 
         private string CreateField(TableInfo ti, ColumnInfo ci, string fieldType, string length, bool isRequired)
