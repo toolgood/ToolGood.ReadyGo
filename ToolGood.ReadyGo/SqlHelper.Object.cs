@@ -182,6 +182,21 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
+        /// 根据条件更新对象，仅更新指定的字段（columns）。set 对象中的主键列仍会被自动忽略，避免意外修改主键。
+        /// condition 无法解析出 WHERE 条件（null、空字符串、空对象等）时会抛出异常，防止意外全表更新。
+        /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="set">要更新的字段与值对象</param>
+        /// <param name="condition">条件</param>
+        /// <param name="columns">仅更新这些字段名</param>
+        /// <returns>受影响的行数</returns>
+        public int UpdateColumns<T>(object set, object condition, IEnumerable<string> columns) where T : class
+        {
+            var (sql, args) = ConditionObjectToUpdateColumnsWhere<T>(set, condition, columns);
+            return Update<T>(sql, args);
+        }
+
+        /// <summary>
         /// 根据条件从数据库中删除对象
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
@@ -387,6 +402,21 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
+        /// 根据条件更新对象，仅更新指定的字段（columns），异步操作。set 对象中的主键列仍会被自动忽略，避免意外修改主键。
+        /// condition 无法解析出 WHERE 条件（null、空字符串、空对象等）时会抛出异常，防止意外全表更新。
+        /// </summary>
+        /// <typeparam name="T">实体类型</typeparam>
+        /// <param name="set">要更新的字段与值对象</param>
+        /// <param name="condition">条件</param>
+        /// <param name="columns">仅更新这些字段名</param>
+        /// <returns>受影响的行数</returns>
+        public Task<int> UpdateColumns_Async<T>(object set, object condition, IEnumerable<string> columns) where T : class
+        {
+            var (sql, args) = ConditionObjectToUpdateColumnsWhere<T>(set, condition, columns);
+            return Update_Async<T>(sql, args);
+        }
+
+        /// <summary>
         /// 根据条件从数据库中删除对象
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
@@ -572,13 +602,32 @@ namespace ToolGood.ReadyGo
             return (stringBuilder.ToString(), args.ToArray());
         }
 
+        /// <summary>
+        /// 根据条件更新对象（忽略指定字段）：set 对象中的主键列会被自动忽略，避免意外修改主键。
+        /// </summary>
         private (string sql, object[] args) ConditionObjectToUpdateSetWhere<T>(object set, object condition, IEnumerable<string> ignoreFields) where T : class
+        {
+            return BuildUpdateSetWhereSql<T>(set, condition, BuildIgnoredFields(GetPocoData(typeof(T)), ignoreFields));
+        }
+
+        /// <summary>
+        /// 根据条件更新对象（仅更新指定字段）：除 updateColumns 指定的字段外，其余列一律忽略；主键列始终忽略。
+        /// </summary>
+        private (string sql, object[] args) ConditionObjectToUpdateColumnsWhere<T>(object set, object condition, IEnumerable<string> updateColumns) where T : class
+        {
+            return BuildUpdateSetWhereSql<T>(set, condition, BuildColumnsIgnoredFields(GetPocoData(typeof(T)), updateColumns));
+        }
+
+        /// <summary>
+        /// 根据条件更新对象：ignored 为已构建好的忽略字段集合。
+        /// condition 无法解析出 WHERE 条件（null、空字符串、空对象等）时会抛出异常，防止意外全表更新。
+        /// </summary>
+        private (string sql, object[] args) BuildUpdateSetWhereSql<T>(object set, object condition, HashSet<string> ignored) where T : class
         {
             if (set == null) { throw new ArgumentException("set is  null object!"); }
 
             var pocoData = GetPocoData(typeof(T));
             var args = new List<object>();
-            var ignored = BuildIgnoredFields(pocoData, ignoreFields);
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append("SET ");
             if (ObjectToSql(stringBuilder, set, ObjectSqlMode.UpdateSet, ignored, pocoData, args) == false) {
@@ -623,6 +672,37 @@ namespace ToolGood.ReadyGo
             if (ignoreFields != null) {
                 foreach (var field in ignoreFields) {
                     if (field != null) { set.Add(field); }
+                }
+            }
+            var primaryKey = pocoData?.TableInfo?.PrimaryKey;
+            if (!string.IsNullOrEmpty(primaryKey)) {
+                foreach (var pkName in primaryKey.Split(',')) {
+                    var column = pkName.Trim();
+                    var member = pocoData.Members.FirstOrDefault(m => m.PocoColumn != null
+                        && string.Equals(m.PocoColumn.ColumnName, column, StringComparison.OrdinalIgnoreCase));
+                    if (member != null) { set.Add(member.Name); }
+                }
+            }
+            return set;
+        }
+
+        /// <summary>
+        /// 构建"仅更新指定字段"的忽略集合：默认忽略实体的全部可更新列，仅保留 updateColumns 指定的列；主键列始终忽略。
+        /// </summary>
+        private static HashSet<string> BuildColumnsIgnoredFields(PocoData pocoData, IEnumerable<string> updateColumns)
+        {
+            var columns = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (updateColumns != null) {
+                foreach (var column in updateColumns) {
+                    if (column != null) { columns.Add(column); }
+                }
+            }
+            var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (pocoData != null) {
+                foreach (var member in pocoData.Members) {
+                    if (member.PocoColumn != null && member.ReferenceType == ReferenceType.None && columns.Contains(member.Name) == false) {
+                        set.Add(member.Name);
+                    }
                 }
             }
             var primaryKey = pocoData?.TableInfo?.PrimaryKey;

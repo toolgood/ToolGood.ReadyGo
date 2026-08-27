@@ -856,6 +856,103 @@ namespace ToolGood.ReadyGo.Tests
 
         #endregion
 
+        #region 对象条件 按字段更新与忽略字段
+
+        [Fact]
+        public void ObjectCondition_UpdateColumns_OnlyUpdatesSpecifiedFields()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("甲", 20, 10.5m, false);
+
+            // 仅更新 Age，其余字段保持原值
+            Assert.Equal(1, helper.UpdateColumns<UserInfo>(
+                new { Name = "甲改", Age = 99, Money = 999m },
+                new { Id = u.Id },
+                new[] { "Age" }));
+
+            var loaded = helper.FirstOrDefault<UserInfo>(u.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(99, loaded.Age);
+            Assert.Equal("甲", loaded.Name);     // 未指定 → 保持原值
+            Assert.Equal(10.5m, loaded.Money);   // 未指定 → 保持原值
+        }
+
+        [Fact]
+        public async Task ObjectCondition_UpdateColumns_Async_Works()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var s = new SimpleUser { Name = "甲", Age = 20 };
+            helper.Insert(s);
+
+            Assert.Equal(1, await helper.UpdateColumns_Async<SimpleUser>(
+                new { Name = "甲改", Age = 99 },
+                new { Id = s.Id },
+                new[] { "Age" }));
+
+            var loaded = helper.FirstOrDefault<SimpleUser>(s.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(99, loaded.Age);
+            Assert.Equal("甲", loaded.Name); // 未指定 → 保持原值
+        }
+
+        [Fact]
+        public void ObjectCondition_UpdateColumns_FloatArray_Works()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+
+            var item = new Tb_NumericArrayTest { Floats = new[] { 1f, 2f }, ValueList = new List<float> { 1f } };
+            helper.Insert(item);
+
+            // 仅更新 Floats，ValueList 保持原值
+            Assert.Equal(1, helper.UpdateColumns<Tb_NumericArrayTest>(
+                new { Floats = new[] { 9.5f, 8.25f }, ValueList = new List<float> { 7f } },
+                new { Id = item.Id },
+                new[] { "Floats" }));
+
+            var loaded = helper.FirstOrDefault<Tb_NumericArrayTest>(item.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(new[] { 9.5f, 8.25f }, loaded.Floats);
+            Assert.Equal(new List<float> { 1f }, loaded.ValueList);
+        }
+
+        [Fact]
+        public void ObjectCondition_Update_IgnoreFields_KeepsIgnoredFields()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var s = new SimpleUser { Name = "甲", Age = 20 };
+            helper.Insert(s);
+
+            // 忽略字段：Name 被忽略 → 保持原值，其余字段照常更新
+            Assert.Equal(1, helper.Update<SimpleUser>(
+                new SimpleUser { Name = "甲改", Age = 99 },
+                new { Id = s.Id },
+                new[] { "Name" }));
+
+            var loaded = helper.FirstOrDefault<SimpleUser>(s.Id);
+            Assert.NotNull(loaded);
+            Assert.Equal(99, loaded.Age);
+            Assert.Equal("甲", loaded.Name);
+        }
+
+        [Fact]
+        public void ObjectCondition_UpdateColumns_EmptyColumns_Throws()
+        {
+            using var db = TestDb.Create();
+            var helper = db.Helper;
+            var u = db.NewUser("甲", 20);
+
+            // 未指定任何更新字段 → 无可用字段，应抛出明确异常
+            Assert.Throws<ArgumentException>(() => helper.UpdateColumns<UserInfo>(
+                new { Name = "甲改" }, new { Id = u.Id }, new string[0]));
+        }
+
+        #endregion
+
         #region SQL_* 系列
 
         [Fact]

@@ -9,7 +9,7 @@
     <AssemblyName>ToolGood.ReadyGo</AssemblyName>
     <RootNamespace>ToolGood.ReadyGo</RootNamespace>
     <PackageId>ToolGood.ReadyGo</PackageId>
-    <Version>5.0.27</Version>
+    <Version>6.0.0</Version>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
