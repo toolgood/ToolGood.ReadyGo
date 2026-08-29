@@ -172,7 +172,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="set">要更新的字段与值对象</param>
         /// <param name="condition">条件</param>
-        /// <param name="columns">仅更新这些字段名</param>
+        /// <param name="columns">仅更新这些字段（支持属性名或数据库列名）</param>
         /// <returns>受影响的行数</returns>
         public int Update<T>(object set, object condition, IEnumerable<string> columns) where T : class
         {
@@ -377,7 +377,7 @@ namespace ToolGood.ReadyGo
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="set">要更新的字段与值对象</param>
         /// <param name="condition">条件</param>
-        /// <param name="columns">仅更新这些字段名</param>
+        /// <param name="columns">仅更新这些字段（支持属性名或数据库列名）</param>
         /// <returns>受影响的行数</returns>
         public Task<int> Update_Async<T>(object set, object condition, IEnumerable<string> columns) where T : class
         {
@@ -410,7 +410,7 @@ namespace ToolGood.ReadyGo
         }
 
         /// <summary>
-        /// 根据条件是判断否存在，异步操作
+        /// 根据条件判断是否存在，异步操作
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
         /// <param name="condition">条件</param>
@@ -445,8 +445,7 @@ namespace ToolGood.ReadyGo
         {
             var db = GetDatabase();
             var pd = db.PocoDataFactory.ForType(typeof(T));
-            var pkColumns = (pd.TableInfo.PrimaryKey ?? "").Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(x => x.Trim()).Where(x => x.Length > 0).ToArray();
+            var pkColumns = SplitPrimaryKeyColumns(pd.TableInfo.PrimaryKey);
             if (pkColumns.Length != 1) {
                 throw new NotSupportedException($"类型 {typeof(T).Name} 的主键不是单一主键列，无法按主键生成查询条件。");
             }
@@ -491,10 +490,32 @@ namespace ToolGood.ReadyGo
         /// </summary>
         private string[] GetPrimaryKeyColumns(Type entityType)
         {
-            var pkName = GetPocoData(entityType).TableInfo.PrimaryKey;
-            if (string.IsNullOrEmpty(pkName)) { return Array.Empty<string>(); }
-            return pkName.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+            return SplitPrimaryKeyColumns(GetPocoData(entityType).TableInfo.PrimaryKey);
+        }
+
+        /// <summary>
+        /// 按逗号拆分主键列名字符串并去空白；null 或空返回空数组。
+        /// </summary>
+        private static string[] SplitPrimaryKeyColumns(string primaryKey)
+        {
+            if (string.IsNullOrEmpty(primaryKey)) { return Array.Empty<string>(); }
+            return primaryKey.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(x => x.Trim()).Where(x => x.Length > 0).ToArray();
+        }
+
+        /// <summary>
+        /// 获取主键列对应的成员（属性）名集合，供忽略主键字段使用。
+        /// </summary>
+        private static HashSet<string> GetPrimaryKeyMemberNames(PocoData pocoData)
+        {
+            var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            if (pocoData == null) { return set; }
+            foreach (var column in SplitPrimaryKeyColumns(pocoData.TableInfo?.PrimaryKey)) {
+                var member = pocoData.Members.FirstOrDefault(m => m.PocoColumn != null
+                    && string.Equals(m.PocoColumn.ColumnName, column, StringComparison.OrdinalIgnoreCase));
+                if (member != null) { set.Add(member.Name); }
+            }
+            return set;
         }
 
         /// <summary>
@@ -541,7 +562,7 @@ namespace ToolGood.ReadyGo
             if (condition is string str) {
                 var trimmed = str.Trim();
                 if (trimmed.Length > 0 && IsStringPrimaryKey(typeof(T))) {
-                    primaryKey = str;
+                    primaryKey = trimmed;
                     return true;
                 }
             }
@@ -558,6 +579,7 @@ namespace ToolGood.ReadyGo
             if (condition is string) {
                 var str = ((string)condition).Trim();
                 if (str.Length == 0) { return ("", new object[0]); }
+                // 字符串被当作原始 SQL 片段直接拼接；调用方须确保其来源可信，否则存在 SQL 注入风险
                 return (IsWhereClause(str) ? str : "WHERE " + str, new object[0]);
             }
 
@@ -643,15 +665,7 @@ namespace ToolGood.ReadyGo
                     if (field != null) { set.Add(field); }
                 }
             }
-            var primaryKey = pocoData?.TableInfo?.PrimaryKey;
-            if (!string.IsNullOrEmpty(primaryKey)) {
-                foreach (var pkName in primaryKey.Split(',')) {
-                    var column = pkName.Trim();
-                    var member = pocoData.Members.FirstOrDefault(m => m.PocoColumn != null
-                        && string.Equals(m.PocoColumn.ColumnName, column, StringComparison.OrdinalIgnoreCase));
-                    if (member != null) { set.Add(member.Name); }
-                }
-            }
+            set.UnionWith(GetPrimaryKeyMemberNames(pocoData));
             return set;
         }
 
@@ -669,20 +683,15 @@ namespace ToolGood.ReadyGo
             var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             if (pocoData != null) {
                 foreach (var member in pocoData.Members) {
-                    if (member.PocoColumn != null && member.ReferenceType == ReferenceType.None && columns.Contains(member.Name) == false) {
+                    // 同时支持属性名与数据库列名，避免与 Update<T>(poco, columns) 的列名语义不一致
+                    if (member.PocoColumn != null && member.ReferenceType == ReferenceType.None
+                        && columns.Contains(member.Name) == false
+                        && columns.Contains(member.PocoColumn.ColumnName) == false) {
                         set.Add(member.Name);
                     }
                 }
             }
-            var primaryKey = pocoData?.TableInfo?.PrimaryKey;
-            if (!string.IsNullOrEmpty(primaryKey)) {
-                foreach (var pkName in primaryKey.Split(',')) {
-                    var column = pkName.Trim();
-                    var member = pocoData.Members.FirstOrDefault(m => m.PocoColumn != null
-                        && string.Equals(m.PocoColumn.ColumnName, column, StringComparison.OrdinalIgnoreCase));
-                    if (member != null) { set.Add(member.Name); }
-                }
-            }
+            set.UnionWith(GetPrimaryKeyMemberNames(pocoData));
             return set;
         }
 
@@ -932,8 +941,8 @@ namespace ToolGood.ReadyGo
                     var txt = ToEscapeParam(value.ToString());
                     return "'" + txt + "'";
                 }
-                // 按枚举底层类型转换，避免 ulong 等大值枚举在 Convert.ToInt64 时溢出
-                return "'" + Convert.ChangeType(value, Enum.GetUnderlyingType(fieldType)) + "'";
+                // 按枚举底层类型转换，避免 ulong 等大值枚举在 Convert.ToInt64 时溢出；数值底层类型不加引号
+                return Convert.ChangeType(value, Enum.GetUnderlyingType(fieldType)).ToString();
             }
 
             var typeCode = Type.GetTypeCode(fieldType);

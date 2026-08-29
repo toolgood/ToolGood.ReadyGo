@@ -604,7 +604,7 @@ namespace ToolGood.ReadyGo
         public async Task<object> Insert_Async<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
+            if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList method.");
 
             if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
                 var pd = GetDatabase().PocoDataFactory.ForType(typeof(T));
@@ -726,15 +726,16 @@ namespace ToolGood.ReadyGo
 
             var toInsert = new List<T>();
             var toUpdate = new List<T>();
+            var db = GetDatabase();
             foreach (var item in list) {
-                if (await GetDatabase().IsNewAsync(item)) {
+                if (await db.IsNewAsync(item)) {
                     toInsert.Add(item);
                 } else {
                     toUpdate.Add(item);
                 }
             }
-            if (toInsert.Count > 0) await GetDatabase().InsertBatchAsync(toInsert);
-            if (toUpdate.Count > 0) await GetDatabase().UpdateBatchAsync(toUpdate.Select(x => UpdateBatch.For(x)));
+            if (toInsert.Count > 0) await db.InsertBatchAsync(toInsert);
+            if (toUpdate.Count > 0) await db.UpdateBatchAsync(toUpdate.Select(x => UpdateBatch.For(x)));
         }
 
         /// <summary>

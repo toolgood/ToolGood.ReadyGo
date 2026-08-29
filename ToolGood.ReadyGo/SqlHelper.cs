@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo
         // 读写数据库
         internal readonly string _connectionString;
         internal readonly DbProviderFactory _factory;
-        internal Database _database;
+        internal volatile Database _database;
         private readonly object _databaseLock = new object();
 
         // 连接时间 事务级别
@@ -84,6 +84,7 @@ namespace ToolGood.ReadyGo
         /// </summary>
         public void Dispose()
         {
+            if (_isDisposable) { return; }
             _isDisposable = true;
             if (_database != null) {
                 _database.Dispose();
@@ -99,11 +100,15 @@ namespace ToolGood.ReadyGo
 
         internal Database GetDatabase()
         {
+            if (_isDisposable) {
+                throw new ObjectDisposedException(nameof(SqlHelper));
+            }
             if (_database == null) {
                 lock (_databaseLock) {
                     if (_database == null) {
-                        _database = new Database(_connectionString, DatabaseProvider.GetDatabaseType(_sqlType), _factory, _isolationLevel);
-                        _database._sqlHelper = this;
+                        var newDb = new Database(_connectionString, DatabaseProvider.GetDatabaseType(_sqlType), _factory, _isolationLevel);
+                        newDb._sqlHelper = this;
+                        _database = newDb;
                     }
                 }
             }
@@ -703,7 +708,7 @@ namespace ToolGood.ReadyGo
         public object Insert<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList methon .");
+            if (poco is IList) throw new ArgumentException("poco is a list type, use InsertList method.");
 
             if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
                 var pd = GetDatabase().PocoDataFactory.ForType(typeof(T));
@@ -835,15 +840,16 @@ namespace ToolGood.ReadyGo
 
             var toInsert = new List<T>();
             var toUpdate = new List<T>();
+            var db = GetDatabase();
             foreach (var item in list) {
-                if (GetDatabase().IsNew(item)) {
+                if (db.IsNew(item)) {
                     toInsert.Add(item);
                 } else {
                     toUpdate.Add(item);
                 }
             }
-            if (toInsert.Count > 0) GetDatabase().InsertBatch(toInsert);
-            if (toUpdate.Count > 0) GetDatabase().UpdateBatch(toUpdate.Select(x => UpdateBatch.For(x)));
+            if (toInsert.Count > 0) db.InsertBatch(toInsert);
+            if (toUpdate.Count > 0) db.UpdateBatch(toUpdate.Select(x => UpdateBatch.For(x)));
         }
 
         /// <summary>
