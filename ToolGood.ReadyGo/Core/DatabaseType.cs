@@ -22,7 +22,7 @@ namespace ToolGood.ReadyGo.NPoco
         /// <summary>
         /// 获取 SQL Server 2012 数据库类型处理器实例。
         /// </summary>
-        public static DatabaseType SqlServer2012 { get { return DynamicDatabaseType.MakeSqlServerType("SqlServer2012DatabaseType"); } }
+        public static DatabaseType SqlServer2012 { get { return Singleton<SqlServer2012DatabaseType>.Instance; } }
 
         /// <summary>
         /// 获取 PostgreSQL 数据库类型处理器实例。
@@ -341,7 +341,7 @@ namespace ToolGood.ReadyGo.NPoco
             if (typeName.StartsWith("SQLite", StringComparison.OrdinalIgnoreCase))
                 return Singleton<SQLiteDatabaseType>.Instance;
             if (typeName.StartsWith("SqlConnection"))
-                return DynamicDatabaseType.MakeSqlServerType("SqlServerDatabaseType");
+                return Singleton<SqlServer2012DatabaseType>.Instance;
             if (typeName.StartsWith("Fb") || typeName.StartsWith("Firebird"))
                 return Singleton<FirebirdDatabaseType>.Instance;
             if (typeName.StartsWith("DuckDb", StringComparison.OrdinalIgnoreCase))
@@ -373,7 +373,7 @@ namespace ToolGood.ReadyGo.NPoco
             }
 
             // Assume SQL Server
-            return DynamicDatabaseType.MakeSqlServerType("SqlServerDatabaseType");
+            return Singleton<SqlServer2012DatabaseType>.Instance;
         }
 
         /// <summary>
