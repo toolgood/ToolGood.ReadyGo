@@ -103,6 +103,11 @@ namespace ToolGood.ReadyGo.NPoco.DatabaseTypes
             if (primaryKeyName != null)
             {
                 AdjustSqlInsertCommandText(cmd, primaryKeyName);
+                System.Console.WriteLine("DEBUG SQL: " + cmd.CommandText);
+                foreach (DbParameter p in cmd.Parameters)
+                {
+                    System.Console.WriteLine($"DEBUG PARAM: name={p.ParameterName} dbtype={p.DbType} valtype={(p.Value == null ? "null" : p.Value.GetType().FullName)}");
+                }
                 return ((IDatabaseHelpers)db).ExecuteScalarHelper(cmd);
             }
 

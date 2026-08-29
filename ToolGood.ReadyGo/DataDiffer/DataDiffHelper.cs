@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,13 @@ namespace ToolGood.ReadyGo
         private const string EqualsSign = "=";
         private const string EmptyJsonObject = "{}";
 
+        private static readonly ConcurrentDictionary<Type, DataDiffTypeInfo> TypeInfoCache = new();
+
+        private static DataDiffTypeInfo GetTypeInfo(Type type)
+        {
+            return TypeInfoCache.GetOrAdd(type, t => new DataDiffTypeInfo(t));
+        }
+
         /// <summary>
         /// 数据变动转成文本（新增）
         /// </summary>
@@ -28,7 +36,7 @@ namespace ToolGood.ReadyGo
         /// <returns></returns>
         public static string Diff<T>(T right) where T : class
         {
-            DataDiffTypeInfo typeInfo = new DataDiffTypeInfo(typeof(T));
+            DataDiffTypeInfo typeInfo = GetTypeInfo(typeof(T));
             return typeInfo.DiffMessage(right);
         }
 
@@ -40,7 +48,7 @@ namespace ToolGood.ReadyGo
         /// <returns></returns>
         public static string Diff<T>(T right, SqlHelper sqlHelper) where T : class
         {
-            DataDiffTypeInfo typeInfo = new DataDiffTypeInfo(typeof(T));
+            DataDiffTypeInfo typeInfo = GetTypeInfo(typeof(T)).Clone();
             typeInfo.SetEnumNameFromDatabase(sqlHelper);
             return typeInfo.DiffMessage(right);
         }
@@ -56,7 +64,7 @@ namespace ToolGood.ReadyGo
             if (left is null && right is null) { return ""; }
             if (left is null) { return Diff(right); }
 
-            DataDiffTypeInfo typeInfo = new DataDiffTypeInfo(typeof(T));
+            DataDiffTypeInfo typeInfo = GetTypeInfo(typeof(T));
             if (right is null) { return typeInfo.DeleteMessage(left); }
             return typeInfo.DiffMessage(left, right);
         }
@@ -73,7 +81,7 @@ namespace ToolGood.ReadyGo
             if (left is null && right is null) { return ""; }
             if (left is null) { return Diff(right, sqlHelper); }
 
-            DataDiffTypeInfo typeInfo = new DataDiffTypeInfo(typeof(T));
+            DataDiffTypeInfo typeInfo = GetTypeInfo(typeof(T)).Clone();
             typeInfo.SetEnumNameFromDatabase(sqlHelper);
             if (right is null) { return typeInfo.DeleteMessage(left); }
             return typeInfo.DiffMessage(left, right);

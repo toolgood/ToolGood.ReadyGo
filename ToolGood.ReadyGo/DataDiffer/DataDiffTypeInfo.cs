@@ -23,10 +23,13 @@ namespace ToolGood.ReadyGo
         public DataDiffPropertyInfo IdPropertyInfo { get; set; }
         public List<DataDiffPropertyInfo> PropertyInfos { get; }
 
-        public DataDiffTypeInfo(Type type)
+        private DataDiffTypeInfo()
         {
             PropertyInfos = new List<DataDiffPropertyInfo>();
+        }
 
+        public DataDiffTypeInfo(Type type) : this()
+        {
             var customAttributes = type.GetCustomAttributes();
             foreach (var customAttribute in customAttributes) {
                 if (customAttribute is DataNameAttribute dataName) {
@@ -69,6 +72,19 @@ namespace ToolGood.ReadyGo
             }
         }
 
+        public DataDiffTypeInfo Clone()
+        {
+            var clone = new DataDiffTypeInfo
+            {
+                Name = Name,
+                IdPropertyInfo = IdPropertyInfo?.Clone()
+            };
+            foreach (var propertyInfo in PropertyInfos) {
+                clone.PropertyInfos.Add(propertyInfo.Clone());
+            }
+            return clone;
+        }
+
         /// <summary>
         /// 获取枚举字段上的 <see cref="DataNameAttribute"/> 显示名称。
         /// </summary>
@@ -108,7 +124,10 @@ namespace ToolGood.ReadyGo
                     }
                     EnumNameCache[item.Sql] = enumNames;
                     item.EnumNames = enumNames;
-                } catch (Exception) { }
+                } catch (Exception exception) {
+                    System.Diagnostics.Debug.WriteLine("***** ENUM NAME QUERY EXCEPTION *****" + Environment.NewLine + Environment.NewLine + exception.Message + Environment.NewLine + exception.StackTrace);
+                    System.Diagnostics.Debug.WriteLine("***** ENUM SQL *****" + Environment.NewLine + Environment.NewLine + item.Sql);
+                }
             }
         }
 
@@ -117,13 +136,13 @@ namespace ToolGood.ReadyGo
             StringBuilder stringBuilder = new StringBuilder();
             if (IdPropertyInfo != null) {
                 if (IdPropertyInfo.IsChange(left, right)) {
-                    var id = IdPropertyInfo.Property.GetValue(right);
+                    var id = IdPropertyInfo.GetValue(right);
                     stringBuilder.Append($"{AddedText}[{Name ?? IdDisplayName}]{id}");
                     foreach (var propertyInfo in PropertyInfos) {
                         propertyInfo.NewValue(right, stringBuilder);
                     }
                 } else {
-                    var id = IdPropertyInfo.Property.GetValue(right);
+                    var id = IdPropertyInfo.GetValue(right);
                     stringBuilder.Append($"{ModifiedText}[{Name ?? IdDisplayName}]{id}");
                     foreach (var propertyInfo in PropertyInfos) {
                         propertyInfo.Diff(left, right, stringBuilder);
@@ -146,7 +165,7 @@ namespace ToolGood.ReadyGo
         {
             StringBuilder stringBuilder = new StringBuilder();
             if (IdPropertyInfo != null) {
-                var id = IdPropertyInfo.Property.GetValue(right);
+                var id = IdPropertyInfo.GetValue(right);
                 stringBuilder.Append($"{AddedText}[{Name ?? IdDisplayName}]{id}");
                 foreach (var propertyInfo in PropertyInfos) {
                     propertyInfo.NewValue(right, stringBuilder);
@@ -168,7 +187,7 @@ namespace ToolGood.ReadyGo
         {
             StringBuilder stringBuilder = new StringBuilder();
             if (IdPropertyInfo != null) {
-                var id = IdPropertyInfo.Property.GetValue(left);
+                var id = IdPropertyInfo.GetValue(left);
                 stringBuilder.Append($"{DeletedText}[{Name ?? IdDisplayName}]{id}");
             } else {
                 if (string.IsNullOrEmpty(Name)) {
