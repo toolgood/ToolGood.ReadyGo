@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 
@@ -19,17 +18,9 @@ namespace ToolGood.ReadyGo
         private const string TimeOnlyFormat = "HH:mm:ss";
         private const string DateOnlyFormat = "yyyy-MM-dd";
 
-        private readonly Func<object, object> _getter;
-
         public DataDiffPropertyInfo(PropertyInfo property)
-            : this(property, CreateGetter(property))
-        {
-        }
-
-        private DataDiffPropertyInfo(PropertyInfo property, Func<object, object> getter)
         {
             Property = property;
-            _getter = getter;
         }
 
         public PropertyInfo Property { get; }
@@ -37,38 +28,17 @@ namespace ToolGood.ReadyGo
         public string Sql { get; set; }
         public Dictionary<string, string> EnumNames { get; set; }
 
-        public object GetValue(object instance) => _getter(instance);
-
-        public DataDiffPropertyInfo Clone()
-        {
-            return new DataDiffPropertyInfo(Property, _getter)
-            {
-                DisplayName = DisplayName,
-                Sql = Sql,
-                EnumNames = EnumNames
-            };
-        }
-
-        private static Func<object, object> CreateGetter(PropertyInfo property)
-        {
-            var instance = Expression.Parameter(typeof(object), "instance");
-            var convert = Expression.Convert(instance, property.DeclaringType);
-            var access = Expression.Property(convert, property);
-            var box = Expression.Convert(access, typeof(object));
-            return Expression.Lambda<Func<object, object>>(box, instance).Compile();
-        }
-
         public bool IsChange<T>(T left, T right)
         {
-            var leftValue = _getter(left);
-            var rightValue = _getter(right);
+            var leftValue = Property.GetValue(left);
+            var rightValue = Property.GetValue(right);
             if (object.Equals(leftValue, rightValue)) { return false; }
             return true;
         }
 
         public void NewValue(object right, StringBuilder stringBuilder)
         {
-            var rightValue = _getter(right);
+            var rightValue = Property.GetValue(right);
             if (null == rightValue) { return; }
             if (string.Equals(rightValue as string, "")) { return; }
 
@@ -78,8 +48,8 @@ namespace ToolGood.ReadyGo
 
         public void Diff<T>(T left, T right, StringBuilder stringBuilder)
         {
-            var leftValue = _getter(left);
-            var rightValue = _getter(right);
+            var leftValue = Property.GetValue(left);
+            var rightValue = Property.GetValue(right);
 
             if (null == leftValue && null == rightValue) { return; }
             if (null != leftValue && leftValue.Equals(rightValue)) { return; }

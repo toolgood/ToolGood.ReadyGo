@@ -145,6 +145,9 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 			if (ci.SerializedAs == ColumnInfo.SerializedKind.Int) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
 			if (ci.SerializedAs == ColumnInfo.SerializedKind.Long) return CreateField(ti, ci, "BIGINT", ci.FieldLength, isRequired);
 			if (ci.SerializedAs == ColumnInfo.SerializedKind.String) return CreateField(ti, ci, "Text", "", false);
+			// 二进制序列化列（如 [NumericArray2Bytes] / [SerializedColumn]）按 BLOB 存储，
+			// 必须优先于原生数组类型判断，否则 float[] 等会被错误映射为 DuckDB LIST 类型（FLOAT[]）
+			if (ci.IsSerialized) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 			if(type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
 			if(type == typeof(string)) return CreateField(ti, ci, "Text", "", isRequired);
 			if(type == typeof(Byte[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
@@ -194,8 +197,6 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 			if(type == typeof(DateTimeOffset)) return CreateField(ti, ci, "DATETIME", ci.FieldLength, isRequired);
 
 			if(type == typeof(Guid)) return CreateField(ti, ci, "TEXT", "40", isRequired);
-
-			if(ci.IsSerialized) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 
 			throw new NotSupportedException($"DuckDB does not support column type: {ci.PropertyType.Name}");
 		}
