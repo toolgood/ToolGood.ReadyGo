@@ -34,7 +34,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <returns>还原的 bool 值</returns>
         public object Deserialize(object value, Type targetType)
         {
-            if (value == null) {
+            if (value == null || value is DBNull) {
                 return null;
             }
             var s = value as string ?? value?.ToString();

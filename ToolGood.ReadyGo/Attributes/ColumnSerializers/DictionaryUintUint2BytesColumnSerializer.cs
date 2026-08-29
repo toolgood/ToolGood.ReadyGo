@@ -27,6 +27,9 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 using (var ms = new MemoryStream(bytes)) {
                     var br = new BinaryReader(ms);
                     var len = Bytes2Uint(br);
+                    if (len > bytes.Length) {
+                        throw new ArgumentException($"数据损坏：声明元素个数 {len} 超过数据长度 {bytes.Length}。", nameof(value));
+                    }
                     var result = new Dictionary<uint, uint>();
                     if (len > 0) {
                         var price = Bytes2Uint(br);
@@ -84,29 +87,43 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
 
         private static byte[] Uint2Bytes(uint value)
         {
-            var bytes = new List<byte>();
+            // uint 最多 5 字节（35 位），倒序填充为变长大端序，避免 List+Reverse 的多次分配
+            var buffer = new byte[5];
+            var index = 5;
             var remaining = value;
-            var temp = (byte)(remaining & 0x7F);
-            bytes.Add(temp);
-            remaining = remaining >> 7;
+            buffer[--index] = (byte)(remaining & 0x7F);
+            remaining >>= 7;
             while (remaining > 0) {
-                temp = (byte)(remaining & 0x7F | 0x80);
-                bytes.Add(temp);
-                remaining = remaining >> 7;
+                buffer[--index] = (byte)(remaining & 0x7F | 0x80);
+                remaining >>= 7;
             }
-            bytes.Reverse();
-            return bytes.ToArray();
+            var result = new byte[5 - index];
+            Array.Copy(buffer, index, result, 0, result.Length);
+            return result;
         }
 
         private static uint Bytes2Uint(BinaryReader br)
         {
             var result = 0u;
-            var b = br.ReadByte();
+            var count = 0;
+            byte b;
+            try {
+                b = br.ReadByte();
+            } catch (EndOfStreamException) {
+                throw new ArgumentException("数据损坏：uint 变长编码缺少数据。", nameof(br));
+            }
             var hasMore = b & 0x80;
             b = (byte)(b & 0x7F);
             result = result | b;
             while (hasMore == 128) {
-                b = br.ReadByte();
+                if (++count > 4) {
+                    throw new ArgumentException("数据损坏：uint 变长编码超过 5 字节。", nameof(br));
+                }
+                try {
+                    b = br.ReadByte();
+                } catch (EndOfStreamException) {
+                    throw new ArgumentException("数据损坏：uint 变长编码不完整。", nameof(br));
+                }
                 hasMore = b & 0x80;
                 b = (byte)(b & 0x7F);
                 result = result << 7;

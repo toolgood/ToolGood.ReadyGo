@@ -9,12 +9,6 @@ namespace ToolGood.ReadyGo.Attributes
     public class ColumnAttribute : Attribute
     {
         /// <summary>
-        /// 列标签
-        /// </summary>
-        /// <param name="name">列名</param>
-        public ColumnAttribute(string name) { Name = name.Trim(); }
-
-        /// <summary>
         /// 列名
         /// </summary>
         public string Name { get; set; }
@@ -47,6 +41,9 @@ namespace ToolGood.ReadyGo.Attributes
         /// <param name="comment">备注</param>
         public ColumnAttribute(string name, string comment = null)
         {
+            if (name == null) {
+                throw new ArgumentNullException(nameof(name));
+            }
             Name = name.Trim();
             if(comment != null) {
                 this.Comment = comment.Trim();

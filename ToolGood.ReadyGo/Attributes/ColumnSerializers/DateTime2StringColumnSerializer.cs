@@ -41,7 +41,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <returns>反序列化后的时间值</returns>
         public object Deserialize(object value, Type targetType)
         {
-            if (value == null) {
+            if (value == null || value is DBNull) {
                 return null;
             }
             var t = Nullable.GetUnderlyingType(targetType) ?? targetType;
@@ -50,7 +50,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
             switch (value) {
                 case DateTime dateTime:
                     if (t == typeof(DateTime)) { return dateTime; }
-                    if (t == typeof(DateTimeOffset)) { return new DateTimeOffset(dateTime); }
+                    if (t == typeof(DateTimeOffset)) { return new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)); }
                     break;
                 case DateTimeOffset dateTimeOffset:
                     if (t == typeof(DateTimeOffset)) { return dateTimeOffset; }
@@ -66,7 +66,8 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 throw new FormatException($"String '{s}' was not recognized as a valid DateTime.");
             }
             if (t == typeof(DateTimeOffset)) {
-                return new DateTimeOffset(result);
+                // 存储值为无时区文本，按 UTC 解释，避免依赖服务器本地时区
+                return new DateTimeOffset(DateTime.SpecifyKind(result, DateTimeKind.Utc));
             }
             return result;
         }

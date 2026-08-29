@@ -19,6 +19,9 @@ namespace ToolGood.ReadyGo.Attributes
         /// <param name="alias">别名</param>
         public AliasAttribute(string alias)
         {
+            if (alias == null) {
+                throw new ArgumentNullException(nameof(alias));
+            }
             Alias = alias;
         }
     }

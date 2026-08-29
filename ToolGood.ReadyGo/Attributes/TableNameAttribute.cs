@@ -14,6 +14,9 @@ namespace ToolGood.ReadyGo.Attributes
         /// <param name="tableName">数据表名</param>
         public TableNameAttribute(string tableName)
         {
+            if (tableName == null) {
+                throw new ArgumentNullException(nameof(tableName));
+            }
             TableName = tableName;
         }
 

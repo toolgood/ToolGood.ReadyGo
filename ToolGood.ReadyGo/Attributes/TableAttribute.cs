@@ -11,7 +11,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// Schema名
         /// </summary>
-        public string SchemaName;
+        public string SchemaName { get; }
 
         /// <summary>
         /// 数据表
@@ -28,6 +28,9 @@ namespace ToolGood.ReadyGo.Attributes
         /// <param name="schemaName">Schema 名</param>
         public TableAttribute(string tableName, string schemaName) : base(tableName)
         {
+            if (schemaName == null) {
+                throw new ArgumentNullException(nameof(schemaName));
+            }
             SchemaName = schemaName.Trim();
         }
     }

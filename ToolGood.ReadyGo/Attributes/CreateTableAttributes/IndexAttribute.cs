@@ -16,10 +16,16 @@ namespace ToolGood.ReadyGo.Attributes
         /// <param name="columns">其它索引列名</param>
         public IndexAttribute(string column, params string[] columns)
         {
+            if (column == null) {
+                throw new ArgumentNullException(nameof(column));
+            }
             ColumnNames = new List<string>();
             ColumnNames.Add(column.Trim());
 
             foreach (var item in columns) {
+                if (item == null) {
+                    throw new ArgumentNullException(nameof(columns));
+                }
                 ColumnNames.Add(item.Trim());
             }
         }
@@ -27,6 +33,6 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列名
         /// </summary>
-        public List<string> ColumnNames;
+        public List<string> ColumnNames { get; }
     }
 }

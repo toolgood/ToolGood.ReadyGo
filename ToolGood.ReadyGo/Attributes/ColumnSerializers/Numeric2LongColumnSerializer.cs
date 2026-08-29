@@ -20,6 +20,9 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
             if (scale < 0) {
                 throw new ArgumentOutOfRangeException(nameof(scale), "scale 不能为负数");
             }
+            if (scale > 28) {
+                throw new ArgumentOutOfRangeException(nameof(scale), "scale 不能超过 28（decimal 有效位数限制）");
+            }
             _scale = scale;
             _multiplier = (decimal)Math.Pow(10, scale);
         }
@@ -48,6 +51,9 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <returns>还原后的小数值</returns>
         public object Deserialize(object value, Type targetType)
         {
+            if (value == null || value is DBNull) {
+                return null;
+            }
             var s = value as string ?? value?.ToString();
             if (string.IsNullOrEmpty(s)) {
                 return null;

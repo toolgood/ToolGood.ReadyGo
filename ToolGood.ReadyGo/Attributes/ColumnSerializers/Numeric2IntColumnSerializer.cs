@@ -51,6 +51,9 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <returns>还原后的小数值</returns>
         public object Deserialize(object value, Type targetType)
         {
+            if (value == null || value is DBNull) {
+                return null;
+            }
             var s = value as string ?? value?.ToString();
             if (string.IsNullOrEmpty(s)) {
                 return null;

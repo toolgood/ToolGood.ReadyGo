@@ -25,8 +25,24 @@ namespace ToolGood.ReadyGo.Attributes
         /// 主键标签（多列默认不自增）
         /// </summary>
         /// <param name="primaryKey">主键列名数组</param>
-        public PrimaryKeyAttribute(string[] primaryKey) : this(string.Join(",", primaryKey))
+        public PrimaryKeyAttribute(string[] primaryKey) : this(JoinPrimaryKey(primaryKey))
         {
+        }
+
+        private static string JoinPrimaryKey(string[] primaryKey)
+        {
+            if (primaryKey == null) {
+                throw new ArgumentNullException(nameof(primaryKey));
+            }
+            if (primaryKey.Length == 0) {
+                throw new ArgumentException("主键列名数组不能为空", nameof(primaryKey));
+            }
+            foreach (var item in primaryKey) {
+                if (item == null) {
+                    throw new ArgumentNullException(nameof(primaryKey));
+                }
+            }
+            return string.Join(",", primaryKey);
         }
 
         /// <summary>

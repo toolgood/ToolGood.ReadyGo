@@ -11,7 +11,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 是否非空
         /// </summary>
-        public bool Required;
+        public bool Required { get; }
 
         /// <summary>
         /// 非空标签

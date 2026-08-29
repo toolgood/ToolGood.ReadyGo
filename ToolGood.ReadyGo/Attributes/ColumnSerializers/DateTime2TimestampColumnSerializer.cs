@@ -52,7 +52,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <returns>反序列化后的时间值</returns>
         public object Deserialize(object value, Type targetType)
         {
-            if (value == null) {
+            if (value == null || value is DBNull) {
                 return null;
             }
             var v = Convert.ToInt64(value, CultureInfo.InvariantCulture);

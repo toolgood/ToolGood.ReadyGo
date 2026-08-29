@@ -14,12 +14,15 @@ namespace ToolGood.ReadyGo.Attributes
         /// <param name="defaultstring">默认SQL</param>
         public DefaultValueAttribute(string defaultstring)
         {
+            if (defaultstring == null) {
+                throw new ArgumentNullException(nameof(defaultstring));
+            }
             DefaultValue = defaultstring.Trim();
         }
 
         /// <summary>
         /// 默认值
         /// </summary>
-        public string DefaultValue;
+        public string DefaultValue { get; }
     }
 }

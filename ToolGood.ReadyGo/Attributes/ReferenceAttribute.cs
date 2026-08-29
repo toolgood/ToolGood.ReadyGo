@@ -31,12 +31,12 @@ namespace ToolGood.ReadyGo.Attributes
         }
         
         /// <summary>
-        /// The property name (case sensitive) that links the relationship.
+        /// 用于关联关系的属性名（区分大小写）。
         /// </summary>
         public string ReferenceMemberName { get; set; }
 
         /// <summary>
-        /// The database column name that maps to the property.
+        /// 映射到该属性的数据库列名。
         /// </summary>
         public string ColumnName { get; set; }
     }

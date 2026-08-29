@@ -37,7 +37,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
         /// <returns>反序列化后的日期值</returns>
         public object Deserialize(object value, Type targetType)
         {
-            if (value == null) {
+            if (value == null || value is DBNull) {
                 return null;
             }
             var v = Convert.ToInt32(value, CultureInfo.InvariantCulture);
@@ -50,7 +50,8 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 return new DateOnly(year, month, day);
             }
             if (t == typeof(DateTimeOffset)) {
-                return new DateTimeOffset(new DateTime(year, month, day));
+                // 存储值为无时区整数，按 UTC 解释，避免依赖服务器本地时区
+                return new DateTimeOffset(DateTime.SpecifyKind(new DateTime(year, month, day), DateTimeKind.Utc));
             }
             return new DateTime(year, month, day);
         }
