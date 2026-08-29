@@ -12,6 +12,8 @@ namespace ToolGood.ReadyGo.SqlServerTests
         {
             var db = SqlServerTestDb.Create();
             var helper = db.Helper;
+            helper.Execute("DROP TABLE IF EXISTS [dbo].[ORDERITEM]");
+            helper.Execute("DROP TABLE IF EXISTS [dbo].[CUSTOMER]");
             helper.Execute("CREATE TABLE [dbo].[CUSTOMER] ([ID] INT NOT NULL PRIMARY KEY, [NAME] NVARCHAR(255))");
             helper.Execute("CREATE TABLE [dbo].[ORDERITEM] ([ORDERITEMID] INT NOT NULL PRIMARY KEY, [CUSTOMERID] INT, [PRODUCT] NVARCHAR(255))");
             helper.Execute("INSERT INTO [dbo].[CUSTOMER] ([ID], [NAME]) VALUES (1, '张三')");

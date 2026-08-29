@@ -12,6 +12,7 @@ namespace ToolGood.ReadyGo.SqlServerTests
         {
             var db = SqlServerTestDb.Create();
             var helper = db.Helper;
+            helper.Execute("DROP TABLE IF EXISTS [dbo].[USERS]");
             helper.Execute("CREATE TABLE [dbo].[USERS] ([USERID] INT NOT NULL PRIMARY KEY, [NAME] NVARCHAR(255), [STREET] NVARCHAR(255), [CITY] NVARCHAR(255))");
             helper.Execute("INSERT INTO [dbo].[USERS] ([USERID], [NAME], [STREET], [CITY]) VALUES (1, '张三', '中山路1号', '上海')");
             helper.Execute("INSERT INTO [dbo].[USERS] ([USERID], [NAME], [STREET], [CITY]) VALUES (2, '李四', '解放路2号', '北京')");

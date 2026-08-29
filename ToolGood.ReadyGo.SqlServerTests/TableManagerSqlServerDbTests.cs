@@ -31,8 +31,8 @@ namespace ToolGood.ReadyGo.SqlServerTests
             Assert.Contains("PRIMARY KEY", sql);
             Assert.Contains("[OrderNo] nvarchar(50)", sql);
             Assert.Contains("[Remark] Text", sql);
-            Assert.Contains("CONSTRAINT u_Tb_Order_OrderNo UNIQUE ([OrderNo])", sql);
-            Assert.Contains("CREATE INDEX i_Tb_Order_UserId ON [Tb_Order]([UserId])", sql);
+            Assert.Contains("CONSTRAINT u_OrderNo UNIQUE ([OrderNo])", sql);
+            Assert.Contains("CREATE INDEX i_UserId ON [Tb_Order]([UserId])", sql);
         }
 
         [Fact]

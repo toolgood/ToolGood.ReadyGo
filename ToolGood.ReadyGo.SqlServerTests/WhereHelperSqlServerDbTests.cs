@@ -69,7 +69,7 @@ namespace ToolGood.ReadyGo.SqlServerTests
             var list2 = helper.Where<Tb_WhereTest>().WhereNotIn(q => q.Age, new int[] { 20, 50 }).ToList();
             Assert.Equal(2, list2.Count);
 
-            var list3 = helper.Where<Tb_WhereTest>("Age").WhereIn("Age", new object[] { 30, 40 }).ToList();
+            var list3 = helper.Where<Tb_WhereTest>().WhereIn("Age", new object[] { 30, 40 }).ToList();
             Assert.Equal(2, list3.Count);
         }
 

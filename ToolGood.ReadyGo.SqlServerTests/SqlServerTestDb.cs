@@ -9,6 +9,8 @@ namespace ToolGood.ReadyGo.SqlServerTests
     internal sealed class SqlServerTestDb : IDisposable
     {
         private const string DatabaseName = "ReadyGoTest";
+        private const string MasterConnStr = "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=SSPI;TrustServerCertificate=True";
+        private static readonly object _initLock = new object();
 
         public SqlHelper Helper { get; }
 
@@ -40,23 +42,72 @@ namespace ToolGood.ReadyGo.SqlServerTests
             // 每个测试从干净数据开始，避免测试间互相影响
             helper.Execute("DELETE FROM [USERINFO]");
             helper.Execute("DELETE FROM [SIMPLEUSER]");
+            // 重置自增计数，保证测试中 ID 从 1 开始
+            helper.Execute("DBCC CHECKIDENT('[USERINFO]', RESEED, 0)");
+            helper.Execute("DBCC CHECKIDENT('[SIMPLEUSER]', RESEED, 0)");
             return new SqlServerTestDb(helper);
         }
 
+        /// <summary>
+        /// 确保 LocalDB 中 ReadyGoTest 数据库与 .mdf 文件状态一致：
+        /// 文件与数据库都存在 → 直接使用；数据库仍注册但文件被删 → 先删库再建库；
+        /// 文件存在但未注册 → 附加；都不存在 → 新建。
+        /// 加锁防止 xUnit 并行测试同时初始化数据库。
+        /// </summary>
         private static void EnsureDatabaseCreated(string dbFile)
         {
-            var mdf = dbFile.Replace("'", "''");
-            var ldf = Path.ChangeExtension(dbFile, ".ldf").Replace("'", "''");
-            var sql = $"CREATE DATABASE [{DatabaseName}] ON PRIMARY (NAME = N'{DatabaseName}', FILENAME = N'{mdf}') " +
-                      $"LOG ON (NAME = N'{DatabaseName}_log', FILENAME = N'{ldf}')";
+            if (File.Exists(dbFile) && IsDatabaseRegistered()) return;
 
-            using (var conn = new Microsoft.Data.SqlClient.SqlConnection(
-                       "Data Source=(LocalDB)\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=SSPI;TrustServerCertificate=True")) {
-                conn.Open();
-                using (var cmd = conn.CreateCommand()) {
-                    cmd.CommandText = sql;
-                    cmd.ExecuteNonQuery();
+            lock (_initLock) {
+                if (File.Exists(dbFile) && IsDatabaseRegistered()) return;
+
+                var mdf = dbFile.Replace("'", "''");
+                var ldf = Path.ChangeExtension(dbFile, ".ldf").Replace("'", "''");
+
+                using (var conn = new Microsoft.Data.SqlClient.SqlConnection(MasterConnStr)) {
+                    conn.Open();
+
+                    if (IsDatabaseRegistered(conn)) {
+                        // 数据库仍注册但文件已被删除，状态不一致 → 先强制删除再重建
+                        using (var cmd = conn.CreateCommand()) {
+                            cmd.CommandText = $"IF DB_ID(N'{DatabaseName}') IS NOT NULL " +
+                                              $"BEGIN ALTER DATABASE [{DatabaseName}] SET SINGLE_USER WITH ROLLBACK IMMEDIATE; DROP DATABASE [{DatabaseName}]; END";
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+
+                    if (File.Exists(dbFile)) {
+                        // 文件存在但数据库未注册 → 附加
+                        using (var cmd = conn.CreateCommand()) {
+                            cmd.CommandText = $"CREATE DATABASE [{DatabaseName}] ON (FILENAME = N'{mdf}') FOR ATTACH";
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
+                    else {
+                        using (var cmd = conn.CreateCommand()) {
+                            cmd.CommandText = $"CREATE DATABASE [{DatabaseName}] ON PRIMARY (NAME = N'{DatabaseName}', FILENAME = N'{mdf}') " +
+                                              $"LOG ON (NAME = N'{DatabaseName}_log', FILENAME = N'{ldf}')";
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
                 }
+            }
+        }
+
+        private static bool IsDatabaseRegistered()
+        {
+            using (var conn = new Microsoft.Data.SqlClient.SqlConnection(MasterConnStr)) {
+                conn.Open();
+                return IsDatabaseRegistered(conn);
+            }
+        }
+
+        private static bool IsDatabaseRegistered(Microsoft.Data.SqlClient.SqlConnection conn)
+        {
+            using (var cmd = conn.CreateCommand()) {
+                cmd.CommandText = "SELECT COUNT(*) FROM sys.databases WHERE name = @name";
+                cmd.Parameters.AddWithValue("@name", DatabaseName);
+                return (int)cmd.ExecuteScalar() > 0;
             }
         }
 
