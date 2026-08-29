@@ -48,7 +48,7 @@ namespace ToolGood.ReadyGo.Tests
 
         private const string JoinSql =
             "SELECT c.Id, c.Name, o.OrderItemId, o.CustomerId, o.Product " +
-            "FROM Customer c INNER JOIN OrderItem o ON o.CustomerId = c.Id ORDER BY c.Id";
+            "FROM Customer c INNER JOIN OrderItem o ON o.CustomerId = c.Id ORDER BY c.Id, o.OrderItemId";
 
         [Fact]
         public void SelectOneToMany_默认主键合并子表()
