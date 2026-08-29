@@ -38,6 +38,9 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 case null:
                     return null;
                 case IList list:
+                    if (!IsNumericList(list.GetType())) {
+                        throw new NotSupportedException($"NumericStringList 仅支持数值数组或 List<T>，不支持：{list.GetType().Name}");
+                    }
                     if (list.Count == 0) {
                         return "";
                     }
@@ -94,6 +97,19 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 return result;
             }
             return ToList(t, result);
+        }
+
+        private static bool IsNumericList(Type type)
+        {
+            Type elementType;
+            if (type.IsArray) {
+                elementType = type.GetElementType();
+            } else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>)) {
+                elementType = type.GetGenericArguments()[0];
+            } else {
+                return false;
+            }
+            return IsNumeric(elementType);
         }
 
         private static bool IsNumeric(Type type)

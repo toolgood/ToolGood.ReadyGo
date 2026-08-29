@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -41,21 +40,26 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
             switch (value) {
                 case null:
                     return null;
-                case IList list:
-                    if (list.Count == 0) {
-                        return "";
-                    }
-                    var sb = new StringBuilder();
-                    for (int i = 0; i < list.Count; i++) {
-                        if (i > 0) {
-                            sb.Append(_separator);
-                        }
-                        sb.Append(Escape(list[i]?.ToString() ?? ""));
-                    }
-                    return sb.ToString();
+                case IList<string> list:
+                    return Join(list);
                 default:
-                    throw new NotSupportedException($"StringList 不支持的类型：{value.GetType().Name}");
+                    throw new NotSupportedException($"StringList 不支持的类型：{value.GetType().Name}，仅支持 List<string> 或 string[]");
             }
+        }
+
+        private string Join(IList<string> items)
+        {
+            if (items.Count == 0) {
+                return "";
+            }
+            var sb = new StringBuilder();
+            for (int i = 0; i < items.Count; i++) {
+                if (i > 0) {
+                    sb.Append(_separator);
+                }
+                sb.Append(Escape(items[i] ?? ""));
+            }
+            return sb.ToString();
         }
 
         /// <summary>
