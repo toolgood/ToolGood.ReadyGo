@@ -37,7 +37,10 @@ namespace ToolGood.ReadyGo.NPoco
             if (pc != null && pc.SerializedColumn && (pc.ColumnSerializer != null || mapper?.ColumnSerializer != null))
             {
                 var serializer = pc.ColumnSerializer ?? mapper.ColumnSerializer;
-                converter = src => serializer.Deserialize(src, dstType);
+                if (typeof(System.IO.Stream).IsAssignableFrom(srcType))
+                    converter = src => serializer.Deserialize(StreamToBytes(src), dstType);
+                else
+                    converter = src => serializer.Deserialize(src, dstType);
                 return converter;
             }
 
@@ -76,6 +79,10 @@ namespace ToolGood.ReadyGo.NPoco
             {
                 converter = src => Guid.Parse((string)src);
             }
+            else if (dstType == typeof(byte[]) && typeof(System.IO.Stream).IsAssignableFrom(srcType))
+            {
+                converter = src => StreamToBytes(src);
+            }
             else if ((!pc?.ValueObjectColumn ?? true) && !dstType.IsAssignableFrom(srcType))
             {
                 converter = src => Convert.ChangeType(src, (underlyingType ?? dstType), null);
@@ -96,6 +103,24 @@ namespace ToolGood.ReadyGo.NPoco
                 typeof(Int32), typeof(UInt32),
                 typeof(Int64), typeof(UInt64)
             }.Contains(t);
+        }
+
+        /// <summary>
+        /// 把数据库驱动返回的 Stream（如 DuckDB.NET 的 UnmanagedMemoryStream）转为 byte[]。
+        /// 已是 byte[] 时原样返回，供 BLOB/序列化列读取统一使用。
+        /// </summary>
+        /// <param name="src">驱动返回的原始值。</param>
+        /// <returns>byte[] 数据。</returns>
+        static byte[] StreamToBytes(object src)
+        {
+            if (src is byte[] bytes) {
+                return bytes;
+            }
+            using (var ms = new System.IO.MemoryStream())
+            {
+                ((System.IO.Stream)src).CopyTo(ms);
+                return ms.ToArray();
+            }
         }
 
         /// <summary>

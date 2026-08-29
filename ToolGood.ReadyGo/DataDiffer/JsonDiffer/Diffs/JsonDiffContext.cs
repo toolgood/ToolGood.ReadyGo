@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text.Json.Nodes;
 
 namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
@@ -28,7 +28,7 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
                 return leftValue;
             }
 
-            throw new InvalidOperationException($"Type must be '{nameof(JsonNode)}' or derived type.");
+            throw new InvalidOperationException($"The left value is not of type '{typeof(T).Name}'.");
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
                 return rightValue;
             }
 
-            throw new InvalidOperationException($"Type must be '{nameof(JsonNode)}' or derived type.");
+            throw new InvalidOperationException($"The right value is not of type '{typeof(T).Name}'.");
         }
     }
 }

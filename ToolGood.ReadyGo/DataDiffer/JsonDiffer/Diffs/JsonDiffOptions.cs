@@ -1,8 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using ToolGood.ReadyGo.JsonDiffPatch.Diffs;
 using System.Text.Json.Nodes;
-using System;
+using ToolGood.ReadyGo.JsonDiffPatch.Diffs;
 
 namespace ToolGood.ReadyGo.JsonDiffPatch
 {

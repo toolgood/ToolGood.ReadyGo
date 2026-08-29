@@ -145,8 +145,7 @@ namespace ToolGood.ReadyGo
                         };
                 case SqlType.DuckDb:
                     return new[] {
-                        "DuckDB.NET.Data.DuckDBFactory, DuckDB.NET.Data.Full",
-                        "DuckDB.NET.Data.DuckDBFactory, DuckDB.NET.Data"
+                        "DuckDB.NET.Data.DuckDBClientFactory, DuckDB.NET.Data"
                         };
                 default:
                     throw new DatabaseUnsupportException($"未知的数据库类型: {sqlType}。");

@@ -466,7 +466,7 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
                     // Perf: this is fine we shouldn't have a node backed by JsonElement here
                     typeNode?.AsValue().TryGetValue(out deltaType);
 
-                    if (string.Equals(deltaType, "a") == isArrayChange)
+                    if (string.Equals(deltaType, ArrayType) == isArrayChange)
                     {
                         return;
                     }

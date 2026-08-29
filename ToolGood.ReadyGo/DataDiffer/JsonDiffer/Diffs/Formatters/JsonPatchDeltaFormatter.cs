@@ -153,7 +153,7 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs.Formatters
         /// </exception>
         protected override JsonNode? FormatTextDiff(ref JsonDiffDelta delta, JsonValue? left, JsonNode? existingValue)
         {
-            throw new NotSupportedException("Text diff is not supported by JsonPath.");
+            throw new NotSupportedException("Text diff is not supported by Json Patch.");
         }
 
         private readonly struct PropertyPathScope : IDisposable

@@ -24,6 +24,22 @@ namespace ToolGood.ReadyGo.NPoco.DatabaseTypes
         }
 
         /// <summary>
+        /// 命令执行前修正参数名：DuckDB 的命名参数占位符为 $name，
+        /// 但参数集合中的 ParameterName 必须不带 $ 前缀才能与占位符匹配绑定。
+        /// </summary>
+        /// <param name="cmd">即将执行的数据库命令。</param>
+        public override void PreExecute(DbCommand cmd)
+        {
+            foreach (DbParameter p in cmd.Parameters)
+            {
+                if (p.ParameterName.Length > 0 && p.ParameterName[0] == '$')
+                {
+                    p.ParameterName = p.ParameterName.Substring(1);
+                }
+            }
+        }
+
+        /// <summary>
         /// 映射参数值；DuckDB 原生支持 bool 类型，无需转为 1/0。
         /// </summary>
         /// <param name="value">待映射的值。</param>

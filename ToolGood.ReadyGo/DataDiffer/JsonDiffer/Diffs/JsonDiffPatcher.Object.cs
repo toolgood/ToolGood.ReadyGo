@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
-using ToolGood.ReadyGo.JsonDiffPatch.Diffs;
 using System.Text.Json.Nodes;
+using ToolGood.ReadyGo.JsonDiffPatch.Diffs;
 
 namespace ToolGood.ReadyGo.JsonDiffPatch
 {
@@ -14,9 +13,6 @@ namespace ToolGood.ReadyGo.JsonDiffPatch
             JsonObject right,
             JsonDiffOptions? options)
         {
-            var leftProperties = (left as IDictionary<string, JsonNode?>).Keys;
-            var rightProperties = (right as IDictionary<string, JsonNode?>).Keys;
-
             JsonDiffContext? diffContext = null;
             var propertyFilter = options?.PropertyFilter;
             if (propertyFilter is not null)
@@ -24,14 +20,16 @@ namespace ToolGood.ReadyGo.JsonDiffPatch
                 diffContext = new JsonDiffContext(left, right);
             }
 
-            foreach (var prop in leftProperties)
+            foreach (var kvp in left)
             {
+                var prop = kvp.Key;
+                var leftValue = kvp.Value;
+
                 if (propertyFilter is not null && !propertyFilter(prop, diffContext!))
                 {
                     continue;
                 }
 
-                var leftValue = left[prop];
                 if (!right.TryGetPropertyValue(prop, out var rightValue))
                 {
                     // Deleted: https://github.com/benjamine/jsondiffpatch/blob/master/docs/deltas.md#deleted
@@ -49,14 +47,16 @@ namespace ToolGood.ReadyGo.JsonDiffPatch
                 }
             }
 
-            foreach (var prop in rightProperties)
+            foreach (var kvp in right)
             {
+                var prop = kvp.Key;
+                var rightValue = kvp.Value;
+
                 if (propertyFilter is not null && !propertyFilter(prop, diffContext!))
                 {
                     continue;
                 }
 
-                var rightValue = right[prop];
                 if (!left.ContainsKey(prop))
                 {
                     // Added: https://github.com/benjamine/jsondiffpatch/blob/master/docs/deltas.md#added

@@ -197,7 +197,7 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
                 if (matchMatrixSpan[i * n + j] > 0)
                 {
                     // X[i - 1] == Y [j - 1]
-                    entries.Insert(0, new LcsEntry(i - 1, j - 1,
+                    entries.Add(new LcsEntry(i - 1, j - 1,
                         matchMatrixSpan[i * n + j] == DeepEqual));
                     i--;
                     j--;
@@ -230,6 +230,9 @@ namespace ToolGood.ReadyGo.JsonDiffPatch.Diffs
                     }
                 }
             }
+
+            // 回溯是逆序收集的，反转以恢复原始顺序
+            entries.Reverse();
 
             return new Lcs(entries, matrixRented, matchMatrixRented, wrapperCacheRented, n);
         }

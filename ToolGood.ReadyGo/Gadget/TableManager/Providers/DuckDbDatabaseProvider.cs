@@ -124,6 +124,20 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
 			return $"DELETE FROM {GetTableName(null, tableName)};";
 		}
 
+		/// <summary>
+		/// 获取表名（DuckDB 使用双引号标识符）
+		/// </summary>
+		/// <param name="schemaName">模式名</param>
+		/// <param name="tableName">表名</param>
+		/// <returns>转义后的表名</returns>
+		public override string GetTableName(string schemaName, string tableName)
+		{
+			if (string.IsNullOrEmpty(schemaName) == false) {
+				return $"\"{schemaName.Replace("\"", "\"\"")}\".\"{tableName.Replace("\"", "\"\"")}\"";
+			}
+			return $"\"{tableName.Replace("\"", "\"\"")}\"";
+		}
+
 		private string CreateColumn(TableInfo ti, ColumnInfo ci)
 		{
 			var type = ci.PropertyType;
