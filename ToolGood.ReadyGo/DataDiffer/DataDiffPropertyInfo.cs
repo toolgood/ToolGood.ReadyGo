@@ -28,6 +28,26 @@ namespace ToolGood.ReadyGo
         public string Sql { get; set; }
         public Dictionary<string, string> EnumNames { get; set; }
 
+        /// <summary>
+        /// 复制属性信息（共享 Property 与枚举名称字典）。
+        /// </summary>
+        public DataDiffPropertyInfo Clone()
+        {
+            return new DataDiffPropertyInfo(Property) {
+                DisplayName = DisplayName,
+                Sql = Sql,
+                EnumNames = EnumNames,
+            };
+        }
+
+        /// <summary>
+        /// 获取实例上对应属性的值。
+        /// </summary>
+        public object GetValue(object instance)
+        {
+            return Property.GetValue(instance);
+        }
+
         public bool IsChange<T>(T left, T right)
         {
             var leftValue = Property.GetValue(left);
