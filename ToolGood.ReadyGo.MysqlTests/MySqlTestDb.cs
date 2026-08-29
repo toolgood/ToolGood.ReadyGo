@@ -1,4 +1,4 @@
-namespace ToolGood.ReadyGo.Tests
+namespace ToolGood.ReadyGo.MysqlTests
 {
     /// <summary>
     /// MySQL 测试数据库工厂：每个测试实例连接到同一 MySQL 数据库，通过建表前 DROP 表保证隔离。

@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace ToolGood.ReadyGo.Tests
+namespace ToolGood.ReadyGo.MysqlTests
 {
     /// <summary>
     /// 复杂对象（嵌套对象）映射测试（基于 MySQL）

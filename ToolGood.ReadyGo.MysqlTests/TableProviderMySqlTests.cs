@@ -1,7 +1,7 @@
 using ToolGood.ReadyGo.Gadget.TableManager.Providers;
 using Xunit;
 
-namespace ToolGood.ReadyGo.Tests
+namespace ToolGood.ReadyGo.MysqlTests
 {
     /// <summary>
     /// MySqlDatabaseProvider 生成 SQL 的正确性验证

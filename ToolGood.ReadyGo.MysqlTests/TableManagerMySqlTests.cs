@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace ToolGood.ReadyGo.Tests
+namespace ToolGood.ReadyGo.MysqlTests
 {
     /// <summary>
     /// TableManager（SqlHelper.TableHelper）单元测试（基于 MySQL）

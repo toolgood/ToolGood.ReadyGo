@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace ToolGood.ReadyGo.Tests
+namespace ToolGood.ReadyGo.MysqlTests
 {
     /// <summary>
     /// SqlHelper.Where 链式查询、UpdateMany、DeleteMany 测试（基于 MySQL）

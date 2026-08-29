@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace ToolGood.ReadyGo.Tests
+namespace ToolGood.ReadyGo.MysqlTests
 {
     /// <summary>
     /// SqlHelper 同步方法单元测试（基于 MySQL）
