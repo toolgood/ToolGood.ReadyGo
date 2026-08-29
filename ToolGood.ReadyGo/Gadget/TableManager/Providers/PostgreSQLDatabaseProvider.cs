@@ -21,28 +21,30 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             var ti = TableInfo.FromType(type);
             EnsureColumns(ti);
             var table = GetTableName(ti);
-            var sql = ti.AutoIncrement ? "CREATE SEQUENCE IF NOT EXISTS seq_" + ti.TableName + " START 1;" : "";
-            sql += "CREATE TABLE IF NOT EXISTS " + table + "(\r\n";
-            foreach (var item in ti.Columns) {
-                sql += "    " + CreateColumn(ti, item) + ",\r\n";
+            var statements = new List<string>();
+            if (ti.AutoIncrement) {
+                statements.Add("CREATE SEQUENCE IF NOT EXISTS seq_" + ti.TableName + " START 1;");
             }
-            sql = sql.Substring(0, sql.Length - 3);
-            sql += "\r\n);\r\n";
+
+            var definitions = new List<string>();
+            foreach (var item in ti.Columns) {
+                definitions.Add("    " + CreateColumn(ti, item));
+            }
+            statements.Add("CREATE TABLE IF NOT EXISTS " + table + "(\r\n" + string.Join(",\r\n", definitions) + "\r\n);");
             if (withIndex) {
                 foreach (var item in ti.Indexs) {
                     var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                     var columns = BuildColumns(item);
-                    sql += "CREATE INDEX IF NOT EXISTS " + txt + " ON " + table + "(" + columns + ");\r\n";
+                    statements.Add("CREATE INDEX IF NOT EXISTS " + txt + " ON " + table + "(" + columns + ");");
                 }
 
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                     var columns = BuildColumns(item);
-                    sql += "CREATE UNIQUE INDEX IF NOT EXISTS " + txt + " ON " + table + "( " + columns + ");\r\n";
+                    statements.Add("CREATE UNIQUE INDEX IF NOT EXISTS " + txt + " ON " + table + "( " + columns + ");");
                 }
             }
-            sql = sql.Substring(0, sql.Length - 2);
-            return sql;
+            return string.Join("\r\n", statements);
         }
 
         /// <summary>
@@ -52,19 +54,20 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>创建索引 SQL</returns>
         public override string GetCreateIndex(Type type)
         {
-            string sql = "";
             var ti = TableInfo.FromType(type);
+            var table = GetTableName(ti);
+            var statements = new List<string>();
             foreach (var item in ti.Indexs) {
                 var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                 var columns = BuildColumns(item);
-                sql += $"CREATE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+                statements.Add($"CREATE INDEX {txt} ON {table}({columns});");
             }
             foreach (var item in ti.Uniques) {
                 var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                 var columns = BuildColumns(item);
-                sql += $"CREATE UNIQUE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+                statements.Add($"CREATE UNIQUE INDEX {txt} ON {table}({columns});");
             }
-            return sql;
+            return string.Join("\r\n", statements);
         }
 
         private string BuildColumns(List<string> columnList)
@@ -84,7 +87,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         public override string GetDropTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            return "DROP TABLE IF EXISTS \"" + ti.TableName + "\";\r\nDROP SEQUENCE IF EXISTS seq_" + ti.TableName + ";";
+            return "DROP TABLE IF EXISTS " + GetTableName(ti) + ";\r\nDROP SEQUENCE IF EXISTS seq_" + ti.TableName + ";";
         }
 
         /// <summary>

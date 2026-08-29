@@ -56,6 +56,8 @@ namespace ToolGood.ReadyGo.Gadget
                         return false;
                     }
                 }
+                // 解包 Nullable 后需重新判断枚举：Type.GetTypeCode(枚举) 返回 Object，无法命中下方 switch
+                if (type.IsEnum) return true;
 
                 if (type == typeof(Guid)) return true;
                 if (type == typeof(AnsiString)) return true;

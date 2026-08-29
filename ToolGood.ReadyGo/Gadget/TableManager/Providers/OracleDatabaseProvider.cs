@@ -18,28 +18,36 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>建表 SQL</returns>
         public override string GetTryCreateTable(Type type, bool withIndex = true)
         {
+            // Oracle 不支持 CREATE TABLE/INDEX IF NOT EXISTS，通过 PL/SQL 匿名块捕获 ORA-00955（名称已被占用）实现幂等。
             var ti = TableInfo.FromType(type);
             EnsureColumns(ti);
-            var sql = "CREATE TABLE " + GetTableName(ti) + "(\r\n";
+            var table = GetTableName(ti);
+
+            var definitions = new List<string>();
             foreach (var item in ti.Columns) {
-                sql += "    " + CreateColumn(ti, item) + ",\r\n";
+                definitions.Add(CreateColumn(ti, item));
             }
-            sql = sql.Substring(0, sql.Length - 3);
-            sql += "\r\n);\r\n";
+            var statements = new List<string> {
+                WrapIdempotent("CREATE TABLE " + table + "(" + string.Join(", ", definitions) + ")")
+            };
             if (withIndex) {
                 foreach (var item in ti.Indexs) {
                     var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                     var columns = BuildColumns(item);
-                    sql += "CREATE INDEX " + txt + " ON " + GetTableName(ti) + "(" + columns + ");\r\n";
+                    statements.Add(WrapIdempotent("CREATE INDEX " + txt + " ON " + table + "(" + columns + ")"));
                 }
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                     var columns = BuildColumns(item);
-                    sql += "CREATE UNIQUE INDEX " + txt + " ON " + GetTableName(ti) + "(" + columns + ");\r\n";
+                    statements.Add(WrapIdempotent("CREATE UNIQUE INDEX " + txt + " ON " + table + "(" + columns + ")"));
                 }
             }
-            sql = sql.Substring(0, sql.Length - 2);
-            return sql;
+            return string.Join("\r\n", statements);
+        }
+
+        private static string WrapIdempotent(string ddl)
+        {
+            return "BEGIN EXECUTE IMMEDIATE '" + ddl.Replace("'", "''") + "'; EXCEPTION WHEN OTHERS THEN IF SQLCODE != -955 THEN RAISE; END IF; END;";
         }
 
         /// <summary>
@@ -49,19 +57,20 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>创建索引 SQL</returns>
         public override string GetCreateIndex(Type type)
         {
-            string sql = "";
             var ti = TableInfo.FromType(type);
+            var table = GetTableName(ti);
+            var statements = new List<string>();
             foreach (var item in ti.Indexs) {
                 var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                 var columns = BuildColumns(item);
-                sql += $"CREATE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+                statements.Add($"CREATE INDEX {txt} ON {table}({columns});");
             }
             foreach (var item in ti.Uniques) {
                 var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                 var columns = BuildColumns(item);
-                sql += $"CREATE UNIQUE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+                statements.Add($"CREATE UNIQUE INDEX {txt} ON {table}({columns});");
             }
-            return sql;
+            return string.Join("\r\n", statements);
         }
 
         private string BuildColumns(List<string> columnList)

@@ -36,18 +36,21 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         /// </summary>
         public string SequenceName { get; internal set; }
 
+        private readonly List<List<string>> _indexs = new List<List<string>>();
         /// <summary>
         /// 索引列集合
         /// </summary>
-        public List<List<string>> Indexs { get; internal set; } = new List<List<string>>();
+        public IReadOnlyList<List<string>> Indexs => _indexs;
+        private readonly List<List<string>> _uniques = new List<List<string>>();
         /// <summary>
         /// 唯一约束列集合
         /// </summary>
-        public List<List<string>> Uniques { get; internal set; } = new List<List<string>>();
+        public IReadOnlyList<List<string>> Uniques => _uniques;
+        private readonly List<ColumnInfo> _columns = new List<ColumnInfo>();
         /// <summary>
         /// 列信息集合
         /// </summary>
-        public List<ColumnInfo> Columns { get; internal set; } = new List<ColumnInfo>();
+        public IReadOnlyList<ColumnInfo> Columns => _columns;
 
         private static readonly Cache<Type, TableInfo> _tableInfoCache = Cache<Type, TableInfo>.CreateStaticCache();
 
@@ -76,7 +79,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
             foreach (var item in t.GetProperties()) {
                 var col = ColumnInfo.FromProperty(item);
                 if (col != null) {
-                    ti.Columns.Add(col);
+                    ti._columns.Add(col);
                 }
             }
 
@@ -109,12 +112,12 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
 
             a = t.GetCustomAttributes(typeof(IndexAttribute), true);
             foreach (IndexAttribute item in a) {
-                ti.Indexs.Add(item.ColumnNames);
+                ti._indexs.Add(item.ColumnNames);
             }
 
             a = t.GetCustomAttributes(typeof(UniqueAttribute), true);
             foreach (UniqueAttribute item in a) {
-                ti.Uniques.Add(item.ColumnNames);
+                ti._uniques.Add(item.ColumnNames);
             }
 
             return ti;

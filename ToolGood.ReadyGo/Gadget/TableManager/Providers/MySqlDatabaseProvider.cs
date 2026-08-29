@@ -27,25 +27,23 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         {
             var ti = TableInfo.FromType(type);
             EnsureColumns(ti);
-            var sql = "CREATE TABLE IF NOT EXISTS " + GetTableName(ti) + "(\r\n";
+            var definitions = new List<string>();
             foreach (var item in ti.Columns) {
-                sql += "    " + CreateColumn(ti, item) + ",\r\n";
+                definitions.Add("    " + CreateColumn(ti, item));
             }
             if (withIndex) {
                 foreach (var item in ti.Indexs) {
                     var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
-                    sql += "    INDEX " + txt + "(" + columns + "),\r\n";
+                    definitions.Add("    INDEX " + txt + "(" + columns + ")");
                 }
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
-                    sql += "    UNIQUE INDEX " + txt + " ( " + columns + "),\r\n";
+                    definitions.Add("    UNIQUE INDEX " + txt + " ( " + columns + ")");
                 }
             }
-            sql = sql.Substring(0, sql.Length - 3);
-            sql += "\r\n);";
-            return sql;
+            return "CREATE TABLE IF NOT EXISTS " + GetTableName(ti) + "(\r\n" + string.Join(",\r\n", definitions) + "\r\n);";
         }
 
         /// <summary>
@@ -55,19 +53,20 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>创建索引 SQL</returns>
         public override string GetCreateIndex(Type type)
         {
-            string sql = "";
             var ti = TableInfo.FromType(type);
+            var table = GetTableName(ti);
+            var statements = new List<string>();
             foreach (var item in ti.Indexs) {
                 var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = BuildColumns(item);
-                sql += $"ALTER TABLE {GetTableName(ti)} ADD INDEX {txt} ({columns});\r\n";
+                statements.Add($"ALTER TABLE {table} ADD INDEX {txt} ({columns});");
             }
             foreach (var item in ti.Uniques) {
                 var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = BuildColumns(item);
-                sql += $"ALTER TABLE {GetTableName(ti)} ADD UNIQUE INDEX {txt} ({columns});\r\n";
+                statements.Add($"ALTER TABLE {table} ADD UNIQUE INDEX {txt} ({columns});");
             }
-            return sql;
+            return string.Join("\r\n", statements);
         }
 
         private string BuildColumns(List<string> columnList)
@@ -225,7 +224,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
                 }
             }
             if (string.IsNullOrEmpty(ci.Comment) == false) {
-                sb.AppendFormat(" COMMENT '{0}'", ci.Comment.Replace("'", @"\'"));
+                sb.AppendFormat(" COMMENT '{0}'", ci.Comment.Replace("'", "''"));
             }
             return sb.ToString();
         }

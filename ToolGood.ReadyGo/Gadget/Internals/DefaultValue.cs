@@ -32,7 +32,7 @@ namespace ToolGood.ReadyGo.Gadget.Internals
             var key = typeof(T).AssemblyQualifiedName + "|" + pd.TableInfo.TableName + "|"
                 + string.Join(",", pd.Columns.Keys.OrderBy(k => k, StringComparer.Ordinal));
             var action = _setDefault.Get(key, () => CreateDefaultFunction<T>(pd));
-            var a = (action as Action<T, bool, bool, bool>);
+            var a = (Action<T, bool, bool, bool>)action;
             a(obj, setString, setDateTime, setGuid);
         }
 

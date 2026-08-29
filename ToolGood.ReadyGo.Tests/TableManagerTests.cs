@@ -45,14 +45,14 @@ namespace ToolGood.ReadyGo.Tests
             Assert.Single(ti.Uniques);
             Assert.Equal("OrderNo", ti.Uniques[0][0]);
 
-            var orderNo = ti.Columns.Find(c => c.ColumnName == "OrderNo");
+            var orderNo = ti.Columns.First(c => c.ColumnName == "OrderNo");
             Assert.Equal("50", orderNo.FieldLength);
             Assert.False(orderNo.IsText);
 
-            var remark = ti.Columns.Find(c => c.ColumnName == "Remark");
+            var remark = ti.Columns.First(c => c.ColumnName == "Remark");
             Assert.True(remark.IsText);
 
-            var money = ti.Columns.Find(c => c.ColumnName == "Money");
+            var money = ti.Columns.First(c => c.ColumnName == "Money");
             Assert.Equal("0", money.DefaultValue);
         }
 

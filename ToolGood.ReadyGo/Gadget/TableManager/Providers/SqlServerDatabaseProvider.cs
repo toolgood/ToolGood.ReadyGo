@@ -28,22 +28,24 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             var schema = string.IsNullOrEmpty(ti.SchemaName) ? "dbo" : ti.SchemaName.Replace("'", "''");
             var tableName = ti.TableName.Replace("'", "''");
 
-            var sb = new StringBuilder();
-            sb.AppendLine($"IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = N'{tableName}' AND schema_id = SCHEMA_ID(N'{schema}'))");
-            sb.AppendLine("BEGIN");
-            sb.Append("    CREATE TABLE " + table + "(\r\n");
+            var definitions = new List<string>();
             foreach (var item in ti.Columns) {
-                sb.Append("        " + CreateColumn(ti, item) + ",\r\n");
+                definitions.Add("        " + CreateColumn(ti, item));
             }
             if (withIndex) {
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
-                    sb.Append("        CONSTRAINT " + txt + " UNIQUE (" + columns + "),\r\n");
+                    definitions.Add("        CONSTRAINT " + txt + " UNIQUE (" + columns + ")");
                 }
             }
-            sb.Length -= 3; // 去掉末尾的 ",\r\n"
-            sb.Append("\r\n    );");
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"IF NOT EXISTS (SELECT 1 FROM sys.tables WHERE name = N'{tableName}' AND schema_id = SCHEMA_ID(N'{schema}'))");
+            sb.AppendLine("BEGIN");
+            sb.AppendLine("    CREATE TABLE " + table + "(");
+            sb.AppendLine(string.Join(",\r\n", definitions));
+            sb.Append("    );");
             if (withIndex) {
                 foreach (var item in ti.Indexs) {
                     var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
@@ -64,19 +66,20 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         public override string GetCreateIndex(Type type)
         {
             //CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX 索引名 ON 表名（字段名[(长度)][ASC | DESC]）;
-            string sql = "";
             var ti = TableInfo.FromType(type);
+            var table = GetTableName(ti);
+            var statements = new List<string>();
             foreach (var item in ti.Indexs) {
                 var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = BuildColumns(item);
-                sql += $"CREATE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+                statements.Add($"CREATE INDEX {txt} ON {table}({columns});");
             }
             foreach (var item in ti.Uniques) {
                 var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = BuildColumns(item);
-                sql += $"CREATE UNIQUE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+                statements.Add($"CREATE UNIQUE INDEX {txt} ON {table}({columns});");
             }
-            return sql;
+            return string.Join("\r\n", statements);
         }
 
         private string BuildColumns(List<string> columnList)

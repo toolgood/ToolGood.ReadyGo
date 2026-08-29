@@ -34,8 +34,8 @@ namespace ToolGood.ReadyGo.Gadget
         Memory,
 
         /// <summary>
-        /// 也就是write-ahead　log取代rollback journal。
-        /// 该模式是持久化的，跨多个数据为连接，在重新打开数据库以后，仍然有效。该模式只在3.7.0以后才有效。
+        /// 也就是 write-ahead log（WAL）取代 rollback journal。
+        /// 该模式是持久化的，跨多个数据库连接，在重新打开数据库以后仍然有效。该模式只在 3.7.0 以后才有效。
         /// </summary>
         Wal,
 

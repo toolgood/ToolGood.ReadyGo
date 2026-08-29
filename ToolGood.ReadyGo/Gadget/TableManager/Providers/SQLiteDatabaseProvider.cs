@@ -21,27 +21,28 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             var ti = TableInfo.FromType(type);
             EnsureColumns(ti);
             var table = GetTableName(ti);
-            var sql = "CREATE TABLE IF NOT EXISTS " + table + "(\r\n";
+
+            var definitions = new List<string>();
             foreach (var item in ti.Columns) {
-                sql += "    " + CreateColumn(ti, item) + ",\r\n";
+                definitions.Add("    " + CreateColumn(ti, item));
             }
-            sql = sql.Substring(0, sql.Length - 3);
-            sql += "\r\n);\r\n";
+            var statements = new List<string> {
+                "CREATE TABLE IF NOT EXISTS " + table + "(\r\n" + string.Join(",\r\n", definitions) + "\r\n);"
+            };
             if (withIndex) {
                 foreach (var item in ti.Indexs) {
                     var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
-                    sql += "CREATE INDEX IF NOT EXISTS " + txt + " ON " + table + "(" + columns + ");\r\n";
+                    statements.Add("CREATE INDEX IF NOT EXISTS " + txt + " ON " + table + "(" + columns + ");");
                 }
 
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                     var columns = BuildColumns(item);
-                    sql += "CREATE UNIQUE INDEX IF NOT EXISTS " + txt + " ON " + table + "( " + columns + ");\r\n";
+                    statements.Add("CREATE UNIQUE INDEX IF NOT EXISTS " + txt + " ON " + table + "( " + columns + ");");
                 }
             }
-            sql = sql.Substring(0, sql.Length - 2);
-            return sql;
+            return string.Join("\r\n", statements);
         }
 
         /// <summary>
@@ -52,19 +53,20 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         public override string GetCreateIndex(Type type)
         {
             //CREATE [UNIQUE|FULLTEXT|SPATIAL] INDEX 索引名 ON 表名（字段名[(长度)][ASC | DESC]）;
-            string sql = "";
             var ti = TableInfo.FromType(type);
+            var table = GetTableName(ti);
+            var statements = new List<string>();
             foreach (var item in ti.Indexs) {
                 var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = BuildColumns(item);
-                sql += $"CREATE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+                statements.Add($"CREATE INDEX {txt} ON {table}({columns});");
             }
             foreach (var item in ti.Uniques) {
                 var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = BuildColumns(item);
-                sql += $"CREATE UNIQUE INDEX {txt} ON {GetTableName(ti)}({columns});\r\n";
+                statements.Add($"CREATE UNIQUE INDEX {txt} ON {table}({columns});");
             }
-            return sql;
+            return string.Join("\r\n", statements);
         }
 
         private string BuildColumns(List<string> columnList)
@@ -147,7 +149,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(Int32[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(Int64[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(Single[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-            if (type == typeof(double[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(Double[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(Decimal[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(bool[])) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 
@@ -160,7 +162,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(List<Int32>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(List<Int64>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(List<Single>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
-            if (type == typeof(List<double>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
+            if (type == typeof(List<Double>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(List<Decimal>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
             if (type == typeof(List<bool>)) return CreateField(ti, ci, "BLOB", ci.FieldLength, false);
 
@@ -177,8 +179,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(Int32)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
             if (type == typeof(Int64)) return CreateField(ti, ci, "INTEGER", ci.FieldLength, isRequired);
             if (type == typeof(Single)) return CreateField(ti, ci, "FLOAT", ci.FieldLength, isRequired);
-            if (type == typeof(double)) return CreateField(ti, ci, "REAL", ci.FieldLength, isRequired);
-            if (type == typeof(decimal)) return CreateField(ti, ci, "REAL", ci.FieldLength, isRequired);
+            if (type == typeof(Double)) return CreateField(ti, ci, "REAL", ci.FieldLength, isRequired);
+            if (type == typeof(Decimal)) return CreateField(ti, ci, "REAL", ci.FieldLength, isRequired);
             if (type == typeof(DateOnly)) return CreateField(ti, ci, "date", ci.FieldLength, isRequired);
             if (type == typeof(DateTime)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
             if (type == typeof(TimeSpan)) return CreateField(ti, ci, "dateTime", ci.FieldLength, isRequired);
