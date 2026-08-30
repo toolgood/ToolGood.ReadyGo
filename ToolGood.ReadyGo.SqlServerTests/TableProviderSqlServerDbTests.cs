@@ -58,8 +58,8 @@ namespace ToolGood.ReadyGo.SqlServerTests
         public void SqlServer_GetCreateIndex()
         {
             var sql = new SqlServerDatabaseProvider().GetCreateIndex(typeof(Tb_Order));
-            Assert.Contains("CREATE INDEX i_UserId ON [Tb_Order]([UserId]);", sql);
-            Assert.Contains("CREATE UNIQUE INDEX u_OrderNo ON [Tb_Order]([OrderNo]);", sql);
+            Assert.Contains("CREATE INDEX i_Tb_Order_UserId ON [Tb_Order]([UserId]);", sql);
+            Assert.Contains("CREATE UNIQUE INDEX u_Tb_Order_OrderNo ON [Tb_Order]([OrderNo]);", sql);
         }
     }
 }

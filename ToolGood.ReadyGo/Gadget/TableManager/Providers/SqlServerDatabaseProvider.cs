@@ -70,12 +70,12 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             var table = GetTableName(ti);
             var statements = new List<string>();
             foreach (var item in ti.Indexs) {
-                var txt = "i_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = BuildColumns(item);
                 statements.Add($"CREATE INDEX {txt} ON {table}({columns});");
             }
             foreach (var item in ti.Uniques) {
-                var txt = "u_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
+                var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_").Replace("[", "").Replace("]", "");
                 var columns = BuildColumns(item);
                 statements.Add($"CREATE UNIQUE INDEX {txt} ON {table}({columns});");
             }
