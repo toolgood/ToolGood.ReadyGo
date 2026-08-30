@@ -22,8 +22,15 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
 
         public static FirebirdDbTestDb Create()
         {
+            // Firebird 嵌入式默认把 lock/trace 文件写到系统目录，这里重定向到可写目录
+            var lockDir = Path.Combine(Path.GetTempPath(), "readygo_firebird_lock");
+            Environment.SetEnvironmentVariable("FIREBIRD_LOCK", lockDir);
+            Directory.CreateDirectory(lockDir);
+
             var dbFile = Path.Combine(Path.GetTempPath(), $"readygo_{Guid.NewGuid():N}.fdb");
-            var connStr = $"Database={dbFile};User=SYSDBA;Password=masterkey;ServerType=1;";
+            // 使用 NuGet 包内置的 Firebird 嵌入式客户端（firebird/win-x64/V4/fbclient.dll）
+            var fbClient = Path.Combine(AppContext.BaseDirectory, "firebird", "win-x64", "V4", "fbclient.dll");
+            var connStr = $"Database={dbFile};User=SYSDBA;Password=masterkey;ServerType=1;Client Library={fbClient};";
             if (File.Exists(dbFile) == false) {
                 lock (_createLock) {
                     if (File.Exists(dbFile) == false) {

@@ -18,7 +18,8 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         /// <returns>建表 SQL</returns>
         public override string GetTryCreateTable(Type type, bool withIndex = true)
         {
-            // Firebird 不支持 CREATE TABLE/INDEX IF NOT EXISTS，通过 EXECUTE BLOCK 判断 rdb$relations 实现幂等。
+            // Firebird 不支持 CREATE TABLE/INDEX IF NOT EXISTS，且一次只能执行一条语句，
+            // 因此将建表/建索引全部合并到单条 EXECUTE BLOCK 中，逐条判断 rdb$relations 实现幂等。
             var ti = TableInfo.FromType(type);
             EnsureColumns(ti);
             var table = GetTableName(ti);
@@ -27,27 +28,38 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             foreach (var item in ti.Columns) {
                 definitions.Add(CreateColumn(ti, item));
             }
-            var statements = new List<string> {
-                WrapIdempotent("CREATE TABLE " + table + "(" + string.Join(", ", definitions) + ")", ti.TableName)
+            var ddlList = new List<string> {
+                "CREATE TABLE " + table + "(" + string.Join(", ", definitions) + ")"
             };
             if (withIndex) {
                 foreach (var item in ti.Indexs) {
                     var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                     var columns = BuildColumns(item);
-                    statements.Add(WrapIdempotent("CREATE INDEX " + txt + " ON " + table + "(" + columns + ")", ti.TableName));
+                    ddlList.Add("CREATE INDEX " + txt + " ON " + table + "(" + columns + ")");
                 }
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                     var columns = BuildColumns(item);
-                    statements.Add(WrapIdempotent("CREATE UNIQUE INDEX " + txt + " ON " + table + "(" + columns + ")", ti.TableName));
+                    ddlList.Add("CREATE UNIQUE INDEX " + txt + " ON " + table + "(" + columns + ")");
                 }
             }
-            return string.Join("\r\n", statements);
+            var sb = new StringBuilder();
+            sb.Append("EXECUTE BLOCK AS BEGIN");
+            var tableName = ti.TableName.Replace("'", "''");
+            foreach (var ddl in ddlList) {
+                sb.Append(" IF (NOT EXISTS(SELECT 1 FROM rdb$relations WHERE rdb$relation_name = '")
+                  .Append(tableName)
+                  .Append("')) THEN EXECUTE STATEMENT '")
+                  .Append(ddl.Replace("'", "''"))
+                  .Append("';");
+            }
+            sb.Append(" END");
+            return sb.ToString();
         }
 
-        private static string WrapIdempotent(string ddl, string tableName)
+        private static string WrapDropIdempotent(string ddl, string tableName)
         {
-            return "EXECUTE BLOCK AS BEGIN IF (NOT EXISTS(SELECT 1 FROM rdb$relations WHERE rdb$relation_name = '" + tableName.Replace("'", "''") + "')) THEN EXECUTE STATEMENT '" + ddl.Replace("'", "''") + "'; END";
+            return "EXECUTE BLOCK AS BEGIN IF (EXISTS(SELECT 1 FROM rdb$relations WHERE rdb$relation_name = '" + tableName.Replace("'", "''") + "')) THEN EXECUTE STATEMENT '" + ddl.Replace("'", "''") + "'; END";
         }
 
         /// <summary>
@@ -83,24 +95,24 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         }
 
         /// <summary>
-        /// 获取删除表 SQL
+        /// 获取删除表 SQL（表不存在时不报错）
         /// </summary>
         /// <param name="type">实体类型</param>
         /// <returns>删除表 SQL</returns>
         public override string GetDropTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            return "DROP TABLE " + GetTableName(ti) + ";";
+            return WrapDropIdempotent("DROP TABLE " + GetTableName(ti) + ";", ti.TableName);
         }
 
         /// <summary>
-        /// 获取删除表 SQL
+        /// 获取删除表 SQL（表不存在时不报错）
         /// </summary>
         /// <param name="tableName">表名</param>
         /// <returns>删除表 SQL</returns>
         public override string GetDropTable(string tableName)
         {
-            return "DROP TABLE " + GetTableName(null, tableName) + ";";
+            return WrapDropIdempotent("DROP TABLE " + GetTableName(null, tableName) + ";", tableName);
         }
 
         /// <summary>
@@ -200,10 +212,10 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
                 if (string.IsNullOrEmpty(ci.DefaultValue) == false) {
                     sb.AppendFormat(" DEFAULT {0}", ci.DefaultValue);
                 }
+                // Firebird 不允许显式 NULL 关键字，可空列默认即为可空，仅需声明 NOT NULL
                 if (isRequired) {
-                    sb.Append(" NOT");
+                    sb.Append(" NOT NULL");
                 }
-                sb.Append(" NULL");
             }
             if (ti.PrimaryKey == ci.ColumnName) {
                 sb.Append(" PRIMARY KEY");
