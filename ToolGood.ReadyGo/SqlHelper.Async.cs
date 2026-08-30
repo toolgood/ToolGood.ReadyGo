@@ -711,7 +711,13 @@ namespace ToolGood.ReadyGo
         public async Task Save_Async<T>(T poco) where T : class
         {
             if (poco == null) throw new ArgumentNullException("poco is null");
-            await GetDatabase().SaveAsync(poco);
+            var db = GetDatabase();
+            // 与 Insert_Async 一致：先填充默认值（DateTime.MinValue→Now 等），避免新对象默认值超出数据库范围
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
+                var pd = db.PocoDataFactory.ForType(typeof(T));
+                DefaultValue.SetDefaultValue<T>(poco, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew, pd);
+            }
+            await db.SaveAsync(poco);
         }
 
         /// <summary>
@@ -724,9 +730,16 @@ namespace ToolGood.ReadyGo
             if (list == null) throw new ArgumentNullException("list is null.");
             if (list.Count == 0) return;
 
+            var db = GetDatabase();
+            // 与 InsertList_Async 一致：先填充默认值（DateTime.MinValue→Now 等），避免新对象默认值超出数据库范围
+            if (_setDateTimeDefaultNow || _setStringDefaultNotNull || _setGuidDefaultNew) {
+                var pd = db.PocoDataFactory.ForType(typeof(T));
+                foreach (var item in list) {
+                    DefaultValue.SetDefaultValue<T>(item, _setStringDefaultNotNull, _setDateTimeDefaultNow, _setGuidDefaultNew, pd);
+                }
+            }
             var toInsert = new List<T>();
             var toUpdate = new List<T>();
-            var db = GetDatabase();
             foreach (var item in list) {
                 if (await db.IsNewAsync(item)) {
                     toInsert.Add(item);
