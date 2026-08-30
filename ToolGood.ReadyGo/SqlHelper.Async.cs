@@ -747,8 +747,12 @@ namespace ToolGood.ReadyGo
                     toUpdate.Add(item);
                 }
             }
-            if (toInsert.Count > 0) await db.InsertBatchAsync(toInsert);
-            if (toUpdate.Count > 0) await db.UpdateBatchAsync(toUpdate.Select(x => UpdateBatch.For(x)));
+            // 用事务包裹批量插入与批量更新，避免中途失败导致部分写入
+            using (var tran = UseTransaction()) {
+                if (toInsert.Count > 0) await db.InsertBatchAsync(toInsert);
+                if (toUpdate.Count > 0) await db.UpdateBatchAsync(toUpdate.Select(x => UpdateBatch.For(x)));
+                tran.Complete();
+            }
         }
 
         /// <summary>

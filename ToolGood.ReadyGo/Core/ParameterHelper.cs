@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using ToolGood.ReadyGo.Attributes.ColumnSerializers;
 
 namespace ToolGood.ReadyGo.NPoco
 {
@@ -168,6 +169,47 @@ namespace ToolGood.ReadyGo.NPoco
                 return Activator.CreateInstance(type);
             }
             return null;
+        }
+
+        /// <summary>
+        /// 序列化输出为 byte[] 的序列化器类型映射，用于列值为 null 时推断数据库参数类型。
+        /// 新增输出 byte[] 的序列化器时需在此登记。
+        /// </summary>
+        private static readonly Dictionary<Type, Type> SerializerOutputTypes = new() {
+            { typeof(NumericArray2BytesColumnSerializer), typeof(byte[]) },
+            { typeof(String2BytesColumnSerializer), typeof(byte[]) },
+            { typeof(DictionaryUintUint2BytesColumnSerializer), typeof(byte[]) },
+        };
+
+        /// <summary>
+        /// 携带明确 DbType 的 NULL 参数值。
+        /// 框架在构建 Insert/Update 参数时用它包装 null，避免 SqlClient 等驱动将 NULL 默认推断为 nvarchar 而无法写入二进制列。
+        /// </summary>
+        internal sealed class TypedNullValue
+        {
+            public TypedNullValue(DbType dbType) { DbType = dbType; }
+            public DbType DbType { get; }
+        }
+
+        /// <summary>
+        /// 包装 null 参数：为 null 值推断并携带明确的 DbType。
+        /// 优先使用序列化器的输出类型（白名单，如输出 byte[] 的序列化器 → DbType.Binary），
+        /// 否则回退到目标列 CLR 类型推断；仍无法确定时返回 null（保持原行为）。
+        /// </summary>
+        /// <param name="dbType">数据库类型提供程序。</param>
+        /// <param name="pocoColumn">目标列信息。</param>
+        /// <param name="value">参数值。</param>
+        /// <returns>非 null 原样返回；null 返回带 DbType 的包装值或 null。</returns>
+        public static object WrapNullWithDbType(IDatabaseType dbType, PocoColumn pocoColumn, object value)
+        {
+            if (value != null) return value;
+            Type outputType = null;
+            if (pocoColumn.ColumnSerializer != null && SerializerOutputTypes.TryGetValue(pocoColumn.ColumnSerializer.GetType(), out var serializedType)) {
+                outputType = serializedType;
+            }
+            outputType ??= pocoColumn.ColumnType;
+            var dbTypeLookup = dbType.LookupDbType(outputType, pocoColumn.ColumnName);
+            return dbTypeLookup.HasValue ? new TypedNullValue(dbTypeLookup.Value) : null;
         }
 
         /// <summary>

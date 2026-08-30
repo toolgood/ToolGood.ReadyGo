@@ -68,7 +68,7 @@ namespace ToolGood.ReadyGo.NPoco
                         sb.Append(", ");
                     sb.AppendFormat("{0} = @{1}", database.DatabaseType.EscapeSqlIdentifier(pocoColumn.ColumnName), index++);
 
-                    rawvalues.Add(value);
+                    rawvalues.Add(ParameterHelper.WrapNullWithDbType(database.DatabaseType, pocoColumn, value));
                 }
 
                 if (sb.Length == 0)

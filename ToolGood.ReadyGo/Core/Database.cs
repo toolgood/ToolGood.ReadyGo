@@ -821,6 +821,17 @@ namespace ToolGood.ReadyGo.NPoco
         /// <param name="value">参数值。</param>
         public virtual void AddParameter(DbCommand cmd, object? value)
         {
+            // 类型化的 NULL 参数：携带明确的 DbType，避免驱动默认推断为 nvarchar 无法写入二进制列
+            if (value is ParameterHelper.TypedNullValue typedNull)
+            {
+                var nullParam = cmd.CreateParameter();
+                nullParam.ParameterName = string.Format("{0}{1}", _paramPrefix, cmd.Parameters.Count);
+                nullParam.Value = DBNull.Value;
+                nullParam.DbType = typedNull.DbType;
+                cmd.Parameters.Add(nullParam);
+                return;
+            }
+
             // Convert value to from poco type to db type
             if (Mappers != null && value != null)
             {

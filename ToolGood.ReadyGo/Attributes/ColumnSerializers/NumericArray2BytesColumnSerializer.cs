@@ -11,6 +11,11 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
     public class NumericArray2BytesColumnSerializer : NPoco.IColumnSerializer
     {
         /// <summary>
+        /// 序列化输出为 byte[]，对应数据库 varbinary/image/BLOB 列。
+        /// </summary>
+        public Type SerializedOutputType => typeof(byte[]);
+
+        /// <summary>
         /// decimal 占用的字节数（decimal.GetBits 返回 4 个 int，共 16 字节）
         /// </summary>
         private const int DecimalSize = 16;

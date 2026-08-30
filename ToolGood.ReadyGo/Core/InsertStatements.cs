@@ -60,14 +60,17 @@ namespace ToolGood.ReadyGo.NPoco
                     values.Add(string.Format("@{0}", index++));
 
                     object val;
+                    PocoColumn valueColumn;
                     if (pocoColumn.ReferenceType == ReferenceType.Foreign)
                     {
                         var member = pd.Members.Single(x => x.MemberInfoData == pocoColumn.MemberInfoData);
                         var column = member.PocoMemberChildren.Single(x => x.Name == member.ReferenceMemberName);
-                        val = database.ProcessMapper(column.PocoColumn, column.PocoColumn.GetValue(poco));
+                        valueColumn = column.PocoColumn;
+                        val = database.ProcessMapper(valueColumn, valueColumn.GetValue(poco));
                     }
                     else
                     {
+                        valueColumn = pocoColumn;
                         val = database.ProcessMapper(pocoColumn, pocoColumn.GetValue(poco));
                     }
 
@@ -77,7 +80,7 @@ namespace ToolGood.ReadyGo.NPoco
                         versionName = pocoColumn.ColumnName;
                     }
 
-                    rawvalues.Add(val);
+                    rawvalues.Add(ParameterHelper.WrapNullWithDbType(database.DatabaseType, valueColumn, val));
                 }
 
                 var sql = string.Empty;
