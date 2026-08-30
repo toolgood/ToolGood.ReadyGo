@@ -86,7 +86,8 @@ namespace ToolGood.ReadyGo.SqlServerTests
                     else {
                         using (var cmd = conn.CreateCommand()) {
                             cmd.CommandText = $"CREATE DATABASE [{DatabaseName}] ON PRIMARY (NAME = N'{DatabaseName}', FILENAME = N'{mdf}') " +
-                                              $"LOG ON (NAME = N'{DatabaseName}_log', FILENAME = N'{ldf}')";
+                                              $"LOG ON (NAME = N'{DatabaseName}_log', FILENAME = N'{ldf}') " +
+                                              "COLLATE Chinese_PRC_CI_AS";
                             cmd.ExecuteNonQuery();
                         }
                     }

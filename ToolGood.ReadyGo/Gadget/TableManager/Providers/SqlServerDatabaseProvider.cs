@@ -148,32 +148,32 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (ci.SerializedAs == ColumnInfo.SerializedKind.String) return CreateField(ti, ci, ci.IsText ? "Text" : "nvarchar", ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), false);
             if (type.IsEnum) return CreateField(ti, ci, "int", ci.FieldLength, isRequired);
             if (type == typeof(string)) return CreateField(ti, ci, ci.IsText ? "Text" : "nvarchar", ci.IsText ? "" : (string.IsNullOrEmpty(ci.FieldLength) ? "4000" : ci.FieldLength), isRequired);
-            // SQL Server 无 BLOB 类型，二进制/数组统一映射为 varbinary(MAX)
-            if (type == typeof(Byte[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(SByte[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(UInt16[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(UInt32[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(UInt64[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(Int16[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(Int32[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(Int64[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(Single[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(double[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(Decimal[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(bool[])) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
+            // SQL Server 无 BLOB 类型，二进制/数组统一映射为 image（旧式 BLOB，等效 varbinary(MAX)）
+            if (type == typeof(Byte[])) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(SByte[])) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(UInt16[])) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(UInt32[])) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(UInt64[])) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(Int16[])) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(Int32[])) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(Int64[])) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(Single[])) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(double[])) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(Decimal[])) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(bool[])) return CreateField(ti, ci, "image", null, false);
 
-            if (type == typeof(List<Byte>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(List<SByte>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(List<UInt16>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(List<UInt32>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(List<UInt64>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(List<Int16>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(List<Int32>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(List<Int64>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(List<Single>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(List<double>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(List<Decimal>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
-            if (type == typeof(List<bool>)) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
+            if (type == typeof(List<Byte>)) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(List<SByte>)) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(List<UInt16>)) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(List<UInt32>)) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(List<UInt64>)) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(List<Int16>)) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(List<Int32>)) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(List<Int64>)) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(List<Single>)) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(List<double>)) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(List<Decimal>)) return CreateField(ti, ci, "image", null, false);
+            if (type == typeof(List<bool>)) return CreateField(ti, ci, "image", null, false);
 
             if (type == typeof(AnsiString)) return CreateField(ti, ci, "varchar", ci.FieldLength, isRequired);
 
@@ -196,7 +196,7 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(TimeSpan)) return CreateField(ti, ci, "time", ci.FieldLength, isRequired);
             if (type == typeof(Guid)) return CreateField(ti, ci, "uniqueidentifier", ci.FieldLength, isRequired);
 
-            if (ci.IsSerialized) return CreateField(ti, ci, "varbinary(MAX)", ci.FieldLength, false);
+            if (ci.IsSerialized) return CreateField(ti, ci, "image", null, false);
 
             throw new NotSupportedException($"Unsupported column type: {ci.PropertyType.Name}");
         }
