@@ -170,6 +170,21 @@ namespace ToolGood.ReadyGo.NPoco
                         return InsertStatements.PrepareInsertSql(this, pd, pd.TableInfo.TableName, pd.TableInfo.PrimaryKey, pd.TableInfo.AutoIncrement, x);
                     }).ToArray();
 
+                    if (DatabaseType.SupportsMultiStatementBatch == false)
+                    {
+                        // 不支持多语句批处理（如 Firebird），降级为逐条执行
+                        foreach (var preparedInsertSql in preparedInserts)
+                        {
+                            using (var cmd = CreateCommand(_sharedConnection, preparedInsertSql.Sql, preparedInsertSql.Rawvalues.ToArray()))
+                            {
+                                result += sync
+                                    ? ExecuteNonQueryHelper(cmd)
+                                    : await ExecuteNonQueryHelperAsync(cmd, cancellationToken).ConfigureAwait(false);
+                            }
+                        }
+                        continue;
+                    }
+
                     var sql = new Sql();
                     foreach (var preparedInsertSql in preparedInserts)
                     {

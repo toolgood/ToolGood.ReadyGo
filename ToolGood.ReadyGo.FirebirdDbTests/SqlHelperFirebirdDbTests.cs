@@ -68,10 +68,10 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
             db.NewUser("王五", 40);
 
             Assert.Equal(3, helper.Count<UserInfo>());
-            Assert.Equal(2, helper.Count<UserInfo>("WHERE Age > 20"));
+            Assert.Equal(2, helper.Count<UserInfo>("WHERE \"Age\" > 20"));
 
-            Assert.True(helper.Exists<UserInfo>("WHERE Id = @0", 1));
-            Assert.False(helper.Exists<UserInfo>("WHERE Id = 999"));
+            Assert.True(helper.Exists<UserInfo>("WHERE \"Id\" = @0", 1));
+            Assert.False(helper.Exists<UserInfo>("WHERE \"Id\" = 999"));
         }
 
         #endregion
@@ -90,19 +90,19 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
             Assert.Equal(13, helper.Select<UserInfo>().Count);
             Assert.Equal(5, helper.Select<UserInfo>(5).Count);
 
-            var sp = helper.SelectPage<UserInfo>(1, 5, "ORDER BY Id");
+            var sp = helper.SelectPage<UserInfo>(1, 5, "ORDER BY \"Id\"");
             Assert.Equal(5, sp.Count);
 
-            var page = helper.Page<UserInfo>(2, 5, "ORDER BY Id");
+            var page = helper.Page<UserInfo>(2, 5, "ORDER BY \"Id\"");
             Assert.Equal(2, page.CurrentPage);
             Assert.Equal(13, page.TotalItems);
             Assert.Equal(5, page.Items.Count);
             Assert.Equal("用户5", page.Items[0].Name);
 
-            var f = helper.FirstOrDefault<UserInfo>("WHERE Name = @0", "用户3");
+            var f = helper.FirstOrDefault<UserInfo>("WHERE \"Name\" = @0", "用户3");
             Assert.NotNull(f);
             Assert.Equal(23, f.Age);
-            Assert.Null(helper.FirstOrDefault<UserInfo>("WHERE Id = 999"));
+            Assert.Null(helper.FirstOrDefault<UserInfo>("WHERE \"Id\" = 999"));
         }
 
         #endregion
@@ -120,7 +120,7 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
             Assert.Equal(1, helper.Update(u));
             Assert.Equal(31, helper.FirstOrDefault<UserInfo>(u.Id).Age);
 
-            Assert.Equal(1, helper.Update<UserInfo>("SET Remark = 'sql更新' WHERE Id = @0", u.Id));
+            Assert.Equal(1, helper.Update<UserInfo>("SET \"Remark\" = 'sql更新' WHERE \"Id\" = @0", u.Id));
             Assert.Equal("sql更新", helper.FirstOrDefault<UserInfo>(u.Id).Remark);
 
             var saved = new UserInfo { Name = "保存新", Age = 66, Money = 1m, IsDelete = false };
@@ -149,9 +149,9 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
             db.NewUser("乙", 30);
 
             Assert.Equal(2, helper.ExecuteScalar<int>("SELECT COUNT(*) FROM \"UserInfo\""));
-            Assert.Equal("乙", helper.ExecuteScalar<string>("SELECT Name FROM \"UserInfo\" WHERE Age = @0", 30));
+            Assert.Equal("乙", helper.ExecuteScalar<string>("SELECT \"Name\" FROM \"UserInfo\" WHERE \"Age\" = @0", 30));
 
-            var dt = helper.ExecuteDataTable("SELECT Id, Name FROM \"UserInfo\"");
+            var dt = helper.ExecuteDataTable("SELECT \"Id\", \"Name\" FROM \"UserInfo\"");
             Assert.Equal(2, dt.Rows.Count);
             Assert.Equal("甲", dt.Rows[0]["Name"]);
         }
@@ -167,10 +167,10 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
             var helper = db.Helper;
 
             using (var trans = helper.UseTransaction()) {
-                helper.Execute("INSERT INTO \"UserInfo\" (Name, Age, Remark, CreateTime, Money, IsDelete) VALUES ('事务1', 1, NULL, '2026-01-01 00:00:00', 1, TRUE)");
+                helper.Execute("INSERT INTO \"UserInfo\" (\"Name\", \"Age\", \"Remark\", \"CreateTime\", \"Money\", \"IsDelete\") VALUES ('事务1', 1, NULL, '2026-01-01 00:00:00', 1, TRUE)");
                 trans.Complete();
             }
-            Assert.True(helper.Exists<UserInfo>("WHERE Name = '事务1'"));
+            Assert.True(helper.Exists<UserInfo>("WHERE \"Name\" = '事务1'"));
         }
 
         [Fact]
@@ -180,10 +180,10 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
             var helper = db.Helper;
 
             using (var trans = helper.UseTransaction()) {
-                helper.Execute("INSERT INTO \"UserInfo\" (Name, Age, Remark, CreateTime, Money, IsDelete) VALUES ('事务2', 1, NULL, '2026-01-01 00:00:00', 1, TRUE)");
+                helper.Execute("INSERT INTO \"UserInfo\" (\"Name\", \"Age\", \"Remark\", \"CreateTime\", \"Money\", \"IsDelete\") VALUES ('事务2', 1, NULL, '2026-01-01 00:00:00', 1, TRUE)");
                 // 不调用 Complete，释放时应回滚
             }
-            Assert.False(helper.Exists<UserInfo>("WHERE Name = '事务2'"));
+            Assert.False(helper.Exists<UserInfo>("WHERE \"Name\" = '事务2'"));
         }
 
         #endregion
@@ -224,11 +224,11 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
             Assert.Equal(2, await helper.Count_Async<UserInfo>());
 
             // InsertList 批量插入不返回主键，需查询获取实际 Id
-            var ids = (await helper.Select_Async<UserInfo>("ORDER BY Id")).Select(x => x.Id).ToList();
+            var ids = (await helper.Select_Async<UserInfo>("ORDER BY \"Id\"")).Select(x => x.Id).ToList();
             Assert.Equal(2, ids.Count);
 
             Assert.Equal(1, await helper.DeleteById_Async<UserInfo>(ids[0]));
-            Assert.Equal(1, await helper.Delete_Async<UserInfo>("WHERE Id = @0", ids[1]));
+            Assert.Equal(1, await helper.Delete_Async<UserInfo>("WHERE \"Id\" = @0", ids[1]));
             Assert.Equal(0, await helper.Count_Async<UserInfo>());
         }
 
@@ -241,15 +241,15 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
                 db.NewUser("用户" + i, 20 + i);
             }
 
-            var list = await helper.Select_Async<UserInfo>("WHERE Age > 25");
+            var list = await helper.Select_Async<UserInfo>("WHERE \"Age\" > 25");
             Assert.Equal(7, list.Count);
 
-            var page = await helper.Page_Async<UserInfo>(2, 5, "ORDER BY Id");
+            var page = await helper.Page_Async<UserInfo>(2, 5, "ORDER BY \"Id\"");
             Assert.Equal(13, page.TotalItems);
             Assert.Equal(5, page.Items.Count);
             Assert.Equal("用户5", page.Items[0].Name);
 
-            var f = await helper.FirstOrDefault_Async<UserInfo>("WHERE Name = @0", "用户2");
+            var f = await helper.FirstOrDefault_Async<UserInfo>("WHERE \"Name\" = @0", "用户2");
             Assert.NotNull(f);
             Assert.Equal(22, f.Age);
         }
@@ -263,8 +263,8 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
             db.NewUser("乙", 30);
 
             Assert.Equal(2, await helper.Count_Async<UserInfo>());
-            Assert.True(await helper.Exists_Async<UserInfo>("WHERE Id = @0", 1));
-            Assert.False(await helper.Exists_Async<UserInfo>("WHERE Id = 999"));
+            Assert.True(await helper.Exists_Async<UserInfo>("WHERE \"Id\" = @0", 1));
+            Assert.False(await helper.Exists_Async<UserInfo>("WHERE \"Id\" = 999"));
         }
     }
 }

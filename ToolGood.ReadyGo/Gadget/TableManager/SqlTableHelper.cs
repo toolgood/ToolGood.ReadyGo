@@ -137,8 +137,9 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         /// <param name="type">实体类型</param>
         public void DropTable(Type type)
         {
+            var ti = TableInfo.FromType(type);
             var sql = GetDropTable(type);
-            _sqlHelper.Execute(sql);
+            ExecuteDrop(sql, ti.TableName);
         }
 
         /// <summary>
@@ -148,6 +149,19 @@ namespace ToolGood.ReadyGo.Gadget.TableManager
         public void DropTable(string tableName)
         {
             var sql = GetDropTable(tableName);
+            ExecuteDrop(sql, tableName);
+        }
+
+        /// <summary>
+        /// 执行删除表 SQL，Firebird 需先判断表是否存在再删除，保证幂等。
+        /// </summary>
+        private void ExecuteDrop(string sql, string tableName)
+        {
+            if (_sqlHelper._sqlType == SqlType.FirebirdDb) {
+                sql = "EXECUTE BLOCK AS BEGIN IF (EXISTS(SELECT 1 FROM rdb$relations WHERE rdb$relation_name = '"
+                      + tableName.Replace("'", "''") + "')) THEN EXECUTE STATEMENT '"
+                      + sql.Replace("'", "''") + "'; END";
+            }
             _sqlHelper.Execute(sql);
         }
 

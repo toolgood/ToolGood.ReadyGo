@@ -27,7 +27,7 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
             using var db = CreateWithUsers();
             var helper = db.Helper;
 
-            var list = helper.Where<Tb_WhereTest>("Age > @0", 30).OrderBy(q => q.Age).ToList();
+            var list = helper.Where<Tb_WhereTest>("\"Age\" > @0", 30).OrderBy(q => q.Age).ToList();
             Assert.Equal(2, list.Count);
             Assert.Equal("王五", list[0].Name);
             Assert.Equal("张伟", list[1].Name);
@@ -69,7 +69,7 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
             var list2 = helper.Where<Tb_WhereTest>().WhereNotIn(q => q.Age, new int[] { 20, 50 }).ToList();
             Assert.Equal(2, list2.Count);
 
-            var list3 = helper.Where<Tb_WhereTest>("Age").WhereIn("Age", new object[] { 30, 40 }).ToList();
+            var list3 = helper.Where<Tb_WhereTest>().WhereIn("\"Age\"", new object[] { 30, 40 }).ToList();
             Assert.Equal(2, list3.Count);
         }
 

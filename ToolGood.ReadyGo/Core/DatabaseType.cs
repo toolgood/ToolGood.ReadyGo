@@ -198,6 +198,11 @@ namespace ToolGood.ReadyGo.NPoco
         }
 
         /// <summary>
+        /// 是否支持在单条命令中拼接多条 SQL 语句执行（如多条 INSERT）。
+        /// </summary>
+        public virtual bool SupportsMultiStatementBatch => true;
+
+        /// <summary>
         /// Returns an SQL Statement that can check for the existance of a row in the database.
         /// </summary>
         /// <returns>用于检查记录是否存在的 SQL 语句模板。</returns>

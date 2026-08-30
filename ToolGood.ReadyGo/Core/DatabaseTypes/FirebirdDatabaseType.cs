@@ -25,6 +25,11 @@ namespace ToolGood.ReadyGo.NPoco.DatabaseTypes
         }
 
         /// <summary>
+        /// Firebird 一次只能执行一条语句，不支持在单条命令中拼接多条语句。
+        /// </summary>
+        public override bool SupportsMultiStatementBatch => false;
+
+        /// <summary>
         /// 在执行命令前预处理命令文本，将 poco_dual 占位符替换为 Firebird 的系统表。
         /// </summary>
         /// <param name="cmd">数据库命令。</param>

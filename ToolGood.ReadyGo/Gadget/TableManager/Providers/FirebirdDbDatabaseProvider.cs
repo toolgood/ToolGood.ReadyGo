@@ -35,12 +35,12 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
                 foreach (var item in ti.Indexs) {
                     var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                     var columns = BuildColumns(item);
-                    ddlList.Add("CREATE INDEX " + txt + " ON " + table + "(" + columns + ")");
+                    ddlList.Add("CREATE INDEX \"" + txt + "\" ON " + table + "(" + columns + ")");
                 }
                 foreach (var item in ti.Uniques) {
                     var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                     var columns = BuildColumns(item);
-                    ddlList.Add("CREATE UNIQUE INDEX " + txt + " ON " + table + "(" + columns + ")");
+                    ddlList.Add("CREATE UNIQUE INDEX \"" + txt + "\" ON " + table + "(" + columns + ")");
                 }
             }
             var sb = new StringBuilder();
@@ -57,11 +57,6 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             return sb.ToString();
         }
 
-        private static string WrapDropIdempotent(string ddl, string tableName)
-        {
-            return "EXECUTE BLOCK AS BEGIN IF (EXISTS(SELECT 1 FROM rdb$relations WHERE rdb$relation_name = '" + tableName.Replace("'", "''") + "')) THEN EXECUTE STATEMENT '" + ddl.Replace("'", "''") + "'; END";
-        }
-
         /// <summary>
         /// 获取创建索引 SQL
         /// </summary>
@@ -71,18 +66,31 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         {
             var ti = TableInfo.FromType(type);
             var table = GetTableName(ti);
-            var statements = new List<string>();
+            var statements = new List<(string Name, string Sql)>();
             foreach (var item in ti.Indexs) {
                 var txt = "i_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                 var columns = BuildColumns(item);
-                statements.Add($"CREATE INDEX {txt} ON {table}({columns});");
+                statements.Add((txt, $"CREATE INDEX \"{txt.Replace("\"", "\"\"")}\" ON {table}({columns})"));
             }
             foreach (var item in ti.Uniques) {
                 var txt = "u_" + ti.TableName + "_" + string.Join("_", item).Replace(" ", "_");
                 var columns = BuildColumns(item);
-                statements.Add($"CREATE UNIQUE INDEX {txt} ON {table}({columns});");
+                statements.Add((txt, $"CREATE UNIQUE INDEX \"{txt.Replace("\"", "\"\"")}\" ON {table}({columns})"));
             }
-            return string.Join("\r\n", statements);
+            if (statements.Count == 0) { return ""; }
+
+            // Firebird 一次只能执行一条语句，合并为单条 EXECUTE BLOCK，并判断索引是否已存在
+            var sb = new StringBuilder();
+            sb.Append("EXECUTE BLOCK AS BEGIN");
+            foreach (var (name, sql) in statements) {
+                sb.Append(" IF (NOT EXISTS(SELECT 1 FROM rdb$indices WHERE rdb$index_name = '")
+                  .Append(name.Replace("'", "''"))
+                  .Append("')) THEN EXECUTE STATEMENT '")
+                  .Append(sql.Replace("'", "''"))
+                  .Append("';");
+            }
+            sb.Append(" END");
+            return sb.ToString();
         }
 
         private string BuildColumns(List<string> columnList)
@@ -95,24 +103,24 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
         }
 
         /// <summary>
-        /// 获取删除表 SQL（表不存在时不报错）
+        /// 获取删除表 SQL（表不存在时不报错，由执行层处理幂等）
         /// </summary>
         /// <param name="type">实体类型</param>
         /// <returns>删除表 SQL</returns>
         public override string GetDropTable(Type type)
         {
             var ti = TableInfo.FromType(type);
-            return WrapDropIdempotent("DROP TABLE " + GetTableName(ti) + ";", ti.TableName);
+            return "DROP TABLE " + GetTableName(ti) + ";";
         }
 
         /// <summary>
-        /// 获取删除表 SQL（表不存在时不报错）
+        /// 获取删除表 SQL（表不存在时不报错，由执行层处理幂等）
         /// </summary>
         /// <param name="tableName">表名</param>
         /// <returns>删除表 SQL</returns>
         public override string GetDropTable(string tableName)
         {
-            return WrapDropIdempotent("DROP TABLE " + GetTableName(null, tableName) + ";", tableName);
+            return "DROP TABLE " + GetTableName(null, tableName) + ";";
         }
 
         /// <summary>

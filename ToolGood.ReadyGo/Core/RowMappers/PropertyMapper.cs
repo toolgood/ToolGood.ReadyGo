@@ -175,6 +175,16 @@ namespace ToolGood.ReadyGo.NPoco.RowMappers
             var value = values[posName.Key.Pos];
             if (!Equals(value, DBNull.Value))
             {
+                if (converter == null)
+                {
+                    // 部分驱动声明的字段类型与实际返回类型不一致（如 Firebird 的 DECIMAL(9,0) 返回 Int32），
+                    // 按成员类型做兜底转换，避免直接强转失败（如 Int32 -> Decimal）。
+                    var memberType = Nullable.GetUnderlyingType(pocoColumn.MemberInfoData.MemberType) ?? pocoColumn.MemberInfoData.MemberType;
+                    if (value != null && !memberType.IsInstanceOfType(value))
+                    {
+                        value = Convert.ChangeType(value, memberType, null);
+                    }
+                }
                 pocoColumn.SetValue(instance, converter != null ? converter(value) : value);
                 return true;
             }

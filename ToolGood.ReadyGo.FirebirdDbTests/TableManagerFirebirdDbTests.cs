@@ -31,8 +31,8 @@ namespace ToolGood.ReadyGo.FirebirdDbTests
             Assert.Contains("PRIMARY KEY", sql);
             Assert.Contains("\"OrderNo\" VARCHAR(50)", sql);
             Assert.Contains("\"Remark\" BLOB SUB_TYPE TEXT", sql);
-            Assert.Contains("CREATE INDEX i_Tb_Order_UserId ON \"Tb_Order\"(\"UserId\")", sql);
-            Assert.Contains("CREATE UNIQUE INDEX u_Tb_Order_OrderNo ON \"Tb_Order\"(\"OrderNo\")", sql);
+            Assert.Contains("CREATE INDEX \"i_Tb_Order_UserId\" ON \"Tb_Order\"(\"UserId\")", sql);
+            Assert.Contains("CREATE UNIQUE INDEX \"u_Tb_Order_OrderNo\" ON \"Tb_Order\"(\"OrderNo\")", sql);
         }
 
         [Fact]

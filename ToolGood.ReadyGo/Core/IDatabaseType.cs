@@ -210,5 +210,9 @@ namespace ToolGood.ReadyGo.NPoco
         /// </summary>
         /// <returns>使用列别名返回 true，否则返回 false。</returns>
         bool UseColumnAliases();
+        /// <summary>
+        /// 是否支持在单条命令中拼接多条 SQL 语句执行（如多条 INSERT）。
+        /// </summary>
+        bool SupportsMultiStatementBatch { get; }
     }
 }
