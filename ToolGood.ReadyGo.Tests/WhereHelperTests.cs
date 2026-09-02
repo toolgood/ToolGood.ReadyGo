@@ -154,7 +154,7 @@ namespace ToolGood.ReadyGo.Tests
         }
 
         [Fact]
-        public void SelectCount()
+        public void Select_Count()
         {
             using var db = CreateWithUsers();
             var helper = db.Helper;
@@ -362,7 +362,7 @@ namespace ToolGood.ReadyGo.Tests
 
             Assert.Equal(4, await helper.Where<Tb_WhereTest>().Count_Async());
             Assert.Equal(2, await helper.Where<Tb_WhereTest>(q => q.Age > 30).Count_Async());
-            Assert.Equal(4, await helper.Where<Tb_WhereTest>().SelectCount_Async());
+            Assert.Equal(4, await helper.Where<Tb_WhereTest>().Select_Count_Async());
 
             Assert.True(await helper.Where<Tb_WhereTest>().Any_Async());
             Assert.False(await helper.Where<Tb_WhereTest>(q => q.Age > 100).Any_Async());

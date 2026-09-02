@@ -118,7 +118,7 @@ namespace ToolGood.ReadyGo.SqlServerTests
         }
 
         [Fact]
-        public void SelectCount()
+        public void Select_Count()
         {
             using var db = CreateWithUsers();
             var helper = db.Helper;

@@ -103,7 +103,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>元素数量。</returns>
-        Task<int> SelectCount_Async(CancellationToken cancellationToken = default);
+        Task<int> Select_Count_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回满足条件的元素数量。
         /// </summary>
@@ -117,7 +117,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="whereExpression">筛选条件。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>元素数量。</returns>
-        Task<int> SelectCount_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
+        Task<int> Select_Count_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步判断是否存在元素。
         /// </summary>
@@ -261,7 +261,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// 统计元素数量（Count 的别名）。
         /// </summary>
         /// <returns>元素数量。</returns>
-        int SelectCount();
+        int Select_Count();
         /// <summary>
         /// 返回满足条件的元素数量。
         /// </summary>
@@ -273,7 +273,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// </summary>
         /// <param name="whereExpression">筛选条件。</param>
         /// <returns>元素数量。</returns>
-        int SelectCount(Expression<Func<T, bool>> whereExpression);
+        int Select_Count(Expression<Func<T, bool>> whereExpression);
         /// <summary>
         /// 判断是否存在元素。
         /// </summary>
@@ -462,7 +462,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>元素数量。</returns>
-        Task<int> SelectCount_Async(CancellationToken cancellationToken = default);
+        Task<int> Select_Count_Async(CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步返回满足条件的元素数量。
         /// </summary>
@@ -476,7 +476,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="whereExpression">筛选条件。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>元素数量。</returns>
-        Task<int> SelectCount_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
+        Task<int> Select_Count_Async(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken = default);
         /// <summary>
         /// 异步判断是否存在元素。
         /// </summary>
