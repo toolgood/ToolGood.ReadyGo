@@ -625,10 +625,10 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <summary>
         /// 限制返回行数并跳过指定行数。
         /// </summary>
-        /// <param name="skip">跳过的行数。</param>
         /// <param name="rows">返回行数。</param>
+        /// <param name="skip">跳过的行数。</param>
         /// <returns>当前查询器。</returns>
-        IQueryProvider<T> Limit(int skip, int rows);
+        IQueryProvider<T> Limit(int rows, int skip);
         /// <summary>
         /// 应用查询构建器中的条件、排序与分页。
         /// </summary>
@@ -664,13 +664,13 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <returns>当前查询器。</returns>
         IQueryProvider<T> IfTrueLimit(bool condition, int rows);
         /// <summary>
-        /// 条件成立时添加 Limit（跳过 skip 行，取 rows 行）。
+        /// 条件成立时添加 Limit（取 rows 行，跳过 skip 行）。
         /// </summary>
         /// <param name="condition">条件开关，为 true 时生效。</param>
-        /// <param name="skip">跳过的行数。</param>
         /// <param name="rows">返回行数。</param>
+        /// <param name="skip">跳过的行数。</param>
         /// <returns>当前查询器。</returns>
-        IQueryProvider<T> IfTrueLimit(bool condition, int skip, int rows);
+        IQueryProvider<T> IfTrueLimit(bool condition, int rows, int skip);
         /// <summary>
         /// Where Exists（自动添加 "EXISTS(" 与 "SELECT * " 前缀）。
         /// </summary>
@@ -1027,10 +1027,10 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <summary>
         /// 限制返回行数并跳过指定行数。
         /// </summary>
-        /// <param name="skip">跳过的行数。</param>
         /// <param name="rows">返回行数。</param>
+        /// <param name="skip">跳过的行数。</param>
         /// <returns>当前查询器。</returns>
-        IAsyncQueryProvider<T> Limit(int skip, int rows);
+        IAsyncQueryProvider<T> Limit(int rows, int skip);
         /// <summary>
         /// 应用查询构建器中的条件、排序与分页。
         /// </summary>

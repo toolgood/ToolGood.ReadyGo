@@ -37,10 +37,10 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <summary>
         /// 设置返回行数并跳过指定行数。
         /// </summary>
-        /// <param name="skip">跳过的行数。</param>
         /// <param name="rows">返回行数。</param>
+        /// <param name="skip">跳过的行数。</param>
         /// <returns>当前构建器。</returns>
-        public virtual QueryBuilder<T> Limit(int skip, int rows)
+        public virtual QueryBuilder<T> Limit(int rows, int skip)
         {
             Data.Rows = rows;
             Data.Skip = skip;

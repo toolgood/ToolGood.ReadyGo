@@ -63,17 +63,17 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <typeparam name="T2">投影结果类型。</typeparam>
         /// <param name="projectionExpression">投影表达式。</param>
         /// <param name="distinct">是否去重。</param>
-        /// <param name="skip">跳过的行数。</param>
         /// <param name="rows">返回行数。</param>
+        /// <param name="skip">跳过的行数。</param>
         /// <returns>投影查询 SQL。</returns>
-        public Sql GetSqlForProjection<T2>(Expression<Func<T, T2>> projectionExpression, bool distinct, int skip, int rows)
+        public Sql GetSqlForProjection<T2>(Expression<Func<T, T2>> projectionExpression, bool distinct, int rows, int skip)
         {
             var selectMembers = _database.DatabaseType.ExpressionVisitor<T>(_database, _pocoData).SelectProjection(projectionExpression);
 
             ((ISqlExpression)_sqlExpression).SelectMembers.Clear();
             ((ISqlExpression)_sqlExpression).SelectMembers.AddRange(selectMembers);
 
-            _sqlExpression.Limit(skip, rows);
+            _sqlExpression.Limit(rows, skip);
 
             if (!_joinSqlExpressions.Any())
             {

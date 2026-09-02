@@ -586,7 +586,7 @@ public User FindUser(int userId, string userName, string nickName)
 var users = helper.Where<User>()
     .Where(u => u.Age > 18)
     .OrderBy(u => u.Name)
-    .Limit(10, 20)                       // 跳过 20 条取 10 条
+    .Limit(10, 20)                       // 取 10 条，跳过 20 条
     .ToList();
 
 var page = helper.Where<User>()

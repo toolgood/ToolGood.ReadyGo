@@ -411,12 +411,12 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         }
 
         /// <summary>
-        /// 设置 LIMIT 子句的偏移量与返回行数。
+        /// 设置 LIMIT 子句的返回行数与偏移量。
         /// </summary>
-        /// <param name="skip">跳过的行数（首行偏移量为 0）。</param>
         /// <param name="rows">返回行数。</param>
+        /// <param name="skip">跳过的行数（首行偏移量为 0）。</param>
         /// <returns>当前表达式。</returns>
-        public virtual ISqlExpression<T> Limit(int skip, int rows)
+        public virtual ISqlExpression<T> Limit(int rows, int skip)
         {
             Rows = rows;
             Skip = skip;

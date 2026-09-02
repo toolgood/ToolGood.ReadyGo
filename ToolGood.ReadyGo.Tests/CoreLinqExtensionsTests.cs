@@ -161,7 +161,7 @@ namespace ToolGood.ReadyGo.Tests
 
             var paged = _db.Query<SimpleUser>()
                 .IfTrueOrderBy(true, x => x.Age)
-                .IfTrueLimit(true, 1, 2)
+                .IfTrueLimit(true, 2, 1)
                 .ToList();
             Assert.Equal(new[] { 20, 30 }, paged.Select(x => x.Age).ToArray());
         }

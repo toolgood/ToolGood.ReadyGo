@@ -84,10 +84,10 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
         /// <summary>
         /// 限制返回行数并跳过指定行数。
         /// </summary>
-        /// <param name="skip">跳过的行数。</param>
         /// <param name="rows">返回行数。</param>
+        /// <param name="skip">跳过的行数。</param>
         /// <returns>当前表达式。</returns>
-        ISqlExpression<T> Limit(int skip, int rows);
+        ISqlExpression<T> Limit(int rows, int skip);
         /// <summary>
         /// 生成关联（JOIN ON）条件 SQL。
         /// </summary>

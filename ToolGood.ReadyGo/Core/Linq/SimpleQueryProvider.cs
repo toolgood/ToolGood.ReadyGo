@@ -428,7 +428,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             if ((result.TotalItems % pageSize) != 0)
                 result.TotalPages++;
 
-            _sqlExpression = _sqlExpression.Limit(offset, pageSize);
+            _sqlExpression = _sqlExpression.Limit(pageSize, offset);
 
             result.Items = await ToList_Async(cancellationToken).ConfigureAwait(false);
 
@@ -498,7 +498,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             if ((result.TotalItems % pageSize) != 0)
                 result.TotalPages++;
 
-            var sql = _buildComplexSql.GetSqlForProjection(projectionExpression, false, offset, pageSize);
+            var sql = _buildComplexSql.GetSqlForProjection(projectionExpression, false, pageSize, offset);
             result.Items = await ExecuteQuery_Async(sql, cancellationToken).Select(projectionExpression.Compile()).ToListAsync(cancellationToken).AsTask();
 
             return result;
@@ -587,13 +587,13 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <summary>
         /// 限制返回行数并跳过指定行数。
         /// </summary>
-        /// <param name="skip">跳过的行数。</param>
         /// <param name="rows">返回行数。</param>
+        /// <param name="skip">跳过的行数。</param>
         /// <returns>当前查询器。</returns>
-        public IAsyncQueryProvider<T> Limit(int skip, int rows)
+        public IAsyncQueryProvider<T> Limit(int rows, int skip)
         {
             ThrowIfOneToMany();
-            _sqlExpression = _sqlExpression.Limit(skip, rows);
+            _sqlExpression = _sqlExpression.Limit(rows, skip);
             return this;
         }
 
@@ -667,7 +667,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
 
             if (builder.Data.Skip.HasValue && builder.Data.Rows.HasValue)
             {
-                Limit(builder.Data.Skip.Value, builder.Data.Rows.Value);
+                Limit(builder.Data.Rows.Value, builder.Data.Skip.Value);
             }
 
             if (builder.Data.WhereExpression != null)
@@ -962,7 +962,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             if ((result.TotalItems % pageSize) != 0)
                 result.TotalPages++;
 
-            _sqlExpression = _sqlExpression.Limit(offset, pageSize);
+            _sqlExpression = _sqlExpression.Limit(pageSize, offset);
 
             result.Items = ToList();
 
@@ -1027,7 +1027,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             if ((result.TotalItems % pageSize) != 0)
                 result.TotalPages++;
 
-            var sql = _buildComplexSql.GetSqlForProjection(projectionExpression, false, offset, pageSize);
+            var sql = _buildComplexSql.GetSqlForProjection(projectionExpression, false, pageSize, offset);
             result.Items = ExecuteQuery(sql).Select(projectionExpression.Compile()).ToList();
 
             return result;
@@ -1259,12 +1259,12 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <summary>
         /// 限制返回行数并跳过指定行数。
         /// </summary>
-        /// <param name="skip">跳过的行数。</param>
         /// <param name="rows">返回行数。</param>
+        /// <param name="skip">跳过的行数。</param>
         /// <returns>当前查询器。</returns>
-        public new IQueryProvider<T> Limit(int skip, int rows)
+        public new IQueryProvider<T> Limit(int rows, int skip)
         {
-            return (IQueryProvider<T>)base.Limit(skip, rows);
+            return (IQueryProvider<T>)base.Limit(rows, skip);
         }
 
         /// <summary>
@@ -1332,16 +1332,16 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
 
         /// <summary>
-        /// 条件成立时添加 Limit（跳过 skip 行，取 rows 行）。
+        /// 条件成立时添加 Limit（取 rows 行，跳过 skip 行）。
         /// </summary>
         /// <param name="condition">条件开关，为 true 时生效。</param>
-        /// <param name="skip">跳过的行数。</param>
         /// <param name="rows">返回行数。</param>
+        /// <param name="skip">跳过的行数。</param>
         /// <returns>当前查询器。</returns>
-        public IQueryProvider<T> IfTrueLimit(bool condition, int skip, int rows)
+        public IQueryProvider<T> IfTrueLimit(bool condition, int rows, int skip)
         {
             if (condition && rows > 0)
-                Limit(skip, rows);
+                Limit(rows, skip);
             return this;
         }
 
