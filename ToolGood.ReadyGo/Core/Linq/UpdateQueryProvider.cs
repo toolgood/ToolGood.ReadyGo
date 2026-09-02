@@ -362,17 +362,6 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return _database.Execute(updateStatement, _sqlExpression.Context.Params);
         }
 #pragma warning restore CS0109
-
-        /// <summary>
-        /// 异步执行更新。
-        /// </summary>
-        /// <param name="obj">待更新的实体。</param>
-        /// <param name="cancellationToken">取消令牌。</param>
-        /// <returns>受影响的行数。</returns>
-        public new Task<int> Execute_Async(T obj, CancellationToken cancellationToken = default)
-        {
-            return base.Execute_Async(obj, cancellationToken);
-        }
     }
 
     /// <summary>

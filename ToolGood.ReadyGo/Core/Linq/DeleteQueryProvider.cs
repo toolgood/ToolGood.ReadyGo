@@ -42,16 +42,6 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         }
 #pragma warning restore CS0109
 
-        /// <summary>
-        /// 异步执行删除。
-        /// </summary>
-        /// <param name="cancellationToken">取消令牌。</param>
-        /// <returns>受影响的行数。</returns>
-        public new Task<int> Execute_Async(CancellationToken cancellationToken = default)
-        {
-            return base.Execute_Async(cancellationToken);
-        }
-
         #region 动态条件便捷方法
 
         /// <summary>
