@@ -169,7 +169,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             return new Sql(newsql, _sqlExpression.Context.Params);
         }
 
-        private static IEnumerable<PocoColumn> GetJoiPocoColumns(IEnumerable<PocoMember> members)
+        private static IEnumerable<PocoColumn> GetJoinPocoColumns(IEnumerable<PocoMember> members)
         {
             foreach (var member in members)
             {
@@ -182,7 +182,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
                     case ReferenceType.None:
                     {
                         yield return member.PocoColumn;
-                        foreach (var pocoMemberChild in GetJoiPocoColumns(member.PocoMemberChildren))
+                        foreach (var pocoMemberChild in GetJoinPocoColumns(member.PocoMemberChildren))
                         {
                             yield return pocoMemberChild;
                         }
@@ -202,7 +202,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
             {
                 var member = joinSqlExpression.PocoMemberJoin;
 
-                cols = cols.Concat(GetJoiPocoColumns(joinSqlExpression.PocoMembers)
+                cols = cols.Concat(GetJoinPocoColumns(joinSqlExpression.PocoMembers)
                     .Where(x => x != null && !x.ResultColumn)
                     .Select(x => new StringPocoCol
                 {
