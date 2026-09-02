@@ -240,7 +240,7 @@ namespace ToolGood.ReadyGo.Tests
             var deleted = await _db.DeleteManyAsync<SimpleUser>()
                 .IfTrueWhere(true, x => x.Age > 20)
                 .WhereIn(x => x.Name, new[] { "丙" })
-                .Execute();
+                .Execute_Async();
             Assert.Equal(1, deleted);
             Assert.Equal(2, Count());
         }
@@ -392,7 +392,7 @@ namespace ToolGood.ReadyGo.Tests
             var n = await _db.UpdateManyAsync<SimpleUser>()
                 .IfTrueWhere(true, x => x.Name == "乙")
                 .WhereIn(x => x.Age, new[] { 20 })
-                .Execute(target);
+                .Execute_Async(target);
             Assert.Equal(1, n);
             Assert.Equal(88, _db.Query<SimpleUser>().Select().First(u => u.Name == "乙").Age);
         }

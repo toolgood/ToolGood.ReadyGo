@@ -332,6 +332,6 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// <param name="obj">待更新的实体。</param>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>受影响的行数。</returns>
-        Task<int> Execute(T obj, CancellationToken cancellationToken = default);
+        Task<int> Execute_Async(T obj, CancellationToken cancellationToken = default);
     }
 }

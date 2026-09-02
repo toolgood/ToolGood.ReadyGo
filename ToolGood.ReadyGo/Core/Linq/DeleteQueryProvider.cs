@@ -47,9 +47,9 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>受影响的行数。</returns>
-        public Task<int> Execute_Async(CancellationToken cancellationToken = default)
+        public new Task<int> Execute_Async(CancellationToken cancellationToken = default)
         {
-            return base.Execute(cancellationToken);
+            return base.Execute_Async(cancellationToken);
         }
 
         #region 动态条件便捷方法
@@ -887,7 +887,7 @@ namespace ToolGood.ReadyGo.NPoco.Linq
         /// </summary>
         /// <param name="cancellationToken">取消令牌。</param>
         /// <returns>受影响的行数。</returns>
-        public Task<int> Execute(CancellationToken cancellationToken = default)
+        public Task<int> Execute_Async(CancellationToken cancellationToken = default)
         {
             return _database.ExecuteAsync(_sqlExpression.Context.ToDeleteStatement(), _sqlExpression.Context.Params, cancellationToken);
         }
