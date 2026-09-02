@@ -626,7 +626,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Enum2IntTest));
 
             helper.Insert(new Tb_Enum2IntTest { State = UserState.None });
             helper.Insert(new Tb_Enum2IntTest { State = UserState.Vip });
@@ -681,7 +681,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_BlobTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_BlobTest));
 
             var data = new byte[] { 0x01, 0x02, 0x03 };
             helper.Insert(new Tb_BlobTest { Name = "b1", Data = data });
@@ -760,7 +760,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
 
             var item = new Tb_NumericArrayTest { Floats = new[] { 1f, 2f } };
             helper.Insert(item);
@@ -784,7 +784,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayDefaultTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayDefaultTest));
 
             var item = new Tb_NumericArrayDefaultTest { Floats = new[] { 1f, 2f } };
             helper.Insert(item);
@@ -804,7 +804,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
 
             var item = new Tb_NumericArrayTest { ValueList = new List<float> { 1f } };
             helper.Insert(item);
@@ -823,7 +823,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
 
             var item = new Tb_NumericArrayTest { Floats = new[] { 1f, 2f } };
             helper.Insert(item);
@@ -842,7 +842,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_FloatCondTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_FloatCondTest));
 
             helper.Insert(new Tb_FloatCondTest { Score = 1.5f });
             helper.Insert(new Tb_FloatCondTest { Score = 2.5f });
@@ -903,7 +903,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_NumericArrayTest));
 
             var item = new Tb_NumericArrayTest { Floats = new[] { 1f, 2f }, ValueList = new List<float> { 1f } };
             helper.Insert(item);

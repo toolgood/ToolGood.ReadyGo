@@ -39,7 +39,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_MoneyTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_MoneyTest));
 
             var item = new Tb_MoneyTest { Money = 1.23m, Weight = 1.2345 };
             helper.Insert(item);
@@ -60,7 +60,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_MoneyTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_MoneyTest));
 
             var item = new Tb_MoneyTest { Money = 1.00m, Weight = 1.0 };
             helper.Insert(item);
@@ -83,7 +83,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_MoneyNullableTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_MoneyNullableTest));
 
             var item = new Tb_MoneyNullableTest { Money = null, Weight = null };
             helper.Insert(item);
@@ -104,7 +104,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_MoneyNullableTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_MoneyNullableTest));
 
             // 直接 SQL 插入 NULL，模拟历史数据
             helper.Execute("INSERT INTO Tb_MoneyNullableTest (Id, Money, Weight) VALUES (@0, NULL, NULL)", 1);
@@ -120,7 +120,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_MoneyNullableTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_MoneyNullableTest));
 
             var item = new Tb_MoneyNullableTest { Money = 1.23m, Weight = 1.2345 };
             helper.Insert(item);

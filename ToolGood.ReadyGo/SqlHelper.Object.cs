@@ -23,44 +23,44 @@ namespace ToolGood.ReadyGo
         /// 根据主键查询第一个
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">主键</param>
+        /// <param name="id">主键</param>
         /// <returns>匹配主键的实体，无结果时返回 null</returns>
-        public T FirstOrDefault<T>(int condition) where T : class
+        public T FirstOrDefault<T>(int id) where T : class
         {
-            return SingleOrDefaultById<T>(condition);
+            return FirstOrDefault<T>((object)id);
         }
 
         /// <summary>
         /// 根据主键查询第一个
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">主键</param>
+        /// <param name="id">主键</param>
         /// <returns>匹配主键的实体，无结果时返回 null</returns>
-        public T FirstOrDefault<T>(uint condition) where T : class
+        public T FirstOrDefault<T>(uint id) where T : class
         {
-            return SingleOrDefaultById<T>(condition);
+            return FirstOrDefault<T>((object)id);
         }
 
         /// <summary>
         /// 根据主键查询第一个
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">主键</param>
+        /// <param name="id">主键</param>
         /// <returns>匹配主键的实体，无结果时返回 null</returns>
-        public T FirstOrDefault<T>(long condition) where T : class
+        public T FirstOrDefault<T>(long id) where T : class
         {
-            return SingleOrDefaultById<T>(condition);
+            return FirstOrDefault<T>((object)id);
         }
 
         /// <summary>
         /// 根据主键查询第一个
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">主键</param>
+        /// <param name="id">主键</param>
         /// <returns>匹配主键的实体，无结果时返回 null</returns>
-        public T FirstOrDefault<T>(ulong condition) where T : class
+        public T FirstOrDefault<T>(ulong id) where T : class
         {
-            return SingleOrDefaultById<T>(condition);
+            return FirstOrDefault<T>((object)id);
         }
 
         #endregion FirstOrDefault PK
@@ -76,7 +76,8 @@ namespace ToolGood.ReadyGo
         public T FirstOrDefault<T>(object condition) where T : class
         {
             if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
-                return SingleOrDefaultById<T>(primaryKey);
+                var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey, 0);
+                return FirstOrDefault<T>($"WHERE {whereSql}", pkArgs);
             }
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return FirstOrDefault<T>(sql, args);
@@ -228,44 +229,44 @@ namespace ToolGood.ReadyGo
         /// 根据主键查询第一个，异步操作
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">主键</param>
+        /// <param name="id">主键</param>
         /// <returns>匹配主键的实体，无结果时返回 null</returns>
-        public Task<T> FirstOrDefault_Async<T>(int condition) where T : class
+        public Task<T> FirstOrDefault_Async<T>(int id) where T : class
         {
-            return SingleOrDefaultById_Async<T>(condition);
+            return FirstOrDefault_Async<T>((object)id);
         }
 
         /// <summary>
         /// 根据主键查询第一个，异步操作
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">主键</param>
+        /// <param name="id">主键</param>
         /// <returns>匹配主键的实体，无结果时返回 null</returns>
-        public Task<T> FirstOrDefault_Async<T>(uint condition) where T : class
+        public Task<T> FirstOrDefault_Async<T>(uint id) where T : class
         {
-            return SingleOrDefaultById_Async<T>(condition);
+            return FirstOrDefault_Async<T>((object)id);
         }
 
         /// <summary>
         /// 根据主键查询第一个，异步操作
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">主键</param>
+        /// <param name="id">主键</param>
         /// <returns>匹配主键的实体，无结果时返回 null</returns>
-        public Task<T> FirstOrDefault_Async<T>(long condition) where T : class
+        public Task<T> FirstOrDefault_Async<T>(long id) where T : class
         {
-            return SingleOrDefaultById_Async<T>(condition);
+            return FirstOrDefault_Async<T>((object)id);
         }
 
         /// <summary>
         /// 根据主键查询第一个，异步操作
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
-        /// <param name="condition">主键</param>
+        /// <param name="id">主键</param>
         /// <returns>匹配主键的实体，无结果时返回 null</returns>
-        public Task<T> FirstOrDefault_Async<T>(ulong condition) where T : class
+        public Task<T> FirstOrDefault_Async<T>(ulong id) where T : class
         {
-            return SingleOrDefaultById_Async<T>(condition);
+            return FirstOrDefault_Async<T>((object)id);
         }
 
         #endregion FirstOrDefault_Async PK
@@ -281,7 +282,8 @@ namespace ToolGood.ReadyGo
         public Task<T> FirstOrDefault_Async<T>(object condition) where T : class
         {
             if (TryGetPrimaryKey<T>(condition, out var primaryKey)) {
-                return SingleOrDefaultById_Async<T>(primaryKey);
+                var (whereSql, pkArgs) = BuildPrimaryKeyWhereSql<T>(primaryKey, 0);
+                return FirstOrDefault_Async<T>($"WHERE {whereSql}", pkArgs);
             }
             var (sql, args) = ConditionObjectToWhere<T>(condition);
             return FirstOrDefault_Async<T>(sql, args);
@@ -451,17 +453,6 @@ namespace ToolGood.ReadyGo
             }
             var pk = db.DatabaseType.EscapeSqlIdentifier(pkColumns[0]);
             return ($"{pk}=@{index}", new object[] { primaryKey });
-        }
-
-        /// <summary>
-        /// 获取唯一一个类型，若数量大于1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="primaryKey">主键名</param>
-        /// <returns></returns>
-        private T SingleOrDefaultById<T>(object primaryKey) where T : class
-        {
-            return GetDatabase().SingleOrDefaultById<T>(primaryKey)!;
         }
 
         /// <summary>

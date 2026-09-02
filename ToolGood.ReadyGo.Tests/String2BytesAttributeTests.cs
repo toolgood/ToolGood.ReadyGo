@@ -29,7 +29,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_String2BytesTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_String2BytesTest));
 
             var content = "中文文本 Test \uD83D\uDE00 结束";   // 含 emoji，验证 UTF-8 多字节
             var data = new byte[] { 0x00, 0x01, 0x7F, 0x80, 0xFF, 0x10, 0x20 };
@@ -47,7 +47,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_String2BytesTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_String2BytesTest));
 
             var content = "你好，ReadyGo";
             var data = new byte[] { 1, 2, 3, 4, 5 };
@@ -69,7 +69,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_String2BytesTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_String2BytesTest));
 
             var item = new Tb_String2BytesTest { Content = "old", Data = new byte[] { 1 } };
             helper.Insert(item);
@@ -89,7 +89,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_String2BytesTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_String2BytesTest));
 
             var item = new Tb_String2BytesTest { Content = null, Data = null };
             helper.Insert(item);
@@ -109,7 +109,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_String2BytesTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_String2BytesTest));
 
             // 直接 SQL 插入 NULL，模拟历史数据
             helper.Execute("INSERT INTO Tb_String2BytesTest (Id, Content, Data) VALUES (@0, NULL, NULL)", 1);

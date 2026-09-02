@@ -511,17 +511,6 @@ namespace ToolGood.ReadyGo
         #region Single SingleOrDefault First FirstOrDefault
 
         /// <summary>
-        /// 获取唯一一个类型，若数量大于1，则抛出异常
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="primaryKey">主键名</param>
-        /// <returns></returns>
-        private async Task<T> SingleOrDefaultById_Async<T>(object primaryKey) where T : class
-        {
-            return await GetDatabase().SingleOrDefaultByIdAsync<T>(primaryKey);
-        }
-
-        /// <summary>
         /// 获取第一个类型
         /// </summary>
         /// <typeparam name="T">实体类型</typeparam>
@@ -748,10 +737,10 @@ namespace ToolGood.ReadyGo
                 }
             }
             // 用事务包裹批量插入与批量更新，避免中途失败导致部分写入
-            using (var tran = UseTransaction()) {
+            await using (var tran = await UseTransaction_Async()) {
                 if (toInsert.Count > 0) await db.InsertBatchAsync(toInsert);
                 if (toUpdate.Count > 0) await db.UpdateBatchAsync(toUpdate.Select(x => UpdateBatch.For(x)));
-                tran.Complete();
+                await tran.CompleteAsync();
             }
         }
 

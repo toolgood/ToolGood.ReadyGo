@@ -3,7 +3,7 @@ using Xunit;
 namespace ToolGood.ReadyGo.MsAccessDbTests
 {
     /// <summary>
-    /// TableManager（SqlHelper.TableHelper）单元测试（基于 Access）
+    /// TableManager（SqlHelper._TableHelper）单元测试（基于 Access）
     /// 注意：Jet/ACE 不支持 CREATE TABLE IF NOT EXISTS，TryCreateTable 前必须先 DropTable。
     /// </summary>
     [Collection("MsAccessDb")]
@@ -12,8 +12,8 @@ namespace ToolGood.ReadyGo.MsAccessDbTests
         private static MsAccessDbTestDb CreateTable()
         {
             var db = MsAccessDbTestDb.Create();
-            db.Helper.TableHelper.DropTable(typeof(Tb_Order));
-            db.Helper.TableHelper.TryCreateTable(typeof(Tb_Order));
+            db.Helper._TableHelper.DropTable(typeof(Tb_Order));
+            db.Helper._TableHelper.TryCreateTable(typeof(Tb_Order));
             return db;
         }
 
@@ -23,7 +23,7 @@ namespace ToolGood.ReadyGo.MsAccessDbTests
             using var db = CreateTable();
             var helper = db.Helper;
 
-            var sql = helper.TableHelper.GetTryCreateTable(typeof(Tb_Order));
+            var sql = helper._TableHelper.GetTryCreateTable(typeof(Tb_Order));
 
             Assert.Contains("CREATE TABLE [Tb_Order](", sql);
             Assert.Contains("[Id] AUTOINCREMENT PRIMARY KEY", sql);
@@ -55,9 +55,9 @@ namespace ToolGood.ReadyGo.MsAccessDbTests
             using var db = CreateTable();
             var helper = db.Helper;
 
-            Assert.Contains("DROP TABLE [Tb_Order];", helper.TableHelper.GetDropTable(typeof(Tb_Order)));
+            Assert.Contains("DROP TABLE [Tb_Order];", helper._TableHelper.GetDropTable(typeof(Tb_Order)));
 
-            helper.TableHelper.DropTable(typeof(Tb_Order));
+            helper._TableHelper.DropTable(typeof(Tb_Order));
 
             var exists = helper.ExecuteScalar<int>(
                 "SELECT COUNT(*) FROM MSysObjects WHERE Name = 'Tb_Order' AND Type = 1");
@@ -74,11 +74,11 @@ namespace ToolGood.ReadyGo.MsAccessDbTests
             helper.Insert(new Tb_Order { UserId = 2, OrderNo = "A002", Money = 2m, CreateTime = DateTime.Now });
             Assert.Equal(2, helper.Count<Tb_Order>());
 
-            var truncateSql = helper.TableHelper.GetTruncateTable(typeof(Tb_Order));
+            var truncateSql = helper._TableHelper.GetTruncateTable(typeof(Tb_Order));
             Assert.Contains("DELETE FROM [Tb_Order];", truncateSql);
             Assert.Contains("ALTER TABLE [Tb_Order] ALTER COLUMN [Id] COUNTER(1,1);", truncateSql);
 
-            helper.TableHelper.TruncateTable(typeof(Tb_Order));
+            helper._TableHelper.TruncateTable(typeof(Tb_Order));
             Assert.Equal(0, helper.Count<Tb_Order>());
         }
 
@@ -88,13 +88,13 @@ namespace ToolGood.ReadyGo.MsAccessDbTests
             using var db = CreateTable();
             var helper = db.Helper;
 
-            helper.TableHelper.DropTable(typeof(Tb_Order));
-            helper.TableHelper.TryCreateTable(typeof(Tb_Order), false);
-            var sql = helper.TableHelper.GetCreateTableIndex(typeof(Tb_Order));
+            helper._TableHelper.DropTable(typeof(Tb_Order));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Order), false);
+            var sql = helper._TableHelper.GetCreateTableIndex(typeof(Tb_Order));
             Assert.Contains("i_Tb_Order_UserId", sql);
             Assert.Contains("u_Tb_Order_OrderNo", sql);
 
-            helper.TableHelper.CreateTableIndex(typeof(Tb_Order));
+            helper._TableHelper.CreateTableIndex(typeof(Tb_Order));
         }
     }
 }

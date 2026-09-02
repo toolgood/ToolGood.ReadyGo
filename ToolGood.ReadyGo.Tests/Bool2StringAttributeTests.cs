@@ -28,7 +28,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Bool2StringTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Bool2StringTest));
 
             var item = new Tb_Bool2StringTest { Active = true, Enable = true };
             helper.Insert(item);
@@ -59,7 +59,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Bool2StringTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Bool2StringTest));
 
             var item = new Tb_Bool2StringTest { Active = false, Enable = null };
             helper.Insert(item);
@@ -78,7 +78,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Bool2StringTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Bool2StringTest));
 
             // 直接 SQL 插入 NULL，模拟历史数据
             helper.Execute("INSERT INTO Tb_Bool2StringTest (Id, Active, Enable) VALUES (@0, 'true', NULL)", 1);
@@ -94,7 +94,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Bool2StringTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Bool2StringTest));
 
             // 直接 SQL 插入 "1"/"0"，模拟历史数据
             helper.Execute("INSERT INTO Tb_Bool2StringTest (Id, Active, Enable) VALUES (@0, '1', '0')", 1);

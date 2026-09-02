@@ -113,10 +113,10 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Provider_NoAutoInc));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Provider_NoAutoInc));
             helper.Execute("INSERT INTO [Tb_Provider_Test_NoAuto]([Id]) VALUES(1);");
 
-            helper.TableHelper.TruncateTable(typeof(Tb_Provider_NoAutoInc)); // 不应抛错
+            helper._TableHelper.TruncateTable(typeof(Tb_Provider_NoAutoInc)); // 不应抛错
 
             Assert.Equal(0, helper.ExecuteScalar<int>("SELECT COUNT(*) FROM [Tb_Provider_Test_NoAuto]"));
         }
@@ -126,7 +126,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Provider_AutoInc));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Provider_AutoInc));
 
             var a = new Tb_Provider_AutoInc { Name = "a" };
             helper.Insert(a);
@@ -134,7 +134,7 @@ namespace ToolGood.ReadyGo.Tests
             helper.Insert(b);
             Assert.Equal(2, b.Id);
 
-            helper.TableHelper.TruncateTable(typeof(Tb_Provider_AutoInc));
+            helper._TableHelper.TruncateTable(typeof(Tb_Provider_AutoInc));
 
             var c = new Tb_Provider_AutoInc { Name = "c" };
             helper.Insert(c);

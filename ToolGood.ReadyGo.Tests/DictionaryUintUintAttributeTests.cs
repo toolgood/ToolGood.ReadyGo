@@ -25,7 +25,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
 
             // 无序输入，序列化时按键升序
             var dict = new Dictionary<uint, uint> { { 300, 1 }, { 100, 2 }, { 250, 5 } };
@@ -43,7 +43,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
 
             var item = new Tb_DictUintTest { PriceVolume = new Dictionary<uint, uint> { { 1, 1 }, { 2, 2 } } };
             helper.Insert(item);
@@ -61,7 +61,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
 
             var item = new Tb_DictUintTest { PriceVolume = null };
             helper.Insert(item);
@@ -76,7 +76,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
 
             var item = new Tb_DictUintTest { PriceVolume = new Dictionary<uint, uint>() };
             helper.Insert(item);
@@ -92,7 +92,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
 
             var item = new Tb_DictUintTest { PriceVolume = new Dictionary<uint, uint> { { 300, 1 }, { 100, 2 } } };
             helper.Insert(item);
@@ -111,7 +111,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
 
             var item = new Tb_DictUintTest { PriceVolume = new Dictionary<uint, uint> { { 1000000, 9 } } };
             helper.Insert(item);
@@ -129,7 +129,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DictUintTest));
 
             // 首键 0 也能正确往返（此前存在键 0 被丢弃的 bug）
             var dict = new Dictionary<uint, uint> { { 0, 5 }, { 10, 3 } };

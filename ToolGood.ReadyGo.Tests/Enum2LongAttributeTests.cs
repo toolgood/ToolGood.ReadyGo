@@ -34,7 +34,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Enum2LongTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Enum2LongTest));
 
             var item = new Tb_Enum2LongTest { State = BigUserState.Large, Extra = BigUserState.Normal };
             helper.Insert(item);
@@ -54,7 +54,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Enum2LongTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Enum2LongTest));
 
             var item = new Tb_Enum2LongTest { State = BigUserState.None, Extra = null };
             helper.Insert(item);

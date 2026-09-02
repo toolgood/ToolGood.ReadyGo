@@ -28,7 +28,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DateTime2StringTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2StringTest));
 
             var item = new Tb_DateTime2StringTest { TradeTime = new DateTime(2026, 8, 23, 15, 30, 45) };
             helper.Insert(item);
@@ -46,7 +46,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DateTime2StringTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2StringTest));
 
             var item = new Tb_DateTime2StringTest { TradeTime = new DateTime(2026, 1, 1, 0, 0, 0) };
             helper.Insert(item);
@@ -66,7 +66,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DateTime2StringTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2StringTest));
 
             var item = new Tb_DateTime2StringTest { TradeTime = new DateTime(2026, 8, 23, 15, 30, 45), EndTime = null };
             helper.Insert(item);
@@ -85,7 +85,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DateTime2StringTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2StringTest));
 
             // 直接 SQL 插入 NULL，模拟历史数据
             helper.Execute("INSERT INTO Tb_DateTime2StringTest (Id, TradeTime, EndTime) VALUES (@0, '2026-08-23 15:30:45', NULL)", 1);
@@ -101,7 +101,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DateTime2StringTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2StringTest));
 
             // 模拟历史数据：数据库中只有 "yyyy-MM-dd"
             helper.Execute("INSERT INTO Tb_DateTime2StringTest (Id, TradeTime, EndTime) VALUES (@0, '2026-01-01', NULL)", 1);

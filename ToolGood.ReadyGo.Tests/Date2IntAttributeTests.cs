@@ -28,7 +28,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Date2IntTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Date2IntTest));
 
             // 带时间部分，保存时只保留 yyyyMMdd
             var tradeDate = new DateTime(2026, 8, 23, 23, 59, 59, 999);
@@ -46,7 +46,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Date2IntTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Date2IntTest));
 
             var item = new Tb_Date2IntTest { TradeDate = new DateTime(2026, 1, 1, 8, 0, 0) };
             helper.Insert(item);
@@ -64,7 +64,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Date2IntTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Date2IntTest));
 
             var item = new Tb_Date2IntTest { TradeDate = new DateTime(2026, 8, 23), SettleDate = null };
             helper.Insert(item);
@@ -79,7 +79,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_Date2IntTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Date2IntTest));
 
             var item = new Tb_Date2IntTest { TradeDate = new DateTime(2026, 8, 23, 15, 30, 0) };
             helper.Insert(item);

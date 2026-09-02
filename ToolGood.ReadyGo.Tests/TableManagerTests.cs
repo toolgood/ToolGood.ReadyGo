@@ -27,7 +27,7 @@ namespace ToolGood.ReadyGo.Tests
     }
 
     /// <summary>
-    /// TableManager（SqlHelper.TableHelper）单元测试（SQLite）
+    /// TableManager（SqlHelper._TableHelper）单元测试（SQLite）
     /// </summary>
     public class TableManagerTests
     {
@@ -62,7 +62,7 @@ namespace ToolGood.ReadyGo.Tests
             using var db = TestDb.Create();
             var helper = db.Helper;
 
-            var sql = helper.TableHelper.GetTryCreateTable(typeof(Tb_Order));
+            var sql = helper._TableHelper.GetTryCreateTable(typeof(Tb_Order));
 
             Assert.Contains("CREATE TABLE IF NOT EXISTS [Tb_Order]", sql);
             Assert.Contains("[Id] INTEGER NOT NULL PRIMARY KEY AutoIncrement", sql);
@@ -78,7 +78,7 @@ namespace ToolGood.ReadyGo.Tests
             using var db = TestDb.Create();
             var helper = db.Helper;
 
-            helper.TableHelper.TryCreateTable(typeof(Tb_Order));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Order));
 
             var order = new Tb_Order { UserId = 1, OrderNo = "A001", Remark = "测试", Money = 9.9m, CreateTime = DateTime.Now };
             helper.Insert(order);
@@ -96,9 +96,9 @@ namespace ToolGood.ReadyGo.Tests
             using var db = TestDb.Create();
             var helper = db.Helper;
 
-            helper.TableHelper.TryCreateTable(typeof(Tb_Order));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Order));
             // 再次调用不应报错
-            helper.TableHelper.TryCreateTable(typeof(Tb_Order));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Order));
         }
 
         [Fact]
@@ -107,10 +107,10 @@ namespace ToolGood.ReadyGo.Tests
             using var db = TestDb.Create();
             var helper = db.Helper;
 
-            helper.TableHelper.TryCreateTable(typeof(Tb_Order));
-            Assert.Contains("DROP TABLE IF EXISTS [Tb_Order]", helper.TableHelper.GetDropTable(typeof(Tb_Order)));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Order));
+            Assert.Contains("DROP TABLE IF EXISTS [Tb_Order]", helper._TableHelper.GetDropTable(typeof(Tb_Order)));
 
-            helper.TableHelper.DropTable(typeof(Tb_Order));
+            helper._TableHelper.DropTable(typeof(Tb_Order));
             // 表已删除，再查询应报错；验证表确实不存在
             var exists = helper.ExecuteScalar<int>("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='Tb_Order'");
             Assert.Equal(0, exists);
@@ -122,16 +122,16 @@ namespace ToolGood.ReadyGo.Tests
             using var db = TestDb.Create();
             var helper = db.Helper;
 
-            helper.TableHelper.TryCreateTable(typeof(Tb_Order));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Order));
             helper.Insert(new Tb_Order { UserId = 1, OrderNo = "A001", Money = 1m, CreateTime = DateTime.Now });
             helper.Insert(new Tb_Order { UserId = 2, OrderNo = "A002", Money = 2m, CreateTime = DateTime.Now });
             Assert.Equal(2, helper.Count<Tb_Order>());
 
-            var sql = helper.TableHelper.GetTruncateTable(typeof(Tb_Order));
+            var sql = helper._TableHelper.GetTruncateTable(typeof(Tb_Order));
             Assert.Contains("DELETE FROM [Tb_Order]", sql);
             Assert.Contains("sqlite_sequence", sql);
 
-            helper.TableHelper.TruncateTable(typeof(Tb_Order));
+            helper._TableHelper.TruncateTable(typeof(Tb_Order));
             Assert.Equal(0, helper.Count<Tb_Order>());
         }
 
@@ -141,12 +141,12 @@ namespace ToolGood.ReadyGo.Tests
             using var db = TestDb.Create();
             var helper = db.Helper;
 
-            helper.TableHelper.TryCreateTable(typeof(Tb_Order), false);
-            var sql = helper.TableHelper.GetCreateTableIndex(typeof(Tb_Order));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Order), false);
+            var sql = helper._TableHelper.GetCreateTableIndex(typeof(Tb_Order));
             Assert.Contains("i_Tb_Order_UserId", sql);
             Assert.Contains("u_Tb_Order_OrderNo", sql);
 
-            helper.TableHelper.CreateTableIndex(typeof(Tb_Order));
+            helper._TableHelper.CreateTableIndex(typeof(Tb_Order));
         }
     }
 }

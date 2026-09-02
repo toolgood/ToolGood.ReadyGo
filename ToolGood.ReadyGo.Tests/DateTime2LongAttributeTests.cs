@@ -28,7 +28,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
 
             // 带毫秒，保存时截断到秒
             var tradeTime = new DateTime(2026, 8, 23, 15, 30, 45, 999);
@@ -46,7 +46,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
 
             var item = new Tb_DateTime2LongTest { TradeTime = new DateTime(2026, 1, 1, 0, 0, 0) };
             helper.Insert(item);
@@ -64,7 +64,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
 
             var item = new Tb_DateTime2LongTest { TradeTime = new DateTime(2026, 8, 23, 15, 30, 45), EndTime = null };
             helper.Insert(item);
@@ -79,7 +79,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_DateTime2LongTest));
 
             var item = new Tb_DateTime2LongTest { TradeTime = new DateTime(2026, 8, 23, 15, 30, 45) };
             helper.Insert(item);

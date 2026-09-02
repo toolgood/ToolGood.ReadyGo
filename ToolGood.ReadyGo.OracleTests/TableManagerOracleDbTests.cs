@@ -3,7 +3,7 @@ using Xunit;
 namespace ToolGood.ReadyGo.OracleTests
 {
     /// <summary>
-    /// TableManager（SqlHelper.TableHelper）单元测试（基于 Oracle）
+    /// TableManager（SqlHelper._TableHelper）单元测试（基于 Oracle）
     /// </summary>
     [Collection("OracleDb")]
     public class TableManagerOracleDbTests
@@ -11,8 +11,8 @@ namespace ToolGood.ReadyGo.OracleTests
         private static OracleTestDb CreateTable()
         {
             var db = OracleTestDb.Create();
-            db.Helper.TableHelper.DropTable(typeof(Tb_Order));
-            db.Helper.TableHelper.TryCreateTable(typeof(Tb_Order));
+            db.Helper._TableHelper.DropTable(typeof(Tb_Order));
+            db.Helper._TableHelper.TryCreateTable(typeof(Tb_Order));
             return db;
         }
 
@@ -22,7 +22,7 @@ namespace ToolGood.ReadyGo.OracleTests
             using var db = CreateTable();
             var helper = db.Helper;
 
-            var sql = helper.TableHelper.GetTryCreateTable(typeof(Tb_Order));
+            var sql = helper._TableHelper.GetTryCreateTable(typeof(Tb_Order));
 
             Assert.Contains("BEGIN EXECUTE IMMEDIATE", sql);
             Assert.Contains("SQLCODE != -955", sql);
@@ -57,8 +57,8 @@ namespace ToolGood.ReadyGo.OracleTests
             using var db = CreateTable();
             var helper = db.Helper;
 
-            helper.TableHelper.TryCreateTable(typeof(Tb_Order));
-            helper.TableHelper.TryCreateTable(typeof(Tb_Order));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Order));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Order));
         }
 
         [Fact]
@@ -67,9 +67,9 @@ namespace ToolGood.ReadyGo.OracleTests
             using var db = CreateTable();
             var helper = db.Helper;
 
-            Assert.Contains("DROP TABLE \"Tb_Order\";", helper.TableHelper.GetDropTable(typeof(Tb_Order)));
+            Assert.Contains("DROP TABLE \"Tb_Order\";", helper._TableHelper.GetDropTable(typeof(Tb_Order)));
 
-            helper.TableHelper.DropTable(typeof(Tb_Order));
+            helper._TableHelper.DropTable(typeof(Tb_Order));
 
             var exists = helper.ExecuteScalar<int>(
                 "SELECT COUNT(*) FROM USER_TABLES WHERE TABLE_NAME = 'TB_ORDER'");
@@ -86,9 +86,9 @@ namespace ToolGood.ReadyGo.OracleTests
             helper.Insert(new Tb_Order { UserId = 2, OrderNo = "A002", Money = 2m, CreateTime = DateTime.Now });
             Assert.Equal(2, helper.Count<Tb_Order>());
 
-            Assert.Contains("TRUNCATE TABLE \"Tb_Order\";", helper.TableHelper.GetTruncateTable(typeof(Tb_Order)));
+            Assert.Contains("TRUNCATE TABLE \"Tb_Order\";", helper._TableHelper.GetTruncateTable(typeof(Tb_Order)));
 
-            helper.TableHelper.TruncateTable(typeof(Tb_Order));
+            helper._TableHelper.TruncateTable(typeof(Tb_Order));
             Assert.Equal(0, helper.Count<Tb_Order>());
         }
 
@@ -98,13 +98,13 @@ namespace ToolGood.ReadyGo.OracleTests
             using var db = CreateTable();
             var helper = db.Helper;
 
-            helper.TableHelper.DropTable(typeof(Tb_Order));
-            helper.TableHelper.TryCreateTable(typeof(Tb_Order), false);
-            var sql = helper.TableHelper.GetCreateTableIndex(typeof(Tb_Order));
+            helper._TableHelper.DropTable(typeof(Tb_Order));
+            helper._TableHelper.TryCreateTable(typeof(Tb_Order), false);
+            var sql = helper._TableHelper.GetCreateTableIndex(typeof(Tb_Order));
             Assert.Contains("i_Tb_Order_UserId", sql);
             Assert.Contains("u_Tb_Order_OrderNo", sql);
 
-            helper.TableHelper.CreateTableIndex(typeof(Tb_Order));
+            helper._TableHelper.CreateTableIndex(typeof(Tb_Order));
         }
     }
 }

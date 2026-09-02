@@ -11,7 +11,7 @@ ToolGood.ReadyGo
 using ToolGood.ReadyGo;
 
 var helper = SqlHelperFactory.OpenSqliteFile("test.db");
-helper.TableHelper.CreateTable(typeof(User));
+helper._TableHelper.CreateTable(typeof(User));
 
 helper.Insert(new User { Name = "Ted", Age = 21 });
 var user = helper.FirstOrDefault<User>("Where Name=@0", "Ted");
@@ -49,7 +49,7 @@ public class User
 using ToolGood.ReadyGo;
 
 var helper = SqlHelperFactory.OpenSqliteFile(dbFile);
-var table = helper.TableHelper;
+var table = helper._TableHelper;
 table.TryCreateTable(typeof(User));    // 表不存在则创建
 table.CreateTable(typeof(User));       // 创建表
 table.CreateTableIndex(typeof(User));  // 创建索引

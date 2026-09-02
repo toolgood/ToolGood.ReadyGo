@@ -26,7 +26,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_TimestampNullableTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_TimestampNullableTest));
 
             var item = new Tb_TimestampNullableTest { CreateTime = null, UpdateTime = null };
             helper.Insert(item);
@@ -47,7 +47,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_TimestampNullableTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_TimestampNullableTest));
 
             // 直接 SQL 插入 NULL，模拟历史数据
             helper.Execute("INSERT INTO Tb_TimestampNullableTest (Id, CreateTime, UpdateTime) VALUES (@0, NULL, NULL)", 1);
@@ -63,7 +63,7 @@ namespace ToolGood.ReadyGo.Tests
         {
             using var db = TestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.TryCreateTable(typeof(Tb_TimestampNullableTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_TimestampNullableTest));
 
             var utc = new DateTime(2026, 8, 23, 15, 30, 45, DateTimeKind.Utc);
             var item = new Tb_TimestampNullableTest { CreateTime = utc, UpdateTime = utc.AddMilliseconds(123) };

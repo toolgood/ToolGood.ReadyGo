@@ -69,7 +69,7 @@ ToolGood.ReadyGo/
 using ToolGood.ReadyGo;
 
 var helper = SqlHelperFactory.OpenSqliteFile("test.db");
-helper.TableHelper.CreateTable(typeof(User));
+helper._TableHelper.CreateTable(typeof(User));
 
 helper.Insert(new User { Name = "Ted", Age = 21 });
 var user = helper.FirstOrDefault<User>("Where Name=@0", "Ted");
@@ -655,10 +655,10 @@ using (var tran = helper.UseTransaction()) {
 
 ## 表管理
 
-通过 `helper.TableHelper`（SqlTableHelper）编程方式创建、删除、截断表：
+通过 `helper._TableHelper`（SqlTableHelper）编程方式创建、删除、截断表：
 
 ```csharp
-var table = helper.TableHelper;
+var table = helper._TableHelper;
 table.TryCreateTable(typeof(User));    // 表不存在则创建
 table.CreateTable(typeof(User));       // 创建表（可传 withIndex: true 同时创建索引）
 table.CreateTableIndex(typeof(User));  // 创建索引

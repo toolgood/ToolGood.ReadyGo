@@ -12,8 +12,8 @@ namespace ToolGood.ReadyGo.DuckDbTests
         {
             var db = DuckDbTestDb.Create();
             var helper = db.Helper;
-            helper.TableHelper.DropTable(typeof(Tb_WhereTest));
-            helper.TableHelper.TryCreateTable(typeof(Tb_WhereTest));
+            helper._TableHelper.DropTable(typeof(Tb_WhereTest));
+            helper._TableHelper.TryCreateTable(typeof(Tb_WhereTest));
             helper.Insert(new Tb_WhereTest { Name = "张三", Age = 20, Vip = false });
             helper.Insert(new Tb_WhereTest { Name = "李四", Age = 30, Vip = true });
             helper.Insert(new Tb_WhereTest { Name = "王五", Age = 40, Vip = true });
