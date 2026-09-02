@@ -15,7 +15,7 @@ ToolGood.ReadyGo 是一款轻量级高性能 Micro-ORM，基于 NPoco 核心修�
 ## 支持框架与数据库
 
 - 框架：.NET 8.0 / 9.0 / 10.0
-- 数据库：SqlServer、MySql、SQLite、PostgreSQL、Oracle、Firebird、DuckDb、Access
+- 数据库：SqlServer、MySql、MariaDb、SQLite、PostgreSQL、Oracle、Firebird、DuckDb、Access
 
 ## 安装
 
@@ -55,12 +55,15 @@ var asyncList = await helper.Where<User>(x => x.Age > 18).ToList_Async();
 ```csharp
 var helper = SqlHelperFactory.OpenDatabase(connectionString, "MySql.Data.MySqlClient", SqlType.MySql);
 var helper = SqlHelperFactory.OpenSqlServer(server, database, user, pwd);
+var helper = SqlHelperFactory.OpenSqlServerFile(filePath, database);      // LocalDB 实例默认 (LocalDB)\MSSQLLocalDB
 var helper = SqlHelperFactory.OpenMysql(server, database, user, pwd);
 var helper = SqlHelperFactory.OpenOracle(server, port, serviceName, user, pwd);
 var helper = SqlHelperFactory.OpenSqliteFile(filePath);        // System.Data.SQLite 驱动
 var helper = SqlHelperFactory.OpenMsSqliteFile(filePath, pwd); // Microsoft.Data.Sqlite 驱动（支持密码）
 var helper = SqlHelperFactory.OpenDuckDbFile(filePath);
 var helper = SqlHelperFactory.OpenAccessFile(filePath);        // 32 位
+var helper = SqlHelperFactory.OpenAccessFile64x(filePath);     // 64 位
+var helper = SqlHelperFactory.OpenSqliteMemory();              // 内存 SQLite
 ```
 
 ## 数据表操作
@@ -140,8 +143,9 @@ public User FindUser(int userId, string userName)
 ### 方法清单
 
 - 构建：`Where`、`WhereSql`、`OrderBy`、`OrderByDescending`、`ThenBy`、`ThenByDescending`、`Limit`、`From`
-- 执行：`ToList`、`First`、`FirstOrDefault`、`Single`、`SingleOrDefault`、`Count`、`Any`、`Exists`、`ToPage`、`Page`、`SelectPage`、`Distinct`
+- 执行：`ToList`、`Select`（等效 ToList）、`First`、`FirstOrDefault`、`Single`、`SingleOrDefault`、`Count`、`Any`、`Exists`、`ToPage`、`Page`、`SelectPage`、`ToArray`、`ToDynamicList`、`ProjectTo`、`Distinct`
 - 常用扩展：`WhereIn`、`WhereNotIn`、`WhereLike`、`WhereLikeStart`、`WhereLikeEnd`、`WhereNotLike`、`WhereNotLikeStart`、`WhereNotLikeEnd`、`WhereExists`、`WhereNotExists`
+- 动态条件（IfTrue* 条件成立才生效）：`IfTrueWhere`、`IfTrueOrderBy`、`IfTrueOrderByDescending`、`IfTrueLimit`、`IfTrueWhereIn`、`IfTrueWhereNotIn`、`IfTrueWhereLike`、`IfTrueWhereLikeStart`、`IfTrueWhereLikeEnd`、`IfTrueWhereExists`、`IfTrueWhereNotExists`
 - 异步：上述执行方法均有 `_Async` 版本（如 `ToList_Async`、`FirstOrDefault_Async`）
 
 ## 批量更新与删除
@@ -158,7 +162,7 @@ helper.DeleteMany<User>().Where(x => x.Age < 18).Execute();
 
 ## object 条件查询
 
-以对象为条件，属性为默认值时忽略该条件：
+以对象为条件，属性按值匹配：`null` 属性生成 `IS NULL`，集合属性生成 `IN`，其它值按等值匹配：
 
 ```csharp
 var user = helper.FirstOrDefault<User>(new { Id = 1 });

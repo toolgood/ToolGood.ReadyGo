@@ -207,7 +207,7 @@ public User FindUser(int userId, string userName, string nickName)
 
 #### 5、object 条件查询
 
-以对象为条件，属性为默认值时忽略该条件：
+以对象为条件，属性按值匹配：`null` 属性生成 `IS NULL`，集合属性生成 `IN`，其它值按等值匹配：
 
 ```csharp
 var user = helper.FirstOrDefault<User>(new { Id = 1 });
@@ -250,6 +250,7 @@ await helper.Update_Async(user, snapshot);   // 异步快照局部更新
 var helper = SqlHelperFactory.OpenDatabase(connectionString, "MySql.Data.MySqlClient", SqlType.MySql);
 var helper = SqlHelperFactory.OpenSqlServer(server, database, user, pwd);
 var helper = SqlHelperFactory.OpenSqlServer(server, port, database, user, pwd);
+var helper = SqlHelperFactory.OpenSqlServerFile(filePath, database);      // LocalDB 实例默认 (LocalDB)\MSSQLLocalDB
 var helper = SqlHelperFactory.OpenMysql(server, database, user, pwd);
 var helper = SqlHelperFactory.OpenMysql(server, port, database, user, pwd);
 var helper = SqlHelperFactory.OpenOracle(server, port, serviceName, user, pwd);
@@ -258,6 +259,7 @@ var helper = SqlHelperFactory.OpenMsSqliteFile(filePath, pwd);
 var helper = SqlHelperFactory.OpenDuckDbFile(filePath);       // 不支持密码（DuckDB 加密需用 ATTACH ... ENCRYPTION_KEY）
 var helper = SqlHelperFactory.OpenAccessFile(filePath);       // 32 位
 var helper = SqlHelperFactory.OpenAccessFile64x(filePath);    // 64 位
+var helper = SqlHelperFactory.OpenSqliteMemory();             // 内存 SQLite
 ```
 
 > **驱动选择说明**
