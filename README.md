@@ -3,7 +3,7 @@ ToolGood.ReadyGo
 
 欢迎使用`ToolGood.ReadyGo`！它是一款轻量级 ORM，基于 NPOCO 核心修改，
 汇聚作者多年经验，简单、快捷，能增加代码的可读性。
-支持 SqlServer、MySql、SQLite、Oracle、Access、DuckDB。
+支持 SqlServer、MySql、MariaDb、SQLite、Oracle、PostgreSQL、Access、FirebirdDb、DuckDB。
 
 ### 快速上手
 
@@ -11,7 +11,7 @@ ToolGood.ReadyGo
 using ToolGood.ReadyGo;
 
 var helper = SqlHelperFactory.OpenSqliteFile("test.db");
-helper._TableHelper.CreateTable(typeof(User));
+helper.TableHelper.CreateTable(typeof(User));
 
 helper.Insert(new User { Name = "Ted", Age = 21 });
 var user = helper.FirstOrDefault<User>("Where Name=@0", "Ted");
@@ -34,7 +34,7 @@ var users = helper.Where<User>().Where(x => x.Age > 18).OrderBy(x => x.Name).ToL
 
 ##### 1.1、简单的数据表操作
 
-目前支持【表操作】的数据库有 SqlServer、MySql、MariaDb、SQLite、DuckDb、Oracle、PostgreSQL、FirebirdDb。
+目前支持【表操作】的数据库有 SqlServer、MySql、MariaDb、SQLite、DuckDb、Oracle、PostgreSQL、FirebirdDb、Access。
 
 ```csharp
 using ToolGood.ReadyGo.Attributes;
@@ -49,7 +49,7 @@ public class User
 using ToolGood.ReadyGo;
 
 var helper = SqlHelperFactory.OpenSqliteFile(dbFile);
-var table = helper._TableHelper;
+var table = helper.TableHelper;
 table.TryCreateTable(typeof(User));    // 表不存在则创建
 table.CreateTable(typeof(User));       // 创建表
 table.CreateTableIndex(typeof(User));  // 创建索引
@@ -63,8 +63,8 @@ table.TruncateTable(typeof(User));     // 清空表
 
 **类级：**
 
-* `Table`：定义表名、schema 名、数据库名。
-  `TableAttribute(string tableName)` / `TableAttribute(string tableName, string schemaName)` / `TableAttribute(string tableName, string schemaName, string databaseName)`
+* `Table`：定义表名、schema 名。
+  `TableAttribute(string tableName)` / `TableAttribute(string tableName, string schemaName)`
 * `PrimaryKey`：定义主键名（默认自增）、Sequence 名。
   `PrimaryKeyAttribute(string primaryKey)` / `PrimaryKeyAttribute(string[] primaryKey)`（复合主键）
 * `Index`：定义索引（可多次使用）。`IndexAttribute(string column, params string[] columns)`
@@ -200,10 +200,10 @@ public User FindUser(int userId, string userName, string nickName)
 
 方法有：
 
-* 构建：`Where`、`WhereSql`、`OrderBy`、`OrderByDescending`、`Limit`、`SkipTake`、`Distinct`
-* 执行：`ToList`、`Select`（等效 ToList）、`First`、`Single`、`Count`、`ToPage`
+* 构建：`Where`、`WhereSql`、`OrderBy`、`OrderByDescending`、`ThenBy`、`ThenByDescending`、`Limit`、`From`
+* 执行：`ToList`、`Select`（等效 ToList）、`First`、`FirstOrDefault`、`Single`、`SingleOrDefault`、`Count`、`Any`、`Exists`、`ToPage`、`Page`、`SelectPage`、`ToArray`、`ToDynamicList`、`ProjectTo`、`Distinct`
 * 动态条件（IfTrue* 条件成立才生效）：`IfTrueWhere`、`IfTrueOrderBy`、`IfTrueOrderByDescending`、`IfTrueLimit`、`IfTrueWhereIn`、`IfTrueWhereNotIn`、`IfTrueWhereLike`、`IfTrueWhereLikeStart`、`IfTrueWhereLikeEnd`、`IfTrueWhereExists`、`IfTrueWhereNotExists`
-* 常用扩展：`WhereIn`、`WhereNotIn`、`WhereLike`（%关键字%）、`WhereLikeStart`、`WhereLikeEnd`、`WhereExists`、`WhereNotExists`
+* 常用扩展：`WhereIn`、`WhereNotIn`、`WhereLike`（%关键字%）、`WhereLikeStart`、`WhereLikeEnd`、`WhereNotLike`、`WhereNotLikeStart`、`WhereNotLikeEnd`、`WhereExists`、`WhereNotExists`
 
 #### 5、object 条件查询
 
@@ -237,7 +237,7 @@ var err = helper._Sql.LastErrorMessage; // 上次错误信息
 `Page`、`SQL_FirstOrDefault`、`SQL_Select`、`SQL_Page`、`SelectOneToMany`、`SelectMultiple`、`FirstOrDefault`、
 `Insert`、`InsertList`、`Update`（含快照/指定列/条件）、`UpdateList`（含快照）、`Delete`、`DeleteById`、`Save`、`SaveList`、`UseTransaction`。
 
-对象条件版本使用 `By` 后缀：`FirstOrDefaultBy`、`SelectBy`、`SelectPageBy`、`PageBy`、`CountBy`、`ExistsBy`、`UpdateBy`、`DeleteBy`（均含 `_Async` 版本）。
+对象条件版本使用同名 `object condition` 重载：`FirstOrDefault`、`Select`、`SelectPage`、`Page`、`Count`、`Exists`、`Update`、`Delete`（均含 `_Async` 版本）。
 
 ```csharp
 var users = await helper.Select_Async<User>("Where [UserType]=@0", 1);
@@ -251,6 +251,7 @@ var helper = SqlHelperFactory.OpenDatabase(connectionString, "MySql.Data.MySqlCl
 var helper = SqlHelperFactory.OpenSqlServer(server, database, user, pwd);
 var helper = SqlHelperFactory.OpenSqlServer(server, port, database, user, pwd);
 var helper = SqlHelperFactory.OpenMysql(server, database, user, pwd);
+var helper = SqlHelperFactory.OpenMysql(server, port, database, user, pwd);
 var helper = SqlHelperFactory.OpenOracle(server, port, serviceName, user, pwd);
 var helper = SqlHelperFactory.OpenSqliteFile(filePath);
 var helper = SqlHelperFactory.OpenMsSqliteFile(filePath, pwd);

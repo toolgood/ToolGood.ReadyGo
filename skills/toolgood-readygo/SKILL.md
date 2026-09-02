@@ -69,7 +69,7 @@ ToolGood.ReadyGo/
 using ToolGood.ReadyGo;
 
 var helper = SqlHelperFactory.OpenSqliteFile("test.db");
-helper._TableHelper.CreateTable(typeof(User));
+helper.TableHelper.CreateTable(typeof(User));
 
 helper.Insert(new User { Name = "Ted", Age = 21 });
 var user = helper.FirstOrDefault<User>("Where Name=@0", "Ted");
@@ -83,17 +83,15 @@ var users = helper.Where<User>().Where(x => x.Age > 18).OrderBy(x => x.Name).ToL
 ### 类级特性（用于 Class）
 
 #### Table
-定义表名、schema 名、数据库名。
+定义表名、schema 名。
 
 ```csharp
 [Table("Users")]                          // 仅表名
 [Table("Users", "dbo")]                   // 表名 + schema
-[Table("Users", "dbo", "MyDatabase")]     // 表名 + schema + 数据库名
 ```
 
 - `TableAttribute(string tableName)`
 - `TableAttribute(string tableName, string schemaName)`
-- `TableAttribute(string tableName, string schemaName, string databaseName)`
 
 #### PrimaryKey
 定义主键名（默认自增）、Sequence 名。
@@ -635,7 +633,7 @@ helper.SaveList(new List<User> { newUser, existingUser });
 
 所有核心操作均提供 `_Async` 后缀的异步版本：`Execute_Async`、`ExecuteScalar_Async`、`ExecuteDataTable_Async`、`ExecuteDataSet_Async`、`Exists_Async`、`Count_Async`、`Select_Async`、`SelectPage_Async`、`Page_Async`、`SelectOneToMany_Async`、`SelectMultiple_Async`、`FirstOrDefault_Async`、`Insert_Async`、`InsertList_Async`、`Update_Async`（含快照/指定列/条件）、`UpdateList_Async`（含快照）、`Delete_Async`、`DeleteById_Async`、`Save_Async`、`SaveList_Async`、`UseTransaction_Async`。
 
-对象条件版本使用 `By` 后缀：`FirstOrDefaultBy`、`SelectBy`、`SelectPageBy`、`PageBy`、`CountBy`、`ExistsBy`、`UpdateBy`、`DeleteBy`（均含 `_Async` 版本）。
+对象条件版本使用同名 `object condition` 重载：`FirstOrDefault`、`Select`、`SelectPage`、`Page`、`Count`、`Exists`、`Update`、`Delete`（均含 `_Async` 版本）。
 
 ```csharp
 var users = await helper.Select_Async<User>("Where [UserType]=@0", 1);
@@ -657,10 +655,10 @@ using (var tran = helper.UseTransaction()) {
 
 ## 表管理
 
-通过 `helper._TableHelper`（SqlTableHelper）编程方式创建、删除、截断表：
+通过 `helper.TableHelper`（SqlTableHelper）编程方式创建、删除、截断表：
 
 ```csharp
-var table = helper._TableHelper;
+var table = helper.TableHelper;
 table.TryCreateTable(typeof(User));    // 表不存在则创建
 table.CreateTable(typeof(User));       // 创建表（可传 withIndex: true 同时创建索引）
 table.CreateTableIndex(typeof(User));  // 创建索引

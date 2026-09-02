@@ -32,7 +32,7 @@ using ToolGood.ReadyGo;
 var helper = SqlHelperFactory.OpenMsSqliteFile("test.db");
 
 // 2. 建表（表不存在时创建）
-helper._TableHelper.TryCreateTable(typeof(User));
+helper.TableHelper.TryCreateTable(typeof(User));
 
 // 3. 插入
 helper.Insert(new User { Name = "Ted", Age = 21 });
@@ -43,7 +43,7 @@ var users = helper.Where<User>()
     .OrderBy(x => x.Name)
     .ToList();
 
-// 5. 分页（SelectPage 为 ToPage 别名）
+// 5. 分页（SelectPage 仅返回当前页列表；ToPage/Page 返回含总数信息的 Page<T>）
 var page = helper.Where<User>().OrderBy(x => x.Age).SelectPage(1, 10);
 
 // 6. 异步查询
@@ -139,9 +139,9 @@ public User FindUser(int userId, string userName)
 
 ### 方法清单
 
-- 构建：`Where`、`WhereSql`、`OrderBy`、`OrderByDescending`、`Limit`、`SkipTake`、`Distinct`
-- 执行：`ToList`、`First`、`Single`、`Count`、`Any`、`ToPage`（别名 `SelectPage`）
-- 常用扩展：`WhereIn`、`WhereNotIn`、`WhereLike`、`WhereLikeStart`、`WhereLikeEnd`、`WhereExists`、`WhereNotExists`
+- 构建：`Where`、`WhereSql`、`OrderBy`、`OrderByDescending`、`ThenBy`、`ThenByDescending`、`Limit`、`From`
+- 执行：`ToList`、`First`、`FirstOrDefault`、`Single`、`SingleOrDefault`、`Count`、`Any`、`Exists`、`ToPage`、`Page`、`SelectPage`、`Distinct`
+- 常用扩展：`WhereIn`、`WhereNotIn`、`WhereLike`、`WhereLikeStart`、`WhereLikeEnd`、`WhereNotLike`、`WhereNotLikeStart`、`WhereNotLikeEnd`、`WhereExists`、`WhereNotExists`
 - 异步：上述执行方法均有 `_Async` 版本（如 `ToList_Async`、`FirstOrDefault_Async`）
 
 ## 批量更新与删除
@@ -211,7 +211,7 @@ var err  = helper._Sql.LastErrorMessage; // 上次错误信息
 
 在 `ToolGood.ReadyGo.Attributes` 命名空间内：
 
-- `Table`：定义表名、schema 名、数据库名
+- `Table`：定义表名、schema 名
 - `PrimaryKey`：定义主键（默认自增），支持复合主键
 - `Column`：定义列名与备注
 - `ResultColumn`：定义返回列（只读，不参与 INSERT/UPDATE）
