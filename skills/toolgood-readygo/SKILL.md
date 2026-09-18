@@ -32,15 +32,17 @@ ToolGood.ReadyGo/
 ├── SqlHelper.Object.cs       # object 条件查询（含主键重载）
 ├── SqlHelper.Where.cs        # 动态查询入口（Where/UpdateMany/DeleteMany）
 ├── SqlHelperFactory.cs       # 创建 SqlHelper 实例的工厂
-├── SqlUtil.cs                # SQL 工具函数
 ├── SqlType.cs                # 数据库类型枚举
 ├── DatabaseProvider.cs       # Provider/数据库类型解析
+├── Page.cs                   # 分页结果（含总记录数）
 ├── Attributes/               # 实体映射特性
-├── Core/                     # NPoco 核心引擎（含 Linq/ 动态查询）
-├── Gadget/                   # 表管理、配置（SqlConfig）、SQL 记录（SqlRecord）
-├── Internals/                # 内部辅助类
-├── Exceptions/               # 异常类型（SqlExecuteException 等）
-└── ConnectionStrings/        # JournalMode 等
+│   ├── ColumnSerializers/            # 列级序列化器实现
+│   └── SerializedColumnAttributes/   # 序列化列特性（SerializedColumn 及各 2Xxx 特性）
+├── Core/                     # NPoco 核心引擎（含 Linq/ 链式查询接口与实现）
+├── DataDiffer/               # 数据差异比较（DataDiffHelper、JsonDiffer 等）
+├── Gadget/                   # 表管理（TableManager）、动态表名（TableName）、JournalMode
+│   └── Internals/            # 内部辅助（配置 SqlConfig、SQL 记录 SqlRecord）
+└── Exceptions/               # 异常类型（SqlExecuteException 等）
 ```
 
 ### 核心类
@@ -102,8 +104,8 @@ var users = helper.Where<User>().Where(x => x.Age > 18).OrderBy(x => x.Name).ToL
 [PrimaryKey(new[] { "UserId", "RoleId" })]  // 复合主键
 ```
 
-- `PrimaryKeyAttribute(string primaryKey)` —— 默认 `AutoIncrement = true`
-- `PrimaryKeyAttribute(string[] primaryKey)` —— 复合主键
+- `PrimaryKeyAttribute(string primaryKey)` —— 单列主键，默认 `AutoIncrement = true`（主键名含逗号时视为多列，不再自动自增）
+- `PrimaryKeyAttribute(string[] primaryKey)` —— 复合主键（复合主键再设置 `AutoIncrement = true` 会抛 `InvalidOperationException`）
 - 属性：`SequenceName`、`AutoIncrement`、`UseOutputClause`
 
 #### Index
@@ -336,6 +338,16 @@ enum 以底层长整数值（long）保存（需 bigint 列）。如 `UserState.
 - `StringArray2StringAttribute(string separator = ",")`
 - `StringArray2StringAttribute(string name, string separator)`
 
+#### String2Bytes
+将 `string` 以 UTF-8 编码的 byte[]（BLOB 列）保存，读取时还原（`null` ↔ `NULL`）。
+
+- `String2BytesAttribute()` / `String2BytesAttribute(string name)`
+
+#### Base64String2Bytes
+将 `byte[]` 以 Base64 字符串（VARCHAR/TEXT 列）保存，读取时还原（`null` ↔ `NULL`）。
+
+- `Base64String2BytesAttribute()` / `Base64String2BytesAttribute(string name)`
+
 #### ComplexMapping
 复杂映射。
 
@@ -529,7 +541,14 @@ helper.Update<User>("Set [Name]=@0 WHERE [Id]=@1", "Test", 1);
 
 ## object 条件查询
 
-以对象为条件，属性为默认值时忽略该条件：
+以对象为条件，**逐属性**生成 WHERE 条件（不判断是否为默认值，所有属性都会参与）：
+
+- `null` → `列 is Null`
+- 空集合 → `1=2`（恒不成立）
+- 集合中全为 `null` → `列 is Null`
+- 集合中既有 `null` 又有值 → `(列 is Null OR 列 in (...))`
+- 单个值 → `列 = @n`
+- 多个值 → `列 in (...)`
 
 ```csharp
 var user = helper.FirstOrDefault<User>(new { Id = 1 });
@@ -540,17 +559,25 @@ var count = helper.Count<User>(new { UserType = 1 });
 var exists = helper.Exists<User>(new { UserName = "Ted" });
 ```
 
-同时提供按主键查询的重载（`FirstOrDefault<T>(int / long / uint / ulong)` 等）：
+同时提供按主键查询的重载（`FirstOrDefault<T>(int / long / uint / ulong)` 等），传整数时会按主键匹配：
 
 ```csharp
 var user = helper.FirstOrDefault<User>(1);
+helper.Delete<User>(1);
 ```
+
+> 注意：条件是 `string` 时会被当作**原始 SQL 片段**直接拼接（如 `Update<User>(set, "Id=1")`），存在 SQL 注入风险，请勿拼接用户输入。
+> `Update<T>(set, condition)` 中 `set` 的主键列会被自动忽略；若 `condition` 无法生成 WHERE 条件，将抛出 `ArgumentException` 以防全表更新。
 
 ## 动态查询
 
 ### 链式查询（Where<T>()）
 
-`Where<T>()` 返回 `IQueryProvider<T>`，可链式调用后再执行。
+`Where<T>()` 返回 `IQueryProvider<T>`，可链式调用后再执行。入口重载：
+
+- `Where<T>()` —— 无初始条件
+- `Where<T>(string where)` / `Where<T>(string where, params object[] args)` —— 直接传入 WHERE 片段
+- `Where<T>(Expression<Func<T, bool>> where)` —— 表达式条件
 
 ```csharp
 public User FindUser(int userId, string userName, string nickName)
@@ -566,20 +593,28 @@ public User FindUser(int userId, string userName, string nickName)
 
 构建方法：
 
-- `Where(expression)`、`WhereSql(sql, args)`、`OrderBy(column)`、`OrderByDescending(column)`、`ThenBy`、`ThenByDescending`、`Limit(rows)`、`Limit(skip, rows)`、`From(builder)`
+- `Where(expression)`、`WhereSql(sql, args)`、`WhereSql(Sql)`、`WhereSql(Func<QueryContext<T>, Sql>)`
+- `OrderBy(column)`、`OrderByDescending(column)`、`ThenBy(column)`、`ThenByDescending(column)`
+- `Limit(rows)`、`Limit(rows, skip)`（先写条数，再写跳过数）、`From(builder)`
 
 执行方法：
 
-- `ToList()`、`ToArray()`、`ToEnumerable()`、`First()`、`FirstOrDefault()`、`Single()`、`SingleOrDefault()`、`Count()`、`Any()`、`ToPage(page, pageSize)`、`ProjectTo<T2>(expression)`、`ToProjectedPage<T2>(expression, page, pageSize)`、`Distinct()`
+- 列表：`ToList()`、`Select()`（ToList 的别名）、`ToArray()`、`ToEnumerable()`、`ToDynamicList()`、`ToDynamicEnumerable()`
+- 单个：`First(expression?)`、`FirstOrDefault(expression?)`、`Single(expression?)`、`SingleOrDefault(expression?)`
+- 计数与存在：`Count(expression?)`、`Select_Count(expression?)`、`Any(expression?)`、`Exists(expression?)`
+- 分页：`ToPage(page, pageSize)`、`Page(page, pageSize)`（ToPage 的别名）、`SelectPage(page, pageSize)`（仅当前页列表）
+- 投影：`ProjectTo<T2>(expression)`、`ToProjectedPage<T2>(expression, page, pageSize)`、`Distinct()`、`Distinct<T2>(expression)`
 
 动态条件扩展（IfTrue* 条件成立才生效）：
 
-- `IfTrueWhere`、`IfTrueOrderBy`、`IfTrueOrderByDescending`、`IfTrueLimit`
-- `IfTrueWhereIn`、`IfTrueWhereNotIn`、`IfTrueWhereLike`、`IfTrueWhereLikeStart`、`IfTrueWhereLikeEnd`、`IfTrueWhereExists`、`IfTrueWhereNotExists`
+- `IfTrueWhere`、`IfTrueOrderBy`、`IfTrueOrderByDescending`、`IfTrueLimit(condition, rows)`、`IfTrueLimit(condition, rows, skip)`
+- `IfTrueWhereIn`、`IfTrueWhereNotIn`、`IfTrueWhereLike`、`IfTrueWhereLikeStart`、`IfTrueWhereLikeEnd`、`IfTrueWhereNotLike`、`IfTrueWhereNotLikeStart`、`IfTrueWhereNotLikeEnd`、`IfTrueWhereExists`、`IfTrueWhereNotExists`
 
-常用扩展：
+常用扩展（列名与表达式两种写法）：
 
-- `WhereIn(column|field, values)`、`WhereNotIn(...)`、`WhereLike(column|field, pattern)`（%关键字%）、`WhereLikeStart`、`WhereLikeEnd`、`WhereExists(sql, args)`、`WhereNotExists(sql, args)`
+- `WhereIn(column|field, values)`、`WhereNotIn(...)`、`WhereExists(sql, args)`、`WhereNotExists(sql, args)`
+- `WhereLike(column|field, pattern)`（`%关键字%`）、`WhereLikeStart`（`关键字%`）、`WhereLikeEnd`（`%关键字`）
+- `WhereNotLike`、`WhereNotLikeStart`、`WhereNotLikeEnd`（语义同上，取反）
 
 ```csharp
 // 排序 + 分页
@@ -618,6 +653,11 @@ helper.UpdateMany<User>()
     .ExcludeDefaults()                  // 跳过默认值字段
     .Execute(new User { Vip = true });
 
+helper.UpdateMany<User>()
+    .Where(x => x.Id == 1)
+    .OnlyFields(x => new { x.NickName, x.Vip })   // 只更新指定字段
+    .Execute(new User { NickName = "新昵称", Vip = true });
+
 helper.DeleteMany<User>()
     .Where(x => x.Age < 18)
     .Execute();
@@ -631,7 +671,7 @@ helper.SaveList(new List<User> { newUser, existingUser });
 
 ## 异步 API
 
-所有核心操作均提供 `_Async` 后缀的异步版本：`Execute_Async`、`ExecuteScalar_Async`、`ExecuteDataTable_Async`、`ExecuteDataSet_Async`、`Exists_Async`、`Count_Async`、`Select_Async`、`SelectPage_Async`、`Page_Async`、`SelectOneToMany_Async`、`SelectMultiple_Async`、`FirstOrDefault_Async`、`Insert_Async`、`InsertList_Async`、`Update_Async`（含快照/指定列/条件）、`UpdateList_Async`（含快照）、`Delete_Async`、`DeleteById_Async`、`Save_Async`、`SaveList_Async`、`UseTransaction_Async`。
+所有核心操作均提供 `_Async` 后缀的异步版本：`Execute_Async`、`ExecuteScalar_Async`、`ExecuteDataTable_Async`、`ExecuteDataSet_Async`、`Exists_Async`、`Count_Async`、`Select_Count_Async`、`Select_Async`、`SelectPage_Async`、`Page_Async`、`SQL_FirstOrDefault_Async`、`SQL_Select_Async`、`SQL_Page_Async`、`SelectOneToMany_Async`、`SelectMultiple_Async`、`FirstOrDefault_Async`、`Insert_Async`、`InsertList_Async`、`Update_Async`（含快照/指定列/条件/原始 SQL）、`UpdateList_Async`（含快照）、`Delete_Async`、`DeleteById_Async`、`Save_Async`、`SaveList_Async`、`UseTransaction_Async`。
 
 对象条件版本使用同名 `object condition` 重载：`FirstOrDefault`、`Select`、`SelectPage`、`Page`、`Count`、`Exists`、`Update`、`Delete`（均含 `_Async` 版本）。
 
@@ -659,17 +699,23 @@ using (var tran = helper.UseTransaction()) {
 
 ```csharp
 var table = helper._TableHelper;
-table.TryCreateTable(typeof(User));    // 表不存在则创建
-table.CreateTable(typeof(User));       // 创建表（可传 withIndex: true 同时创建索引）
-table.CreateTableIndex(typeof(User));  // 创建索引
-table.DropTable(typeof(User));         // 删除表
-table.TruncateTable(typeof(User));     // 清空表
+table.TryCreateTable(typeof(User));    // 表不存在则创建（存在则跳过）
+table.CreateTable(typeof(User));       // 直接建表（表已存在可能报错）
+table.CreateTableIndex(typeof(User));  // 单独创建索引
+table.DropTable(typeof(User));         // 按类型删除表
+table.DropTable("Users");              // 按表名删除表
+table.TruncateTable(typeof(User));     // 按类型清空表
+table.TruncateTable("Users");          // 按表名清空表
 
-// 获取 SQL 脚本
+// 获取 SQL 脚本（TryCreateTable / CreateTable / CreateTableIndex / DropTable / TruncateTable 均有对应 Get 版本）
+var tryCreateSql = table.GetTryCreateTable(typeof(User));  // 表不存在则创建
 var createSql = table.GetCreateTable(typeof(User));
+var indexSql = table.GetCreateTableIndex(typeof(User));
 var dropSql = table.GetDropTable(typeof(User));
 var truncateSql = table.GetTruncateTable(typeof(User));
 ```
+
+> `TryCreateTable` / `CreateTable`（及对应 `Get` 版本）带 `bool withIndex = true` 参数，默认同时创建索引；`DropTable` / `TruncateTable` / `GetDropTable` / `GetTruncateTable` 同时提供 `Type` 与 `string tableName` 两种重载。
 
 ## 配置选项
 
@@ -702,21 +748,47 @@ var cmd = helper._Sql.LastCommand;      // 上次 SQL（带参数格式化）
 var err = helper._Sql.LastErrorMessage; // 上次错误信息
 ```
 
-## SQL 工具类（SqlUtil）
+## SQL 片段与 LIKE / IN 条件扩展
+
+本库没有独立的 SQL 工具类，常用的 LIKE / IN / EXISTS 条件以 `IQueryProvider<T>` 的链式扩展方法提供，均支持**列名**与**表达式**两种写法。
 
 ```csharp
-var escaped = SqlUtil.ToEscapeParam("O'Brien");         // 转义参数
-var escaped = SqlUtil.ToEscapeLikeParam("test%value");  // 转义 LIKE 参数
+// LIKE：pattern 内部会自动转义，方法自行补 % 与 ESCAPE
+helper.Where<User>()
+    .WhereLike("Name", "张")           // Name LIKE '%张%'（包含）
+    .WhereLikeStart("Name", "张")      // Name LIKE '张%'（以…开头）
+    .WhereLikeEnd("Name", "张")        // Name LIKE '%张'（以…结尾）
+    .WhereNotLike("Name", "张")        // Name NOT LIKE '%张%'
+    .ToList();
 
-var where = SqlUtil.WhereLike("Name", "张");        // Name LIKE '张'
-var where = SqlUtil.WhereLikeStart("Name", "张");   // Name LIKE '%张'
-var where = SqlUtil.WhereLikeEnd("Name", "张");     // Name LIKE '张%'
+// IN / NOT IN
+helper.Where<User>()
+    .WhereIn(u => u.Id, new List<int> { 1, 2, 3 })
+    .WhereNotIn(u => u.Status, new[] { "Deleted" })
+    .ToList();
 
-var where = SqlUtil.WhereIn("Id", new List<int> { 1, 2, 3 });
-var where = SqlUtil.WhereNotIn("Id", new List<int> { 1, 2, 3 });
+// 自定义 SQL 片段（使用 @0、@1 占位符传参）
+helper.Where<User>()
+    .WhereSql("Age > @0 AND City = @1", 18, "上海")
+    .ToList();
+
+// 用 Sql 对象携带片段与参数（ToolGood.ReadyGo.NPoco.Sql）
+var fragment = new Sql("Age > @0", 18);
+var users = helper.Where<User>().WhereSql(fragment).ToList();
+
+// 需要在构建时动态决定片段内容时使用委托
+var users2 = helper.Where<User>()
+    .WhereSql(ctx => new Sql("City = @0", city))
+    .ToList();
 ```
 
+> `column` 传空抛 `ArgumentNullException`；`pattern` 传空则不追加条件。
+> `EXISTS` / `NOT EXISTS` 使用 `WhereExists(sql, args)` / `WhereNotExists(sql, args)`。
+> 手工拼接 SQL 时务必用 `@0`、`@1` 占位符传参，不要拼接用户输入（存在 SQL 注入风险）。
+
 ## 动态表名
+
+`GetTableName<T>(asName)` 返回 `TableName<T>`；`GetTableName(Type, asName)` 返回 `TableName`。成员访问会得到**转义后的列名**（带别名前缀），`ToString()` 得到**转义后的表名**（带别名）。
 
 ```csharp
 // 获取动态表名用于列绑定
@@ -725,7 +797,15 @@ var sql = $"SELECT {u.Id}, {u.Name} FROM {u} WHERE {u.Status} = 'Active'";
 
 // 使用类型
 var table = helper.GetTableName(typeof(User), "t");
-var sql = $"SELECT {table.Id} FROM {table}";
+var sql2 = $"SELECT {table.Id} FROM {table}";
+
+// 列名支持忽略下划线的模糊匹配（UserName / user_name 均可命中同一列）
+var u2 = helper.GetTableName<User>("u");
+var s = $"{u2.UserName} = {u2.user_name}";
+
+// TableName<T> 还提供表达式取列名（仅支持单层属性，嵌套成员会抛 NotSupportedException）
+var u3 = helper.GetTableName<User>("u");
+var col = u3.F(x => x.NickName);       // 等价于 u3.NickName
 ```
 
 ## 支持的数据库
@@ -739,11 +819,14 @@ SqlHelperFactory 提供以下连接方法：
 | MySQL | OpenMysql | MySql.Data 或 MySqlConnector（按已加载驱动自动识别） |
 | SQLite | OpenSqliteFile | System.Data.SQLite |
 | SQLite | OpenMsSqliteFile | Microsoft.Data.Sqlite |
+| SQLite | OpenSqliteMemory（`:memory:`，每连接独立） | System.Data.SQLite |
 | Oracle | OpenOracle | Oracle.ManagedDataAccess |
 | DuckDB | OpenDuckDbFile（不支持密码，加密需用 ATTACH ... ENCRYPTION_KEY） | DuckDB.NET.Data.Full |
 | MS Access | OpenAccessFile（32位）/ OpenAccessFile64x（64位） | System.Data.OleDb |
 
-`SqlType` 枚举还包含 SqlServerCE、MsAccessDb 等类型（表操作暂不支持）。
+`OpenDatabase(connectionString, SqlType.xxx)` / `OpenDatabase(connectionString, providerName, SqlType.xxx)` 可连接上表之外的数据库类型（如 MariaDb、PostgreSQL、FirebirdDb、MsAccessDb、DuckDb）。同一 `SqlType` 存在多个驱动时，应通过 `providerName` 精确指定，避免选错驱动。
+
+`SqlType` 枚举取值：`None`、`SQLite`、`MsAccessDb`、`FirebirdDb`、`DuckDb`、`SqlServer`、`MySql`、`MariaDb`、`Oracle`、`PostgreSQL`。其中 SqlServer、MySql/MariaDb、SQLite、DuckDb、Oracle、PostgreSQL、FirebirdDb、MsAccessDb 均支持表操作（建表/删表/清空）。
 
 ## 最佳实践
 

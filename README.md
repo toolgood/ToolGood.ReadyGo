@@ -81,7 +81,9 @@ table.TruncateTable(typeof(User));     // 清空表
 * `Text` / `MediumText` / `LongText`：定义 TEXT 类型列（无参）。
 * `DefaultValue`：定义默认值（默认 SQL）。`DefaultValueAttribute(string defaultstring)`
 
-> 更多特性（`Alias`、`ColumnType`、`ComputedColumn`、`VersionColumn`、`Reference`、`SerializedColumn`、`Bool2String`、`Date2String`、`Date2Int`、`DateTime2String`、`DateTime2Long`、`DateTime2Timestamp`、`Numeric2Int`、`Numeric2Long`、`NumericArray2Bytes`、`Enum2String`、`ComplexMapping`、`PersistedType`、`Construct`、`StatementPreparationHook` 等）请参见 `skills/toolgood-readygo/SKILL.md` 中的完整清单。
+> 更多特性（`Alias`、`ColumnType`、`ComputedColumn`、`VersionColumn`、`Reference`、`SerializedColumn`、`Bool2String`、`Date2String`、`Date2Int`、`DateTime2String`、`DateTime2Long`、`DateTime2Timestamp`、`Numeric2Int`、`Numeric2Long`、`NumericArray2Bytes`、`String2Bytes`、`Base64String2Bytes`、`ComplexMapping`、`PersistedType`、`Construct`、`StatementPreparationHook` 等）请参见 `skills/toolgood-readygo/SKILL.md` 中的完整清单。
+>
+> 注意：`Enum2String` 标记在**枚举类型本身**（`AttributeTargets.Enum`）上，表示该枚举以名称字符串读写；属性级枚举转换请使用 `Enum2Int` 等（标记在属性/字段上）。
 
 #### 2、数据表操作
 
@@ -201,13 +203,13 @@ public User FindUser(int userId, string userName, string nickName)
 方法有：
 
 * 构建：`Where`、`WhereSql`、`OrderBy`、`OrderByDescending`、`ThenBy`、`ThenByDescending`、`Limit`、`From`
-* 执行：`ToList`、`Select`（等效 ToList）、`First`、`FirstOrDefault`、`Single`、`SingleOrDefault`、`Count`、`Any`、`Exists`、`ToPage`、`Page`、`SelectPage`、`ToArray`、`ToDynamicList`、`ProjectTo`、`Distinct`
+* 执行：`ToList`、`Select`（等效 ToList）、`ToArray`、`ToEnumerable`、`ToDynamicList`、`ToDynamicEnumerable`、`First`、`FirstOrDefault`、`Single`、`SingleOrDefault`、`Count`、`Select_Count`、`Any`、`Exists`、`ToPage`、`Page`、`SelectPage`、`ProjectTo`、`ToProjectedPage`、`Distinct`
 * 动态条件（IfTrue* 条件成立才生效）：`IfTrueWhere`、`IfTrueOrderBy`、`IfTrueOrderByDescending`、`IfTrueLimit`、`IfTrueWhereIn`、`IfTrueWhereNotIn`、`IfTrueWhereLike`、`IfTrueWhereLikeStart`、`IfTrueWhereLikeEnd`、`IfTrueWhereExists`、`IfTrueWhereNotExists`
 * 常用扩展：`WhereIn`、`WhereNotIn`、`WhereLike`（%关键字%）、`WhereLikeStart`、`WhereLikeEnd`、`WhereNotLike`、`WhereNotLikeStart`、`WhereNotLikeEnd`、`WhereExists`、`WhereNotExists`
 
 #### 5、object 条件查询
 
-以对象为条件，属性按值匹配：`null` 属性生成 `IS NULL`，集合属性生成 `IN`，其它值按等值匹配：
+以对象为条件，逐属性生成条件（未映射属性自动跳过）：`null` 值生成 `is Null`；集合值为空集合时生成 `1=2`，含 `null` 元素时生成 `(列 is Null OR 列 in (...))`（元素全为 `null` 时仅生成 `is Null`），单元素生成等值、多元素生成 `in (...)`；其它值按等值匹配。此外，传整数会按主键查询；传字符串时若实体主键为字符串类型则按主键值参数化查询，否则作为 SQL 片段（需自行确保安全）。
 
 ```csharp
 var user = helper.FirstOrDefault<User>(new { Id = 1 });
@@ -216,6 +218,7 @@ helper.Update<User>(new { NickName = "新昵称" }, new { Id = 1 });   // set �
 helper.Delete<User>(new { Id = 1 });
 var count = helper.Count<User>(new { UserType = 1 });
 var exists = helper.Exists<User>(new { UserName = "Ted" });
+var byPk = helper.FirstOrDefault<User>(1);                          // 整数 → 主键查询
 ```
 
 #### 6、SQL执行监控
