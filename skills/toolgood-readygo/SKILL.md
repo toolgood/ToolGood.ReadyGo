@@ -541,9 +541,10 @@ helper.Update<User>("Set [Name]=@0 WHERE [Id]=@1", "Test", 1);
 
 ## object 条件查询
 
-以对象为条件，**逐属性**生成 WHERE 条件（不判断是否为默认值，所有属性都会参与）：
+以对象为条件，**逐属性**生成 WHERE 条件；未映射属性、导航属性以及标记 `[Ignore]` 的属性会被自动跳过，不参与条件，也不判断属性值是否为默认值：
 
-- `null` → `列 is Null`
+- 条件对象为 `null` 或空对象（无任何可用属性）→ 无 WHERE 条件
+- 属性值为 `null` → `列 is Null`
 - 空集合 → `1=2`（恒不成立）
 - 集合中全为 `null` → `列 is Null`
 - 集合中既有 `null` 又有值 → `(列 is Null OR 列 in (...))`
@@ -559,14 +560,19 @@ var count = helper.Count<User>(new { UserType = 1 });
 var exists = helper.Exists<User>(new { UserName = "Ted" });
 ```
 
-同时提供按主键查询的重载（`FirstOrDefault<T>(int / long / uint / ulong)` 等），传整数时会按主键匹配：
+条件同时为**主键查询**提供了快捷路径，分以下情形：
+
+- 整数条件（`int / long / uint / ulong` 等）→ 按主键匹配，等价于 `FirstOrDefault<T>(int id)` 系列重载；要求实体为**单一主键列**，复合主键会抛出 `ArgumentException`
+- 非整数、非字符串的值类型条件 → 直接抛出 `ArgumentException`（"仅支持整数类型主键"）
+- `string` 条件且实体主键为 `string` → 按主键值**参数化**查询（优先于下方 SQL 片段处理，不会被当作 SQL 片段）
+- 其它 `string` 条件 → 被当作**原始 SQL 片段**直接拼接（如 `Update<User>(set, "Id=1")`），存在 SQL 注入风险，请勿拼接用户输入；空字符串视为无条件
 
 ```csharp
-var user = helper.FirstOrDefault<User>(1);
+var user = helper.FirstOrDefault<User>(1);     // 整数 → 主键查询
 helper.Delete<User>(1);
+user = helper.FirstOrDefault<User>("U001");    // 实体主键为 string → 主键查询
 ```
 
-> 注意：条件是 `string` 时会被当作**原始 SQL 片段**直接拼接（如 `Update<User>(set, "Id=1")`），存在 SQL 注入风险，请勿拼接用户输入。
 > `Update<T>(set, condition)` 中 `set` 的主键列会被自动忽略；若 `condition` 无法生成 WHERE 条件，将抛出 `ArgumentException` 以防全表更新。
 
 ## 动态查询
