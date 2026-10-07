@@ -22,8 +22,10 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                     return ToInt(dateTime);
                 case DateTimeOffset dateTimeOffset:
                     return ToInt(dateTimeOffset.DateTime);
+#if NET6_0_OR_GREATER
                 case DateOnly dateOnly:
                     return ToInt(dateOnly.ToDateTime(TimeOnly.MinValue));
+#endif
                 default:
                     throw new NotSupportedException($"Date2Int 不支持的类型：{value.GetType().Name}");
             }
@@ -46,9 +48,11 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
             var day = v % 100;
 
             var t = Nullable.GetUnderlyingType(targetType) ?? targetType;
+#if NET6_0_OR_GREATER
             if (t == typeof(DateOnly)) {
                 return new DateOnly(year, month, day);
             }
+#endif
             if (t == typeof(DateTimeOffset)) {
                 // 存储值为无时区整数，按 UTC 解释，避免依赖服务器本地时区
                 return new DateTimeOffset(DateTime.SpecifyKind(new DateTime(year, month, day), DateTimeKind.Utc));

@@ -154,7 +154,7 @@ namespace ToolGood.ReadyGo
                 if (value == null) {
                     stringBuilder.Append(NullValueText);
                 } else {
-                    var items = value.ToString().Split(',', StringSplitOptions.RemoveEmptyEntries);
+                    var items = value.ToString().Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                     for (int i = 0; i < items.Length; i++) {
                         if (i > 0) { stringBuilder.Append(Pipe); }
                         stringBuilder.Append(items[i]);

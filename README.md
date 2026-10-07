@@ -5,6 +5,13 @@ ToolGood.ReadyGo
 汇聚作者多年经验，简单、快捷，能增加代码的可读性。
 支持 SqlServer、MySql、MariaDb、SQLite、Oracle、PostgreSQL、Access、FirebirdDb、DuckDB。
 
+### 目标框架
+
+多目标框架构建：`netstandard2.0`、`net8.0`、`net9.0`、`net10.0`。
+
+* `netstandard2.0` 可被 .NET Framework 4.6.1+ / .NET Core 2.0+ 引用；为补齐运行时不具备的类型，会自动引入 `Microsoft.Bcl.AsyncInterfaces`、`System.Memory`、`System.Text.Json`、`System.Reflection.Emit` 等依赖包。
+* `netstandard2.0` 目标**不支持 `DateOnly` / `TimeOnly`**（该运行时无此类型），相关映射与序列化分支在该目标下不编译；如需 `DateOnly` / `TimeOnly`，请使用 `net8.0` 及以上目标。
+
 ### 快速上手
 
 ```csharp

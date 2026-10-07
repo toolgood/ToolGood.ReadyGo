@@ -541,7 +541,7 @@ namespace ToolGood.ReadyGo.NPoco.Expressions
                 return BuildSelectExpression(null, distinct);
 
             // 提前构建已选列的 (实体类型, 成员名) 集合，将去重判断由 O(n*m) 嵌套扫描降为 O(1)
-            var selectedKeys = new HashSet<(Type, string)>(selectMembers.Count);
+            var selectedKeys = new HashSet<(Type, string)>();
             foreach (var member in selectMembers)
                 selectedKeys.Add((member.EntityType, member.PocoColumn.MemberInfoData.Name));
 

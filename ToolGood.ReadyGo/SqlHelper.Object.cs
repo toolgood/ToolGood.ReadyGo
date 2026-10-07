@@ -759,7 +759,7 @@ namespace ToolGood.ReadyGo
             bool hasColumn = false;
 
             var ignored = ignoreFields as ISet<string>
-                ?? ignoreFields?.ToHashSet(StringComparer.OrdinalIgnoreCase);
+                ?? (ignoreFields == null ? null : new HashSet<string>(ignoreFields, StringComparer.OrdinalIgnoreCase));
 
             var type = condition.GetType();
             var accessors = GetPropertyAccessors(type);

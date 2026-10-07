@@ -107,9 +107,9 @@ namespace ToolGood.ReadyGo
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(name);
             stringBuilder.Append(NameSeparator);
-            stringBuilder.AppendJoin(Pipe, lefts);
+            stringBuilder.Append(string.Join(Pipe, lefts));
             stringBuilder.Append(Arrow);
-            stringBuilder.AppendJoin(Pipe, rights);
+            stringBuilder.Append(string.Join(Pipe, rights));
             return stringBuilder.ToString();
         }
 
@@ -129,9 +129,9 @@ namespace ToolGood.ReadyGo
             StringBuilder stringBuilder = new StringBuilder();
             stringBuilder.Append(name);
             stringBuilder.Append(NameSeparator);
-            stringBuilder.AppendJoin(Pipe, lefts);
+            stringBuilder.Append(string.Join(Pipe, lefts));
             stringBuilder.Append(Arrow);
-            stringBuilder.AppendJoin(Pipe, rights);
+            stringBuilder.Append(string.Join(Pipe, rights));
             return stringBuilder.ToString();
         }
 

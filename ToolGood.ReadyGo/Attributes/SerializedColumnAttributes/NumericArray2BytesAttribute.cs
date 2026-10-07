@@ -1,5 +1,6 @@
 using System;
 using ToolGood.ReadyGo.Attributes.ColumnSerializers;
+using ToolGood.ReadyGo.NPoco;
 
 namespace ToolGood.ReadyGo.Attributes
 {
@@ -13,7 +14,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public override NumericArray2BytesColumnSerializer Serializer => DefaultSerializer;
+        public override IColumnSerializer Serializer => DefaultSerializer;
 
         private static readonly NumericArray2BytesColumnSerializer DefaultSerializer = new NumericArray2BytesColumnSerializer();
 

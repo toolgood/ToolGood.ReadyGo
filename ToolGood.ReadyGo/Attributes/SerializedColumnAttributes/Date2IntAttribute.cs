@@ -1,5 +1,6 @@
 using System;
 using ToolGood.ReadyGo.Attributes.ColumnSerializers;
+using ToolGood.ReadyGo.NPoco;
 
 namespace ToolGood.ReadyGo.Attributes
 {
@@ -14,7 +15,7 @@ namespace ToolGood.ReadyGo.Attributes
         /// <summary>
         /// 列级序列化器
         /// </summary>
-        public override Date2IntColumnSerializer Serializer => DefaultSerializer;
+        public override IColumnSerializer Serializer => DefaultSerializer;
 
         private static readonly Date2IntColumnSerializer DefaultSerializer = new Date2IntColumnSerializer();
 

@@ -195,7 +195,9 @@ namespace ToolGood.ReadyGo.Gadget.TableManager.Providers
             if (type == typeof(double)) return CreateField(ti, ci, "DOUBLE PRECISION", ci.FieldLength, isRequired);
             if (type == typeof(decimal)) return CreateField(ti, ci, "DECIMAL", ci.FieldLength, isRequired);
             if (type == typeof(DateTime)) return CreateField(ti, ci, "TIMESTAMP", ci.FieldLength, isRequired);
+#if NET6_0_OR_GREATER
             if (type == typeof(DateOnly)) return CreateField(ti, ci, "DATE", ci.FieldLength, isRequired);
+#endif
             if (type == typeof(TimeSpan)) return CreateField(ti, ci, "TIME", ci.FieldLength, isRequired);
             if (type == typeof(DateTimeOffset)) return CreateField(ti, ci, "TIMESTAMP WITH TIME ZONE", ci.FieldLength, isRequired);
             if (type == typeof(Guid)) return CreateField(ti, ci, "CHAR", "36", isRequired);

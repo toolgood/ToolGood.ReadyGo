@@ -25,8 +25,10 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                     return dateTime.ToString(DateFormat, CultureInfo.InvariantCulture);
                 case DateTimeOffset dateTimeOffset:
                     return dateTimeOffset.ToString(DateFormat, CultureInfo.InvariantCulture);
+#if NET6_0_OR_GREATER
                 case DateOnly dateOnly:
                     return dateOnly.ToString(DateFormat, CultureInfo.InvariantCulture);
+#endif
                 default:
                     throw new NotSupportedException($"Date2String 不支持的类型：{value.GetType().Name}");
             }
@@ -50,24 +52,31 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 case DateTime dateTime:
                     if (t == typeof(DateTime)) { return dateTime; }
                     if (t == typeof(DateTimeOffset)) { return new DateTimeOffset(DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)); }
+#if NET6_0_OR_GREATER
                     if (t == typeof(DateOnly)) { return DateOnly.FromDateTime(dateTime); }
+#endif
                     break;
                 case DateTimeOffset dateTimeOffset:
                     if (t == typeof(DateTimeOffset)) { return dateTimeOffset; }
                     if (t == typeof(DateTime)) { return dateTimeOffset.DateTime; }
+#if NET6_0_OR_GREATER
                     if (t == typeof(DateOnly)) { return DateOnly.FromDateTime(dateTimeOffset.DateTime); }
+#endif
                     break;
+#if NET6_0_OR_GREATER
                 case DateOnly dateOnly:
                     if (t == typeof(DateOnly)) { return dateOnly; }
                     if (t == typeof(DateTime)) { return dateOnly.ToDateTime(TimeOnly.MinValue); }
                     if (t == typeof(DateTimeOffset)) { return new DateTimeOffset(DateTime.SpecifyKind(dateOnly.ToDateTime(TimeOnly.MinValue), DateTimeKind.Utc)); }
                     break;
+#endif
             }
 
             var s = value as string ?? value?.ToString();
             if (string.IsNullOrEmpty(s)) {
                 return null;
             }
+#if NET6_0_OR_GREATER
             if (t == typeof(DateOnly)) {
                 if (DateOnly.TryParseExact(s, DateFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var dateOnly)) {
                     return dateOnly;
@@ -78,6 +87,7 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 }
                 throw new FormatException($"String '{s}' was not recognized as a valid DateOnly.");
             }
+#endif
 
             if (!TryParse(s, out var result)) {
                 throw new FormatException($"String '{s}' was not recognized as a valid DateTime.");

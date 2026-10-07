@@ -1,6 +1,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 
 namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
 {
@@ -31,17 +32,17 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
                 case null:
                     return null;
                 case float[] a:
-                    return ToBytes(a, sizeof(float), (span, v) => BinaryPrimitives.WriteSingleLittleEndian(span, v));
+                    return ToBytes(a, sizeof(float), (span, v) => WriteSingleLE(span, v));
                 case double[] a:
-                    return ToBytes(a, sizeof(double), (span, v) => BinaryPrimitives.WriteDoubleLittleEndian(span, v));
+                    return ToBytes(a, sizeof(double), (span, v) => WriteDoubleLE(span, v));
                 case int[] a:
                     return ToBytes(a, sizeof(int), (span, v) => BinaryPrimitives.WriteInt32LittleEndian(span, v));
                 case decimal[] a:
                     return ToBytes(a, DecimalSize, WriteDecimal);
                 case List<float> l:
-                    return ToBytes(l, sizeof(float), (span, v) => BinaryPrimitives.WriteSingleLittleEndian(span, v));
+                    return ToBytes(l, sizeof(float), (span, v) => WriteSingleLE(span, v));
                 case List<double> l:
-                    return ToBytes(l, sizeof(double), (span, v) => BinaryPrimitives.WriteDoubleLittleEndian(span, v));
+                    return ToBytes(l, sizeof(double), (span, v) => WriteDoubleLE(span, v));
                 case List<int> l:
                     return ToBytes(l, sizeof(int), (span, v) => BinaryPrimitives.WriteInt32LittleEndian(span, v));
                 case List<decimal> l:
@@ -68,16 +69,16 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
 
             var t = Nullable.GetUnderlyingType(targetType) ?? targetType;
             if (t == typeof(List<float>)) {
-                return new List<float>(FromBytes(bytes, sizeof(float), BinaryPrimitives.ReadSingleLittleEndian));
+                return new List<float>(FromBytes(bytes, sizeof(float), ReadSingleLE));
             }
             if (t == typeof(float[])) {
-                return FromBytes(bytes, sizeof(float), BinaryPrimitives.ReadSingleLittleEndian);
+                return FromBytes(bytes, sizeof(float), ReadSingleLE);
             }
             if (t == typeof(List<double>)) {
-                return new List<double>(FromBytes(bytes, sizeof(double), BinaryPrimitives.ReadDoubleLittleEndian));
+                return new List<double>(FromBytes(bytes, sizeof(double), ReadDoubleLE));
             }
             if (t == typeof(double[])) {
-                return FromBytes(bytes, sizeof(double), BinaryPrimitives.ReadDoubleLittleEndian);
+                return FromBytes(bytes, sizeof(double), ReadDoubleLE);
             }
             if (t == typeof(List<int>)) {
                 return new List<int>(FromBytes(bytes, sizeof(int), BinaryPrimitives.ReadInt32LittleEndian));
@@ -96,6 +97,36 @@ namespace ToolGood.ReadyGo.Attributes.ColumnSerializers
 
         private delegate void SpanWriter<T>(Span<byte> span, T value);
         private delegate T SpanReader<T>(ReadOnlySpan<byte> span);
+
+        // netstandard2.0 的 BinaryPrimitives 未提供浮点小端读写方法，这里用整型小端 + 位转换实现，
+        // 保证各目标框架、各平台（含大端）行为一致。
+        [StructLayout(LayoutKind.Explicit)]
+        private struct SingleInt32Union
+        {
+            [FieldOffset(0)] public float Single;
+            [FieldOffset(0)] public int Int32;
+        }
+
+        private static void WriteSingleLE(Span<byte> span, float value)
+        {
+            var union = new SingleInt32Union { Single = value };
+            BinaryPrimitives.WriteInt32LittleEndian(span, union.Int32);
+        }
+
+        private static float ReadSingleLE(ReadOnlySpan<byte> span)
+        {
+            return new SingleInt32Union { Int32 = BinaryPrimitives.ReadInt32LittleEndian(span) }.Single;
+        }
+
+        private static void WriteDoubleLE(Span<byte> span, double value)
+        {
+            BinaryPrimitives.WriteInt64LittleEndian(span, BitConverter.DoubleToInt64Bits(value));
+        }
+
+        private static double ReadDoubleLE(ReadOnlySpan<byte> span)
+        {
+            return BitConverter.Int64BitsToDouble(BinaryPrimitives.ReadInt64LittleEndian(span));
+        }
 
         private static byte[] ToBytes<T>(IReadOnlyList<T> values, int size, SpanWriter<T> write)
         {

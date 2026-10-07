@@ -14,8 +14,10 @@ ToolGood.ReadyGo 是一款轻量级高性能 Micro-ORM，基于 NPoco 核心修�
 
 ## 支持框架与数据库
 
-- 框架：.NET 8.0 / 9.0 / 10.0
+- 框架：.NET Standard 2.0 / .NET 8.0 / 9.0 / 10.0
 - 数据库：SqlServer、MySql、MariaDb、SQLite、PostgreSQL、Oracle、Firebird、DuckDb、Access
+
+> `netstandard2.0` 目标可被 .NET Framework 4.6.1+ / .NET Core 2.0+ 引用，依赖会自动带上 `Microsoft.Bcl.AsyncInterfaces`、`System.Memory`、`System.Text.Json`、`System.Reflection.Emit` 等兼容包；受限于该运行时，`netstandard2.0` 下**不支持 `DateOnly` / `TimeOnly`** 映射，需要使用这两个类型时请改用 `net8.0` 及以上目标。
 
 ## 安装
 
