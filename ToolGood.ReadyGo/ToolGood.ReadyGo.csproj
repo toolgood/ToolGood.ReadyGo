@@ -9,7 +9,7 @@
     <AssemblyName>ToolGood.ReadyGo</AssemblyName>
     <RootNamespace>ToolGood.ReadyGo</RootNamespace>
     <PackageId>ToolGood.ReadyGo</PackageId>
-    <Version>6.0.11</Version>
+    <Version>6.0.12</Version>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>ToolGood.ReadyGo.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
@@ -39,8 +39,6 @@
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <!-- netstandard2.0 缺少 IAsyncEnumerable / IAsyncDisposable / ValueTask，需要兼容包 -->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="10.0.11" />
-    <!-- Span<T> / ReadOnlySpan<T> / BinaryPrimitives 等 -->
-    <PackageReference Include="System.Memory" Version="4.6.3" />
     <!-- 数据差异比较（JsonDiffer）依赖 System.Text.Json -->
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
     <!-- DynamicMethod / ILGenerator（FastCreate、MemberAccessor 等） -->
