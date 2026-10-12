@@ -72,8 +72,7 @@ namespace ToolGood.ReadyGo
         public static SqlHelper OpenSqlServerFile(string filePath, string database, string server = "(LocalDB)\\MSSQLLocalDB")
         {
             // 注意：C# 字符串中 \\ 转义为 \，原默认值 "(LocalDb)\v11.0" 中的 \v 会被解释为垂直制表符
-            // AttachDBFilename 值用双引号包裹并转义，防止路径含 ; = " 等字符破坏连接字符串
-            var connstr = $"Data Source={QuoteConnectionValue(server)};Initial Catalog={QuoteConnectionValue(database)};Integrated Security=SSPI;AttachDBFilename={QuoteConnectionValue(filePath)}";
+            var connstr = $"Data Source={server};Initial Catalog={database};Integrated Security=SSPI;AttachDBFilename={filePath}";
             return OpenDatabase(connstr, "System.Data.SqlClient", SqlType.SqlServer);
         }
 
@@ -88,7 +87,7 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenSqlServer(string server, string database, string user, string pwd, bool trustServerCertificate = false)
         {
-            var connstr = $"Server={QuoteConnectionValue(server)};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)}";
+            var connstr = $"Server={server};Database={database};Uid={user};Pwd={pwd}";
             if (trustServerCertificate) {
                 connstr += ";TrustServerCertificate=True";
             }
@@ -107,7 +106,7 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenSqlServer(string server, int port, string database, string user, string pwd, bool trustServerCertificate = false)
         {
-            var connstr = $"Server={QuoteConnectionValue($"{server},{port}")};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)}";
+            var connstr = $"Server={server},{port};Database={database};Uid={user};Pwd={pwd}";
             if (trustServerCertificate) {
                 connstr += ";TrustServerCertificate=True";
             }
@@ -128,8 +127,8 @@ namespace ToolGood.ReadyGo
             var isMySqlData = IsMySqlDataDriver(factory);
             // MySql.Data 使用 charset/AllowUserVariables 关键字，MySqlConnector 使用 CharSet（默认允许用户变量）
             var connstr = isMySqlData
-                ? $"Server={QuoteConnectionValue(server)};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)};charset=utf8mb4;AllowUserVariables=true;"
-                : $"Server={QuoteConnectionValue(server)};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)};CharSet=utf8mb4;";
+                ? $"Server={server};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;AllowUserVariables=true;"
+                : $"Server={server};Database={database};Uid={user};Pwd={pwd};CharSet=utf8mb4;";
             var options = GetMySqlConnectionOptions(factory.GetType().Assembly.GetName());
             if (options != null) {
                 connstr += options;
@@ -152,8 +151,8 @@ namespace ToolGood.ReadyGo
             var isMySqlData = IsMySqlDataDriver(factory);
             // MySql.Data 使用 charset/AllowUserVariables 关键字，MySqlConnector 使用 CharSet（默认允许用户变量）
             var connstr = isMySqlData
-                ? $"Server={QuoteConnectionValue(server)};Port={port};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)};charset=utf8mb4;AllowUserVariables=true;"
-                : $"Server={QuoteConnectionValue(server)};Port={port};Database={QuoteConnectionValue(database)};Uid={QuoteConnectionValue(user)};Pwd={QuoteConnectionValue(pwd)};CharSet=utf8mb4;";
+                ? $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};charset=utf8mb4;AllowUserVariables=true;"
+                : $"Server={server};Port={port};Database={database};Uid={user};Pwd={pwd};CharSet=utf8mb4;";
             var options = GetMySqlConnectionOptions(factory.GetType().Assembly.GetName());
             if (options != null) {
                 connstr += options;
@@ -300,15 +299,6 @@ namespace ToolGood.ReadyGo
         private static string EscapeConnectionValue(string value)
         {
             return value.Replace("\"", "\"\"");
-        }
-
-        /// <summary>
-        /// 连接字符串值转义并用双引号包裹：用于拼接 server/database/user/pwd 等动态值，
-        /// 防止值中含 ; = " 空格 等字符破坏连接字符串
-        /// </summary>
-        private static string QuoteConnectionValue(string value)
-        {
-            return "\"" + EscapeConnectionValue(value ?? string.Empty) + "\"";
         }
 
         /// <summary>
