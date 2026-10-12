@@ -212,7 +212,11 @@ namespace ToolGood.ReadyGo
         /// <returns>打开的 SqlHelper 实例</returns>
         public static SqlHelper OpenOracle(string server, int port, string serviceName, string user, string pwd)
         {
-            var conn = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={QuoteConnectionValue(server)})(PORT={port}))(CONNECT_DATA=(SERVICE_NAME={QuoteConnectionValue(serviceName)})));User Id={QuoteConnectionValue(user)};Password={QuoteConnectionValue(pwd)}";
+            // Oracle 连接字符串不使用 SqlClient/OleDb 的“双引号包裹值”语义：
+            // TNS 描述符内的 HOST/SERVICE_NAME 及 User Id/Password 均应为裸值，加双引号会导致
+            // ODP.NET 解析出带引号的主机名/服务名/用户名（部分驱动版本不剥离引号），连接失败。
+            // 保持 5.X 的原始拼接方式。
+            var conn = $"Data Source=(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST={server})(PORT={port}))(CONNECT_DATA=(SERVICE_NAME={serviceName})));User Id={user};Password={pwd}";
             return SqlHelperFactory.OpenDatabase(conn, SqlType.Oracle);
         }
 
